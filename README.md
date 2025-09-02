@@ -1,6 +1,6 @@
 # Python
 
-## Python Variable Types Cheat Sheet
+## Variable Types
 
 | **Variable Type** | **Description** | **Example** | **Type Check** |
 | --- | --- | --- | --- |
@@ -318,7 +318,7 @@ for num in range(index1, index2 + 1):
 
 ---
 
-## Python List Cheat Sheet
+## List
 
 | **Operation** | **Description** | **Example** | **Output** |
 | --- | --- | --- | --- |
