@@ -31,8 +31,10 @@
 ```python
 age = 25
 print(age, type(age))
+
 price = 99.99
 print(price, type(price))
+
 com = 2 + 3j
 print(com, type(com))
 ```
@@ -43,6 +45,7 @@ print(com, type(com))
 name = "mashfiq"
 gretting = "Hello Data Science"
 multi = """this is a multiline text"""
+
 print(name, type(name))
 print(gretting, type(gretting))
 print(multi, type(multi))
@@ -53,6 +56,7 @@ print(multi, type(multi))
 ```python
 is_active = True
 is_admin = False
+
 print(is_active, type(is_active))
 print(is_admin, type(is_admin))
 ```
@@ -66,6 +70,7 @@ print(is_admin, type(is_admin))
 ```python
 numbers = [1, 2, 3, 4, 5]
 print(numbers, type(numbers))
+
 fruits = ["apple", "banana", "mango"]
 print(fruits, type(fruits))
 ```
@@ -75,6 +80,7 @@ print(fruits, type(fruits))
 ```python
 coordinates = (10.0, 20.0)
 print(coordinates, type(coordinates))
+
 colors = ("red", "green", "blue")
 print(colors, type(colors))
 ```
@@ -123,6 +129,7 @@ print(var, type(var))
 ```python
 PI = 3.14159
 GRAVITY = 9.8
+
 print(PI, type(PI))
 print(GRAVITY, type(GRAVITY))
 ```
@@ -144,6 +151,7 @@ float(5)
 ```python
 a = 10
 b = 20
+
 print("The value of a is {} and b is {}".format(a, b))
 print("The value of b is {1} and a is {0}".format(a, b))
 print("Hello {name}, {greeting}".format(name="Mash", greeting="Good Morning!"))
@@ -159,6 +167,7 @@ print(num)
 
 x = 5
 y = 5
+
 print(x is y)
 print(x is not y)
 
@@ -212,6 +221,7 @@ else:
 num1 = 10
 num2 = 50
 num3 = 15
+
 if (num1 >= num2) and (num1 >= num3):
     largest = num1
 elif (num2 >= num1) and (num2 >= num3):
@@ -231,9 +241,11 @@ print(largest)
 lst = [10, 20, 30, 40, 50]
 product = 1
 index = 0
+
 while index < len(lst):
     product *= lst[index]
     index += 1
+
 print("Product is : {}".format(product))
 ```
 
@@ -242,6 +254,7 @@ print("Product is : {}".format(product))
 ```python
 numbers = [1, 2, 3, 4, 5]
 index = 0
+
 while index < len(numbers):
     print(numbers[index])
     index += 1
@@ -255,11 +268,13 @@ else:
 num = int(input("Enter a number: "))
 isDivisible = False
 i = 2
+
 while i < num:
     if num % i == 0:
         isDivisible = True
         print("{} is divisible by {}".format(num, i))
     i += 1
+
 if isDivisible:
     print("{} is Not a Prime number.".format(num))
 else:
@@ -271,8 +286,10 @@ else:
 ```python
 lst = [10, 20, 30, 40, 50]
 product = 1
+
 for ele in lst:
     product *= ele
+
 print(product)
 ```
 
@@ -285,7 +302,9 @@ for i in range(1, 20, 2):
     print(i)
 for i in range(0, 20, 5):
     print(i)
+
 lst = ["Mash", "Safa", "Nosh", "Shad", "Rak", "Sham"]
+
 for index in range(len(lst)):
     print(lst[index])
 ```
@@ -294,6 +313,7 @@ for index in range(len(lst)):
 
 ```python
 numbers = [1, 2, 3]
+
 for item in numbers:
     print(item)
 else:
@@ -305,7 +325,9 @@ else:
 ```python
 index1 = int(input("Enter Starting point of numbers: "))
 index2 = int(input("Enter End point of numbers: "))
+
 print("Prime numbers between {} and {} are: ".format(index1, index2))
+
 for num in range(index1, index2 + 1):
     if num > 1:
         isDivisible = False
@@ -358,63 +380,79 @@ print(len(lst4))
 lst = ["one", "Two", "Three"]
 lst.append('Four')
 print(lst)
+
 lst.insert(3, "Four")
 print(lst)
+
 lst = ["one", "Two", "Two", "Three"]
 lst.remove("Two")
 print(lst)
+
 lst1 = ["one", "Two", "Two", "Three"]
 lst2 = ["Four", "Five"]
 lst1.append(lst2)
 print(lst1)
+
 lst1 = ["one", "Two", "Two", "Three"]
 lst2 = ["Four", "Five"]
 lst1.extend(lst2)
 print(lst1)
+
 lst = ["one", "Two", "Three", "Four", "Five"]
 del lst[1]
 print(lst)
+
 lst = ["one", "Two", "Three", "Four", "Five"]
 a = lst.pop(1)
 print(a)
 print(lst)
+
 lst = ["one", "Two", "Three", "Four", "Five"]
 if "Two" in lst:
     print("AI")
 if "Six" not in lst:
     print("ML")
+
 numbers = [3, 1, 6, 2, 8]
 sorted_lst = sorted(numbers)
 reverse_sort_lst = sorted(numbers, reverse=True)
+
 print(numbers)
 numbers.sort()
 print(sorted_lst)
 print(reverse_sort_lst)
 print(numbers)
+
 lst = [1, 2, 3, 4, 5]
 abc = lst
 abc.append(6)
 print(abc)
 print(lst)
+
 s = "one,Two,Three,Four,Five"
 slst = s.split(',')
 print(s)
 print(slst)
+
 s = "This is applied AI Course"
 split_lst = s.split()
 print(split_lst)
+
 numbers = [10, 20, 30, 40, 50, 60, 70, 80, 90]
 print(numbers[:])
 print(numbers[0:4])
 print(numbers[::2])
 print(numbers[2::2])
+
 lst1 = [1, 2, 3, 4]
 lst2 = ["Mash", "Safa"]
 new_lst = lst1 + lst2
 print(new_lst)
+
 numbers = [1, 2, 3, 1, 3, 4, 2, 5]
 print(numbers.count(1))
 print(numbers.count(3))
+
 for ele in new_lst:
     print(ele)
 ```
@@ -423,16 +461,22 @@ for ele in new_lst:
 
 ```python
 sqrs = []
+
 for i in range(10):
     sqrs.append(i**2)
+
 print(sqrs)
+
 sqrs = [i**2 for i in range(10)]
 print(sqrs)
+
 lst = [-10, -20, 10, 20, 50]
 new_lst = [i * 2 for i in lst]
 print(new_lst)
+
 new_lst = [i * 2 for i in lst if i >= 0]
 print(new_lst)
+
 new_lst = [(i, i**2) for i in range(10)]
 print(new_lst)
 ```
@@ -445,13 +489,17 @@ matrix = [
     [5, 6, 7, 8],
     [9, 10, 11, 12]
 ]
+
 transposed = []
+
 for i in range(4):
     lst = []
     for row in matrix:
         lst.append(row[i])
     transposed.append(lst)
+
 print(transposed)
+
 transposed = [[row[i] for row in matrix] for i in range(4)]
 print(transposed)
 ```
@@ -486,15 +534,20 @@ t = (1, 2, 3, 'Mash')
 t = ((1, 2, 3), ('Mash', 'Safa'))
 t = ('Mash')
 print(type(t))
+
 t = ('Mash',)
 print(type(t))
+
 t = ('ABC', ('Mash', 'Safa'))
 print(t[1][0])
+
 t = (1,2,3,4,5,6, [1,2,3,4])
 print(t)
 print(t[1:4])
 print(t[6][0])
+
 del t
+
 t = (1, 2, 3, 1, 3, 3, 4, 1)
 print(t.count(1))
 print(t.index(1))
@@ -575,12 +628,16 @@ set2 = {4, 5, 6, 7, 8}
 
 print(set1 | set2)
 print(set1.union(set2))
+
 print(set1 & set2)
 print(set1.intersection(set2))
+
 print(set1 - set2)
 print(set1.difference(set2))
+
 print(set1 ^ set2)
 print(set1.symmetric_difference(set2))
+
 print(set1.issubset(set2))
 print(set2.issubset(set1))
 
