@@ -228,7 +228,3 @@ SHOW VARIABLES;      -- Server variables
 mysql -u user -p db_name < file.sql      # Import
 mysqldump -u user -p db_name > backup.sql # Export
 ```
-
-```bash
-
-```
