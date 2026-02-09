@@ -1,0 +1,2918 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Built‑In Functions and Operators.md</title>
+<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+<link rel="stylesheet" href="dark.css">
+<style>
+/* https://github.com/microsoft/vscode/blob/master/extensions/markdown-language-features/media/markdown.css */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+body {
+	font-family: var(--vscode-markdown-font-family, -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif);
+	font-size: var(--vscode-markdown-font-size, 14px);
+	padding: 0 26px;
+	line-height: var(--vscode-markdown-line-height, 22px);
+	word-wrap: break-word;
+}
+
+#code-csp-warning {
+	position: fixed;
+	top: 0;
+	right: 0;
+	color: white;
+	margin: 16px;
+	text-align: center;
+	font-size: 12px;
+	font-family: sans-serif;
+	background-color:#444444;
+	cursor: pointer;
+	padding: 6px;
+	box-shadow: 1px 1px 1px rgba(0,0,0,.25);
+}
+
+#code-csp-warning:hover {
+	text-decoration: none;
+	background-color:#007acc;
+	box-shadow: 2px 2px 2px rgba(0,0,0,.25);
+}
+
+body.scrollBeyondLastLine {
+	margin-bottom: calc(100vh - 22px);
+}
+
+body.showEditorSelection .code-line {
+	position: relative;
+}
+
+body.showEditorSelection .code-active-line:before,
+body.showEditorSelection .code-line:hover:before {
+	content: "";
+	display: block;
+	position: absolute;
+	top: 0;
+	left: -12px;
+	height: 100%;
+}
+
+body.showEditorSelection li.code-active-line:before,
+body.showEditorSelection li.code-line:hover:before {
+	left: -30px;
+}
+
+.vscode-light.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.15);
+}
+
+.vscode-light.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.40);
+}
+
+.vscode-light.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-dark.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.4);
+}
+
+.vscode-dark.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.60);
+}
+
+.vscode-dark.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-high-contrast.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 160, 0, 0.7);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 160, 0, 1);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+img {
+	max-width: 100%;
+	max-height: 100%;
+}
+
+a {
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+a:focus,
+input:focus,
+select:focus,
+textarea:focus {
+	outline: 1px solid -webkit-focus-ring-color;
+	outline-offset: -1px;
+}
+
+hr {
+	border: 0;
+	height: 2px;
+	border-bottom: 2px solid;
+}
+
+h1 {
+	padding-bottom: 0.3em;
+	line-height: 1.2;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+}
+
+h1, h2, h3 {
+	font-weight: normal;
+}
+
+table {
+	border-collapse: collapse;
+}
+
+table > thead > tr > th {
+	text-align: left;
+	border-bottom: 1px solid;
+}
+
+table > thead > tr > th,
+table > thead > tr > td,
+table > tbody > tr > th,
+table > tbody > tr > td {
+	padding: 5px 10px;
+}
+
+table > tbody > tr + tr > td {
+	border-top: 1px solid;
+}
+
+blockquote {
+	margin: 0 7px 0 5px;
+	padding: 0 16px 0 10px;
+	border-left-width: 5px;
+	border-left-style: solid;
+}
+
+code {
+	font-family: Menlo, Monaco, Consolas, "Droid Sans Mono", "Courier New", monospace, "Droid Sans Fallback";
+	font-size: 1em;
+	line-height: 1.357em;
+}
+
+body.wordWrap pre {
+	white-space: pre-wrap;
+}
+
+pre:not(.hljs),
+pre.hljs code > div {
+	padding: 16px;
+	border-radius: 3px;
+	overflow: auto;
+}
+
+pre code {
+	color: var(--vscode-editor-foreground);
+	tab-size: 4;
+}
+
+/** Theming */
+
+.vscode-light pre {
+	background-color: rgba(220, 220, 220, 0.4);
+}
+
+.vscode-dark pre {
+	background-color: rgba(10, 10, 10, 0.4);
+}
+
+.vscode-high-contrast pre {
+	background-color: rgb(0, 0, 0);
+}
+
+.vscode-high-contrast h1 {
+	border-color: rgb(0, 0, 0);
+}
+
+.vscode-light table > thead > tr > th {
+	border-color: rgba(0, 0, 0, 0.69);
+}
+
+.vscode-dark table > thead > tr > th {
+	border-color: rgba(255, 255, 255, 0.69);
+}
+
+.vscode-light h1,
+.vscode-light hr,
+.vscode-light table > tbody > tr + tr > td {
+	border-color: rgba(0, 0, 0, 0.18);
+}
+
+.vscode-dark h1,
+.vscode-dark hr,
+.vscode-dark table > tbody > tr + tr > td {
+	border-color: rgba(255, 255, 255, 0.18);
+}
+
+</style>
+
+<style>
+/* Tomorrow Theme */
+/* http://jmblog.github.com/color-themes-for-google-code-highlightjs */
+/* Original theme - https://github.com/chriskempson/tomorrow-theme */
+
+/* Tomorrow Comment */
+.hljs-comment,
+.hljs-quote {
+	color: #8e908c;
+}
+
+/* Tomorrow Red */
+.hljs-variable,
+.hljs-template-variable,
+.hljs-tag,
+.hljs-name,
+.hljs-selector-id,
+.hljs-selector-class,
+.hljs-regexp,
+.hljs-deletion {
+	color: #c82829;
+}
+
+/* Tomorrow Orange */
+.hljs-number,
+.hljs-built_in,
+.hljs-builtin-name,
+.hljs-literal,
+.hljs-type,
+.hljs-params,
+.hljs-meta,
+.hljs-link {
+	color: #f5871f;
+}
+
+/* Tomorrow Yellow */
+.hljs-attribute {
+	color: #eab700;
+}
+
+/* Tomorrow Green */
+.hljs-string,
+.hljs-symbol,
+.hljs-bullet,
+.hljs-addition {
+	color: #718c00;
+}
+
+/* Tomorrow Blue */
+.hljs-title,
+.hljs-section {
+	color: #4271ae;
+}
+
+/* Tomorrow Purple */
+.hljs-keyword,
+.hljs-selector-tag {
+	color: #8959a8;
+}
+
+.hljs {
+	display: block;
+	overflow-x: auto;
+	color: #4d4d4c;
+	padding: 0.5em;
+}
+
+.hljs-emphasis {
+	font-style: italic;
+}
+
+.hljs-strong {
+	font-weight: bold;
+}
+</style>
+
+<style>
+/*
+ * Markdown PDF CSS
+ */
+
+ body {
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif, "Meiryo";
+	padding: 0 12px;
+}
+
+pre {
+	background-color: #f8f8f8;
+	border: 1px solid #cccccc;
+	border-radius: 3px;
+	overflow-x: auto;
+	white-space: pre-wrap;
+	overflow-wrap: break-word;
+}
+
+pre:not(.hljs) {
+	padding: 23px;
+	line-height: 19px;
+}
+
+blockquote {
+	background: rgba(127, 127, 127, 0.1);
+	border-color: rgba(0, 122, 204, 0.5);
+}
+
+.emoji {
+	height: 1.4em;
+}
+
+code {
+	font-size: 14px;
+	line-height: 19px;
+}
+
+/* for inline code */
+:not(pre):not(.hljs) > code {
+	color: #C9AE75; /* Change the old color so it seems less like an error */
+	font-size: inherit;
+}
+
+/* Page Break : use <div class="page"/> to insert page break
+-------------------------------------------------------- */
+.page {
+	page-break-after: always;
+}
+
+</style>
+
+<script src="https://unpkg.com/mermaid/dist/mermaid.min.js"></script>
+</head>
+<body>
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: document.body.classList.contains('vscode-dark') || document.body.classList.contains('vscode-high-contrast')
+          ? 'dark'
+          : 'default'
+    });
+  </script>
+<img src="https://www.mysql.com/common/logos/logo-mysql-170x115.png" alt="MySQL Logo" width="240" />
+<h1 id="%F0%9F%90%AC-built-in-functions-and-operators">🐬 Built-In Functions and Operators</h1>
+<h2 id="%F0%9F%93%91-table-of-contents">📑 Table of Contents</h2>
+<ul>
+<li><a href="#operators">⚙️ Operators</a></li>
+<li><a href="#string-functions">🔤 String Functions</a></li>
+<li><a href="#numeric-functions">🔢 Numeric Functions</a></li>
+<li><a href="#date-and-time-functions">📅 Date and Time Functions</a></li>
+<li><a href="#aggregate-functions">📊 Aggregate Functions</a></li>
+<li><a href="#window-functions">🪟 Window Functions</a></li>
+<li><a href="#json-functions">📋 JSON Functions</a></li>
+<li><a href="#spatial-functions">🌍 Spatial Functions</a></li>
+<li><a href="#comparison-functions">⚖️ Comparison Functions</a></li>
+<li><a href="#control-flow-functions">🔀 Control Flow Functions</a></li>
+<li><a href="#information-functions">ℹ️ Information Functions</a></li>
+<li><a href="#encryption-and-compression">🔐 Encryption and Compression</a></li>
+<li><a href="#locking-functions">🔒 Locking Functions</a></li>
+<li><a href="#regular-expression-functions">🔍 Regular Expression Functions</a></li>
+<li><a href="#replication-functions">🔄 Replication Functions</a></li>
+<li><a href="#xml-functions">📄 XML Functions</a></li>
+<li><a href="#miscellaneous-functions">🛠️ Miscellaneous Functions</a></li>
+</ul>
+<hr>
+<h2 id="%E2%9A%99%EF%B8%8F-operators">⚙️ Operators</h2>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Description</th>
+<th>Usage Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>&amp;</td>
+<td>Bitwise AND</td>
+<td><code>SELECT a &amp; b;</code></td>
+</tr>
+<tr>
+<td>&gt;</td>
+<td>Greater than operator</td>
+<td><code>SELECT a &gt; b;</code></td>
+</tr>
+<tr>
+<td>&gt;&gt;</td>
+<td>Right shift</td>
+<td><code>SELECT a &gt;&gt; b;</code></td>
+</tr>
+<tr>
+<td>&gt;=</td>
+<td>Greater than or equal operator</td>
+<td><code>SELECT a &gt;= b;</code></td>
+</tr>
+<tr>
+<td>&lt;</td>
+<td>Less than operator</td>
+<td><code>SELECT a &lt; b;</code></td>
+</tr>
+<tr>
+<td>&lt;&gt;, !=</td>
+<td>Not equal operator</td>
+<td><code>SELECT a &lt;&gt; b;</code></td>
+</tr>
+<tr>
+<td>&lt;&lt;</td>
+<td>Left shift</td>
+<td><code>SELECT a &lt;&lt; b;</code></td>
+</tr>
+<tr>
+<td>&lt;=</td>
+<td>Less than or equal operator</td>
+<td><code>SELECT a &lt;= b;</code></td>
+</tr>
+<tr>
+<td>&lt;=&gt;</td>
+<td>NULL-safe equal to operator</td>
+<td><code>SELECT a &lt;=&gt; b;</code></td>
+</tr>
+<tr>
+<td>%, MOD</td>
+<td>Modulo operator</td>
+<td><code>SELECT a % b;</code></td>
+</tr>
+<tr>
+<td>*</td>
+<td>Multiplication operator</td>
+<td><code>SELECT a * b;</code></td>
+</tr>
+<tr>
+<td>+</td>
+<td>Addition operator</td>
+<td><code>SELECT a + b;</code></td>
+</tr>
+<tr>
+<td>-</td>
+<td>Minus operator</td>
+<td><code>SELECT a - b;</code></td>
+</tr>
+<tr>
+<td>- (unary)</td>
+<td>Change the sign of the argument</td>
+<td><code>SELECT -a;</code></td>
+</tr>
+<tr>
+<td>-&gt;</td>
+<td>Return value from JSON column after evaluating path; equivalent to JSON_EXTRACT().</td>
+<td><code>SELECT a -&gt; '$.x';</code></td>
+</tr>
+<tr>
+<td>-&gt;&gt;</td>
+<td>Return value from JSON column after evaluating path and unquoting the result; equivalent to JSON_UNQUOTE(JSON_EXTRACT()).</td>
+<td><code>SELECT a -&gt;&gt; '$.x';</code></td>
+</tr>
+<tr>
+<td>/</td>
+<td>Division operator</td>
+<td><code>SELECT a / b;</code></td>
+</tr>
+<tr>
+<td>:=</td>
+<td>Assign a value</td>
+<td><code>SET @a := 1;</code></td>
+</tr>
+<tr>
+<td>=</td>
+<td>Assign a value (as part of a SET statement, or as part of the SET clause in an UPDATE statement)</td>
+<td><code>UPDATE my_table SET col = 1 WHERE id = 1;</code></td>
+</tr>
+<tr>
+<td>=</td>
+<td>Equal operator</td>
+<td><code>SELECT a = b;</code></td>
+</tr>
+<tr>
+<td>^</td>
+<td>Bitwise XOR</td>
+<td><code>SELECT a ^ b;</code></td>
+</tr>
+<tr>
+<td>|</td>
+<td>Bitwise OR</td>
+<td><code>SELECT a \| b;</code></td>
+</tr>
+<tr>
+<td>~</td>
+<td>Bitwise inversion</td>
+<td><code>SELECT ~a;</code></td>
+</tr>
+<tr>
+<td>AND, &amp;&amp;</td>
+<td>Logical AND</td>
+<td><code>SELECT a AND b;</code></td>
+</tr>
+<tr>
+<td>OR, ||</td>
+<td>Logical OR</td>
+<td><code>SELECT a OR b;</code></td>
+</tr>
+<tr>
+<td>NOT, !</td>
+<td>Negates value</td>
+<td><code>SELECT NOT a;</code></td>
+</tr>
+<tr>
+<td>XOR</td>
+<td>Logical XOR</td>
+<td><code>SELECT a XOR b;</code></td>
+</tr>
+<tr>
+<td>BETWEEN ... AND ...</td>
+<td>Whether a value is within a range of values</td>
+<td><code>SELECT * FROM t WHERE x BETWEEN 1 AND 10;</code></td>
+</tr>
+<tr>
+<td>NOT BETWEEN ... AND ...</td>
+<td>Whether a value is not within a range of values</td>
+<td><code>SELECT * FROM t WHERE x NOT BETWEEN 1 AND 10;</code></td>
+</tr>
+<tr>
+<td>IN()</td>
+<td>Whether a value is within a set of values</td>
+<td><code>SELECT * FROM t WHERE x IN (1,2,3);</code></td>
+</tr>
+<tr>
+<td>NOT IN()</td>
+<td>Whether a value is not within a set of values</td>
+<td><code>SELECT * FROM t WHERE x NOT IN (1,2,3);</code></td>
+</tr>
+<tr>
+<td>IS</td>
+<td>Test a value against a boolean</td>
+<td><code>SELECT a IS TRUE;</code></td>
+</tr>
+<tr>
+<td>IS NOT</td>
+<td>Test a value against a boolean</td>
+<td><code>SELECT a IS NOT TRUE;</code></td>
+</tr>
+<tr>
+<td>IS NULL</td>
+<td>NULL value test</td>
+<td><code>SELECT * FROM t WHERE col IS NULL;</code></td>
+</tr>
+<tr>
+<td>IS NOT NULL</td>
+<td>NOT NULL value test</td>
+<td><code>SELECT * FROM t WHERE col IS NOT NULL;</code></td>
+</tr>
+<tr>
+<td>LIKE</td>
+<td>Simple pattern matching</td>
+<td><code>SELECT * FROM t WHERE col LIKE 'abc%';</code></td>
+</tr>
+<tr>
+<td>NOT LIKE</td>
+<td>Negation of simple pattern matching</td>
+<td><code>SELECT * FROM t WHERE col NOT LIKE 'abc%';</code></td>
+</tr>
+<tr>
+<td>REGEXP</td>
+<td>Whether string matches regular expression</td>
+<td><code>SELECT col REGEXP '^[0-9]+$';</code></td>
+</tr>
+<tr>
+<td>NOT REGEXP</td>
+<td>Negation of REGEXP</td>
+<td><code>SELECT col NOT REGEXP '^[0-9]+$';</code></td>
+</tr>
+<tr>
+<td>RLIKE</td>
+<td>Whether string matches regular expression</td>
+<td><code>SELECT col RLIKE '^[0-9]+$';</code></td>
+</tr>
+<tr>
+<td>DIV</td>
+<td>Integer division</td>
+<td><code>SELECT 7 DIV 2;</code></td>
+</tr>
+<tr>
+<td>CASE</td>
+<td>Case operator</td>
+<td><code>SELECT CASE WHEN a &gt; 0 THEN 'yes' ELSE 'no' END;</code></td>
+</tr>
+<tr>
+<td>INTERVAL()</td>
+<td>Return the index of the argument that is less than the first argument</td>
+<td><code>SELECT INTERVAL(10, 1, 5, 15);</code></td>
+</tr>
+<tr>
+<td>MEMBER OF()</td>
+<td>Returns true (1) if first operand matches any element of JSON array passed as second operand, otherwise returns false (0)</td>
+<td><code>SELECT 'a' MEMBER OF (JSON_ARRAY('a','b'));</code></td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="%F0%9F%94%A4-string-functions">🔤 String Functions</h2>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Description</th>
+<th>Usage Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ASCII()</td>
+<td>Return numeric value of left-most character</td>
+<td><code>SELECT ASCII('A');</code></td>
+</tr>
+<tr>
+<td>BIN()</td>
+<td>Return a string containing binary representation of a number</td>
+<td><code>SELECT BIN(7);</code></td>
+</tr>
+<tr>
+<td>BIT_LENGTH()</td>
+<td>Return length of argument in bits</td>
+<td><code>SELECT BIT_LENGTH('abc');</code></td>
+</tr>
+<tr>
+<td>CHAR()</td>
+<td>Return the character for each integer passed</td>
+<td><code>SELECT CHAR(65);</code></td>
+</tr>
+<tr>
+<td>CHAR_LENGTH()</td>
+<td>Return number of characters in argument</td>
+<td><code>SELECT CHAR_LENGTH('abc');</code></td>
+</tr>
+<tr>
+<td>CHARACTER_LENGTH()</td>
+<td>Synonym for CHAR_LENGTH()</td>
+<td><code>SELECT CHARACTER_LENGTH('abc');</code></td>
+</tr>
+<tr>
+<td>CHARSET()</td>
+<td>Return the character set of the argument</td>
+<td><code>SELECT CHARSET('abc');</code></td>
+</tr>
+<tr>
+<td>COERCIBILITY()</td>
+<td>Return the collation coercibility value of the string argument</td>
+<td><code>SELECT COERCIBILITY('abc');</code></td>
+</tr>
+<tr>
+<td>COLLATION()</td>
+<td>Return the collation of the string argument</td>
+<td><code>SELECT COLLATION('abc');</code></td>
+</tr>
+<tr>
+<td>CONCAT()</td>
+<td>Return concatenated string</td>
+<td><code>SELECT CONCAT('a','b');</code></td>
+</tr>
+<tr>
+<td>CONCAT_WS()</td>
+<td>Return concatenate with separator</td>
+<td><code>SELECT CONCAT_WS('-', 'a', 'b');</code></td>
+</tr>
+<tr>
+<td>ELT()</td>
+<td>Return string at index number</td>
+<td><code>SELECT ELT(2, 'a','b','c');</code></td>
+</tr>
+<tr>
+<td>EXPORT_SET()</td>
+<td>Return a string such that for every bit set in the value bits, you get an on string and for every unset bit, you get an off string</td>
+<td><code>SELECT EXPORT_SET(5,'Y','N');</code></td>
+</tr>
+<tr>
+<td>FIELD()</td>
+<td>Index (position) of first argument in subsequent arguments</td>
+<td><code>SELECT FIELD('b','a','b','c');</code></td>
+</tr>
+<tr>
+<td>FIND_IN_SET()</td>
+<td>Index (position) of first argument within second argument</td>
+<td><code>SELECT FIND_IN_SET('b','a,b,c');</code></td>
+</tr>
+<tr>
+<td>FORMAT()</td>
+<td>Return a number formatted to specified number of decimal places</td>
+<td><code>SELECT FORMAT(1234.56,2);</code></td>
+</tr>
+<tr>
+<td>HEX()</td>
+<td>Hexadecimal representation of decimal or string value</td>
+<td><code>SELECT HEX('abc');</code></td>
+</tr>
+<tr>
+<td>INSERT()</td>
+<td>Insert substring at specified position up to specified number of characters</td>
+<td><code>SELECT INSERT('abc',2,1,'Z');</code></td>
+</tr>
+<tr>
+<td>INSTR()</td>
+<td>Return the index of the first occurrence of substring</td>
+<td><code>SELECT INSTR('abc','b');</code></td>
+</tr>
+<tr>
+<td>LCASE()</td>
+<td>Synonym for LOWER()</td>
+<td><code>SELECT LCASE('ABC');</code></td>
+</tr>
+<tr>
+<td>LEFT()</td>
+<td>Return the leftmost number of characters as specified</td>
+<td><code>SELECT LEFT('abc',2);</code></td>
+</tr>
+<tr>
+<td>LENGTH()</td>
+<td>Return the length of a string in bytes</td>
+<td><code>SELECT LENGTH('abc');</code></td>
+</tr>
+<tr>
+<td>LOAD_FILE()</td>
+<td>Load the named file</td>
+<td><code>SELECT LOAD_FILE('/path/file');</code></td>
+</tr>
+<tr>
+<td>LOCATE()</td>
+<td>Return the position of the first occurrence of substring</td>
+<td><code>SELECT LOCATE('b','abc');</code></td>
+</tr>
+<tr>
+<td>LOWER()</td>
+<td>Return the argument in lowercase</td>
+<td><code>SELECT LOWER('ABC');</code></td>
+</tr>
+<tr>
+<td>LPAD()</td>
+<td>Return the string argument, left-padded with the specified string</td>
+<td><code>SELECT LPAD('abc',5,'0');</code></td>
+</tr>
+<tr>
+<td>LTRIM()</td>
+<td>Remove leading spaces</td>
+<td><code>SELECT LTRIM('  abc');</code></td>
+</tr>
+<tr>
+<td>MAKE_SET()</td>
+<td>Return a set of comma-separated strings that have the corresponding bit in bits set</td>
+<td><code>SELECT MAKE_SET(5,'a','b','c');</code></td>
+</tr>
+<tr>
+<td>MID()</td>
+<td>Return a substring starting from the specified position</td>
+<td><code>SELECT MID('abc',2,1);</code></td>
+</tr>
+<tr>
+<td>OCT()</td>
+<td>Return a string containing octal representation of a number</td>
+<td><code>SELECT OCT(8);</code></td>
+</tr>
+<tr>
+<td>OCTET_LENGTH()</td>
+<td>Synonym for LENGTH()</td>
+<td><code>SELECT OCTET_LENGTH('abc');</code></td>
+</tr>
+<tr>
+<td>ORD()</td>
+<td>Return character code for leftmost character of the argument</td>
+<td><code>SELECT ORD('A');</code></td>
+</tr>
+<tr>
+<td>POSITION()</td>
+<td>Synonym for LOCATE()</td>
+<td><code>SELECT POSITION('b' IN 'abc');</code></td>
+</tr>
+<tr>
+<td>QUOTE()</td>
+<td>Escape the argument for use in an SQL statement</td>
+<td><code>SELECT QUOTE(&quot;I'm&quot;);</code></td>
+</tr>
+<tr>
+<td>REPEAT()</td>
+<td>Repeat a string the specified number of times</td>
+<td><code>SELECT REPEAT('a',3);</code></td>
+</tr>
+<tr>
+<td>REPLACE()</td>
+<td>Replace occurrences of a specified string</td>
+<td><code>SELECT REPLACE('abc','b','Z');</code></td>
+</tr>
+<tr>
+<td>REVERSE()</td>
+<td>Reverse the characters in a string</td>
+<td><code>SELECT REVERSE('abc');</code></td>
+</tr>
+<tr>
+<td>RIGHT()</td>
+<td>Return the specified rightmost number of characters</td>
+<td><code>SELECT RIGHT('abc',2);</code></td>
+</tr>
+<tr>
+<td>RPAD()</td>
+<td>Append string the specified number of times</td>
+<td><code>SELECT RPAD('abc',5,'0');</code></td>
+</tr>
+<tr>
+<td>RTRIM()</td>
+<td>Remove trailing spaces</td>
+<td><code>SELECT RTRIM('abc  ');</code></td>
+</tr>
+<tr>
+<td>SOUNDEX()</td>
+<td>Return a soundex string</td>
+<td><code>SELECT SOUNDEX('abc');</code></td>
+</tr>
+<tr>
+<td>SOUNDS LIKE</td>
+<td>Compare sounds</td>
+<td><code>SELECT 'Robert' SOUNDS LIKE 'Rupert';</code></td>
+</tr>
+<tr>
+<td>SPACE()</td>
+<td>Return a string of the specified number of spaces</td>
+<td><code>SELECT SPACE(3);</code></td>
+</tr>
+<tr>
+<td>STRCMP()</td>
+<td>Compare two strings</td>
+<td><code>SELECT STRCMP('a','b');</code></td>
+</tr>
+<tr>
+<td>SUBSTR()</td>
+<td>Return the substring as specified</td>
+<td><code>SELECT SUBSTR('abc',2);</code></td>
+</tr>
+<tr>
+<td>SUBSTRING()</td>
+<td>Return the substring as specified</td>
+<td><code>SELECT SUBSTRING('abc',2);</code></td>
+</tr>
+<tr>
+<td>SUBSTRING_INDEX()</td>
+<td>Return a substring from a string before the specified number of occurrences of the delimiter</td>
+<td><code>SELECT SUBSTRING_INDEX('a,b,c',',',2);</code></td>
+</tr>
+<tr>
+<td>TRIM()</td>
+<td>Remove leading and trailing spaces</td>
+<td><code>SELECT TRIM('  abc  ');</code></td>
+</tr>
+<tr>
+<td>UCASE()</td>
+<td>Synonym for UPPER()</td>
+<td><code>SELECT UCASE('abc');</code></td>
+</tr>
+<tr>
+<td>UNHEX()</td>
+<td>Return a string containing hex representation of a number</td>
+<td><code>SELECT UNHEX('4D');</code></td>
+</tr>
+<tr>
+<td>UPPER()</td>
+<td>Convert to uppercase</td>
+<td><code>SELECT UPPER('abc');</code></td>
+</tr>
+<tr>
+<td>WEIGHT_STRING()</td>
+<td>Return the weight string for a string</td>
+<td><code>SELECT WEIGHT_STRING('abc');</code></td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="%F0%9F%94%A2-numeric-functions">🔢 Numeric Functions</h2>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Description</th>
+<th>Usage Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ABS()</td>
+<td>Return the absolute value</td>
+<td><code>SELECT ABS(-5);</code></td>
+</tr>
+<tr>
+<td>ACOS()</td>
+<td>Return the arc cosine</td>
+<td><code>SELECT ACOS(0.5);</code></td>
+</tr>
+<tr>
+<td>ASIN()</td>
+<td>Return the arc sine</td>
+<td><code>SELECT ASIN(0.5);</code></td>
+</tr>
+<tr>
+<td>ATAN()</td>
+<td>Return the arc tangent</td>
+<td><code>SELECT ATAN(1);</code></td>
+</tr>
+<tr>
+<td>ATAN2()</td>
+<td>Return the arc tangent of the two arguments</td>
+<td><code>SELECT ATAN2(1,1);</code></td>
+</tr>
+<tr>
+<td>CEIL()</td>
+<td>Return the smallest integer value not less than the arg</td>
+<td><code>SELECT CEIL(1.2);</code></td>
+</tr>
+<tr>
+<td>CEILING()</td>
+<td>Return the smallest integer value not less than the arg</td>
+<td><code>SELECT CEILING(1.2);</code></td>
+</tr>
+<tr>
+<td>CONV()</td>
+<td>Convert numbers between different number bases</td>
+<td><code>SELECT CONV('a',16,10);</code></td>
+</tr>
+<tr>
+<td>COS()</td>
+<td>Return the cosine</td>
+<td><code>SELECT COS(0);</code></td>
+</tr>
+<tr>
+<td>COT()</td>
+<td>Return the cotangent</td>
+<td><code>SELECT COT(1);</code></td>
+</tr>
+<tr>
+<td>CRC32()</td>
+<td>Compute a cyclic redundancy check value</td>
+<td><code>SELECT CRC32('abc');</code></td>
+</tr>
+<tr>
+<td>DEGREES()</td>
+<td>Convert radians to degrees</td>
+<td><code>SELECT DEGREES(PI());</code></td>
+</tr>
+<tr>
+<td>DISTANCE()</td>
+<td>Calculates the distance between two vectors</td>
+<td><code>SELECT DISTANCE(v1, v2);</code></td>
+</tr>
+<tr>
+<td>EXP()</td>
+<td>Raise to the power of</td>
+<td><code>SELECT EXP(1);</code></td>
+</tr>
+<tr>
+<td>FLOOR()</td>
+<td>Return the largest integer value not greater than the arg</td>
+<td><code>SELECT FLOOR(1.9);</code></td>
+</tr>
+<tr>
+<td>LN()</td>
+<td>Return the natural logarithm of the argument</td>
+<td><code>SELECT LN(2);</code></td>
+</tr>
+<tr>
+<td>LOG()</td>
+<td>Return the natural logarithm of the first argument</td>
+<td><code>SELECT LOG(2);</code></td>
+</tr>
+<tr>
+<td>LOG10()</td>
+<td>Return the base-10 logarithm of the argument</td>
+<td><code>SELECT LOG10(100);</code></td>
+</tr>
+<tr>
+<td>LOG2()</td>
+<td>Return the base-2 logarithm of the argument</td>
+<td><code>SELECT LOG2(8);</code></td>
+</tr>
+<tr>
+<td>MOD()</td>
+<td>Return the remainder</td>
+<td><code>SELECT MOD(7,2);</code></td>
+</tr>
+<tr>
+<td>PI()</td>
+<td>Return the value of pi</td>
+<td><code>SELECT PI();</code></td>
+</tr>
+<tr>
+<td>POW()</td>
+<td>Return the argument raised to the specified power</td>
+<td><code>SELECT POW(2,3);</code></td>
+</tr>
+<tr>
+<td>POWER()</td>
+<td>Return the argument raised to the specified power</td>
+<td><code>SELECT POWER(2,3);</code></td>
+</tr>
+<tr>
+<td>RADIANS()</td>
+<td>Return argument converted to radians</td>
+<td><code>SELECT RADIANS(180);</code></td>
+</tr>
+<tr>
+<td>RAND()</td>
+<td>Return a random floating-point value</td>
+<td><code>SELECT RAND();</code></td>
+</tr>
+<tr>
+<td>ROUND()</td>
+<td>Round the argument</td>
+<td><code>SELECT ROUND(1.234,2);</code></td>
+</tr>
+<tr>
+<td>SIGN()</td>
+<td>Return the sign of the argument</td>
+<td><code>SELECT SIGN(-5);</code></td>
+</tr>
+<tr>
+<td>SIN()</td>
+<td>Return the sine of the argument</td>
+<td><code>SELECT SIN(0);</code></td>
+</tr>
+<tr>
+<td>SQRT()</td>
+<td>Return the square root of the argument</td>
+<td><code>SELECT SQRT(9);</code></td>
+</tr>
+<tr>
+<td>TAN()</td>
+<td>Return the tangent of the argument</td>
+<td><code>SELECT TAN(1);</code></td>
+</tr>
+<tr>
+<td>TRUNCATE()</td>
+<td>Truncate to specified number of decimal places</td>
+<td><code>SELECT TRUNCATE(1.234,2);</code></td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="%F0%9F%93%85-date-and-time-functions">📅 Date and Time Functions</h2>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Description</th>
+<th>Usage Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ADDDATE()</td>
+<td>Add time values (intervals) to a date value</td>
+<td><code>SELECT ADDDATE('2024-01-01', INTERVAL 1 DAY);</code></td>
+</tr>
+<tr>
+<td>ADDTIME()</td>
+<td>Add time</td>
+<td><code>SELECT ADDTIME('10:00:00','01:00:00');</code></td>
+</tr>
+<tr>
+<td>CURDATE()</td>
+<td>Return the current date</td>
+<td><code>SELECT CURDATE();</code></td>
+</tr>
+<tr>
+<td>CURRENT_DATE(), CURRENT_DATE</td>
+<td>Synonyms for CURDATE()</td>
+<td><code>SELECT CURRENT_DATE();</code></td>
+</tr>
+<tr>
+<td>CURRENT_TIME(), CURRENT_TIME</td>
+<td>Synonyms for CURTIME()</td>
+<td><code>SELECT CURRENT_TIME();</code></td>
+</tr>
+<tr>
+<td>CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP</td>
+<td>Synonyms for NOW()</td>
+<td><code>SELECT CURRENT_TIMESTAMP();</code></td>
+</tr>
+<tr>
+<td>CURTIME()</td>
+<td>Return the current time</td>
+<td><code>SELECT CURTIME();</code></td>
+</tr>
+<tr>
+<td>DATE()</td>
+<td>Extract the date part of a date or datetime expression</td>
+<td><code>SELECT DATE(NOW());</code></td>
+</tr>
+<tr>
+<td>DATE_ADD()</td>
+<td>Add time values (intervals) to a date value</td>
+<td><code>SELECT DATE_ADD('2024-01-01', INTERVAL 7 DAY);</code></td>
+</tr>
+<tr>
+<td>DATE_FORMAT()</td>
+<td>Format date as specified</td>
+<td><code>SELECT DATE_FORMAT(NOW(), '%Y-%m-%d');</code></td>
+</tr>
+<tr>
+<td>DATE_SUB()</td>
+<td>Subtract a time value (interval) from a date</td>
+<td><code>SELECT DATE_SUB('2024-01-01', INTERVAL 7 DAY);</code></td>
+</tr>
+<tr>
+<td>DATEDIFF()</td>
+<td>Subtract two dates</td>
+<td><code>SELECT DATEDIFF('2024-01-10','2024-01-01');</code></td>
+</tr>
+<tr>
+<td>DAY()</td>
+<td>Synonym for DAYOFMONTH()</td>
+<td><code>SELECT DAY('2024-01-05');</code></td>
+</tr>
+<tr>
+<td>DAYNAME()</td>
+<td>Return the name of the weekday</td>
+<td><code>SELECT DAYNAME('2024-01-05');</code></td>
+</tr>
+<tr>
+<td>DAYOFMONTH()</td>
+<td>Return the day of the month (0-31)</td>
+<td><code>SELECT DAYOFMONTH('2024-01-05');</code></td>
+</tr>
+<tr>
+<td>DAYOFWEEK()</td>
+<td>Return the weekday index of the argument</td>
+<td><code>SELECT DAYOFWEEK('2024-01-05');</code></td>
+</tr>
+<tr>
+<td>DAYOFYEAR()</td>
+<td>Return the day of the year (1-366)</td>
+<td><code>SELECT DAYOFYEAR('2024-01-05');</code></td>
+</tr>
+<tr>
+<td>EXTRACT()</td>
+<td>Extract part of a date</td>
+<td><code>SELECT EXTRACT(YEAR FROM NOW());</code></td>
+</tr>
+<tr>
+<td>FROM_DAYS()</td>
+<td>Convert a day number to a date</td>
+<td><code>SELECT FROM_DAYS(738885);</code></td>
+</tr>
+<tr>
+<td>FROM_UNIXTIME()</td>
+<td>Format Unix timestamp as a date</td>
+<td><code>SELECT FROM_UNIXTIME(1700000000);</code></td>
+</tr>
+<tr>
+<td>GET_FORMAT()</td>
+<td>Return a date format string</td>
+<td><code>SELECT GET_FORMAT(DATE,'ISO');</code></td>
+</tr>
+<tr>
+<td>HOUR()</td>
+<td>Extract the hour</td>
+<td><code>SELECT HOUR('10:11:12');</code></td>
+</tr>
+<tr>
+<td>LAST_DAY()</td>
+<td>Return the last day of the month for the argument</td>
+<td><code>SELECT LAST_DAY('2024-01-05');</code></td>
+</tr>
+<tr>
+<td>LOCALTIME(), LOCALTIME</td>
+<td>Synonym for NOW()</td>
+<td><code>SELECT LOCALTIME();</code></td>
+</tr>
+<tr>
+<td>LOCALTIMESTAMP, LOCALTIMESTAMP()</td>
+<td>Synonym for NOW()</td>
+<td><code>SELECT LOCALTIMESTAMP();</code></td>
+</tr>
+<tr>
+<td>MAKEDATE()</td>
+<td>Create a date from the year and day of year</td>
+<td><code>SELECT MAKEDATE(2024, 100);</code></td>
+</tr>
+<tr>
+<td>MAKETIME()</td>
+<td>Create time from hour, minute, second</td>
+<td><code>SELECT MAKETIME(10,11,12);</code></td>
+</tr>
+<tr>
+<td>MICROSECOND()</td>
+<td>Return the microseconds from argument</td>
+<td><code>SELECT MICROSECOND('10:11:12.123456');</code></td>
+</tr>
+<tr>
+<td>MINUTE()</td>
+<td>Return the minute from the argument</td>
+<td><code>SELECT MINUTE('10:11:12');</code></td>
+</tr>
+<tr>
+<td>MONTH()</td>
+<td>Return the month from the date passed</td>
+<td><code>SELECT MONTH('2024-01-05');</code></td>
+</tr>
+<tr>
+<td>MONTHNAME()</td>
+<td>Return the name of the month</td>
+<td><code>SELECT MONTHNAME('2024-01-05');</code></td>
+</tr>
+<tr>
+<td>NOW()</td>
+<td>Return the current date and time</td>
+<td><code>SELECT NOW();</code></td>
+</tr>
+<tr>
+<td>PERIOD_ADD()</td>
+<td>Add a period to a year-month</td>
+<td><code>SELECT PERIOD_ADD(202401, 2);</code></td>
+</tr>
+<tr>
+<td>PERIOD_DIFF()</td>
+<td>Return the number of months between periods</td>
+<td><code>SELECT PERIOD_DIFF(202403, 202401);</code></td>
+</tr>
+<tr>
+<td>QUARTER()</td>
+<td>Return the quarter from a date argument</td>
+<td><code>SELECT QUARTER('2024-01-05');</code></td>
+</tr>
+<tr>
+<td>SEC_TO_TIME()</td>
+<td>Converts seconds to 'hh:mm:ss' format</td>
+<td><code>SELECT SEC_TO_TIME(3661);</code></td>
+</tr>
+<tr>
+<td>SECOND()</td>
+<td>Return the second (0-59)</td>
+<td><code>SELECT SECOND('10:11:12');</code></td>
+</tr>
+<tr>
+<td>STR_TO_DATE()</td>
+<td>Convert a string to a date</td>
+<td><code>SELECT STR_TO_DATE('2024-01-05','%Y-%m-%d');</code></td>
+</tr>
+<tr>
+<td>SUBDATE()</td>
+<td>Synonym for DATE_SUB() when invoked with three arguments</td>
+<td><code>SELECT SUBDATE('2024-01-05', INTERVAL 1 DAY);</code></td>
+</tr>
+<tr>
+<td>SUBTIME()</td>
+<td>Subtract times</td>
+<td><code>SELECT SUBTIME('10:11:12','00:10:00');</code></td>
+</tr>
+<tr>
+<td>SYSDATE()</td>
+<td>Return the time at which the function executes</td>
+<td><code>SELECT SYSDATE();</code></td>
+</tr>
+<tr>
+<td>TIME()</td>
+<td>Extract the time portion of the expression passed</td>
+<td><code>SELECT TIME(NOW());</code></td>
+</tr>
+<tr>
+<td>TIME_FORMAT()</td>
+<td>Format as time</td>
+<td><code>SELECT TIME_FORMAT(NOW(), '%H:%i:%s');</code></td>
+</tr>
+<tr>
+<td>TIME_TO_SEC()</td>
+<td>Return the argument converted to seconds</td>
+<td><code>SELECT TIME_TO_SEC('01:01:01');</code></td>
+</tr>
+<tr>
+<td>TIMEDIFF()</td>
+<td>Subtract time</td>
+<td><code>SELECT TIMEDIFF('10:11:12','10:10:10');</code></td>
+</tr>
+<tr>
+<td>TIMESTAMP()</td>
+<td>With a single argument, returns date/datetime; with two, the sum of the arguments</td>
+<td><code>SELECT TIMESTAMP('2024-01-01','10:00:00');</code></td>
+</tr>
+<tr>
+<td>TIMESTAMPADD()</td>
+<td>Add an interval to a datetime expression</td>
+<td><code>SELECT TIMESTAMPADD(DAY, 1, NOW());</code></td>
+</tr>
+<tr>
+<td>TIMESTAMPDIFF()</td>
+<td>Return the difference of two datetime expressions, using the units specified</td>
+<td><code>SELECT TIMESTAMPDIFF(DAY, '2024-01-01', '2024-01-05');</code></td>
+</tr>
+<tr>
+<td>TO_DAYS()</td>
+<td>Return the date argument converted to days</td>
+<td><code>SELECT TO_DAYS('2024-01-05');</code></td>
+</tr>
+<tr>
+<td>TO_SECONDS()</td>
+<td>Return the date or datetime argument converted to seconds since Year 0</td>
+<td><code>SELECT TO_SECONDS('2024-01-05');</code></td>
+</tr>
+<tr>
+<td>UNIX_TIMESTAMP()</td>
+<td>Return a Unix timestamp</td>
+<td><code>SELECT UNIX_TIMESTAMP();</code></td>
+</tr>
+<tr>
+<td>UTC_DATE()</td>
+<td>Return the current UTC date</td>
+<td><code>SELECT UTC_DATE();</code></td>
+</tr>
+<tr>
+<td>UTC_TIME()</td>
+<td>Return the current UTC time</td>
+<td><code>SELECT UTC_TIME();</code></td>
+</tr>
+<tr>
+<td>UTC_TIMESTAMP()</td>
+<td>Return the current UTC date and time</td>
+<td><code>SELECT UTC_TIMESTAMP();</code></td>
+</tr>
+<tr>
+<td>WEEK()</td>
+<td>Return the week number</td>
+<td><code>SELECT WEEK('2024-01-05');</code></td>
+</tr>
+<tr>
+<td>WEEKDAY()</td>
+<td>Return the weekday index</td>
+<td><code>SELECT WEEKDAY('2024-01-05');</code></td>
+</tr>
+<tr>
+<td>WEEKOFYEAR()</td>
+<td>Return the calendar week of the date (1-53)</td>
+<td><code>SELECT WEEKOFYEAR('2024-01-05');</code></td>
+</tr>
+<tr>
+<td>YEAR()</td>
+<td>Return the year</td>
+<td><code>SELECT YEAR('2024-01-05');</code></td>
+</tr>
+<tr>
+<td>YEARWEEK()</td>
+<td>Return the year and week</td>
+<td><code>SELECT YEARWEEK('2024-01-05');</code></td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="%F0%9F%93%8A-aggregate-functions">📊 Aggregate Functions</h2>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Description</th>
+<th>Usage Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>AVG()</td>
+<td>Return the average value of the argument</td>
+<td><code>SELECT AVG(col) FROM my_table;</code></td>
+</tr>
+<tr>
+<td>BIT_AND()</td>
+<td>Return bitwise AND</td>
+<td><code>SELECT BIT_AND(col) FROM my_table;</code></td>
+</tr>
+<tr>
+<td>BIT_OR()</td>
+<td>Return bitwise OR</td>
+<td><code>SELECT BIT_OR(col) FROM my_table;</code></td>
+</tr>
+<tr>
+<td>BIT_XOR()</td>
+<td>Return bitwise XOR</td>
+<td><code>SELECT BIT_XOR(col) FROM my_table;</code></td>
+</tr>
+<tr>
+<td>COUNT()</td>
+<td>Return a count of the number of rows returned</td>
+<td><code>SELECT COUNT(*) FROM my_table;</code></td>
+</tr>
+<tr>
+<td>COUNT(DISTINCT)</td>
+<td>Return the count of a number of different values</td>
+<td><code>SELECT COUNT(DISTINCT col) FROM t;</code></td>
+</tr>
+<tr>
+<td>GROUP_CONCAT()</td>
+<td>Return a concatenated string</td>
+<td><code>SELECT GROUP_CONCAT(col) FROM my_table;</code></td>
+</tr>
+<tr>
+<td>MAX()</td>
+<td>Return the maximum value</td>
+<td><code>SELECT MAX(col) FROM my_table;</code></td>
+</tr>
+<tr>
+<td>MIN()</td>
+<td>Return the minimum value</td>
+<td><code>SELECT MIN(col) FROM my_table;</code></td>
+</tr>
+<tr>
+<td>STD()</td>
+<td>Return the population standard deviation</td>
+<td><code>SELECT STD(col) FROM my_table;</code></td>
+</tr>
+<tr>
+<td>STDDEV()</td>
+<td>Return the population standard deviation</td>
+<td><code>SELECT STDDEV(col) FROM my_table;</code></td>
+</tr>
+<tr>
+<td>STDDEV_POP()</td>
+<td>Return the population standard deviation</td>
+<td><code>SELECT STDDEV_POP(col) FROM my_table;</code></td>
+</tr>
+<tr>
+<td>STDDEV_SAMP()</td>
+<td>Return the sample standard deviation</td>
+<td><code>SELECT STDDEV_SAMP(col) FROM my_table;</code></td>
+</tr>
+<tr>
+<td>SUM()</td>
+<td>Return the sum</td>
+<td><code>SELECT SUM(col) FROM my_table;</code></td>
+</tr>
+<tr>
+<td>VAR_POP()</td>
+<td>Return the population standard variance</td>
+<td><code>SELECT VAR_POP(col) FROM my_table;</code></td>
+</tr>
+<tr>
+<td>VAR_SAMP()</td>
+<td>Return the sample variance</td>
+<td><code>SELECT VAR_SAMP(col) FROM my_table;</code></td>
+</tr>
+<tr>
+<td>VARIANCE()</td>
+<td>Return the population standard variance</td>
+<td><code>SELECT VARIANCE(col) FROM my_table;</code></td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="%F0%9F%AA%9F-window-functions">🪟 Window Functions</h2>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Description</th>
+<th>Usage Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>CUME_DIST()</td>
+<td>Cumulative distribution value</td>
+<td><code>SELECT CUME_DIST() OVER ();</code></td>
+</tr>
+<tr>
+<td>DENSE_RANK()</td>
+<td>Rank of current row within its partition, without gaps</td>
+<td><code>SELECT DENSE_RANK() OVER ();</code></td>
+</tr>
+<tr>
+<td>FIRST_VALUE()</td>
+<td>Value of argument from first row of window frame</td>
+<td><code>SELECT FIRST_VALUE(col) OVER ();</code></td>
+</tr>
+<tr>
+<td>GROUPING()</td>
+<td>Distinguish super-aggregate ROLLUP rows from regular rows</td>
+<td><code>SELECT GROUPING(col) FROM t GROUP BY col WITH ROLLUP;</code></td>
+</tr>
+<tr>
+<td>LAG()</td>
+<td>Value of argument from row lagging current row within partition</td>
+<td><code>SELECT LAG(col) OVER ();</code></td>
+</tr>
+<tr>
+<td>LAST_VALUE()</td>
+<td>Value of argument from last row of window frame</td>
+<td><code>SELECT LAST_VALUE(col) OVER ();</code></td>
+</tr>
+<tr>
+<td>LEAD()</td>
+<td>Value of argument from row leading current row within partition</td>
+<td><code>SELECT LEAD(col) OVER ();</code></td>
+</tr>
+<tr>
+<td>NTH_VALUE()</td>
+<td>Value of argument from N-th row of window frame</td>
+<td><code>SELECT NTH_VALUE(col,2) OVER ();</code></td>
+</tr>
+<tr>
+<td>NTILE()</td>
+<td>Bucket number of current row within its partition.</td>
+<td><code>SELECT NTILE(4) OVER ();</code></td>
+</tr>
+<tr>
+<td>PERCENT_RANK()</td>
+<td>Percentage rank value</td>
+<td><code>SELECT PERCENT_RANK() OVER ();</code></td>
+</tr>
+<tr>
+<td>RANK()</td>
+<td>Rank of current row within its partition, with gaps</td>
+<td><code>SELECT RANK() OVER ();</code></td>
+</tr>
+<tr>
+<td>ROW_NUMBER()</td>
+<td>Number of current row within its partition</td>
+<td><code>SELECT ROW_NUMBER() OVER ();</code></td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="%F0%9F%93%8B-json-functions">📋 JSON Functions</h2>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Description</th>
+<th>Usage Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>JSON_ARRAY()</td>
+<td>Create JSON array</td>
+<td><code>SELECT JSON_ARRAY(1,2,3);</code></td>
+</tr>
+<tr>
+<td>JSON_ARRAY_APPEND()</td>
+<td>Append data to JSON document</td>
+<td><code>SELECT JSON_ARRAY_APPEND('[1]', '$', 2);</code></td>
+</tr>
+<tr>
+<td>JSON_ARRAY_INSERT()</td>
+<td>Insert into JSON array</td>
+<td><code>SELECT JSON_ARRAY_INSERT('[1]', '$[1]', 2);</code></td>
+</tr>
+<tr>
+<td>JSON_ARRAYAGG()</td>
+<td>Return result set as a single JSON array</td>
+<td><code>SELECT JSON_ARRAYAGG(col) FROM t;</code></td>
+</tr>
+<tr>
+<td>JSON_CONTAINS()</td>
+<td>Whether JSON document contains specific object at path</td>
+<td><code>SELECT JSON_CONTAINS('{&quot;a&quot;:1}','1','$.a');</code></td>
+</tr>
+<tr>
+<td>JSON_CONTAINS_PATH()</td>
+<td>Whether JSON document contains any data at path</td>
+<td><code>SELECT JSON_CONTAINS_PATH('{&quot;a&quot;:1}','one','$.a');</code></td>
+</tr>
+<tr>
+<td>JSON_DEPTH()</td>
+<td>Maximum depth of JSON document</td>
+<td><code>SELECT JSON_DEPTH('{&quot;a&quot;:1}');</code></td>
+</tr>
+<tr>
+<td>JSON_DUALITY_OBJECT()</td>
+<td>Create JSON duality object</td>
+<td><code>SELECT JSON_DUALITY_OBJECT();</code></td>
+</tr>
+<tr>
+<td>JSON_EXTRACT()</td>
+<td>Return data from JSON document</td>
+<td><code>SELECT JSON_EXTRACT('{&quot;a&quot;:1}','$.a');</code></td>
+</tr>
+<tr>
+<td>JSON_INSERT()</td>
+<td>Insert data into JSON document</td>
+<td><code>SELECT JSON_INSERT('{&quot;a&quot;:1}','$.b',2);</code></td>
+</tr>
+<tr>
+<td>JSON_KEYS()</td>
+<td>Array of keys from JSON document</td>
+<td><code>SELECT JSON_KEYS('{&quot;a&quot;:1,&quot;b&quot;:2}');</code></td>
+</tr>
+<tr>
+<td>JSON_LENGTH()</td>
+<td>Number of elements in JSON document</td>
+<td><code>SELECT JSON_LENGTH('[1,2,3]');</code></td>
+</tr>
+<tr>
+<td>JSON_MERGE()</td>
+<td>Merge JSON documents, preserving duplicate keys. Deprecated synonym for JSON_MERGE_PRESERVE()</td>
+<td><code>SELECT JSON_MERGE('{&quot;a&quot;:1}','{&quot;a&quot;:2}');</code></td>
+</tr>
+<tr>
+<td>JSON_MERGE_PATCH()</td>
+<td>Merge JSON documents, replacing values of duplicate keys</td>
+<td><code>SELECT JSON_MERGE_PATCH('{&quot;a&quot;:1}','{&quot;a&quot;:2}');</code></td>
+</tr>
+<tr>
+<td>JSON_MERGE_PRESERVE()</td>
+<td>Merge JSON documents, preserving duplicate keys</td>
+<td><code>SELECT JSON_MERGE_PRESERVE('{&quot;a&quot;:1}','{&quot;a&quot;:2}');</code></td>
+</tr>
+<tr>
+<td>JSON_OBJECT()</td>
+<td>Create JSON object</td>
+<td><code>SELECT JSON_OBJECT('a',1);</code></td>
+</tr>
+<tr>
+<td>JSON_OBJECTAGG()</td>
+<td>Return result set as a single JSON object</td>
+<td><code>SELECT JSON_OBJECTAGG(k,v) FROM t;</code></td>
+</tr>
+<tr>
+<td>JSON_OVERLAPS()</td>
+<td>Compare JSON documents; return TRUE if they overlap</td>
+<td><code>SELECT JSON_OVERLAPS('{&quot;a&quot;:1}','{&quot;a&quot;:2}');</code></td>
+</tr>
+<tr>
+<td>JSON_PRETTY()</td>
+<td>Print a JSON document in human-readable format</td>
+<td><code>SELECT JSON_PRETTY('{&quot;a&quot;:1}');</code></td>
+</tr>
+<tr>
+<td>JSON_QUOTE()</td>
+<td>Quote JSON document</td>
+<td><code>SELECT JSON_QUOTE('abc');</code></td>
+</tr>
+<tr>
+<td>JSON_REMOVE()</td>
+<td>Remove data from JSON document</td>
+<td><code>SELECT JSON_REMOVE('{&quot;a&quot;:1}','$.a');</code></td>
+</tr>
+<tr>
+<td>JSON_REPLACE()</td>
+<td>Replace values in JSON document</td>
+<td><code>SELECT JSON_REPLACE('{&quot;a&quot;:1}','$.a',2);</code></td>
+</tr>
+<tr>
+<td>JSON_SCHEMA_VALID()</td>
+<td>Validate JSON document against JSON schema</td>
+<td><code>SELECT JSON_SCHEMA_VALID('{&quot;type&quot;:&quot;object&quot;}','{&quot;a&quot;:1}');</code></td>
+</tr>
+<tr>
+<td>JSON_SCHEMA_VALIDATION_REPORT()</td>
+<td>Validate JSON document against JSON schema; returns report</td>
+<td><code>SELECT JSON_SCHEMA_VALIDATION_REPORT('{&quot;type&quot;:&quot;object&quot;}','{&quot;a&quot;:1}');</code></td>
+</tr>
+<tr>
+<td>JSON_SEARCH()</td>
+<td>Path to value within JSON document</td>
+<td><code>SELECT JSON_SEARCH('{&quot;a&quot;:1}','one',1);</code></td>
+</tr>
+<tr>
+<td>JSON_SET()</td>
+<td>Insert data into JSON document</td>
+<td><code>SELECT JSON_SET('{&quot;a&quot;:1}','$.b',2);</code></td>
+</tr>
+<tr>
+<td>JSON_STORAGE_FREE()</td>
+<td>Freed space within binary representation of JSON column value following partial update</td>
+<td><code>SELECT JSON_STORAGE_FREE('{}');</code></td>
+</tr>
+<tr>
+<td>JSON_STORAGE_SIZE()</td>
+<td>Space used for storage of binary representation of a JSON document</td>
+<td><code>SELECT JSON_STORAGE_SIZE('{}');</code></td>
+</tr>
+<tr>
+<td>JSON_TABLE()</td>
+<td>Return data from a JSON expression as a relational table</td>
+<td><code>SELECT * FROM JSON_TABLE('[1,2]','$[*]' COLUMNS (x INT PATH '$'));</code></td>
+</tr>
+<tr>
+<td>JSON_TYPE()</td>
+<td>Type of JSON value</td>
+<td><code>SELECT JSON_TYPE('{&quot;a&quot;:1}');</code></td>
+</tr>
+<tr>
+<td>JSON_UNQUOTE()</td>
+<td>Unquote JSON value</td>
+<td><code>SELECT JSON_UNQUOTE('&quot;a&quot;');</code></td>
+</tr>
+<tr>
+<td>JSON_VALID()</td>
+<td>Whether JSON value is valid</td>
+<td><code>SELECT JSON_VALID('{&quot;a&quot;:1}');</code></td>
+</tr>
+<tr>
+<td>JSON_VALUE()</td>
+<td>Extract value from JSON document at path; return as VARCHAR(512) or specified type</td>
+<td><code>SELECT JSON_VALUE('{&quot;a&quot;:1}','$.a');</code></td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="%F0%9F%8C%8D-spatial-functions">🌍 Spatial Functions</h2>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Description</th>
+<th>Usage Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GeomCollection()</td>
+<td>Construct geometry collection from geometries</td>
+<td><code>SELECT GeomCollection();</code></td>
+</tr>
+<tr>
+<td>GeometryCollection()</td>
+<td>Construct geometry collection from geometries</td>
+<td><code>SELECT GeometryCollection();</code></td>
+</tr>
+<tr>
+<td>LineString()</td>
+<td>Construct LineString from Point values</td>
+<td><code>SELECT LineString();</code></td>
+</tr>
+<tr>
+<td>MultiLineString()</td>
+<td>Construct MultiLineString from LineString values</td>
+<td><code>SELECT MultiLineString();</code></td>
+</tr>
+<tr>
+<td>MultiPoint()</td>
+<td>Construct MultiPoint from Point values</td>
+<td><code>SELECT MultiPoint();</code></td>
+</tr>
+<tr>
+<td>MultiPolygon()</td>
+<td>Construct MultiPolygon from Polygon values</td>
+<td><code>SELECT MultiPolygon();</code></td>
+</tr>
+<tr>
+<td>Point()</td>
+<td>Construct Point from coordinates</td>
+<td><code>SELECT Point(1,1);</code></td>
+</tr>
+<tr>
+<td>Polygon()</td>
+<td>Construct Polygon from LineString arguments</td>
+<td><code>SELECT Polygon();</code></td>
+</tr>
+<tr>
+<td>MBRContains()</td>
+<td>Whether MBR of one geometry contains MBR of another</td>
+<td><code>SELECT MBRContains(a,b);</code></td>
+</tr>
+<tr>
+<td>MBRCoveredBy()</td>
+<td>Whether one MBR is covered by another</td>
+<td><code>SELECT MBRCoveredBy(a,b);</code></td>
+</tr>
+<tr>
+<td>MBRCovers()</td>
+<td>Whether one MBR covers another</td>
+<td><code>SELECT MBRCovers(a,b);</code></td>
+</tr>
+<tr>
+<td>MBRDisjoint()</td>
+<td>Whether MBRs of two geometries are disjoint</td>
+<td><code>SELECT MBRDisjoint(a,b);</code></td>
+</tr>
+<tr>
+<td>MBREquals()</td>
+<td>Whether MBRs of two geometries are equal</td>
+<td><code>SELECT MBREquals(a,b);</code></td>
+</tr>
+<tr>
+<td>MBRIntersects()</td>
+<td>Whether MBRs of two geometries intersect</td>
+<td><code>SELECT MBRIntersects(a,b);</code></td>
+</tr>
+<tr>
+<td>MBROverlaps()</td>
+<td>Whether MBRs of two geometries overlap</td>
+<td><code>SELECT MBROverlaps(a,b);</code></td>
+</tr>
+<tr>
+<td>MBRTouches()</td>
+<td>Whether MBRs of two geometries touch</td>
+<td><code>SELECT MBRTouches(a,b);</code></td>
+</tr>
+<tr>
+<td>MBRWithin()</td>
+<td>Whether MBR of one geometry is within MBR of another</td>
+<td><code>SELECT MBRWithin(a,b);</code></td>
+</tr>
+<tr>
+<td>ST_Area()</td>
+<td>Return Polygon or MultiPolygon area</td>
+<td><code>SELECT ST_Area(g);</code></td>
+</tr>
+<tr>
+<td>ST_AsBinary(), ST_AsWKB()</td>
+<td>Convert from internal geometry format to WKB</td>
+<td><code>SELECT ST_AsBinary(g);</code></td>
+</tr>
+<tr>
+<td>ST_AsGeoJSON()</td>
+<td>Generate GeoJSON object from geometry</td>
+<td><code>SELECT ST_AsGeoJSON(g);</code></td>
+</tr>
+<tr>
+<td>ST_AsText(), ST_AsWKT()</td>
+<td>Convert from internal geometry format to WKT</td>
+<td><code>SELECT ST_AsText(g);</code></td>
+</tr>
+<tr>
+<td>ST_Buffer()</td>
+<td>Return geometry of points within given distance from geometry</td>
+<td><code>SELECT ST_Buffer(g, 10);</code></td>
+</tr>
+<tr>
+<td>ST_Buffer_Strategy()</td>
+<td>Produce strategy option for ST_Buffer()</td>
+<td><code>SELECT ST_Buffer_Strategy('quad_segs=8');</code></td>
+</tr>
+<tr>
+<td>ST_Centroid()</td>
+<td>Return centroid as a point</td>
+<td><code>SELECT ST_Centroid(g);</code></td>
+</tr>
+<tr>
+<td>ST_Collect()</td>
+<td>Aggregate spatial values into collection</td>
+<td><code>SELECT ST_Collect(g);</code></td>
+</tr>
+<tr>
+<td>ST_Contains()</td>
+<td>Whether one geometry contains another</td>
+<td><code>SELECT ST_Contains(a,b);</code></td>
+</tr>
+<tr>
+<td>ST_ConvexHull()</td>
+<td>Return convex hull of geometry</td>
+<td><code>SELECT ST_ConvexHull(g);</code></td>
+</tr>
+<tr>
+<td>ST_Crosses()</td>
+<td>Whether one geometry crosses another</td>
+<td><code>SELECT ST_Crosses(a,b);</code></td>
+</tr>
+<tr>
+<td>ST_Difference()</td>
+<td>Return point set difference of two geometries</td>
+<td><code>SELECT ST_Difference(a,b);</code></td>
+</tr>
+<tr>
+<td>ST_Dimension()</td>
+<td>Dimension of geometry</td>
+<td><code>SELECT ST_Dimension(g);</code></td>
+</tr>
+<tr>
+<td>ST_Disjoint()</td>
+<td>Whether one geometry is disjoint from another</td>
+<td><code>SELECT ST_Disjoint(a,b);</code></td>
+</tr>
+<tr>
+<td>ST_Distance()</td>
+<td>The distance of one geometry from another</td>
+<td><code>SELECT ST_Distance(a,b);</code></td>
+</tr>
+<tr>
+<td>ST_Distance_Sphere()</td>
+<td>Minimum distance on earth between two geometries</td>
+<td><code>SELECT ST_Distance_Sphere(a,b);</code></td>
+</tr>
+<tr>
+<td>ST_EndPoint()</td>
+<td>End Point of LineString</td>
+<td><code>SELECT ST_EndPoint(g);</code></td>
+</tr>
+<tr>
+<td>ST_Envelope()</td>
+<td>Return MBR of geometry</td>
+<td><code>SELECT ST_Envelope(g);</code></td>
+</tr>
+<tr>
+<td>ST_Equals()</td>
+<td>Whether one geometry is equal to another</td>
+<td><code>SELECT ST_Equals(a,b);</code></td>
+</tr>
+<tr>
+<td>ST_ExteriorRing()</td>
+<td>Return exterior ring of Polygon</td>
+<td><code>SELECT ST_ExteriorRing(g);</code></td>
+</tr>
+<tr>
+<td>ST_FrechetDistance()</td>
+<td>The discrete Fréchet distance of one geometry from another</td>
+<td><code>SELECT ST_FrechetDistance(a,b);</code></td>
+</tr>
+<tr>
+<td>ST_GeoHash()</td>
+<td>Produce a geohash value</td>
+<td><code>SELECT ST_GeoHash(g);</code></td>
+</tr>
+<tr>
+<td>ST_GeomCollFromText(), ST_GeometryCollectionFromText(), ST_GeomCollFromTxt()</td>
+<td>Return geometry collection from WKT</td>
+<td><code>SELECT ST_GeomCollFromText('GEOMETRYCOLLECTION()');</code></td>
+</tr>
+<tr>
+<td>ST_GeomCollFromWKB(), ST_GeometryCollectionFromWKB()</td>
+<td>Return geometry collection from WKB</td>
+<td><code>SELECT ST_GeomCollFromWKB(g);</code></td>
+</tr>
+<tr>
+<td>ST_GeometryN()</td>
+<td>Return N-th geometry from geometry collection</td>
+<td><code>SELECT ST_GeometryN(g,1);</code></td>
+</tr>
+<tr>
+<td>ST_GeometryType()</td>
+<td>Return name of geometry type</td>
+<td><code>SELECT ST_GeometryType(g);</code></td>
+</tr>
+<tr>
+<td>ST_GeomFromGeoJSON()</td>
+<td>Generate geometry from GeoJSON object</td>
+<td><code>SELECT ST_GeomFromGeoJSON('{&quot;type&quot;:&quot;Point&quot;,&quot;coordinates&quot;:[0,0]}');</code></td>
+</tr>
+<tr>
+<td>ST_GeomFromText(), ST_GeometryFromText()</td>
+<td>Return geometry from WKT</td>
+<td><code>SELECT ST_GeomFromText('POINT(0 0)');</code></td>
+</tr>
+<tr>
+<td>ST_GeomFromWKB(), ST_GeometryFromWKB()</td>
+<td>Return geometry from WKB</td>
+<td><code>SELECT ST_GeomFromWKB(g);</code></td>
+</tr>
+<tr>
+<td>ST_HausdorffDistance()</td>
+<td>The discrete Hausdorff distance of one geometry from another</td>
+<td><code>SELECT ST_HausdorffDistance(a,b);</code></td>
+</tr>
+<tr>
+<td>ST_InteriorRingN()</td>
+<td>Return N-th interior ring of Polygon</td>
+<td><code>SELECT ST_InteriorRingN(g,1);</code></td>
+</tr>
+<tr>
+<td>ST_Intersection()</td>
+<td>Return point set intersection of two geometries</td>
+<td><code>SELECT ST_Intersection(a,b);</code></td>
+</tr>
+<tr>
+<td>ST_Intersects()</td>
+<td>Whether one geometry intersects another</td>
+<td><code>SELECT ST_Intersects(a,b);</code></td>
+</tr>
+<tr>
+<td>ST_IsClosed()</td>
+<td>Whether a geometry is closed and simple</td>
+<td><code>SELECT ST_IsClosed(g);</code></td>
+</tr>
+<tr>
+<td>ST_IsEmpty()</td>
+<td>Whether a geometry is empty</td>
+<td><code>SELECT ST_IsEmpty(g);</code></td>
+</tr>
+<tr>
+<td>ST_IsSimple()</td>
+<td>Whether a geometry is simple</td>
+<td><code>SELECT ST_IsSimple(g);</code></td>
+</tr>
+<tr>
+<td>ST_IsValid()</td>
+<td>Whether a geometry is valid</td>
+<td><code>SELECT ST_IsValid(g);</code></td>
+</tr>
+<tr>
+<td>ST_LatFromGeoHash()</td>
+<td>Return latitude from geohash value</td>
+<td><code>SELECT ST_LatFromGeoHash('ezs42');</code></td>
+</tr>
+<tr>
+<td>ST_Latitude()</td>
+<td>Return latitude of Point</td>
+<td><code>SELECT ST_Latitude(g);</code></td>
+</tr>
+<tr>
+<td>ST_Length()</td>
+<td>Return length of LineString</td>
+<td><code>SELECT ST_Length(g);</code></td>
+</tr>
+<tr>
+<td>ST_LineFromText(), ST_LineStringFromText()</td>
+<td>Construct LineString from WKT</td>
+<td><code>SELECT ST_LineFromText('LINESTRING(0 0,1 1)');</code></td>
+</tr>
+<tr>
+<td>ST_LineFromWKB(), ST_LineStringFromWKB()</td>
+<td>Construct LineString from WKB</td>
+<td><code>SELECT ST_LineFromWKB(g);</code></td>
+</tr>
+<tr>
+<td>ST_LineInterpolatePoint()</td>
+<td>The point a given percentage along a LineString</td>
+<td><code>SELECT ST_LineInterpolatePoint(g,0.5);</code></td>
+</tr>
+<tr>
+<td>ST_LineInterpolatePoints()</td>
+<td>The points a given percentage along a LineString</td>
+<td><code>SELECT ST_LineInterpolatePoints(g,0.5);</code></td>
+</tr>
+<tr>
+<td>ST_LongFromGeoHash()</td>
+<td>Return longitude from geohash value</td>
+<td><code>SELECT ST_LongFromGeoHash('ezs42');</code></td>
+</tr>
+<tr>
+<td>ST_Longitude()</td>
+<td>Return longitude of Point</td>
+<td><code>SELECT ST_Longitude(g);</code></td>
+</tr>
+<tr>
+<td>ST_MakeEnvelope()</td>
+<td>Rectangle around two points</td>
+<td><code>SELECT ST_MakeEnvelope(0,0,1,1,4326);</code></td>
+</tr>
+<tr>
+<td>ST_MLineFromText(), ST_MultiLineStringFromText()</td>
+<td>Construct MultiLineString from WKT</td>
+<td><code>SELECT ST_MLineFromText('MULTILINESTRING()');</code></td>
+</tr>
+<tr>
+<td>ST_MLineFromWKB(), ST_MultiLineStringFromWKB()</td>
+<td>Construct MultiLineString from WKB</td>
+<td><code>SELECT ST_MLineFromWKB(g);</code></td>
+</tr>
+<tr>
+<td>ST_MPointFromText(), ST_MultiPointFromText()</td>
+<td>Construct MultiPoint from WKT</td>
+<td><code>SELECT ST_MPointFromText('MULTIPOINT()');</code></td>
+</tr>
+<tr>
+<td>ST_MPointFromWKB(), ST_MultiPointFromWKB()</td>
+<td>Construct MultiPoint from WKB</td>
+<td><code>SELECT ST_MPointFromWKB(g);</code></td>
+</tr>
+<tr>
+<td>ST_MPolyFromText(), ST_MultiPolygonFromText()</td>
+<td>Construct MultiPolygon from WKT</td>
+<td><code>SELECT ST_MPolyFromText('MULTIPOLYGON()');</code></td>
+</tr>
+<tr>
+<td>ST_MPolyFromWKB(), ST_MultiPolygonFromWKB()</td>
+<td>Construct MultiPolygon from WKB</td>
+<td><code>SELECT ST_MPolyFromWKB(g);</code></td>
+</tr>
+<tr>
+<td>ST_NumGeometries()</td>
+<td>Return number of geometries in geometry collection</td>
+<td><code>SELECT ST_NumGeometries(g);</code></td>
+</tr>
+<tr>
+<td>ST_NumInteriorRing(), ST_NumInteriorRings()</td>
+<td>Return number of interior rings in Polygon</td>
+<td><code>SELECT ST_NumInteriorRing(g);</code></td>
+</tr>
+<tr>
+<td>ST_NumPoints()</td>
+<td>Return number of points in LineString</td>
+<td><code>SELECT ST_NumPoints(g);</code></td>
+</tr>
+<tr>
+<td>ST_Overlaps()</td>
+<td>Whether one geometry overlaps another</td>
+<td><code>SELECT ST_Overlaps(a,b);</code></td>
+</tr>
+<tr>
+<td>ST_PointAtDistance()</td>
+<td>The point a given distance along a LineString</td>
+<td><code>SELECT ST_PointAtDistance(g,10);</code></td>
+</tr>
+<tr>
+<td>ST_PointFromGeoHash()</td>
+<td>Convert geohash value to POINT value</td>
+<td><code>SELECT ST_PointFromGeoHash('ezs42');</code></td>
+</tr>
+<tr>
+<td>ST_PointFromText()</td>
+<td>Construct Point from WKT</td>
+<td><code>SELECT ST_PointFromText('POINT(0 0)');</code></td>
+</tr>
+<tr>
+<td>ST_PointFromWKB()</td>
+<td>Construct Point from WKB</td>
+<td><code>SELECT ST_PointFromWKB(g);</code></td>
+</tr>
+<tr>
+<td>ST_PointN()</td>
+<td>Return N-th point from LineString</td>
+<td><code>SELECT ST_PointN(g,1);</code></td>
+</tr>
+<tr>
+<td>ST_PolyFromText(), ST_PolygonFromText()</td>
+<td>Construct Polygon from WKT</td>
+<td><code>SELECT ST_PolyFromText('POLYGON()');</code></td>
+</tr>
+<tr>
+<td>ST_PolyFromWKB(), ST_PolygonFromWKB()</td>
+<td>Construct Polygon from WKB</td>
+<td><code>SELECT ST_PolyFromWKB(g);</code></td>
+</tr>
+<tr>
+<td>ST_Simplify()</td>
+<td>Return simplified geometry</td>
+<td><code>SELECT ST_Simplify(g);</code></td>
+</tr>
+<tr>
+<td>ST_SRID()</td>
+<td>Return spatial reference system ID for geometry</td>
+<td><code>SELECT ST_SRID(g);</code></td>
+</tr>
+<tr>
+<td>ST_StartPoint()</td>
+<td>Start Point of LineString</td>
+<td><code>SELECT ST_StartPoint(g);</code></td>
+</tr>
+<tr>
+<td>ST_SwapXY()</td>
+<td>Return argument with X/Y coordinates swapped</td>
+<td><code>SELECT ST_SwapXY(g);</code></td>
+</tr>
+<tr>
+<td>ST_SymDifference()</td>
+<td>Return point set symmetric difference of two geometries</td>
+<td><code>SELECT ST_SymDifference(a,b);</code></td>
+</tr>
+<tr>
+<td>ST_Touches()</td>
+<td>Whether one geometry touches another</td>
+<td><code>SELECT ST_Touches(a,b);</code></td>
+</tr>
+<tr>
+<td>ST_Transform()</td>
+<td>Transform coordinates of geometry</td>
+<td><code>SELECT ST_Transform(g,4326);</code></td>
+</tr>
+<tr>
+<td>ST_Union()</td>
+<td>Return point set union of two geometries</td>
+<td><code>SELECT ST_Union(a,b);</code></td>
+</tr>
+<tr>
+<td>ST_Validate()</td>
+<td>Return validated geometry</td>
+<td><code>SELECT ST_Validate(g);</code></td>
+</tr>
+<tr>
+<td>ST_Within()</td>
+<td>Whether one geometry is within another</td>
+<td><code>SELECT ST_Within(a,b);</code></td>
+</tr>
+<tr>
+<td>ST_X()</td>
+<td>Return X coordinate of Point</td>
+<td><code>SELECT ST_X(g);</code></td>
+</tr>
+<tr>
+<td>ST_Y()</td>
+<td>Return Y coordinate of Point</td>
+<td><code>SELECT ST_Y(g);</code></td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="%E2%9A%96%EF%B8%8F-comparison-functions">⚖️ Comparison Functions</h2>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Description</th>
+<th>Usage Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>COALESCE()</td>
+<td>Return the first non-NULL argument</td>
+<td><code>SELECT COALESCE(col1, col2) FROM t;</code></td>
+</tr>
+<tr>
+<td>EXISTS()</td>
+<td>Whether the result of a query contains any rows</td>
+<td><code>SELECT EXISTS(SELECT 1);</code></td>
+</tr>
+<tr>
+<td>NOT EXISTS()</td>
+<td>Whether the result of a query contains no rows</td>
+<td><code>SELECT NOT EXISTS(SELECT 1);</code></td>
+</tr>
+<tr>
+<td>GREATEST()</td>
+<td>Return the largest argument</td>
+<td><code>SELECT GREATEST(1,2,3);</code></td>
+</tr>
+<tr>
+<td>ISNULL()</td>
+<td>Test whether the argument is NULL</td>
+<td><code>SELECT ISNULL(NULL);</code></td>
+</tr>
+<tr>
+<td>LEAST()</td>
+<td>Return the smallest argument</td>
+<td><code>SELECT LEAST(1,2,3);</code></td>
+</tr>
+<tr>
+<td>NULLIF()</td>
+<td>Return NULL if expr1 = expr2</td>
+<td><code>SELECT NULLIF(1,1);</code></td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="%F0%9F%94%80-control-flow-functions">🔀 Control Flow Functions</h2>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Description</th>
+<th>Usage Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>CASE</td>
+<td>Case operator</td>
+<td><code>SELECT CASE WHEN a &gt; 0 THEN 'yes' ELSE 'no' END;</code></td>
+</tr>
+<tr>
+<td>IF()</td>
+<td>If/else construct</td>
+<td><code>SELECT IF(a &gt; 0, 'yes', 'no');</code></td>
+</tr>
+<tr>
+<td>IFNULL()</td>
+<td>Null if/else construct</td>
+<td><code>SELECT IFNULL(a, 0);</code></td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="%E2%84%B9%EF%B8%8F-information-functions">ℹ️ Information Functions</h2>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Description</th>
+<th>Usage Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>BENCHMARK()</td>
+<td>Repeatedly execute an expression</td>
+<td><code>SELECT BENCHMARK(100000, MD5('a'));</code></td>
+</tr>
+<tr>
+<td>BIN_TO_UUID()</td>
+<td>Convert binary UUID to string</td>
+<td><code>SELECT BIN_TO_UUID(UUID_TO_BIN(UUID()));</code></td>
+</tr>
+<tr>
+<td>BIT_COUNT()</td>
+<td>Return the number of bits that are set</td>
+<td><code>SELECT BIT_COUNT(7);</code></td>
+</tr>
+<tr>
+<td>CONNECTION_ID()</td>
+<td>Return the connection ID (thread ID) for the connection</td>
+<td><code>SELECT CONNECTION_ID();</code></td>
+</tr>
+<tr>
+<td>CURRENT_ROLE()</td>
+<td>Return the current active roles</td>
+<td><code>SELECT CURRENT_ROLE();</code></td>
+</tr>
+<tr>
+<td>CURRENT_USER(), CURRENT_USER</td>
+<td>The authenticated user name and host name</td>
+<td><code>SELECT CURRENT_USER();</code></td>
+</tr>
+<tr>
+<td>DATABASE()</td>
+<td>Return the default (current) database name</td>
+<td><code>SELECT DATABASE();</code></td>
+</tr>
+<tr>
+<td>DEFAULT()</td>
+<td>Return the default value for a table column</td>
+<td><code>SELECT DEFAULT(col);</code></td>
+</tr>
+<tr>
+<td>FOUND_ROWS()</td>
+<td>For a SELECT with a LIMIT clause, the number of rows that would be returned were there no LIMIT clause</td>
+<td><code>SELECT FOUND_ROWS();</code></td>
+</tr>
+<tr>
+<td>ICU_VERSION()</td>
+<td>ICU library version</td>
+<td><code>SELECT ICU_VERSION();</code></td>
+</tr>
+<tr>
+<td>LAST_INSERT_ID()</td>
+<td>Value of the AUTOINCREMENT column for the last INSERT</td>
+<td><code>SELECT LAST_INSERT_ID();</code></td>
+</tr>
+<tr>
+<td>PS_CURRENT_THREAD_ID()</td>
+<td>Performance Schema thread ID for current thread</td>
+<td><code>SELECT PS_CURRENT_THREAD_ID();</code></td>
+</tr>
+<tr>
+<td>PS_THREAD_ID()</td>
+<td>Performance Schema thread ID for given thread</td>
+<td><code>SELECT PS_THREAD_ID();</code></td>
+</tr>
+<tr>
+<td>ROW_COUNT()</td>
+<td>The number of rows updated</td>
+<td><code>SELECT ROW_COUNT();</code></td>
+</tr>
+<tr>
+<td>SCHEMA()</td>
+<td>Synonym for DATABASE()</td>
+<td><code>SELECT SCHEMA();</code></td>
+</tr>
+<tr>
+<td>SESSION_USER()</td>
+<td>Synonym for USER()</td>
+<td><code>SELECT SESSION_USER();</code></td>
+</tr>
+<tr>
+<td>SYSTEM_USER()</td>
+<td>Synonym for USER()</td>
+<td><code>SELECT SYSTEM_USER();</code></td>
+</tr>
+<tr>
+<td>USER()</td>
+<td>The user name and host name provided by the client</td>
+<td><code>SELECT USER();</code></td>
+</tr>
+<tr>
+<td>UUID()</td>
+<td>Return a Universal Unique Identifier (UUID)</td>
+<td><code>SELECT UUID();</code></td>
+</tr>
+<tr>
+<td>UUID_SHORT()</td>
+<td>Return an integer-valued universal identifier</td>
+<td><code>SELECT UUID_SHORT();</code></td>
+</tr>
+<tr>
+<td>UUID_TO_BIN()</td>
+<td>Convert string UUID to binary</td>
+<td><code>SELECT UUID_TO_BIN(UUID());</code></td>
+</tr>
+<tr>
+<td>VERSION()</td>
+<td>Return a string that indicates the MySQL server version</td>
+<td><code>SELECT VERSION();</code></td>
+</tr>
+<tr>
+<td>IS_UUID()</td>
+<td>Whether argument is a valid UUID</td>
+<td><code>SELECT IS_UUID(UUID());</code></td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="%F0%9F%94%90-encryption-and-compression">🔐 Encryption and Compression</h2>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Description</th>
+<th>Usage Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>AES_DECRYPT()</td>
+<td>Decrypt using AES</td>
+<td><code>SELECT AES_DECRYPT(col, 'key');</code></td>
+</tr>
+<tr>
+<td>AES_ENCRYPT()</td>
+<td>Encrypt using AES</td>
+<td><code>SELECT AES_ENCRYPT('text', 'key');</code></td>
+</tr>
+<tr>
+<td>COMPRESS()</td>
+<td>Return result as a binary string</td>
+<td><code>SELECT COMPRESS('text');</code></td>
+</tr>
+<tr>
+<td>RANDOM_BYTES()</td>
+<td>Return a random byte vector</td>
+<td><code>SELECT RANDOM_BYTES(16);</code></td>
+</tr>
+<tr>
+<td>SHA2()</td>
+<td>Calculate an SHA-2 checksum</td>
+<td><code>SELECT SHA2('text', 256);</code></td>
+</tr>
+<tr>
+<td>UNCOMPRESS()</td>
+<td>Uncompress a string compressed</td>
+<td><code>SELECT UNCOMPRESS(col);</code></td>
+</tr>
+<tr>
+<td>UNCOMPRESSED_LENGTH()</td>
+<td>Return the length of a string before compression</td>
+<td><code>SELECT UNCOMPRESSED_LENGTH(col);</code></td>
+</tr>
+<tr>
+<td>VALIDATE_PASSWORD_STRENGTH()</td>
+<td>Determine strength of password</td>
+<td><code>SELECT VALIDATE_PASSWORD_STRENGTH('abc');</code></td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="%F0%9F%94%92-locking-functions">🔒 Locking Functions</h2>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Description</th>
+<th>Usage Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GET_LOCK()</td>
+<td>Get a named lock</td>
+<td><code>SELECT GET_LOCK('my_lock', 10);</code></td>
+</tr>
+<tr>
+<td>IS_FREE_LOCK()</td>
+<td>Whether the named lock is free</td>
+<td><code>SELECT IS_FREE_LOCK('my_lock');</code></td>
+</tr>
+<tr>
+<td>IS_USED_LOCK()</td>
+<td>Whether the named lock is in use; return connection identifier if true</td>
+<td><code>SELECT IS_USED_LOCK('my_lock');</code></td>
+</tr>
+<tr>
+<td>RELEASE_ALL_LOCKS()</td>
+<td>Release all current named locks</td>
+<td><code>SELECT RELEASE_ALL_LOCKS();</code></td>
+</tr>
+<tr>
+<td>RELEASE_LOCK()</td>
+<td>Release the named lock</td>
+<td><code>SELECT RELEASE_LOCK('my_lock');</code></td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="%F0%9F%94%8D-regular-expression-functions">🔍 Regular Expression Functions</h2>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Description</th>
+<th>Usage Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>REGEXP_INSTR()</td>
+<td>Starting index of substring matching regular expression</td>
+<td><code>SELECT REGEXP_INSTR('abc123','[0-9]');</code></td>
+</tr>
+<tr>
+<td>REGEXP_LIKE()</td>
+<td>Whether string matches regular expression</td>
+<td><code>SELECT REGEXP_LIKE('abc','^a');</code></td>
+</tr>
+<tr>
+<td>REGEXP_REPLACE()</td>
+<td>Replace substrings matching regular expression</td>
+<td><code>SELECT REGEXP_REPLACE('abc123','[0-9]','');</code></td>
+</tr>
+<tr>
+<td>REGEXP_SUBSTR()</td>
+<td>Return substring matching regular expression</td>
+<td><code>SELECT REGEXP_SUBSTR('abc123','[0-9]+');</code></td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="%F0%9F%94%84-replication-functions">🔄 Replication Functions</h2>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Description</th>
+<th>Usage Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>asynchronous_connection_failover_add_managed()</td>
+<td>Add group member source server configuration information to a replication channel source list</td>
+<td><code>SELECT asynchronous_connection_failover_add_managed('example');</code></td>
+</tr>
+<tr>
+<td>asynchronous_connection_failover_add_source()</td>
+<td>Add source server configuration information server to a replication channel source list</td>
+<td><code>SELECT asynchronous_connection_failover_add_source('example');</code></td>
+</tr>
+<tr>
+<td>asynchronous_connection_failover_delete_managed()</td>
+<td>Remove a managed group from a replication channel source list</td>
+<td><code>SELECT asynchronous_connection_failover_delete_managed('example');</code></td>
+</tr>
+<tr>
+<td>asynchronous_connection_failover_delete_source()</td>
+<td>Remove a source server from a replication channel source list</td>
+<td><code>SELECT asynchronous_connection_failover_delete_source('example');</code></td>
+</tr>
+<tr>
+<td>asynchronous_connection_failover_reset()</td>
+<td>Remove all settings relating to group replication asynchronous failover</td>
+<td><code>SELECT asynchronous_connection_failover_reset('example');</code></td>
+</tr>
+<tr>
+<td>group_replication_disable_member_action()</td>
+<td>Disable member action for event specified</td>
+<td><code>SELECT group_replication_disable_member_action('example');</code></td>
+</tr>
+<tr>
+<td>group_replication_enable_member_action()</td>
+<td>Enable member action for event specified</td>
+<td><code>SELECT group_replication_enable_member_action('example');</code></td>
+</tr>
+<tr>
+<td>group_replication_get_communication_protocol()</td>
+<td>Get version of group replication communication protocol currently in use</td>
+<td><code>SELECT group_replication_get_communication_protocol('example');</code></td>
+</tr>
+<tr>
+<td>group_replication_get_write_concurrency()</td>
+<td>Get maximum number of consensus instances currently set for group</td>
+<td><code>SELECT group_replication_get_write_concurrency('example');</code></td>
+</tr>
+<tr>
+<td>group_replication_reset_member_actions()</td>
+<td>Reset all member actions to defaults and configuration version number to 1</td>
+<td><code>SELECT group_replication_reset_member_actions('example');</code></td>
+</tr>
+<tr>
+<td>group_replication_set_as_primary()</td>
+<td>Make a specific group member the primary</td>
+<td><code>SELECT group_replication_set_as_primary('example');</code></td>
+</tr>
+<tr>
+<td>group_replication_set_communication_protocol()</td>
+<td>Set version for group replication communication protocol to use</td>
+<td><code>SELECT group_replication_set_communication_protocol('example');</code></td>
+</tr>
+<tr>
+<td>group_replication_set_write_concurrency()</td>
+<td>Set maximum number of consensus instances that can be executed in parallel</td>
+<td><code>SELECT group_replication_set_write_concurrency('example');</code></td>
+</tr>
+<tr>
+<td>group_replication_switch_to_multi_primary_mode()</td>
+<td>Changes the mode of a group running in single-primary mode to multi-primary mode</td>
+<td><code>SELECT group_replication_switch_to_multi_primary_mode('example');</code></td>
+</tr>
+<tr>
+<td>group_replication_switch_to_single_primary_mode()</td>
+<td>Changes the mode of a group running in multi-primary mode to single-primary mode</td>
+<td><code>SELECT group_replication_switch_to_single_primary_mode('example');</code></td>
+</tr>
+<tr>
+<td>MASTER_POS_WAIT()</td>
+<td>Block until the replica has read and applied all updates up to the specified position</td>
+<td><code>SELECT MASTER_POS_WAIT('example');</code></td>
+</tr>
+<tr>
+<td>SOURCE_POS_WAIT()</td>
+<td>Block until the replica has read and applied all updates up to the specified position</td>
+<td><code>SELECT SOURCE_POS_WAIT('example');</code></td>
+</tr>
+<tr>
+<td>WAIT_FOR_EXECUTED_GTID_SET()</td>
+<td>Wait until the given GTIDs have executed on the replica.</td>
+<td><code>SELECT WAIT_FOR_EXECUTED_GTID_SET('example');</code></td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="%F0%9F%93%84-xml-functions">📄 XML Functions</h2>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Description</th>
+<th>Usage Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ExtractValue()</td>
+<td>Extract a value from an XML string using XPath notation</td>
+<td><code>SELECT ExtractValue('&lt;a&gt;1&lt;/a&gt;','/a');</code></td>
+</tr>
+<tr>
+<td>UpdateXML()</td>
+<td>Return replaced XML fragment</td>
+<td><code>SELECT UpdateXML('&lt;a&gt;1&lt;/a&gt;','/a','2');</code></td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="%F0%9F%9B%A0%EF%B8%8F-miscellaneous-functions">🛠️ Miscellaneous Functions</h2>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Description</th>
+<th>Usage Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ANY_VALUE()</td>
+<td>Suppress ONLY_FULL_GROUP_BY value rejection</td>
+<td><code>SELECT ANY_VALUE(col) FROM t GROUP BY id;</code></td>
+</tr>
+<tr>
+<td>BINARY</td>
+<td>Cast a string to a binary string</td>
+<td><code>SELECT BINARY('abc');</code></td>
+</tr>
+<tr>
+<td>CAST()</td>
+<td>Cast a value as a certain type</td>
+<td><code>SELECT CAST('1' AS UNSIGNED);</code></td>
+</tr>
+<tr>
+<td>CONVERT()</td>
+<td>Cast a value as a certain type</td>
+<td><code>SELECT CONVERT('1', UNSIGNED);</code></td>
+</tr>
+<tr>
+<td>CONVERT_TZ()</td>
+<td>Convert from one time zone to another</td>
+<td><code>SELECT CONVERT_TZ(NOW(),'UTC','SYSTEM');</code></td>
+</tr>
+<tr>
+<td>ETAG()</td>
+<td>Compute hash for each row, using one or more column or other values</td>
+<td><code>SELECT ETAG('a');</code></td>
+</tr>
+<tr>
+<td>FORMAT_BYTES()</td>
+<td>Convert byte count to value with units</td>
+<td><code>SELECT FORMAT_BYTES(1024);</code></td>
+</tr>
+<tr>
+<td>FORMAT_PICO_TIME()</td>
+<td>Convert time in picoseconds to value with units</td>
+<td><code>SELECT FORMAT_PICO_TIME(1000);</code></td>
+</tr>
+<tr>
+<td>FROM_BASE64()</td>
+<td>Decode base64 encoded string and return result</td>
+<td><code>SELECT FROM_BASE64('YQ==');</code></td>
+</tr>
+<tr>
+<td>INET_ATON()</td>
+<td>Return the numeric value of an IP address</td>
+<td><code>SELECT INET_ATON('127.0.0.1');</code></td>
+</tr>
+<tr>
+<td>INET_NTOA()</td>
+<td>Return the IP address from a numeric value</td>
+<td><code>SELECT INET_NTOA(2130706433);</code></td>
+</tr>
+<tr>
+<td>MATCH()</td>
+<td>Perform full-text search</td>
+<td><code>SELECT MATCH(col) AGAINST('term');</code></td>
+</tr>
+<tr>
+<td>NAME_CONST()</td>
+<td>Cause the column to have the given name</td>
+<td><code>SELECT NAME_CONST('a',1);</code></td>
+</tr>
+<tr>
+<td>ROLES_GRAPHML()</td>
+<td>Return a GraphML document representing memory role subgraphs</td>
+<td><code>SELECT ROLES_GRAPHML();</code></td>
+</tr>
+<tr>
+<td>SLEEP()</td>
+<td>Sleep for a number of seconds</td>
+<td><code>SELECT SLEEP(1);</code></td>
+</tr>
+<tr>
+<td>STATEMENT_DIGEST()</td>
+<td>Compute statement digest hash value</td>
+<td><code>SELECT STATEMENT_DIGEST('SELECT 1');</code></td>
+</tr>
+<tr>
+<td>STATEMENT_DIGEST_TEXT()</td>
+<td>Compute normalized statement digest</td>
+<td><code>SELECT STATEMENT_DIGEST_TEXT('SELECT 1');</code></td>
+</tr>
+<tr>
+<td>STRING_TO_VECTOR()</td>
+<td>Get the binary value of the VECTOR column represented by a conforming string</td>
+<td><code>SELECT STRING_TO_VECTOR('[1,2,3]');</code></td>
+</tr>
+<tr>
+<td>TO_BASE64()</td>
+<td>Return the argument converted to a base-64 string</td>
+<td><code>SELECT TO_BASE64('a');</code></td>
+</tr>
+<tr>
+<td>VALUES()</td>
+<td>Define the values to be used during an INSERT</td>
+<td><code>INSERT INTO t (c) VALUES (1);</code></td>
+</tr>
+<tr>
+<td>VECTOR_DIM()</td>
+<td>Get the length of a vector (number of entries)</td>
+<td><code>SELECT VECTOR_DIM(vec);</code></td>
+</tr>
+<tr>
+<td>VECTOR_TO_STRING()</td>
+<td>Get the string representation of a VECTOR column, given its value as a binary string</td>
+<td><code>SELECT VECTOR_TO_STRING(vec);</code></td>
+</tr>
+<tr>
+<td>CAN_ACCESS_COLUMN()</td>
+<td>Internal use only</td>
+<td><code>SELECT CAN_ACCESS_COLUMN('example');</code></td>
+</tr>
+<tr>
+<td>CAN_ACCESS_DATABASE()</td>
+<td>Internal use only</td>
+<td><code>SELECT CAN_ACCESS_DATABASE('example');</code></td>
+</tr>
+<tr>
+<td>CAN_ACCESS_TABLE()</td>
+<td>Internal use only</td>
+<td><code>SELECT CAN_ACCESS_TABLE('example');</code></td>
+</tr>
+<tr>
+<td>CAN_ACCESS_USER()</td>
+<td>Internal use only</td>
+<td><code>SELECT CAN_ACCESS_USER('example');</code></td>
+</tr>
+<tr>
+<td>CAN_ACCESS_VIEW()</td>
+<td>Internal use only</td>
+<td><code>SELECT CAN_ACCESS_VIEW('example');</code></td>
+</tr>
+<tr>
+<td>GET_DD_COLUMN_PRIVILEGES()</td>
+<td>Internal use only</td>
+<td><code>SELECT GET_DD_COLUMN_PRIVILEGES('example');</code></td>
+</tr>
+<tr>
+<td>GET_DD_CREATE_OPTIONS()</td>
+<td>Internal use only</td>
+<td><code>SELECT GET_DD_CREATE_OPTIONS('example');</code></td>
+</tr>
+<tr>
+<td>GET_DD_INDEX_SUB_PART_LENGTH()</td>
+<td>Internal use only</td>
+<td><code>SELECT GET_DD_INDEX_SUB_PART_LENGTH('example');</code></td>
+</tr>
+<tr>
+<td>INTERNAL_AUTO_INCREMENT()</td>
+<td>Internal use only</td>
+<td><code>SELECT INTERNAL_AUTO_INCREMENT('example');</code></td>
+</tr>
+<tr>
+<td>INTERNAL_AVG_ROW_LENGTH()</td>
+<td>Internal use only</td>
+<td><code>SELECT INTERNAL_AVG_ROW_LENGTH('example');</code></td>
+</tr>
+<tr>
+<td>INTERNAL_CHECK_TIME()</td>
+<td>Internal use only</td>
+<td><code>SELECT INTERNAL_CHECK_TIME('example');</code></td>
+</tr>
+<tr>
+<td>INTERNAL_CHECKSUM()</td>
+<td>Internal use only</td>
+<td><code>SELECT INTERNAL_CHECKSUM('example');</code></td>
+</tr>
+<tr>
+<td>INTERNAL_DATA_FREE()</td>
+<td>Internal use only</td>
+<td><code>SELECT INTERNAL_DATA_FREE('example');</code></td>
+</tr>
+<tr>
+<td>INTERNAL_DATA_LENGTH()</td>
+<td>Internal use only</td>
+<td><code>SELECT INTERNAL_DATA_LENGTH('example');</code></td>
+</tr>
+<tr>
+<td>INTERNAL_DD_CHAR_LENGTH()</td>
+<td>Internal use only</td>
+<td><code>SELECT INTERNAL_DD_CHAR_LENGTH('example');</code></td>
+</tr>
+<tr>
+<td>INTERNAL_GET_COMMENT_OR_ERROR()</td>
+<td>Internal use only</td>
+<td><code>SELECT INTERNAL_GET_COMMENT_OR_ERROR('example');</code></td>
+</tr>
+<tr>
+<td>INTERNAL_GET_ENABLED_ROLE_JSON()</td>
+<td>Internal use only</td>
+<td><code>SELECT INTERNAL_GET_ENABLED_ROLE_JSON('example');</code></td>
+</tr>
+<tr>
+<td>INTERNAL_GET_HOSTNAME()</td>
+<td>Internal use only</td>
+<td><code>SELECT INTERNAL_GET_HOSTNAME('example');</code></td>
+</tr>
+<tr>
+<td>INTERNAL_GET_USERNAME()</td>
+<td>Internal use only</td>
+<td><code>SELECT INTERNAL_GET_USERNAME('example');</code></td>
+</tr>
+<tr>
+<td>INTERNAL_GET_VIEW_WARNING_OR_ERROR()</td>
+<td>Internal use only</td>
+<td><code>SELECT INTERNAL_GET_VIEW_WARNING_OR_ERROR('example');</code></td>
+</tr>
+<tr>
+<td>INTERNAL_INDEX_COLUMN_CARDINALITY()</td>
+<td>Internal use only</td>
+<td><code>SELECT INTERNAL_INDEX_COLUMN_CARDINALITY('example');</code></td>
+</tr>
+<tr>
+<td>INTERNAL_INDEX_LENGTH()</td>
+<td>Internal use only</td>
+<td><code>SELECT INTERNAL_INDEX_LENGTH('example');</code></td>
+</tr>
+<tr>
+<td>INTERNAL_IS_ENABLED_ROLE()</td>
+<td>Internal use only</td>
+<td><code>SELECT INTERNAL_IS_ENABLED_ROLE('example');</code></td>
+</tr>
+<tr>
+<td>INTERNAL_IS_MANDATORY_ROLE()</td>
+<td>Internal use only</td>
+<td><code>SELECT INTERNAL_IS_MANDATORY_ROLE('example');</code></td>
+</tr>
+<tr>
+<td>INTERNAL_KEYS_DISABLED()</td>
+<td>Internal use only</td>
+<td><code>SELECT INTERNAL_KEYS_DISABLED('example');</code></td>
+</tr>
+<tr>
+<td>INTERNAL_MAX_DATA_LENGTH()</td>
+<td>Internal use only</td>
+<td><code>SELECT INTERNAL_MAX_DATA_LENGTH('example');</code></td>
+</tr>
+<tr>
+<td>INTERNAL_TABLE_ROWS()</td>
+<td>Internal use only</td>
+<td><code>SELECT INTERNAL_TABLE_ROWS('example');</code></td>
+</tr>
+<tr>
+<td>INTERNAL_UPDATE_TIME()</td>
+<td>Internal use only</td>
+<td><code>SELECT INTERNAL_UPDATE_TIME('example');</code></td>
+</tr>
+</tbody>
+</table>
+
+</body>
+</html>
