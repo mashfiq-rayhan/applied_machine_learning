@@ -1,4 +1,407 @@
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Play:wght@400;700&display=swap');
+
+:root {
+  --la-ink: #3f6386;
+  --la-teal: #3f6386;
+  --la-teal-soft: #e8f6f7;
+  --la-coral: #9333ea;
+  --la-coral-soft: #fff1ed;
+  --la-cdf: #6f9fb8;
+  --la-line: #5b5c5c;
+  --la-surface: #f7faf9;
+  --la-text: #c9c9c9;
+  --la-panel: #00070e;
+  --la-chip: #17283a;
+}
+
+*,
+*::before,
+*::after {
+  font-family: 'Play', sans-serif !important;
+}
+
+body,
+.markdown-body,
+p,
+li {
+  color: var(--la-text) !important;
+}
+
+h1 {
+  color: var(--la-ink);
+  border-bottom: 4px solid var(--la-teal);
+  padding-bottom: 0.35em;
+}
+
+h2 {
+  color: var(--la-teal);
+  border-left: 6px solid var(--la-teal);
+  padding-left: 0.55em;
+  margin-top: 2em;
+}
+
+h3 {
+  color: var(--la-coral);
+}
+
+.insight-item {
+  background: var(--la-panel);
+  border-left: 5px solid var(--la-coral);
+  border-radius: 5px;
+  color: var(--la-text);
+  font-size: 1.05em;
+  margin: 0.7em 0;
+  padding: 0.65em 0.9em;
+}
+
+.insight-item strong {
+  color: var(--la-coral);
+}
+
+.insight-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55em;
+  list-style: none;
+  margin: 0.5em 0 1em;
+  padding: 0;
+}
+
+.insight-list li {
+  background: var(--la-chip);
+  border: 1px solid var(--la-teal);
+  border-radius: 999px;
+  color: var(--la-text);
+  padding: 0.35em 0.75em;
+}
+
+.concept-flow {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  margin: 1.25em 0;
+}
+
+.concept-flow .flow-step {
+  background: var(--la-panel);
+  border: 1px solid var(--la-teal);
+  border-radius: 7px;
+  color: var(--la-text);
+  max-width: 22em;
+  padding: 0.7em 1.2em;
+  text-align: center;
+  width: 100%;
+}
+
+.concept-flow .flow-step strong {
+  color: var(--la-coral);
+}
+
+.concept-flow .flow-arrow {
+  color: var(--la-teal);
+  font-size: 1.35em;
+  line-height: 1.25;
+}
+
+.summary-grid {
+  display: flex;
+  gap: 1em;
+  margin: 1.25em 0;
+}
+
+.summary-card {
+  background: var(--la-panel);
+  border-top: 5px solid var(--la-teal);
+  border-radius: 7px;
+  color: var(--la-text);
+  flex: 1 1 0;
+  min-width: 0;
+  padding: 1em;
+}
+
+.summary-card.pdf {
+  border-top-color: var(--la-coral);
+}
+
+.summary-card.cdf {
+  border-top-color: var(--la-cdf);
+}
+
+.summary-card h3 {
+  margin-top: 0;
+}
+
+.summary-card p {
+  margin-bottom: 0;
+}
+
+.summary-tag {
+  color: var(--la-teal);
+  font-size: 0.82em;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.relationship-banner {
+  align-items: center;
+  background: var(--la-panel);
+  border: 1px solid var(--la-teal);
+  border-radius: 7px;
+  color: var(--la-text);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6em;
+  justify-content: center;
+  margin: 1.25em 0;
+  padding: 0.85em 1em;
+  text-align: center;
+}
+
+.relationship-banner strong {
+  color: var(--la-coral);
+}
+
+.relationship-banner .arrow {
+  color: var(--la-teal);
+  font-size: 1.2em;
+}
+
+.ml-grid {
+  display: flex;
+  gap: 1em;
+  margin: 1.25em 0;
+}
+
+.ml-card {
+  background: var(--la-panel);
+  border-left: 5px solid var(--la-teal);
+  border-radius: 7px;
+  color: var(--la-text);
+  flex: 1 1 0;
+  padding: 1em;
+}
+
+.ml-card.diagnostics {
+  border-left-color: var(--la-coral);
+}
+
+.ml-card h3 {
+  margin-top: 0;
+}
+
+.feature-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45em;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.feature-chips li {
+  background: var(--la-chip);
+  border-left: 3px solid var(--la-coral);
+  border-radius: 4px;
+  color: var(--la-text);
+  flex: 1 1 calc(50% - 0.45em);
+  padding: 0.55em 0.7em;
+}
+
+.panel-kicker {
+  color: var(--la-teal);
+  font-size: 0.82em;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  margin-top: -0.6em;
+  text-transform: uppercase;
+}
+
+.ml-workflow {
+  align-items: center;
+  background: var(--la-panel);
+  border: 1px solid var(--la-teal);
+  border-radius: 7px;
+  color: var(--la-text);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55em;
+  justify-content: center;
+  margin: 1.25em 0;
+  padding: 0.85em 1em;
+  text-align: center;
+}
+
+.ml-workflow strong {
+  color: var(--la-coral);
+}
+
+.percentile-callout {
+  background: var(--la-panel);
+  border-left: 5px solid var(--la-cdf);
+  border-radius: 7px;
+  color: var(--la-text);
+  margin: 1.25em 0;
+  padding: 1em;
+}
+
+.percentile-callout strong {
+  color: var(--la-cdf);
+}
+
+@media (max-width: 700px) {
+  .summary-grid,
+  .ml-grid {
+    flex-direction: column;
+  }
+}
+
+.intuition-grid {
+  display: flex;
+  gap: 1em;
+  margin: 1.25em 0;
+}
+
+.intuition-card {
+  background: var(--la-panel);
+  border-radius: 7px;
+  color: var(--la-text);
+  flex: 1 1 0;
+  min-width: 0;
+  padding: 1em;
+}
+
+.intuition-card.pdf {
+  border-top: 5px solid var(--la-coral);
+}
+
+.intuition-card.cdf {
+  border-top: 5px solid var(--la-cdf);
+}
+
+.intuition-card h3 {
+  margin-top: 0;
+}
+
+.intuition-chart {
+  align-items: end;
+  border-bottom: 2px solid var(--la-teal);
+  display: flex;
+  gap: 0.35em;
+  height: 9em;
+  justify-content: center;
+  margin: 1em 0;
+  padding: 0 0.75em;
+}
+
+.intuition-chart span {
+  background: var(--la-coral);
+  border-radius: 4px 4px 0 0;
+  display: block;
+  flex: 1;
+  max-width: 2.5em;
+}
+
+.intuition-card.cdf .intuition-chart span {
+  background: var(--la-cdf);
+}
+
+.intuition-label {
+  color: var(--la-teal);
+  font-size: 0.9em;
+  text-align: center;
+}
+
+@media (max-width: 760px) {
+  .intuition-grid {
+    flex-direction: column;
+  }
+}
+
+.relationship-item {
+  background: var(--la-panel);
+  border-left: 5px solid var(--la-teal);
+  border-radius: 5px;
+  color: var(--la-text);
+  margin: 0.65em 0;
+  padding: 0.55em 0.85em;
+}
+
+.relationship-item strong {
+  color: var(--la-coral);
+  margin-right: 0.35em;
+}
+
+.revision-question {
+  color: #c0392b;
+}
+
+blockquote {
+  background: var(--la-panel);
+  border-left: 5px solid var(--la-cdf) !important;
+  color: var(--la-text);
+  padding: 0.75em 1em;
+}
+
+table {
+  border: 1px solid var(--la-line);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+th {
+  background: var(--la-panel);
+  color: var(--la-text);
+}
+
+td {
+  color: var(--la-text);
+}
+
+tr:nth-child(even) {
+  background: var(--la-chip);
+}
+
+hr {
+  border: 0;
+  border-top: 2px solid var(--la-line);
+  margin: 2.2em 0;
+}
+
+/* Keep displayed equations visually distinct without competing with the text. */
+.katex-display,
+.math,
+.math-block {
+  background: #00070e;
+  border-left: 6px solid #2f005c;
+  border-radius: 6px;
+  padding: 0.6em 0.8em;
+  overflow-x: auto;
+  color: #c9c9c9 !important;
+}
+
+.katex,
+.katex * {
+  color: #9b9a9a !important;
+}
+</style>
+
 # 4. Histogram, PDF, and CDF
+
+> **A visual guide to distributions**
+>
+> Learn how observed data becomes a histogram, how probability density is represented by a PDF, and how probability accumulates in a CDF.
+
+## At a Glance
+
+| View          | What it shows                          | Visual form      |
+| ------------- | -------------------------------------- | ---------------- |
+| **Histogram** | Observed values grouped into intervals | Bars             |
+| **PDF**       | Density across possible values         | Smooth curve     |
+| **CDF**       | Probability accumulated up to a value  | Increasing curve |
+
+### The Big Picture
 
 Understanding **Histogram, Probability Density Function (PDF), and Cumulative Distribution Function (CDF)** is fundamental to understanding how numerical data is distributed.
 
@@ -8,16 +411,19 @@ $$
 \boxed{\text{Histogram} \approx \text{PDF} \rightarrow \text{CDF}}
 $$
 
-* **Histogram** shows how observations are distributed across intervals.
-* **PDF** describes the probability density of a continuous random variable.
-* **CDF** describes the accumulated probability up to a given value.
+- **Histogram** shows how observations are distributed across intervals.
+- **PDF** describes the probability density of a continuous random variable.
+- **CDF** describes the accumulated probability up to a given value.
+
+> **Reading path:** Start with the histogram to see the data, use the PDF to describe density, and use the CDF to answer cumulative probability questions.
 
 ---
 
 <a id="histogram"></a>
-# 4.1 Histogram
 
-## Histogram Theory
+## 4.1 Histogram
+
+### Histogram Theory
 
 A **histogram** is a graphical representation of the distribution of numerical data.
 
@@ -47,14 +453,14 @@ The height of each bar represents the **frequency/count** of observations in tha
 
 ### Components of a Histogram
 
-* **X-axis:** Value ranges or bins
-* **Y-axis:** Frequency, relative frequency, or density
-* **Bars:** Represent the number/density of observations in each interval
-* **Bin width:** Width of each interval
+- **X-axis:** Value ranges or bins
+- **Y-axis:** Frequency, relative frequency, or density
+- **Bars:** Represent the number/density of observations in each interval
+- **Bin width:** Width of each interval
 
 ---
 
-## Mathematical Representation
+### Mathematical Representation
 
 Suppose we have \(n\) observations:
 
@@ -102,7 +508,7 @@ if it does not.
 
 ---
 
-## Relative Frequency
+### Relative Frequency
 
 The **relative frequency** of a bin is:
 
@@ -128,7 +534,7 @@ So, 25% of the observations are in that interval.
 
 ---
 
-## Histogram Density
+### Histogram Density
 
 If we normalize the histogram by both the total number of observations and the bin width, we obtain a density estimate:
 
@@ -140,9 +546,9 @@ $$
 
 where:
 
-* \(count_i\) = number of observations in bin \(i\)
-* \(n\) = total number of observations
-* \(h\) = bin width
+- \(count_i\) = number of observations in bin \(i\)
+- \(n\) = total number of observations
+- \(h\) = bin width
 
 This makes the histogram comparable to a **Probability Density Function (PDF)**.
 
@@ -154,49 +560,41 @@ $$
 
 ---
 
-# 4.2 Why Histograms Are Useful
+## 4.2 Why Histograms Are Useful
 
 A histogram helps us understand the **shape and structure of a dataset**.
 
 It can reveal:
 
-### 1. Distribution Shape
+<h3 class="insight-item"><strong>1. Distribution Shape :</strong> We can determine whether the data is approximately:</h3>
 
-We can determine whether the data is approximately:
+<ul class="insight-list">
+<li>Symmetric</li>
+<li>Left-skewed</li>
+<li>Right-skewed</li>
+<li>Uniform</li>
+<li>Bell-shaped</li>
+</ul>
 
-* symmetric
-* left-skewed
-* right-skewed
-* uniform
-* bell-shaped
+<h3 class="insight-item"><strong>2. Modality :</strong> A histogram can show whether the distribution is:</h3>
 
-### 2. Modality
+<ul class="insight-list">
+<li><strong>Unimodal</strong> → one major peak</li>
+<li><strong>Bimodal</strong> → two major peaks</li>
+<li><strong>Multimodal</strong> → multiple peaks</li>
+</ul>
 
-A histogram can show whether the distribution is:
+<h3 class="insight-item"><strong>3. Spread :</strong> It helps us understand how widely the observations are distributed.</h3>
 
-* **Unimodal** → one major peak
-* **Bimodal** → two major peaks
-* **Multimodal** → multiple peaks
+<h3 class="insight-item"><strong>4. Outliers :</strong> Very distant observations may appear as isolated bars.</h3>
 
-### 3. Spread
+<h3 class="insight-item"><strong>5. Gaps :</strong> A histogram can reveal ranges where very few or no observations exist.</h3>
 
-It helps us understand how widely the observations are distributed.
-
-### 4. Outliers
-
-Very distant observations may appear as isolated bars.
-
-### 5. Gaps
-
-A histogram can reveal ranges where very few or no observations exist.
-
-### 6. Concentration
-
-We can see where most of the observations are concentrated.
+<h3 class="insight-item"><strong>6. Concentration :</strong> We can see where most of the observations are concentrated.</h3>
 
 ---
 
-# 4.3 Choosing the Number of Bins
+## 4.3 Choosing the Number of Bins
 
 The number and width of bins significantly affect the appearance of a histogram.
 
@@ -204,17 +602,17 @@ The number and width of bins significantly affect the appearance of a histogram.
 
 If there are too few bins:
 
-* important patterns may disappear
-* different groups may be merged
-* the distribution may appear overly smooth
+- important patterns may disappear
+- different groups may be merged
+- the distribution may appear overly smooth
 
 ### Too Many Bins
 
 If there are too many bins:
 
-* the histogram can become noisy
-* random fluctuations may look like meaningful patterns
-* the underlying distribution can become difficult to interpret
+- the histogram can become noisy
+- random fluctuations may look like meaningful patterns
+- the underlying distribution can become difficult to interpret
 
 Therefore:
 
@@ -227,9 +625,10 @@ The goal is to reveal the underlying structure of the data rather than noise.
 ---
 
 <a id="pdf"></a>
-# 4.4 Probability Density Function (PDF)
 
-## What is a PDF?
+## 4.4 Probability Density Function (PDF)
+
+### What is a PDF?
 
 A **Probability Density Function (PDF)** describes how probability is distributed across the possible values of a **continuous random variable**.
 
@@ -253,7 +652,7 @@ For a continuous random variable, probability is obtained from the **area under 
 
 ---
 
-# 4.5 Properties of a PDF
+## 4.5 Properties of a PDF
 
 A valid PDF must satisfy:
 
@@ -275,7 +674,7 @@ This represents the fact that the total probability of all possible outcomes is 
 
 ---
 
-# 4.6 Probability from a PDF
+## 4.6 Probability from a PDF
 
 Suppose we want to find the probability that a continuous random variable \(X\) falls between \(a\) and \(b\).
 
@@ -321,7 +720,7 @@ The result is the area under the PDF between 10 and 20.
 
 ---
 
-# 4.7 PDF and Continuous Variables
+## 4.7 PDF and Continuous Variables
 
 For a continuous random variable:
 
@@ -351,7 +750,7 @@ Therefore, we use intervals and areas under the curve to calculate probabilities
 
 ---
 
-# 4.8 Relationship Between Histogram and PDF
+## 4.8 Relationship Between Histogram and PDF
 
 A histogram is based on **observed sample data**, while a PDF represents the underlying **probability distribution** of a continuous random variable.
 
@@ -365,24 +764,25 @@ where \(f(x)\) is the PDF.
 
 Conceptually:
 
-```text
-Observed Data
-     ↓
-  Histogram
-     ↓
-Approximation
-     ↓
-Underlying PDF
-```
+<div class="concept-flow">
+<div class="flow-step"><strong>Observed Data</strong></div>
+<div class="flow-arrow">↓</div>
+<div class="flow-step"><strong>Histogram</strong></div>
+<div class="flow-arrow">↓</div>
+<div class="flow-step"><strong>Approximation</strong></div>
+<div class="flow-arrow">↓</div>
+<div class="flow-step"><strong>Underlying PDF</strong></div>
+</div>
 
 The histogram gives us an empirical view of the data, while the PDF gives us a mathematical representation of a probability distribution.
 
 ---
 
 <a id="cdf"></a>
-# 4.9 Cumulative Distribution Function (CDF)
 
-## What is a CDF?
+## 4.9 Cumulative Distribution Function (CDF)
+
+### What is a CDF?
 
 The **Cumulative Distribution Function (CDF)** tells us the probability that a random variable \(X\) is less than or equal to a particular value \(x\).
 
@@ -407,7 +807,7 @@ The CDF therefore represents the **accumulated probability** from \(-\infty\) up
 
 ---
 
-# 4.10 Understanding CDF Intuitively
+## 4.10 Understanding CDF Intuitively
 
 Suppose:
 
@@ -429,7 +829,7 @@ If the random variable represents exam scores, this could mean that 80% of the p
 
 ---
 
-# 4.11 Properties of CDF
+## 4.11 Properties of CDF
 
 A CDF always satisfies:
 
@@ -483,7 +883,7 @@ Eventually, all probability has been accumulated.
 
 ---
 
-# 4.12 Probability Using the CDF
+## 4.12 Probability Using the CDF
 
 The CDF makes calculating interval probabilities very convenient.
 
@@ -539,7 +939,7 @@ So there is a **45% probability** that \(X\) falls between 10 and 20.
 
 ---
 
-# 4.13 Relationship Between PDF and CDF
+## 4.13 Relationship Between PDF and CDF
 
 The PDF and CDF are directly related.
 
@@ -587,7 +987,7 @@ PDF  ─────────────────────────
 
 ---
 
-# 4.14 Histogram vs PDF vs CDF
+## 4.14 Histogram vs PDF vs CDF
 
 | Concept       | Meaning                       | Representation   | Main Question                                    |
 | ------------- | ----------------------------- | ---------------- | ------------------------------------------------ |
@@ -597,7 +997,7 @@ PDF  ─────────────────────────
 
 ---
 
-# 4.15 Simple Example
+## 4.15 Simple Example
 
 Consider the following observations:
 
@@ -658,7 +1058,7 @@ This means approximately 50% of the observations are less than or equal to 5.
 
 ---
 
-# 4.16 Empirical CDF
+## 4.16 Empirical CDF
 
 When working with actual sample data, we can construct an **Empirical Cumulative Distribution Function (ECDF)**.
 
@@ -675,15 +1075,15 @@ $$
 
 where:
 
-* \(n\) = number of observations
-* \(I(x_i\le x)\) = 1 if \(x_i\le x\)
-* \(I(x_i\le x)\) = 0 otherwise
+- \(n\) = number of observations
+- \(I(x_i\le x)\) = 1 if \(x_i\le x\)
+- \(I(x_i\le x)\) = 0 otherwise
 
 The ECDF tells us the proportion of observed values that are less than or equal to \(x\).
 
 ---
 
-# 4.17 Histogram, PDF, and CDF — Big Picture
+## 4.17 Histogram, PDF, and CDF — Big Picture
 
 These concepts can be understood as three different views of a distribution.
 
@@ -719,41 +1119,47 @@ It tells us how much probability has accumulated up to a particular value.
 
 ---
 
-# 4.18 Visual Intuition
+## 4.18 Visual Intuition
 
-Think of a PDF as a **mountain landscape**.
+Think of the PDF and CDF as two views of the same distribution:
 
-The height of the mountain represents **density**.
+<div class="intuition-grid">
+<div class="intuition-card pdf">
+<h3>PDF: Density</h3>
+<p>The height shows where observations are concentrated. A taller region means greater density, not probability at one exact point.</p>
+<div class="intuition-chart" aria-label="A peaked PDF profile">
+<span style="height: 20%"></span>
+<span style="height: 35%"></span>
+<span style="height: 55%"></span>
+<span style="height: 80%"></span>
+<span style="height: 100%"></span>
+<span style="height: 80%"></span>
+<span style="height: 55%"></span>
+<span style="height: 35%"></span>
+<span style="height: 20%"></span>
+</div>
+<div class="intuition-label">Density changes across the value range</div>
+</div>
 
-The CDF represents how much area you have accumulated as you move from left to right.
+<div class="intuition-card cdf">
+<h3>CDF: Accumulation</h3>
+<p>The curve rises as probability accumulates from left to right. It begins near 0 and approaches 1.</p>
+<div class="intuition-chart" aria-label="A rising CDF profile">
+<span style="height: 10%"></span>
+<span style="height: 18%"></span>
+<span style="height: 28%"></span>
+<span style="height: 42%"></span>
+<span style="height: 58%"></span>
+<span style="height: 72%"></span>
+<span style="height: 83%"></span>
+<span style="height: 92%"></span>
+<span style="height: 98%"></span>
+</div>
+<div class="intuition-label">Accumulated probability increases toward 1</div>
+</div>
+</div>
 
-```text
-PDF
-
-Density
-  │
-  │              /\
-  │             /  \
-  │           /      \
-  │         /          \
-  │_______/______________\________ Value
-```
-
-Now imagine accumulating the area from left to right:
-
-```text
-CDF
-
-Probability
-1.0 │                         ______
-    │                     ___/
-    │                  __/
-    │               __/
-    │            __/
-    │        ___/
-0.0 │_______/
-    └────────────────────────────── Value
-```
+> **Memory aid:** The PDF describes _where_ probability is concentrated; the CDF describes _how much_ probability has accumulated.
 
 The CDF starts near:
 
@@ -769,7 +1175,7 @@ $$
 
 ---
 
-# 4.19 Key Mathematical Relationships
+## 4.19 Key Mathematical Relationships
 
 The most important formulas to remember are:
 
@@ -856,49 +1262,39 @@ $$
 
 ---
 
-# 4.20 Quick Summary
+## 4.20 Quick Summary
 
-### Histogram
+<div class="summary-grid">
+<div class="summary-card histogram">
+<div class="summary-tag">Observed data</div>
+<h3>Histogram</h3>
+<p><strong>Shows the distribution of observed numerical data using bins.</strong></p>
+</div>
 
-> **Shows the distribution of observed numerical data using bins.**
+<div class="summary-card pdf">
+<div class="summary-tag">Density</div>
+<h3>PDF</h3>
+<p><strong>Shows probability density across the possible values of a continuous random variable.</strong></p>
+</div>
 
-### PDF
+<div class="summary-card cdf">
+<div class="summary-tag">Accumulation</div>
+<h3>CDF</h3>
+<p><strong>Shows the cumulative probability up to a particular value.</strong></p>
+</div>
+</div>
 
-> **Shows probability density across the possible values of a continuous random variable.**
-
-### CDF
-
-> **Shows the cumulative probability up to a particular value.**
-
-The relationship can be summarized as:
-
-$$
-\boxed{
-\text{Histogram}
-\approx
-\text{PDF}
-}
-$$
-
-and:
-
-$$
-\boxed{
-\text{CDF}
-=
-\int \text{PDF}
-}
-$$
-
-while:
-
-$$
-\boxed{
-\text{PDF}
-=
-\frac{d}{dx}\text{CDF}
-}
-$$
+<div class="relationship-banner">
+<strong>Histogram</strong>
+<span class="arrow">≈</span>
+<strong>PDF</strong>
+<span class="arrow">→</span>
+<strong>CDF</strong>
+<span class="arrow">|</span>
+<span>CDF = integral of PDF</span>
+<span class="arrow">|</span>
+<span>PDF = derivative of CDF</span>
+</div>
 
 ### One-line intuition
 
@@ -922,44 +1318,59 @@ $$
 
 ---
 
-# 4.21 ML Perspective
+## 4.21 ML Perspective
 
-These concepts are useful in Machine Learning because they help us understand the **distribution of features** before building models.
+Before building a model, inspect the distribution of each feature. Histograms, PDFs, and CDFs help reveal the shape and behavior of the data before training begins.
 
-For example, if a dataset contains:
+<div class="ml-grid">
+<div class="ml-card">
+<h3>Features to Inspect</h3>
+<p class="panel-kicker">Example numerical variables</p>
+<ul class="feature-chips">
+<li>Age</li>
+<li>Salary</li>
+<li>House price</li>
+<li>Exam score</li>
+<li>Temperature</li>
+</ul>
+</div>
 
-* Age
-* Salary
-* House price
-* Exam score
-* Temperature
+<div class="ml-card diagnostics">
+<h3>Questions to Ask</h3>
+<ul>
+<li>Is the feature skewed?</li>
+<li>Are there outliers?</li>
+<li>Where are values concentrated?</li>
+<li>Would a transformation help?</li>
+<li>Does it resemble a known distribution?</li>
+</ul>
+</div>
+</div>
 
-we can use histograms to inspect their distributions.
+<div class="ml-workflow">
+<strong>Inspect features</strong>
+<span>→</span>
+<strong>Understand distributions</strong>
+<span>→</span>
+<strong>Choose transformations</strong>
+<span>→</span>
+<strong>Build the model</strong>
+</div>
 
-We can then reason about:
-
-* skewness
-* outliers
-* concentration
-* spread
-* multimodality
-* whether transformations may be useful
-* whether a feature approximately follows a known distribution
-
-CDFs are also useful for understanding **percentiles and quantiles**.
-
-For example, if:
+CDFs are especially useful for understanding **percentiles and quantiles**. For example, if:
 
 $$
 F(x)=0.90
 $$
 
-then approximately 90% of the distribution lies at or below \(x\).
+then approximately 90% of the distribution lies at or below $x$.
 
-This provides a direct connection between:
+<div class="percentile-callout">
+<strong>ML interpretation:</strong> The CDF connects probability to percentiles and quantiles. A value where $F(x)=0.90$ is approximately the 90th percentile.
+</div>
 
 $$
 \boxed{\text{CDF}\leftrightarrow\text{Percentiles}\leftrightarrow\text{Quantiles}}
 $$
 
-Understanding Histogram, PDF, and CDF therefore provides an important foundation for later topics such as **probability distributions, normal distribution, z-scores, variance, standard deviation, skewness, percentiles, quantiles, and statistical inference**.
+These ideas provide a foundation for **probability distributions, normal distribution, z-scores, variance, standard deviation, skewness, percentiles, quantiles, and statistical inference**.
