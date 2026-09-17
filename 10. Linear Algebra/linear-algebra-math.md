@@ -99,6 +99,102 @@ hr {
 }
 </style>
 
+# Linear Algebra
+
+> **A geometric and mathematical toolkit for Machine Learning**
+>
+> Linear algebra gives us a language for representing data, measuring relationships, and describing the spaces where ML models operate.
+
+## At a Glance
+
+| Idea       | Intuition                  | ML connection                               |
+| ---------- | -------------------------- | ------------------------------------------- |
+| **Scalar** | One number                 | A single value or parameter                 |
+| **Vector** | An ordered list of values  | One observation or feature embedding        |
+| **Matrix** | A table of values          | A dataset, transformation, or layer weights |
+| **Tensor** | A higher-dimensional array | Images, batches, and deep-learning data     |
+
+### The Core Progression
+
+$$
+\boxed{
+\text{Scalar}
+\rightarrow
+\text{Vector}
+\rightarrow
+\text{Matrix}
+\rightarrow
+\text{Higher-Dimensional Space}
+}
+$$
+
+### How to Read These Notes
+
+1. **Build the objects:** scalars, vectors, matrices, and geometric shapes.
+2. **Learn the operations:** norms, dot products, projections, and distances.
+3. **Connect geometry to ML:** hyperplanes, decision boundaries, and feature spaces.
+4. **Finish with practice:** formula summaries and revision questions.
+
+> **Study tip:** For each formula, ask what it measures geometrically and where it appears in an ML model.
+
+Linear Algebra is one of the fundamental mathematical foundations of **Machine Learning, Deep Learning, Computer Vision, Optimization, and Data Science**.
+
+In Machine Learning, data is frequently represented using:
+
+- **Scalars** → single numbers
+- **Vectors** → lists of numbers
+- **Matrices** → collections of vectors
+- **Tensors** → higher-dimensional arrays
+
+Many ML operations can ultimately be expressed using **vector and matrix operations**.
+
+---
+
+## 10.1 Why Learn Linear Algebra?
+
+Linear Algebra allows us to represent and manipulate data mathematically.
+
+For example, a person's features can be represented as:
+
+$$
+\mathbf{x} =
+\begin{bmatrix}
+\text{age}\\
+\text{height}\\
+\text{weight}\\
+\text{income}
+\end{bmatrix}
+$$
+
+A dataset containing many observations can then be represented as a matrix:
+
+$$
+X =
+\begin{bmatrix}
+x_{11} & x_{12} & x_{13} \\
+x_{21} & x_{22} & x_{23} \\
+\vdots & \vdots & \vdots \\
+x_{n1} & x_{n2} & x_{n3}
+\end{bmatrix}
+$$
+
+Linear Algebra is used throughout ML:
+
+| ML Concept        | Linear Algebra                   |
+| ----------------- | -------------------------------- |
+| Dataset           | Matrix                           |
+| Features          | Vectors / Matrix columns         |
+| Linear Regression | Matrix operations                |
+| Neural Networks   | Matrix multiplication            |
+| PCA               | Eigenvectors / matrices          |
+| Computer Vision   | Image matrices / tensors         |
+| Embeddings        | High-dimensional vectors         |
+| Optimization      | Vector calculus + linear algebra |
+| Similarity        | Dot product / cosine similarity  |
+
+The goal is therefore not simply to memorize formulas, but to understand **how geometric objects and data are represented mathematically**.
+
+
 ## 10.2 Introduction to Vectors (2D, 3D, nD)
 
 **Row Vector and Column Vector**
@@ -1045,26 +1141,87 @@ $$
 | $\sum_{i=1}^n \dfrac{x_i^2}{a_i^2} = 1$ | $P$ **On** the hyperellipsoid |
 | $\sum_{i=1}^n \dfrac{x_i^2}{a_i^2} > 1$ | $P$ **Outside**               |
 
+**Append this content right after the existing section `### 10.9 Square and Rectangle (2D)`** (just before `### 10.10 Hypercube and Hypercuboid (nD)`).
+
+It matches the lecture screenshot and expands the axis-aligned rectangle example with the exact conditions, diagram description, and the hyperplane representation of the boundary lines that appear in the image.
+
+
 ### 10.9 Square and Rectangle (2D)
 
-**Axis-aligned rectangle** (example):
+**Squares / Rectangles (axis-parallel)**
+
+In 2-D an axis-aligned (axis-parallel) rectangle is defined by independent bounds on each coordinate.
+
+**Example from the board**
+
+A point $P(p_1,p_2)$ lies **inside** the rectangle when
+
+$$
+p_1 \le 5 \quad\text{and}\quad p_1 > 2
+$$
+$$
+p_2 > 3 \quad\text{and}\quad p_2 < 4
+$$
+
+i.e.
+
+$$
+2 < p_1 \le 5 \qquad\text{and}\qquad 3 < p_2 < 4.
+$$
+
+**Geometric picture**
 
 ```
           x₂
            ↑
-         9 |  ┌───────┐
-           |  │       │
-         3 |  └───────┘
-           +--2-------5--→ x₁
+         4 |  ┌─────────┐   ← x₂ = 4
+           |  │         │
+           |  │  • P    │
+         3 |  └─────────┘   ← x₂ = 3
+           +--2---------5--→ x₁
+              ↑         ↑
+            x₁=2      x₁=5
 ```
 
-A point $P(p_1, p_2)$ lies **inside** the rectangle if:
+**Boundary lines as hyperplanes**
+
+Each vertical or horizontal side is itself a 1-dimensional hyperplane.
+
+For the left boundary $x_1 = 2$:
 
 $$
-2 < p_1 < 5 \quad \text{and} \quad 3 < p_2 < 9
+\omega_0 + \omega_1 x_1 + \omega_2 x_2 = 0
 $$
 
-(General form: $x_{\min} < x_1 < x_{\max}$ and $y_{\min} < x_2 < y_{\max}$)
+with the concrete coefficients
+
+$$
+\omega_0 = -2,\qquad \omega_1 = 1,\qquad \omega_2 = 0
+\qquad\Rightarrow\qquad
+-2 + 1\cdot x_1 + 0\cdot x_2 = 0
+\qquad\Rightarrow\qquad x_1 = 2.
+$$
+
+The two half-spaces created by this line are simply
+
+$$
+p_1 < 5 \qquad\text{and}\qquad p_1 > 5
+$$
+
+(and likewise for the other three sides).
+
+A point lies inside the rectangle if and only if it satisfies **all four** half-space inequalities at the same time.
+
+**General form (axis-aligned rectangle)**
+
+$$
+x_{\min} < x_1 < x_{\max}
+\qquad\text{and}\qquad
+y_{\min} < x_2 < y_{\max}.
+$$
+
+(The same idea extends immediately to a hyper-rectangle / hypercuboid in $n$ dimensions — see the next section.)
+
 
 ### 10.10 Hypercube and Hypercuboid (nD)
 
