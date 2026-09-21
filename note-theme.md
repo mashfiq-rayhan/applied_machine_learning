@@ -355,3 +355,18 @@ Copy the CSS block below into any note, then add your markdown content underneat
 - For stability, avoid custom CSS outside the shared root variables.
 
 This file is now your shared lecture-note theme base.
+
+
+
+---
+---
+---
+
+# Graph Theme
+Apply this exact visual theme:
+- Pure solid black background (#000000)
+- Full smooth rainbow gradient fill inside the bell curve: deep blue at the far tails → cyan → green → yellow → orange → bright red at the peak
+- All text (percentages, σ or μ±σ labels, and axis numbers) in solid color #4b5563
+- All vertical divider lines in solid color #4b5563
+- Outline of the bell curve itself in solid color #4b5563
+Keep the exact layout, proportions, and all notations exactly as they appear in the original image. Do not change any labels or symbols.
