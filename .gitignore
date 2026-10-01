@@ -1,0 +1,16 @@
+desktop.ini
+02. MySQL/MySQL/
+
+.venv/
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+.env
+
+# Ignore all files inside data directories
+**/data/*
+
+Applied Machine Learning/
+Books/
+Template/
+Docx/
