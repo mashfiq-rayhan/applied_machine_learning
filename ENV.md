@@ -22,3 +22,7 @@ python -m pip install package-name
 ```sh
 python -m pip freeze > requirements.txt
 ```
+
+```sh
+git commit -m ":rocket: Journey to Machine Learning :zap:"
+```
