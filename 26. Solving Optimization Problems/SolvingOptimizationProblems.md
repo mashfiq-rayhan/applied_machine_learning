@@ -894,3 +894,217 @@ $K$ = number of random points that you use at each iteration for updating.
 ![LR](./assets/12.02.jpg)
 
 ## 13. Revision Questions
+
+**Questions**
+
+[1. Explain about Logistic regression?](#1-explain-about-logistic-regression)  
+[2. What is Sigmoid function & Squashing?](#2-what-is-sigmoid-function--squashing)  
+[3. Explain about Optimization problem in logistic regression.](#3-explain-about-optimization-problem-in-logistic-regression)  
+[4. Explain Importance of Weight vector in logistic regression.](#4-explain-importance-of-weight-vector-in-logistic-regression)  
+[5. L2 Regularization: Overfitting and Underfitting.](#5-l2-regularization-overfitting-and-underfitting)  
+[6. L1 regularization and sparsity.](#6-l1-regularization-and-sparsity)  
+[7. What is Probabilistic Interpretation: Gaussian Naive Bayes?](#7-what-is-probabilistic-interpretation-gaussian-naive-bayes)  
+[8. Explain about Hyperparameter search: Grid Search and Random Search?](#8-explain-about-hyperparameter-search-grid-search-and-random-search)  
+[9. What is Column Standardization?](#9-what-is-column-standardization)  
+[10. Explain about Collinearity of features?](#10-explain-about-collinearity-of-features)  
+[11. Find Train & Run time space and time complexity of Logistic regression?](#11-find-train--run-time-space-and-time-complexity-of-logistic-regression)  
+
+### 1. Explain about Logistic regression?
+
+Logistic Regression is a linear classification algorithm that finds a hyperplane to separate classes.
+
+**Geometric view**:
+- Decision surface: $ \pi: w^T x + b = 0 $
+- A point $ x_i $ is correctly classified when $ y_i (w^T x_i) > 0 $ (using labels $ y_i \in \{-1, +1\} $)
+- Goal: Find the best $ w $ and $ b $ that maximize the number of correctly classified points.
+
+**Key properties**:
+- Simple and elegant
+- Outputs probabilities (via sigmoid)
+- Works well when classes are almost linearly separable
+- Can be extended with regularization
+
+It is both a geometric method (hyperplane) and a probabilistic method (sigmoid + log-loss).
+
+### 2. What is Sigmoid function & Squashing?
+
+The **Sigmoid function** (also called logistic function) is:
+
+$ \sigma(z) = \frac{1}{1 + e^{-z}} $
+
+**Properties**:
+- Range is always between 0 and 1
+- S-shaped curve
+- $ \sigma(0) = 0.5 $
+- As $ z \to +\infty $, $ \sigma(z) \to 1 $
+- As $ z \to -\infty $, $ \sigma(z) \to 0 $
+
+**Squashing**:
+- The linear score $ w^T x + b $ can take any real value ($ -\infty $ to $ +\infty $)
+- Sigmoid “squashes” this unbounded value into the range $ (0, 1) $
+- This allows us to interpret the output as a **probability**:
+  $ P(y=1|x) = \sigma(w^T x + b) $
+
+### 3. Explain about Optimization problem in logistic regression.
+
+We want to find the best weight vector $ w $ that correctly classifies as many points as possible.
+
+Using labels $ y_i \in \{-1, +1\} $, a point is correctly classified when:
+
+$ y_i (w^T x_i) > 0 $
+
+**Optimization formulation**:
+
+$ w^* = \arg\max_w \sum_{i=1}^{n} y_i (w^T x_i) $
+
+In practice we minimize the **logistic loss** (negative log-likelihood):
+
+$ L(w) = \sum_{i=1}^{n} \log \big(1 + e^{-y_i (w^T x_i)}\big) $
+
+(with optional regularization term)
+
+This is a convex optimization problem and can be solved using Gradient Descent, SGD, or second-order methods (Newton, LBFGS).
+
+### 4. Explain Importance of Weight vector in logistic regression.
+
+The weight vector $ w $ has dual importance:
+
+1. **Geometric meaning**:
+   - $ w $ is the **normal vector** to the decision hyperplane
+   - Direction of $ w $ points towards the positive class
+   - Magnitude of $ w $ affects the steepness of the sigmoid
+
+2. **Feature importance**:
+   - $ |w_j| $ tells how important feature $ j $ is
+   - Sign of $ w_j $ tells the direction of influence (positive or negative)
+   - After column standardization, the magnitudes become directly comparable
+
+3. **Decision rule**:
+   - $ w^T x + b > 0 \rightarrow $ predict positive class
+   - $ w^T x + b < 0 \rightarrow $ predict negative class
+
+### 5. L2 Regularization: Overfitting and Underfitting.
+
+**L2 Regularization** (Ridge) adds the term $ \lambda \|w\|_2^2 = \lambda \sum w_j^2 $ to the loss:
+
+$ L(w) = \sum \log(1 + e^{-y_i w^T x_i}) + \lambda \|w\|_2^2 $
+
+**Effect**:
+- Penalizes large weights
+- Keeps weights small and distributed across features
+- Controls the bias-variance trade-off
+
+**Overfitting vs Underfitting**:
+- **High $ \lambda $** → strong regularization → high bias, low variance → underfitting
+- **Low $ \lambda $** → weak regularization → low bias, high variance → overfitting
+- Optimal $ \lambda $ is chosen via cross-validation
+
+L2 never makes weights exactly zero; it only shrinks them.
+
+### 6. L1 regularization and sparsity.
+
+**L1 Regularization** (Lasso) adds the term $ \lambda \|w\|_1 = \lambda \sum |w_j| $:
+
+$ L(w) = \sum \log(1 + e^{-y_i w^T x_i}) + \lambda \|w\|_1 $
+
+**Key property – Sparsity**:
+- L1 can drive some weights **exactly to zero**
+- This performs automatic feature selection
+- The resulting model is sparse (uses only a subset of features)
+
+**Comparison with L2**:
+- L1 → sparse solutions (feature selection)
+- L2 → small but non-zero weights (weight shrinkage)
+
+L1 is preferred when we believe only a few features are truly important.
+
+### 7. What is Probabilistic Interpretation: Gaussian Naive Bayes?
+
+Under certain assumptions, Logistic Regression and Gaussian Naive Bayes are closely related.
+
+**Assumptions of Gaussian Naive Bayes**:
+- Features are independent given the class
+- Features follow a Gaussian distribution in each class
+
+When class-conditional densities are Gaussian with the **same covariance matrix**, the posterior probability $ P(y=1|x) $ takes exactly the logistic (sigmoid) form:
+
+$ P(y=1|x) = \sigma(w^T x + b) $
+
+Thus, Logistic Regression can be viewed as the discriminative counterpart of Gaussian Naive Bayes (with shared covariance).
+
+- Generative model → Gaussian NB
+- Discriminative model → Logistic Regression
+
+### 8. Explain about Hyperparameter search: Grid Search and Random Search?
+
+Hyperparameters in Logistic Regression mainly include:
+- Regularization strength $ \lambda $ (or $ C = 1/\lambda $)
+- Type of regularization (L1 / L2)
+- Solver, etc.
+
+**Grid Search**:
+- Tries every possible combination from a predefined set of values
+- Exhaustive but computationally expensive
+- Guarantees finding the best combination within the grid
+
+**Random Search**:
+- Randomly samples hyperparameter combinations
+- More efficient when only a few hyperparameters matter
+- Often finds good solutions faster than Grid Search
+- Better for high-dimensional hyperparameter spaces
+
+Both are usually combined with cross-validation.
+
+### 9. What is Column Standardization?
+
+**Column Standardization** (Z-score normalization) transforms each feature:
+
+$ x_j' = \frac{x_j - \mu_j}{\sigma_j} $
+
+After this:
+- Every feature has mean = 0 and standard deviation = 1
+
+**Why it is important for Logistic Regression**:
+- Features are brought to the same scale
+- Weight magnitudes become comparable (feature importance)
+- Helps optimization algorithms converge faster
+- Regularization works properly (otherwise features with large scale dominate)
+
+Always fit the mean and std only on the training data.
+
+### 10. Explain about Collinearity of features?
+
+**Collinearity** (or multicollinearity) occurs when two or more features are highly linearly correlated.
+
+**Problems it causes in Logistic Regression**:
+- Weights become unstable and hard to interpret
+- Small changes in data can cause large changes in $ w $
+- Feature importance becomes unreliable
+- Optimization can become numerically unstable
+
+**How to detect**:
+- Correlation matrix
+- Variance Inflation Factor (VIF)
+
+**How to handle**:
+- Remove one of the correlated features
+- Use L1 / L2 regularization
+- Apply PCA or other dimensionality reduction
+- Collect more data if possible
+
+### 11. Find Train & Run time space and time complexity of Logistic regression?
+
+**Training Time Complexity**:
+- Using Gradient Descent / SGD: roughly $ O(n \cdot d \cdot k) $
+  - $ n $ = number of training points
+  - $ d $ = number of features
+  - $ k $ = number of iterations
+
+**Run-time (Prediction) Time Complexity**:
+- $ O(d) $ per test point (just compute $ w^T x + b $ and apply sigmoid)
+
+**Space Complexity**:
+- $ O(d) $ to store the weight vector $ w $ and bias $ b $
+- During training, additional space may be needed for gradients and data
+
+Logistic Regression is very efficient at prediction time compared to many other algorithms (e.g., k-NN, kernel methods).
