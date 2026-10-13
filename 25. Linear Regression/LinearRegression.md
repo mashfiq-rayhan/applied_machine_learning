@@ -492,8 +492,9 @@ $$
 
 ## 03. Need for Regularization in Linear Regression
 
-![LR](./assets/03.01.jpg)
-![LR](./assets/03.02.jpg)
+![LR](./assets/03.01.jpg)  
+![LR](./assets/03.03.jpg)  
+![LR](./assets/03.02.jpg)  
 
 > **Why use Regularization in Linear Regression?**
 

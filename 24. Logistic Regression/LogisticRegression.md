@@ -350,7 +350,7 @@
 ## 01. Geometric Intuition of Logistic Regression
 
 ![LR](./assets/01.01.jpg)  
-![LR](./assets/01.02.jpg)
+![LR](./assets/01.02.jpg)  
 
 > **Logistic Regression (Geometric Intuition)**
 
@@ -489,6 +489,7 @@ Logistic Regression finds a hyperplane that best separates the two classes in a 
 ## 02. Sigmoid Function: Squashing
 
 ![LR](./assets/02.01.jpg)  
+![LR](./assets/02.03.jpg)  
 ![LR](./assets/02.02.jpg)
 
 > **Squashing & Sigmoid Function**
@@ -753,6 +754,7 @@ Because $\log$ is monotonically increasing, taking the log (and then flipping th
 ## 04. Weight Vector
 
 ![LR](./assets/04.01.jpg)  
+![LR](./assets/04.03.jpg)  
 ![LR](./assets/04.02.jpg)
 
 **Weight-Vector**
@@ -815,6 +817,7 @@ $$
 ## 05. L2 Regularization: Overfitting and Underfitting
 
 ![LR](./assets/05.01.jpg)  
+![LR](./assets/05.03.jpg)  
 ![LR](./assets/05.02.jpg)
 
 > **L2 Regularization: Overfitting vs Underfitting**
@@ -1056,6 +1059,7 @@ Thus both formulations are equivalent.
 ## 08. Loss Minimization Interpretation
 
 ![LR](./assets/08.01.jpg)  
+![LR](./assets/08.03.jpg)  
 ![LR](./assets/08.02.jpg)
 
 > **Loss Minimization Interpretation of LR**
@@ -1512,7 +1516,8 @@ We can control this trade-off using the regularization hyper-parameter $\lambda$
 
 ## 15. Logistic Regression with Imbalanced Data - A Geometric View
 
-![LR](./assets/15.01.jpg)
+![LR](./assets/15.01.jpg)  
+![LR](./assets/15.03.jpg)  
 ![LR](./assets/15.02.jpg)
 
 > **`How does imbalanced data impact Logistic Regression? (Geometric Explanation)`**
@@ -1691,7 +1696,7 @@ Amazon reviews dataset → BoW, tf-idf, Word2Vec are all forms of feature engine
 ## 19. Extensions to Generalized Linear Models
 
 Refer to Part III 
-> ### [`Generalized Linear Models.pdf`](./assets/cs229-notes1.pdf)
+> ### [`Generalized Linear Models.pdf`](./cs229-notes1.pdf)
 
 ![LR](./assets/19.01.jpg)  
 ![LR](./assets/19.02.jpg)

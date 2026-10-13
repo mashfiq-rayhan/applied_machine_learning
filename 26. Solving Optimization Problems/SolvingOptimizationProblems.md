@@ -339,11 +339,11 @@
 
 ## 01. Differentiation
 
-![LR](./assets/01.01.jpg)
+![LR](./assets/01.01.jpg)   
 
 ![LR](./assets/01.02.jpg)
 
-**Solving Optimization Problems: Differentiation**
+> **Solving Optimization Problems: Differentiation**
 
 Many core ML algorithms are optimization problems:
 
@@ -661,15 +661,15 @@ As we move closer to $x^*$, the **slope reduces**.
 2. Update:
 
 $$
-x_1 = x_0 - \gamma \left.\frac{df}{dx}\right|_{x_0}
+x_1 = x_0 - r \left.\frac{df}{dx}\right|_{x_0}
 $$
 
-where $\gamma$ is the **step-size** (learning rate).
+where $r$ is the **step-size** (learning rate).
 
 **Case when slope is positive** (point is to the right of the minimum):
 
 $$
-x_1 = x_0 - \gamma \cdot (+ve) \quad \Rightarrow \quad x_1 < x_0
+x_1 = x_0 - r \cdot (+ve) \quad \Rightarrow \quad x_1 < x_0
 $$
 
 → we move left, closer to $x^*$.
@@ -677,7 +677,7 @@ $$
 **Case when slope is negative** (point is to the left of the minimum):
 
 $$
-x_1 = x_0 - \gamma \cdot (-ve) \quad \Rightarrow \quad x_1 > x_0
+x_1 = x_0 - r \cdot (-ve) \quad \Rightarrow \quad x_1 > x_0
 $$
 
 → we move right, closer to $x^*$.
@@ -685,7 +685,7 @@ $$
 3. General iterative update:
 
 $$
-x_{i+1} = x_i - \gamma \left.\frac{df}{dx}\right|_{x_i}
+x_{i+1} = x_i - r \left.\frac{df}{dx}\right|_{x_i}
 $$
 
 (or in vector form using the gradient $\nabla_{\mathbf{x}} f$)
@@ -710,19 +710,19 @@ $$
 
 ![LR](./assets/06.02.jpg)
 
-> **Learning Rate (or) Step-size ($\gamma$)**
+> **Learning Rate (or) Step-size ( $ r $ )**
 
 In the Gradient Descent update equation:
 
 $$
-x_i = x_{i-1} - \gamma \left.\frac{df}{dx}\right|_{x_{i-1}}
+x_i = x_{i-1} - r \left.\frac{df}{dx}\right|_{x_{i-1}}
 $$
 
-$\gamma$ is a **constant** called the learning rate (or step-size).
+$ r $ is a **constant** called the learning rate (or step-size).
 
-In Deep Learning we choose $\gamma$ more carefully / effectively.
+In Deep Learning we choose $ r $ more carefully / effectively.
 
-### Problem of Oscillation (when $\gamma$ is too large)
+### Problem of Oscillation (when $ r $ is too large)
 
 Take the simple function $f(x) = x^2$.
 
@@ -730,7 +730,7 @@ $$
 \frac{df}{dx} = 2x
 $$
 
-Let $\gamma = 1$ and start at $x_i = 0.5$:
+Let $r = 1$ and start at $x_i = 0.5$:
 
 $$
 \begin{align*}
@@ -744,17 +744,17 @@ We simply jumped over the minimum.
 
 ### Remedy for Oscillation
 
-**Change $\gamma$ with each iteration.**
+**Change $ r $ with each iteration.**
 
-One common technique: **reduce $\gamma$ with each iteration**.
+One common technique: **reduce $ r $ with each iteration**.
 
 $$
-\gamma = h(i)
+r = h(i)
 $$
 
 where $i$ is the iteration number.
 
-As the iteration number increases ($i \uparrow$), the learning rate decreases ($\gamma \downarrow$).
+As the iteration number increases ($i \uparrow$), the learning rate decreases ($r \downarrow$).
 
 ## 07. Gradient Descent for Linear Regression
 
@@ -787,13 +787,13 @@ $$
 2. Update:
 
 $$
-\mathbf{w}_1 = \mathbf{w}_0 - \gamma \sum_{i=1}^{n} (-2\mathbf{x}_i)\big(y_i - \mathbf{w}_0^\top \mathbf{x}_i\big)
+\mathbf{w}_1 = \mathbf{w}_0 - r \sum_{i=1}^{n} (-2\mathbf{x}_i)\big(y_i - \mathbf{w}_0^\top \mathbf{x}_i\big)
 $$
 
 3. Next iteration:
 
 $$
-\mathbf{w}_2 = \mathbf{w}_1 - \gamma \sum_{i=1}^{n} (-2\mathbf{x}_i)\big(y_i - \mathbf{w}_1^\top \mathbf{x}_i\big)
+\mathbf{w}_2 = \mathbf{w}_1 - r \sum_{i=1}^{n} (-2\mathbf{x}_i)\big(y_i - \mathbf{w}_1^\top \mathbf{x}_i\big)
 $$
 
 Continue:
@@ -811,7 +811,7 @@ $$
 ### General Update Rule
 
 $$
-\mathbf{w}_j = \mathbf{w}_{j-1} - \gamma \sum_{i=1}^{n} (-2\mathbf{x}_i)\big(y_i - \mathbf{w}_{j-1}^\top \mathbf{x}_i\big)
+\mathbf{w}_j = \mathbf{w}_{j-1} - r \sum_{i=1}^{n} (-2\mathbf{x}_i)\big(y_i - \mathbf{w}_{j-1}^\top \mathbf{x}_i\big)
 $$
 
 ### Problem with Batch Gradient Descent
@@ -835,7 +835,7 @@ SGD is the **most important optimization algorithm** in Machine Learning.
 For Linear Regression the full (batch) update is:
 
 $$
-\mathbf{w}_{j+1} = \mathbf{w}_j - \gamma \sum_{i=1}^{n} (-2\mathbf{x}_i)\big(y_i - \mathbf{w}_j^\top \mathbf{x}_i\big)
+\mathbf{w}_{j+1} = \mathbf{w}_j - r \sum_{i=1}^{n} (-2\mathbf{x}_i)\big(y_i - \mathbf{w}_j^\top \mathbf{x}_i\big)
 $$
 
 When $n$ is large (e.g. $n = 1$ million), computing the full sum at every iteration takes a lot of time.
@@ -845,7 +845,7 @@ When $n$ is large (e.g. $n = 1$ million), computing the full sum at every iterat
 Instead of using all $n$ points, we use only a small random subset of $K$ points:
 
 $$
-\mathbf{w}_{j+1} = \mathbf{w}_j - \gamma \sum_{i=1}^{K} (-2\mathbf{x}_i)\big(y_i - \mathbf{w}_j^\top \mathbf{x}_i\big)
+\mathbf{w}_{j+1} = \mathbf{w}_j - r \sum_{i=1}^{K} (-2\mathbf{x}_i)\big(y_i - \mathbf{w}_j^\top \mathbf{x}_i\big)
 $$
 
 where $1 \leq K \leq n$ and we pick a **random set of $K$ points** at each iteration.
@@ -875,11 +875,172 @@ $K$ = number of random points that you use at each iteration for updating.
 
 ![LR](./assets/09.02.jpg)
 
+>**Constrained Optimization**
+
+We often solve problems of the form:
+
+$$
+\max_{\mathbf{x}} f(\mathbf{x})
+\quad\text{or}\quad
+\min_{\mathbf{x}} f(\mathbf{x})
+$$
+
+subject to constraints.
+
+### Example: PCA
+
+$$
+\max_{\mathbf{u}} \frac{1}{n}\sum_{i=1}^{n}(\mathbf{u}^\top\mathbf{x}_i)^2
+\quad\text{subject to}\quad
+\mathbf{u}^\top\mathbf{u}=1
+$$
+
+- Objective function: $\dfrac{1}{n}\sum_{i=1}^{n}(\mathbf{u}^\top\mathbf{x}_i)^2$
+- Constraint: $\mathbf{u}^\top\mathbf{u}=1$
+
+### General Constrained Optimization
+
+$$
+\begin{align*}
+\max_{\mathbf{x}} &\quad f(\mathbf{x}) \\
+\text{s.t.} &\quad g(\mathbf{x})=c \qquad\text{(equality constraint)} \\
+&\quad h(\mathbf{x})\ge d \qquad\text{(inequality constraint)}
+\end{align*}
+$$
+
+Note that any inequality of the form $k(\mathbf{x})\le e$ can be rewritten as $-k(\mathbf{x})\ge -e$.
+
+### Lagrangian Multipliers
+
+The Lagrangian is formed as:
+
+$$
+\mathcal{L}(\mathbf{x},\lambda,\mu)
+= f(\mathbf{x})
+- \lambda\big(g(\mathbf{x})-c\big)
+- \mu\big(d-h(\mathbf{x})\big)
+$$
+
+where $\lambda$ and $\mu$ are the **Lagrangian multipliers** ($\lambda\ge 0$, $\mu\ge 0$).
+
+We solve the system:
+
+$$
+\frac{\partial\mathcal{L}}{\partial\mathbf{x}}=0,\quad
+\frac{\partial\mathcal{L}}{\partial\lambda}=0,\quad
+\frac{\partial\mathcal{L}}{\partial\mu}=0
+$$
+
+This gives the optimal $\tilde{\mathbf{x}}$, $\tilde{\lambda}$, $\tilde{\mu}$.
+
+### Applying Lagrangian to PCA
+
+The PCA problem can be rewritten using the covariance matrix:
+
+$$
+S = \operatorname{Cov}(X) = \frac{1}{n}X^\top X
+$$
+
+as
+
+$$
+\max_{\mathbf{u}}\ \mathbf{u}^\top S\mathbf{u}
+\quad\text{subject to}\quad
+\mathbf{u}^\top\mathbf{u}=1
+$$
+
+Lagrangian:
+
+$$
+\mathcal{L}(\mathbf{u},\lambda)
+= \mathbf{u}^\top S\mathbf{u}
+- \lambda(\mathbf{u}^\top\mathbf{u}-1)
+$$
+
+Take derivative w.r.t. $\mathbf{u}$ and set to zero:
+
+$$
+\frac{\partial\mathcal{L}}{\partial\mathbf{u}}=0
+\quad\Rightarrow\quad
+S\mathbf{u}-\lambda\mathbf{u}=0
+\quad\Rightarrow\quad
+S\mathbf{u}=\lambda\mathbf{u}
+$$
+
+### Eigenvalue Interpretation
+
+$$
+S\mathbf{u}=\lambda\mathbf{u}
+$$
+
+is the definition of eigenvalue and eigenvector:
+
+- $\mathbf{u}$ is an **eigenvector** of the covariance matrix $S$
+- $\lambda$ is the corresponding **eigenvalue** of $S$
+
+### Conclusion for PCA
+
+The optimization problem of PCA reduces to finding the eigenvalues and eigenvectors of the covariance matrix $S$.
+
 ## 10. Logistic Regression Formulation Revisited
 
 ![LR](./assets/10.01.jpg)
 
 ![LR](./assets/10.02.jpg)
+
+> **Logistic Regression Revisited (Constrained Optimization View)**
+
+The usual regularized form is:
+
+$$
+\mathbf{w}^* = \arg\min_{\mathbf{w}} \big(\text{logistic-loss}\big) + \lambda\,\mathbf{w}^\top\mathbf{w}
+$$
+
+The term $\lambda\,\mathbf{w}^\top\mathbf{w}$ is regularization.
+
+### Constrained Optimization Formulation
+
+We can rewrite the same problem as a constrained optimization problem:
+
+$$
+\begin{align*}
+\mathbf{w}^* &= \arg\min_{\mathbf{w}} \big(\text{logistic-loss}\big) \\
+\text{subject to} &\quad \mathbf{w}^\top\mathbf{w} = 1
+\end{align*}
+$$
+
+(Here $\mathbf{w}^\top\mathbf{w}=1$ is an equality constraint. The hyperplane is still $\mathbf{w}^\top\mathbf{x}=\pi$.)
+
+### Lagrangian
+
+Form the Lagrangian:
+
+$$
+\mathcal{L}
+= \text{logistic-loss}
+- \lambda\big(1 - \mathbf{w}^\top\mathbf{w}\big)
+$$
+
+which is equivalent to
+
+$$
+\mathcal{L}
+= \text{logistic-loss}
++ \lambda\,\mathbf{w}^\top\mathbf{w}
+$$
+
+(up to a constant sign flip that does not change the location of the optimum).
+
+### Key Insight
+
+**Regularization can be thought of as imposing an equality constraint.**
+
+This is an alternative (and very useful) interpretation of regularization:
+
+- One interpretation → add a penalty term $\lambda\|\mathbf{w}\|^2$
+- Alternative interpretation → enforce the constraint $\mathbf{w}^\top\mathbf{w}=1$ via Lagrange multipliers
+
+Both views lead to the same optimal solution.
 
 ## 11. Why L1 Regularization Creates Sparsity
 
@@ -887,11 +1048,171 @@ $K$ = number of random points that you use at each iteration for updating.
 
 ![LR](./assets/11.02.jpg)
 
+> **Why does L1-regularization create Sparsity?**
+
+In Logistic Regression, **L1-regularization creates sparsity in $\mathbf{w}$** (more of the $w_i$’s become exactly zero) as compared to L2-regularization.
+
+$$
+\mathbf{w} = \langle w_1, w_2, \dots, w_d \rangle
+$$
+
+### Comparison of Objectives
+
+**L2-regularization**
+
+$$
+\min_{\mathbf{w}} \text{loss} + \lambda \|\mathbf{w}\|_2^2
+= \min_{w_1,\dots,w_d} \big(w_1^2 + w_2^2 + \dots + w_d^2\big)
+$$
+
+For a single weight:
+
+$$
+\min_{w_1} w_1^2 = L_2(w_1)
+$$
+
+**L1-regularization**
+
+$$
+\min_{\mathbf{w}} \text{loss} + \lambda \|\mathbf{w}\|_1
+= \min_{w_1,\dots,w_d} \big(|w_1| + |w_2| + \dots + |w_d|\big)
+$$
+
+For a single weight:
+
+$$
+\min_{w_1} |w_1| = L_1(w_1)
+$$
+
+### Geometry & Gradient
+
+**L2** ($L_2(w_1)=w_1^2$)
+
+- Smooth parabola
+- Gradient (slope): $\dfrac{\partial L_2}{\partial w_1} = 2w_1$
+- Gradient becomes very small when $w_1$ is already small → updates become tiny
+
+**L1** ($L_1(w_1)=|w_1|$)
+
+$$
+|w_1| =
+\begin{cases}
+w_1 & \text{if } w_1 > 0 \\
+-w_1 & \text{if } w_1 \le 0
+\end{cases}
+$$
+
+Gradient:
+
+$$
+\frac{\partial L_1}{\partial w_1} =
+\begin{cases}
++1 & \text{if } w_1 > 0 \\
+-1 & \text{if } w_1 < 0
+\end{cases}
+$$
+
+(The gradient is constant in magnitude and does **not** shrink when $w_1$ becomes small.)
+
+### Gradient Descent Updates (example)
+
+Assume learning rate $r = 0.01$ and current weight $w_1 = 0.05$ (small positive).
+
+**L2 update**
+
+$$
+(w_1)_{j+1}
+= (w_1)_j - r \cdot (2\cdot w_1)
+= 0.05 - 0.01\cdot(2\cdot 0.05)
+= 0.05 - 0.001
+= 0.049
+$$
+
+The weight only decreases by a very small amount.
+
+**L1 update**
+
+$$
+(w_1)_{j+1}
+= (w_1)_j - r \cdot (+1)
+= 0.05 - 0.01
+= 0.04
+$$
+
+The weight decreases by a constant step size.
+
+### Why Sparsity Appears
+
+- **L2-regularization** does **not** change the value of a small $w_1$ much from one iteration to the next → less chance that $w_1$ reaches exactly zero by the end of training.
+- **L1-regularization** continues to constantly reduce $w_1$ towards zero ($w_1^*\to 0$) → much higher chance that many weights become exactly zero after a finite number of iterations.
+
+This is the geometric and algorithmic reason why L1-regularization produces sparse solutions.
+
 ## 12. Assignment 6: Implement SGD for Linear Regression
 
 ![LR](./assets/12.01.jpg)
 
 ![LR](./assets/12.02.jpg)
+
+> **Example: Implement SGD for Linear Regression**
+
+Linear Regression code sample (Boston home price dataset).
+
+- In sklearn we have `LinearRegression()`
+- Task: **Implement SGD for Linear Regression** yourself.
+
+### Objective
+
+$$
+\min_{\mathbf{w},b}\ \sum_{i=1}^{n}\big(y_i - \mathbf{w}^\top\mathbf{x}_i - b\big)^2
+= \mathcal{L}(\mathbf{w},b)
+$$
+
+### Gradients
+
+Full-batch gradients:
+
+$$
+\frac{\partial\mathcal{L}}{\partial\mathbf{w}}
+= \sum_{i=1}^{n}(-2\mathbf{x}_i)\big(y_i - \mathbf{w}^\top\mathbf{x}_i - b\big)
+\quad\rightarrow\quad\text{GD}
+$$
+
+$$
+\frac{\partial\mathcal{L}}{\partial b}
+= \sum_{i=1}^{n}(-2)\big(y_i - \mathbf{w}^\top\mathbf{x}_i - b\big)
+\quad\rightarrow\quad\text{GD}
+$$
+
+For **SGD** we replace the full sum by a sum over a random batch of $K$ points ($K\ll n$).
+
+### Iterative Algorithm (SGD)
+
+$$
+\begin{align*}
+\mathbf{w}_{j+1}
+&= \mathbf{w}_j - r \left.\frac{\partial\mathcal{L}}{\partial\mathbf{w}}\right|_{\mathbf{w}_j} \\[6pt]
+b_{j+1}
+&= b_j - r \left.\frac{\partial\mathcal{L}}{\partial b}\right|_{b_j}
+\end{align*}
+$$
+
+- Run for a fixed number of iterations (e.g. 100 iterations)
+- After $k$ iterations we have $\mathbf{w}_k\approx\mathbf{w}_{k+1}$ and $b_k\approx b_{k+1}$
+- Declare $\mathbf{w}^*\approx\mathbf{w}_k$, $b^*\approx b_k$
+
+### Learning-rate schedule
+
+Reduce $ r $ with each iteration:
+
+$$
+\begin{align*}
+\text{iter } 0 &\rightarrow r = 1 \\
+\text{iter } 1 &\rightarrow r = r/2 \\
+\text{iter } 2 &\rightarrow r = r/2 \\
+&\vdots
+\end{align*}
+$$
 
 ## 13. Revision Questions
 

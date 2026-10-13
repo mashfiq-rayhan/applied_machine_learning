@@ -26,3 +26,12 @@ python -m pip freeze > requirements.txt
 ```sh
 git commit -m ":rocket: Journey to Machine Learning :zap:"
 ```
+
+
+Image resizing
+
+```sh
+source ../../.venv/Scripts/activate
+
+python resize.py
+```
