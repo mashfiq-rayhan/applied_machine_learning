@@ -1,0 +1,1039 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Data Processing | Applied Machine Learning</title>
+<link rel="stylesheet" href="../HTMLs/theme.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
+<script>
+window.MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']],
+    displayMath: [['$$', '$$'], ['\\[', '\\]']],
+    processEscapes: true,
+    processEnvironments: true
+  },
+  options: {
+    skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+  }
+};
+</script>
+<script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-svg.js"></script>
+</head>
+<body class="site-page">
+<div class="site-layout"><nav class="curriculum-nav" aria-label="Main curriculum navigation"><iframe src="../HTMLs/table-of-contents.html" title="Machine learning curriculum"></iframe></nav><div class="note-layout"><main class="note-content"><h1>Data Processing</h1><style>
+  @import url("https://fonts.googleapis.com/css2?family=Play:wght@400;700&display=swap");
+  @import url("https://cdnjs.cloudflare.com/ajax/libs/latin-modern/1.1.0/css/latinmodern-math.min.css");
+
+  :root {
+    --la-ink: #3f6386;
+    --la-teal: #3f6386;
+    --la-teal-soft: #e8f6f7;
+    --la-coral: #9333ea;
+    --la-coral-soft: #fff1ed;
+    --la-cdf: #17283a;
+    --la-line: #5b5c5c;
+    --la-surface: #f7faf9;
+    --la-text: #c9c9c9;
+    --la-panel: #00070e;
+    --la-chip: #17283a;
+    --la-amber: #9a6b16;
+    --la-amber-soft: #fff8e6;
+  }
+
+  *,
+  *::before,
+  *::after {
+    font-family: "Play", sans-serif !important;
+  }
+
+  pre,
+  pre code {
+    font-family: Consolas, "Courier New", monospace !important;
+  }
+
+  body,
+  .markdown-body,
+  p,
+  li {
+    color: var(--la-text) !important;
+  }
+
+  h1 {
+    color: var(--la-ink);
+    border-bottom: 4px solid var(--la-teal);
+    padding-bottom: 0.35em;
+  }
+
+  h2 {
+    color: var(--la-teal);
+    border-left: 6px solid var(--la-teal);
+    padding-left: 0.55em;
+    margin-top: 2em;
+  }
+
+  h3,
+  h4 {
+    color: var(--la-coral);
+  }
+
+  a {
+    color: var(--la-coral);
+    text-decoration: none;
+  }
+
+  a:hover {
+    text-decoration: underline;
+  }
+
+  blockquote {
+    background: var(--la-panel);
+    border-left: 5px solid var(--la-cdf) !important;
+    border-radius: 6px;
+    color: var(--la-text);
+    padding: 0.75em 1em;
+  }
+
+  code {
+    background: var(--la-chip);
+    border-radius: 4px;
+    color: var(--la-text);
+    padding: 0.1em 0.3em;
+  }
+
+  pre {
+    background: var(--la-panel);
+    border: 1px solid var(--la-line);
+    border-radius: 8px;
+    overflow-x: auto;
+    padding: 1em;
+  }
+
+  table {
+    border: 1px solid var(--la-line);
+    border-collapse: collapse;
+    border-radius: 8px;
+    overflow: hidden;
+    width: 100%;
+  }
+
+  th {
+    background: var(--la-panel);
+    color: var(--la-text);
+    padding: 0.7em 0.8em;
+    text-align: left;
+  }
+
+  td {
+    color: var(--la-text);
+    padding: 0.7em 0.8em;
+  }
+
+  tr:nth-child(even) {
+    background: var(--la-chip);
+  }
+
+  hr {
+    border: 0;
+    border-top: 2px solid var(--la-line);
+    margin: 2.2em 0;
+  }
+
+  .summary-grid,
+  .ml-grid,
+  .intuition-grid {
+    display: flex;
+    gap: 1em;
+    margin: 1.25em 0;
+  }
+
+  .summary-card,
+  .ml-card,
+  .intuition-card {
+    background: var(--la-panel);
+    border-radius: 7px;
+    color: var(--la-text);
+    flex: 1 1 0;
+    min-width: 0;
+    padding: 1em;
+  }
+
+  .summary-card {
+    border-top: 5px solid var(--la-teal);
+  }
+
+  .summary-card.pdf,
+  .ml-card.diagnostics,
+  .intuition-card.pdf {
+    border-top-color: var(--la-coral);
+  }
+
+  .summary-card.cdf,
+  .intuition-card.cdf {
+    border-top-color: var(--la-cdf);
+  }
+
+  .summary-card h3,
+  .ml-card h3,
+  .intuition-card h3 {
+    margin-top: 0;
+  }
+
+  .summary-tag,
+  .panel-kicker {
+    color: var(--la-teal);
+    font-size: 0.82em;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .relationship-banner,
+  .ml-workflow {
+    align-items: center;
+    background: var(--la-panel);
+    border: 1px solid var(--la-teal);
+    border-radius: 7px;
+    color: var(--la-text);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6em;
+    justify-content: center;
+    margin: 1.25em 0;
+    padding: 0.85em 1em;
+    text-align: center;
+  }
+
+  .relationship-banner strong,
+  .ml-workflow strong,
+  .relationship-item strong,
+  .insight-item strong {
+    color: var(--la-coral);
+  }
+
+  .relationship-banner .arrow {
+    color: var(--la-teal);
+    font-size: 1.2em;
+  }
+
+  .relationship-item,
+  .insight-item {
+    background: var(--la-panel);
+    border-left: 5px solid var(--la-teal);
+    border-radius: 5px;
+    color: var(--la-text);
+    margin: 0.65em 0;
+    padding: 0.55em 0.85em;
+  }
+
+  .insight-item {
+    border-left-color: var(--la-coral);
+  }
+
+  .insight-list,
+  .feature-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.55em;
+    list-style: none;
+    margin: 0.5em 0 1em;
+    padding: 0;
+  }
+
+  .insight-list li,
+  .feature-chips li {
+    background: var(--la-chip);
+    border: 1px solid var(--la-teal);
+    border-radius: 999px;
+    color: var(--la-text);
+    padding: 0.35em 0.75em;
+  }
+
+  .feature-chips li {
+    border-radius: 4px;
+    border-left: 3px solid var(--la-coral);
+    border-right: none;
+    border-top: none;
+    border-bottom: none;
+    flex: 1 1 calc(50% - 0.45em);
+  }
+
+  .concept-flow {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    margin: 1.25em 0;
+  }
+
+  .concept-flow .flow-step {
+    background: var(--la-panel);
+    border: 1px solid var(--la-teal);
+    border-radius: 7px;
+    color: var(--la-text);
+    max-width: 22em;
+    padding: 0.7em 1.2em;
+    text-align: center;
+    width: 100%;
+  }
+
+  .concept-flow .flow-step strong {
+    color: var(--la-coral);
+  }
+
+  .concept-flow .flow-arrow {
+    color: var(--la-teal);
+    font-size: 1.35em;
+    line-height: 1.25;
+  }
+
+  .percentile-callout {
+    background: var(--la-panel);
+    border-left: 5px solid var(--la-cdf);
+    border-radius: 7px;
+    color: var(--la-text);
+    margin: 1.25em 0;
+    padding: 1em;
+  }
+
+  .percentile-callout strong {
+    color: var(--la-cdf);
+  }
+
+  .katex-display,
+  .math,
+  .math-block {
+    background: #00070e;
+    border-left: 6px solid #2f005c;
+    border-radius: 6px;
+    padding: 0.6em 0.8em;
+    overflow-x: auto;
+    color: #c9c9c9 !important;
+    font-family: "Latin Modern Math", "Cambria Math", "STIX Two Math", serif !important;
+  }
+
+  .katex,
+  .katex * {
+    color: #9b9a9a !important;
+    font-family: "Latin Modern Math", "Cambria Math", "STIX Two Math", serif !important;
+  }
+
+  @media (max-width: 700px) {
+    .summary-grid,
+    .ml-grid,
+    .intuition-grid {
+      flex-direction: column;
+    }
+  }
+</style>
+
+<h2 id="01-dataset-overview-amazon-fine-food-reviews-eda">01. Dataset Overview Amazon Fine Food Reviews (EDA)</h2>
+<h2 id="02-data-cleaning-deduplication">02. Data Cleaning Deduplication</h2>
+<h2 id="03-why-convert-text-to-a-vector">03. Why Convert Text to a Vector</h2>
+<p><img src="./assets/03.jpg" alt="TV" /></p>
+<blockquote>
+<h3 id="text-to-vector">Text to Vector</h3>
+</blockquote>
+<h3 id="why-do-we-need-text-to-vector">Why do we need Text to Vector?</h3>
+<p>Machine Learning models (including Logistic Regression, etc.) work with <strong>numerical vectors</strong>, not with raw text.</p>
+<p>We need a way to convert English text (words and sentences) into <strong>d-dimensional numerical vectors</strong>.</p>
+<p>$$
+\text{Review text} \quad \longrightarrow \quad d\text{-dimensional vector}
+$$</p>
+<h3 id="geometric-meaning">Geometric Meaning</h3>
+<p>Once we convert text into vectors, we can use ideas from Linear Algebra:</p>
+<ul>
+<li>Points in $d$-dimensional space</li>
+<li>Planes / hyperplanes to separate classes (e.g. positive vs negative reviews)</li>
+<li>Distance and similarity between vectors</li>
+</ul>
+<p><strong>Example (Sentiment Classification):</strong></p>
+<ul>
+<li>Positive reviews and negative reviews become two groups of points in $d$-dimensional space</li>
+<li>We try to find a hyperplane (defined by a weight vector $w$) that separates them</li>
+</ul>
+<p>Decision rule:</p>
+<p>$$
+\begin{cases}
+w^T x_i &gt; 0 &amp; \Rightarrow \text{positive review} \
+w^T x_i &lt; 0 &amp; \Rightarrow \text{negative review}
+\end{cases}
+$$</p>
+<h3 id="important-requirement">Important Requirement</h3>
+<p>If two texts are <strong>semantically similar</strong>, then their corresponding vectors should be <strong>geometrically close</strong>.</p>
+<p>$$
+\text{If } \text{EngSim}(r_1, r_2) &gt; \text{EngSim}(r_1, r_3)
+$$</p>
+<p>then</p>
+<p>$$
+\text{dist}(v_1, v_2) &lt; \text{dist}(v_1, v_3)
+$$</p>
+<h3 id="common-techniques-to-convert-text--vector">Common Techniques to Convert Text → Vector</h3>
+<ul>
+<li>Bag of Words (BoW)</li>
+<li>TF-IDF</li>
+<li>Word2Vec (W2V)</li>
+<li>Average Word2Vec</li>
+<li>TF-IDF weighted Word2Vec</li>
+</ul>
+<p>These methods try to create vector representations such that similar texts end up close to each other in the vector space.</p>
+<h2 id="04-bag-of-words-bow">04. Bag of Words (BoW)</h2>
+<p><img src="./assets/04.jpg" alt="TV" /></p>
+<p>Bag of Words is one of the simplest methods to convert text into numerical vectors.</p>
+<h3 id="step-1-create-the-dictionary-vocabulary">Step 1: Create the Dictionary (Vocabulary)</h3>
+<p>Collect all unique words from the entire corpus (all reviews).</p>
+<p>Example corpus:</p>
+<ul>
+<li>$r_1$: This pasta is very tasty and affordable</li>
+<li>$r_2$: This pasta is not tasty and is affordable</li>
+<li>$r_3$: This pasta is delicious and cheap</li>
+<li>$r_4$: Pasta is tasty and pasta tastes good</li>
+</ul>
+<p><strong>Dictionary</strong> = set of all unique words<br />
+$$
+{\text{this, pasta, is, very, tasty, and, affordable, not, delicious, cheap, tastes, good, ...}}
+$$</p>
+<p>Let the number of unique words be $d$.<br />
+Each review will be converted into a $d$-dimensional vector.</p>
+<h3 id="step-2-convert-each-review-into-a-vector">Step 2: Convert each review into a vector</h3>
+<p>For a review $r_i$, the corresponding vector $v_i$ is created as follows:</p>
+<ul>
+<li>Each dimension corresponds to one word in the dictionary</li>
+<li>The value in that dimension = <strong>number of times</strong> the word occurs in the review</li>
+</ul>
+<p><strong>Example:</strong></p>
+<p>Review: “This pasta is very tasty and affordable”</p>
+<p>$$
+v_1 = [0, 0, 1, 1, 1, 1, \dots]
+$$</p>
+<p>(Most of the entries are zero → <strong>sparse vector</strong>)</p>
+<h3 id="important-property">Important Property</h3>
+<p>BoW should satisfy:</p>
+<blockquote>
+<p>Similar texts must result in closer vectors.</p>
+</blockquote>
+<h3 id="binary--boolean-bag-of-words">Binary / Boolean Bag of Words</h3>
+<p>Instead of counting the number of occurrences, we can just store:</p>
+<ul>
+<li>1 → if the word occurs at least once</li>
+<li>0 → otherwise</li>
+</ul>
+<p>This is called <strong>Binary BoW</strong> or <strong>Boolean BoW</strong>.</p>
+<p>In Binary BoW, the Euclidean distance between two vectors is related to the number of differing words:</p>
+<p>$$
+|v_1 - v_2| = \sqrt{\text{number of differing words between } r_1 \text{ and } r_2}
+$$</p>
+<h3 id="summary">Summary</h3>
+<table>
+<thead>
+<tr>
+  <th>Type</th>
+  <th>Value stored in each dimension</th>
+  <th>Nature of vector</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Normal BoW</td>
+  <td>Count of the word</td>
+  <td>Sparse</td>
+</tr>
+<tr>
+  <td>Binary BoW</td>
+  <td>1 if word present, else 0</td>
+  <td>Sparse</td>
+</tr>
+</tbody>
+</table>
+<p>BoW is simple and effective, but it ignores the order of words and semantic meaning.</p>
+<h2 id="05-stop-word-removal-tokenization-lemmatization">05. Stop-word removal, Tokenization, Lemmatization</h2>
+<blockquote>
+<h3 id="featurizations---convert-text-to-numeric-vectors">Featurizations - convert text to numeric vectors</h3>
+</blockquote>
+<p>Before converting text into BoW vectors, we apply several preprocessing steps to make the vectors smaller and more meaningful.</p>
+<p><img src="./assets/05.jpg" alt="DP" /></p>
+<h3 id="1-removing-stopwords">1. Removing Stopwords</h3>
+<p>Stopwords are common words that carry very little meaning (e.g. “this”, “is”, “and”, “the”, “very”).</p>
+<p><strong>Example:</strong></p>
+<ul>
+<li>Original: “This pasta is very tasty and affordable”</li>
+<li>After removing stopwords: “pasta tasty affordable”</li>
+</ul>
+<p>Removing stopwords reduces the dimension of the BoW vectors and keeps only the more informative words.</p>
+<h3 id="2-lowercasing">2. Lowercasing</h3>
+<p>Convert all letters to small letters so that “Pasta” and “pasta” are treated as the same word.</p>
+<h3 id="3-stemming">3. Stemming</h3>
+<p>Stemming reduces words to their root form by chopping off prefixes/suffixes.</p>
+<p>Common stemmers:</p>
+<ul>
+<li>Porter Stemmer</li>
+<li>Snowball Stemmer</li>
+</ul>
+<p><strong>Examples:</strong></p>
+<ul>
+<li>tastes, tasty, tasteful → <strong>tast</strong></li>
+<li>beautiful, beauty → <strong>beauti</strong></li>
+</ul>
+<h3 id="4-lemmatization">4. Lemmatization</h3>
+<p>Lemmatization also reduces words to their base form, but it is smarter than stemming because it uses vocabulary and morphological analysis.</p>
+<p>It produces actual meaningful words (lemmas).</p>
+<p><strong>Note:</strong> Lemmatization is usually preferred over stemming when we care about readability.</p>
+<h3 id="why-do-we-do-text-preprocessing">Why do we do Text Preprocessing?</h3>
+<ul>
+<li>Reduces the size of the vocabulary ($d$ becomes smaller)</li>
+<li>Makes BoW vectors more meaningful</li>
+<li>Groups similar words together (e.g. “tasty”, “tasteful”, “tastes”)</li>
+</ul>
+<h3 id="limitation-of-bow--preprocessing">Limitation of BoW + Preprocessing</h3>
+<p>Even after preprocessing, BoW still <strong>cannot capture semantic similarity</strong> properly.</p>
+<p>Example:</p>
+<ul>
+<li>“tasty” and “delicious” are very similar in meaning</li>
+<li>But in BoW they are treated as completely different dimensions</li>
+</ul>
+<p>This is why we later use more advanced techniques such as <strong>Word2Vec</strong>, which can capture semantic meaning of words.</p>
+<h3 id="3-limitations-of-bow">3. Limitations of BoW</h3>
+<ul>
+<li>BoW only counts word frequency.</li>
+<li>It does <strong>not</strong> understand that “tasty” and “delicious” have very similar meaning.</li>
+<li>Result: Two sentences with similar meaning can have very different BoW vectors.</li>
+</ul>
+<h3 id="4-solution-word2vec">4. Solution: Word2Vec</h3>
+<ul>
+<li><strong>Word2Vec</strong> learns dense vector representations that capture <strong>semantic meaning</strong>.</li>
+<li>Words with similar meaning (e.g., tasty ↔ delicious) get similar vectors.</li>
+<li>Combined with text preprocessing, we can convert text into meaningful dense vectors.</li>
+</ul>
+<p><strong>Summary</strong></p>
+<table>
+<thead>
+<tr>
+  <th>Technique</th>
+  <th>Captures Semantics?</th>
+  <th>Output</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>BoW</td>
+  <td>No</td>
+  <td>Sparse high-dimensional vector</td>
+</tr>
+<tr>
+  <td>BoW + Preprocessing</td>
+  <td>Partially</td>
+  <td>Smaller sparse vector</td>
+</tr>
+<tr>
+  <td>Word2Vec</td>
+  <td>Yes</td>
+  <td>Dense low-dimensional vector</td>
+</tr>
+</tbody>
+</table>
+<h2 id="06-uni-gram-bi-gram-n-grams">06. Uni-Gram, Bi-Gram, N-Grams</h2>
+<p><img src="./assets/06.jpg" alt="DP" /></p>
+<h3 id="problem-with-basic-bow-uni-gram">Problem with basic BoW (Uni-gram)</h3>
+<p>In standard Bag of Words we treat <strong>each single word</strong> as a dimension (Uni-gram).</p>
+<p><strong>Example:</strong></p>
+<ul>
+<li>$r_1$: This pasta is very tasty and affordable</li>
+<li>$r_2$: This pasta is not tasty and is affordable</li>
+</ul>
+<p>After removing stopwords, both reviews contain the words “pasta”, “tasty”, “affordable”.</p>
+<p>BoW will conclude that $r_1$ and $r_2$ are very similar — but they actually have <strong>opposite meanings</strong> because of the word “not”.</p>
+<p>Uni-gram BoW <strong>discards the sequence information</strong>.</p>
+<h3 id="bi-grams">Bi-grams</h3>
+<p>A <strong>Bi-gram</strong> is a pair of consecutive words.</p>
+<p>Instead of taking single words as dimensions, we take pairs of consecutive words.</p>
+<p><strong>Example Bi-grams from $r_1$:</strong></p>
+<ul>
+<li>“very tasty”</li>
+<li>“tasty and”</li>
+<li>“and affordable”</li>
+</ul>
+<p><strong>Example Bi-grams from $r_2$:</strong></p>
+<ul>
+<li>“not tasty”</li>
+<li>“tasty and”</li>
+<li>“and is”</li>
+</ul>
+<p>Now “very tasty” and “not tasty” become <strong>different dimensions</strong>, so the two reviews will no longer look identical.</p>
+<h3 id="n-grams">n-grams</h3>
+<p>Generalization:</p>
+<table>
+<thead>
+<tr>
+  <th>n</th>
+  <th>Name</th>
+  <th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>n = 1</td>
+  <td>Uni-gram</td>
+  <td>Single words</td>
+</tr>
+<tr>
+  <td>n = 2</td>
+  <td>Bi-gram</td>
+  <td>Pairs of consecutive words</td>
+</tr>
+<tr>
+  <td>n = 3</td>
+  <td>Tri-gram</td>
+  <td>Three consecutive words</td>
+</tr>
+<tr>
+  <td>n</td>
+  <td>n-gram</td>
+  <td>n consecutive words</td>
+</tr>
+</tbody>
+</table>
+<h3 id="key-points">Key Points</h3>
+<ul>
+<li>Uni-gram BoW discards sequence information</li>
+<li>Bi-grams and higher n-grams retain some sequence information</li>
+<li>As $n$ increases, the number of possible n-grams grows very fast</li>
+<li>Therefore the dimensionality $d$ of the vector also increases significantly</li>
+</ul>
+<p>$$
+\text{Number of bi-grams} &gt; \text{Number of uni-grams}
+$$</p>
+<p>$$
+\text{Number of tri-grams} &gt; \text{Number of bi-grams}
+$$</p>
+<p>$$
+\text{Number of n-grams} &gt;\text{Number of tri-grams} &gt; \text{Number of bi-grams} &gt; \text{Number of uni-grams}
+$$</p>
+<p>Using n-grams (especially bi-grams) helps BoW capture local word order and improves performance on many text classification tasks.</p>
+<h2 id="07-tf-idf-term-frequency-inverse-document-frequency">07. TF-IDF (Term Frequency-Inverse Document Frequency)</h2>
+<p>TF-IDF is a popular technique to convert text into numerical vectors.<br />
+It improves upon simple Bag of Words by giving more importance to important words and less importance to common words.</p>
+<p><img src="./assets/07.jpg" alt="DP" /></p>
+<h3 id="1-term-frequency-tf">1. Term Frequency (TF)</h3>
+<p><strong>Definition:</strong></p>
+<p>$$
+TF(w_i, r_j) = \dfrac{\text{Number of times } w_i \text{ occurs in review } r_j}{\text{Total number of words in review } r_j}
+$$</p>
+<p><strong>Properties:</strong></p>
+<ul>
+<li>$0 \le TF(w_i, r_j) \le 1$</li>
+<li>It can be interpreted as a probability</li>
+</ul>
+<p><strong>Example:</strong></p>
+<p>Review $r_1$: $w_1, w_2, w_3, w_2, w_5$ (total 5 words)</p>
+<p>$$
+TF(w_2, r_1) = \dfrac{2}{5}
+$$</p>
+<h3 id="2-inverse-document-frequency-idf">2. Inverse Document Frequency (IDF)</h3>
+<p><strong>Definition:</strong></p>
+<p>$$
+IDF(w_i, D_c) = \log \left( \dfrac{N}{n_i} \right)
+$$</p>
+<p>where:</p>
+<ul>
+<li>$N$ = total number of documents (reviews) in the corpus $D_c$</li>
+<li>$n_i$ = number of documents that contain the word $w_i$</li>
+</ul>
+<p><strong>Properties:</strong></p>
+<ul>
+<li>$IDF(w_i, D_c) \ge 0$</li>
+<li>If a word appears in all documents → $n_i = N$ → $IDF = \log(1) = 0$</li>
+<li>If a word is rare → $n_i$ is small → $IDF$ becomes large</li>
+</ul>
+<p><strong>Key Intuition:</strong></p>
+<ul>
+<li>Frequent words in the corpus (e.g. “the”, “is”) get <strong>low</strong> IDF</li>
+<li>Rare words get <strong>high</strong> IDF</li>
+</ul>
+<p>IDF is a <strong>monotonically decreasing</strong> function of $n_i$.</p>
+<h3 id="3-tf-idf-value">3. TF-IDF Value</h3>
+<p>For a word $w_i$ in a review $r_j$:</p>
+<p>$$
+TF\text{-}IDF(w_i, r_j) = TF(w_i, r_j) \times IDF(w_i, D_c)
+$$</p>
+<h3 id="how-tf-idf-vectors-are-formed">How TF-IDF Vectors are Formed</h3>
+<p>Each review $r_j$ is converted into a vector $v_j$ where the value in the dimension corresponding to word $w_i$ is:</p>
+<p>$$
+v_j[i] = TF(w_i, r_j) \times IDF(w_i, D_c)
+$$</p>
+<h3 id="why-tf-idf-is-better-than-bow">Why TF-IDF is Better than BoW</h3>
+<table>
+<thead>
+<tr>
+  <th>Aspect</th>
+  <th>Bag of Words</th>
+  <th>TF-IDF</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Common words (e.g. “the”)</td>
+  <td>High values</td>
+  <td>Low values (low IDF)</td>
+</tr>
+<tr>
+  <td>Rare but important words</td>
+  <td>Same as common words</td>
+  <td>High values (high IDF)</td>
+</tr>
+<tr>
+  <td>Importance of a word</td>
+  <td>Only based on count</td>
+  <td>Based on count + rarity</td>
+</tr>
+</tbody>
+</table>
+<p><strong>TF-IDF gives:</strong></p>
+<ul>
+<li>More importance to words that are frequent in a particular document</li>
+<li>More importance to words that are rare in the entire corpus</li>
+</ul>
+<h3 id="limitation">Limitation</h3>
+<p>TF-IDF still <strong>does not capture semantic meaning</strong>.</p>
+<p>Example:</p>
+<ul>
+<li>“tasty” and “delicious” are similar in meaning</li>
+<li>But TF-IDF treats them as completely different dimensions</li>
+</ul>
+<p>This limitation is later addressed by techniques like <strong>Word2Vec</strong>.</p>
+<h2 id="08-why-use-log-in-idf">08. Why Use Log in IDF</h2>
+<p><img src="./assets/08.jpg" alt="DP" /></p>
+<blockquote>
+<p>Why do we use $\log\left(\dfrac{N}{n_i}\right)$ for IDF?</p>
+</blockquote>
+<h3 id="definition-recap">Definition Recap</h3>
+<p>$$
+IDF(w_i, D_c) = \log\left(\dfrac{N}{n_i}\right)
+$$</p>
+<ul>
+<li>$N$ = total number of documents</li>
+<li>$n_i$ = number of documents containing the word $w_i$</li>
+</ul>
+<h3 id="why-logarithm">Why logarithm?</h3>
+<p>Using the raw value $\dfrac{N}{n_i}$ can produce extremely large numbers for rare words, which can dominate the TF-IDF values.</p>
+<p>Taking $\log$ has two practical benefits:</p>
+<ol>
+<li>It compresses the range of values.</li>
+<li>It still preserves the ranking (monotonic transformation).</li>
+</ol>
+<h3 id="connection-to-zipfs-law">Connection to Zipf’s Law</h3>
+<p>Word frequencies in natural language follow <strong>Zipf’s Law</strong> (a power-law distribution):</p>
+<ul>
+<li>A few words (the, is, and, …) occur extremely frequently</li>
+<li>Most words occur very rarely</li>
+</ul>
+<p>If we plot word frequency (sorted in decreasing order), we get a power-law curve.</p>
+<p>Taking $\log$ of the frequencies makes the distribution much better behaved (closer to linear / easier to work with).</p>
+<p>This is similar to the idea of using log or Box-Cox transforms for power-law / log-normal data.</p>
+<h3 id="practical-example">Practical Example</h3>
+<p>Suppose $N = 1000$ documents:</p>
+<table>
+<thead>
+<tr>
+  <th>Word</th>
+  <th>$n_i$</th>
+  <th>$\dfrac{N}{n_i}$</th>
+  <th>$\log\left(\dfrac{N}{n_i}\right)$</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>the</td>
+  <td>1000</td>
+  <td>1</td>
+  <td>0</td>
+</tr>
+<tr>
+  <td>is</td>
+  <td>1000</td>
+  <td>1</td>
+  <td>0</td>
+</tr>
+<tr>
+  <td>civilization</td>
+  <td>1</td>
+  <td>1000</td>
+  <td>≈ 6.9</td>
+</tr>
+</tbody>
+</table>
+<p>Without log, the rare word “civilization” would get a value of 1000, which can completely dominate the vector.</p>
+<p>With log, the value becomes a more reasonable ≈ 6.9.</p>
+<h3 id="summary-2">Summary</h3>
+<ul>
+<li>Using $\log\left(\dfrac{N}{n_i}\right)$ is a <strong>heuristic</strong> (from a 1972 research paper)</li>
+<li>It is not strongly based on theory, but works very well in practice</li>
+<li>It prevents rare words from dominating the TF-IDF vectors</li>
+<li>It is connected to the fact that word frequencies follow Zipf’s law (power-law distribution)</li>
+</ul>
+<h2 id="09-word2vec">09. Word2Vec</h2>
+<p><a href="https://www.tensorflow.org/text/tutorials/word2vec">https://www.tensorflow.org/text/tutorials/word2vec</a></p>
+<p><img src="./assets/09.jpg" alt="DP" /></p>
+<h3 id="introduction">Introduction</h3>
+<p><strong>Word2Vec</strong> is a state-of-the-art technique (introduced around 2013) that converts words into dense numerical vectors while capturing <strong>semantic meaning</strong>.</p>
+<p>Unlike BoW and TF-IDF (which produce sparse vectors and ignore semantics), Word2Vec produces <strong>dense, low-dimensional vectors</strong> that understand relationships between words.</p>
+<h3 id="key-properties-of-word2vec">Key Properties of Word2Vec</h3>
+<ol>
+<li><p><strong>Dense Vectors</strong></p>
+<ul>
+<li>Typical dimensions: 50, 100, 200, 300</li>
+<li>Not sparse (most values are non-zero)</li>
+</ul>
+</li>
+<li><p><strong>Semantic Similarity</strong></p>
+<ul>
+<li>If two words are semantically similar, their vectors will be close in the vector space.</li>
+<li>Example: “tasty” and “delicious” will have nearby vectors, while “baseball” will be far away.</li>
+</ul>
+</li>
+<li><p><strong>Relationships / Analogies</strong></p>
+<ul>
+<li>Word2Vec can capture relationships such as:</li>
+</ul>
+</li>
+</ol>
+<p>$$
+v_{\text{man}} - v_{\text{woman}} \approx v_{\text{king}} - v_{\text{queen}}
+$$</p>
+<h3 id="how-it-works-high-level-idea">How it Works (High-level Idea)</h3>
+<p>Word2Vec learns relationships <strong>automatically from a large text corpus</strong> (no manual feature engineering).</p>
+<p><strong>Core Intuition:</strong></p>
+<ul>
+<li>Words that appear in similar <strong>neighborhoods</strong> (contexts) should have similar vectors.</li>
+</ul>
+<p>$$
+\text{If } N(w_i) \approx N(w_j) \quad \Rightarrow \quad v_i \approx v_j
+$$</p>
+<h3 id="training-data">Training Data</h3>
+<ul>
+<li>Trained on very large text corpora (e.g. Google News)</li>
+<li>Larger corpus → better quality vectors</li>
+<li>Larger dimensions → more information-rich vectors (but more computation)</li>
+</ul>
+<h3 id="comparison-with-previous-methods">Comparison with Previous Methods</h3>
+<table>
+<thead>
+<tr>
+  <th>Method</th>
+  <th>Vector Type</th>
+  <th>Captures Semantics?</th>
+  <th>Dimensionality</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>BoW</td>
+  <td>Sparse</td>
+  <td>No</td>
+  <td>Very high (vocab size)</td>
+</tr>
+<tr>
+  <td>TF-IDF</td>
+  <td>Sparse</td>
+  <td>No</td>
+  <td>Very high (vocab size)</td>
+</tr>
+<tr>
+  <td>Word2Vec</td>
+  <td>Dense</td>
+  <td>Yes</td>
+  <td>Low (50–300)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="note">Note</h3>
+<p>Internally, Word2Vec can be understood as a form of matrix factorization or a shallow neural network (we will treat the internal working as a black-box for now).</p>
+<h2 id="10-avg-word2vec-tf-idf-weighted-word2vec">10. Avg-Word2Vec, TF-IDF Weighted Word2Vec</h2>
+<p>Word2Vec gives us a dense vector for <strong>each word</strong>.</p>
+<p>But in practice we need a vector for a whole <strong>sentence / review</strong>.</p>
+<p><img src="./assets/10.jpg" alt="DP" /></p>
+<p>Two simple and popular ways to create sentence vectors using Word2Vec are:</p>
+<h3 id="1-average-word2vec-avg-w2v">1. Average Word2Vec (Avg-W2V)</h3>
+<p><strong>Idea:</strong> Take the average of all word vectors in the sentence.</p>
+<p>Given a review:</p>
+<p>$$
+r_1 = w_1, w_2, w_1, w_3, w_4, w_5
+$$</p>
+<p>(with $n_1$ words)</p>
+<p>$$
+v_1 = \dfrac{1}{n_1} \Big[ W2V(w_1) + W2V(w_2) + W2V(w_1) + \dots + W2V(w_5) \Big]
+$$</p>
+<p><strong>Properties:</strong></p>
+<ul>
+<li>Very simple</li>
+<li>Works reasonably well in practice</li>
+<li>Not perfect, but a strong baseline</li>
+</ul>
+<h3 id="2-tf-idf-weighted-word2vec-tf-idf-w2v">2. TF-IDF Weighted Word2Vec (TF-IDF-W2V)</h3>
+<p><strong>Idea:</strong> Instead of simple averaging, take a <strong>weighted average</strong> where the weights are the TF-IDF values of the words.</p>
+<p>$$
+\text{TF-IDF-W2V}(r_1) = \dfrac{\sum_{i} \big( t_i \cdot W2V(w_i) \big)}{\sum_{i} t_i}
+$$</p>
+<p>where $t_i = \text{TF-IDF}(w_i, r_1)$</p>
+<p><strong>Special Case:</strong></p>
+<ul>
+<li>If all $t_i = 1$, then TF-IDF-W2V becomes exactly the same as Average Word2Vec.</li>
+</ul>
+<h3 id="summary-3">Summary</h3>
+<table>
+<thead>
+<tr>
+  <th>Method</th>
+  <th>How sentence vector is created</th>
+  <th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Average W2V</td>
+  <td>Simple average of word vectors</td>
+  <td>Simple &amp; effective baseline</td>
+</tr>
+<tr>
+  <td>TF-IDF weighted W2V</td>
+  <td>Weighted average using TF-IDF scores</td>
+  <td>Gives more importance to important words</td>
+</tr>
+</tbody>
+</table>
+<p>Both methods are <strong>weighting schemes</strong> to convert a sequence of word vectors into a single sentence vector.</p>
+<p>These techniques are simple ways to leverage Word2Vec for sentence-level representations (also called Sent2Vec style approaches). More advanced methods later use deep learning to create better sentence embeddings (Thought Vectors, etc.).</p>
+<h2 id="11-bag-of-words-code-sample">11. Bag of Words (Code Sample)</h2>
+<p><img src="./assets/11.jpg" alt="DP" /></p>
+<h3 id="what-is-a-sparse-matrix">What is a Sparse Matrix?</h3>
+<p>A matrix $A$ of size $n \times m$ is called <strong>sparse</strong> if <strong>most of its elements are zero</strong>.</p>
+<p>$$
+A \in \mathbb{R}^{n \times m}
+$$</p>
+<ul>
+<li>Total number of cells = $n \times m$</li>
+<li>Space required if stored normally = $O(n \times m)$</li>
+</ul>
+<h3 id="why-sparse-matrices-appear-in-nlp-bow">Why Sparse Matrices appear in NLP (BoW)</h3>
+<p>In Bag of Words:</p>
+<ul>
+<li>$n$ = number of reviews / documents (e.g. 364K)</li>
+<li>$m$ = number of unique words in the vocabulary (e.g. 115K)</li>
+</ul>
+<p>So the BoW matrix is of size:</p>
+<p>$$
+364K \times 115K
+$$</p>
+<p>Each row $r_i$ is a <strong>sparse vector</strong> because a single review contains only a few words, while the vocabulary is very large.</p>
+<p>Most of the values in any row $r_i$ are zero.</p>
+<h3 id="efficient-representation-of-sparse-matrices">Efficient Representation of Sparse Matrices</h3>
+<p>Instead of storing all $n \times m$ values, we store only the <strong>non-zero</strong> entries.</p>
+<p>One common way is to use a <strong>Dictionary</strong> (or list of triples):</p>
+<p>For each non-zero cell we store:</p>
+<p>$$
+(\text{row index},; \text{column index},; \text{value})
+$$</p>
+<p><strong>Space complexity:</strong></p>
+<ul>
+<li>Normal storage: $O(m)$ per row</li>
+<li>Sparse storage: $O(k)$ where $k$ = number of non-zero cells</li>
+</ul>
+<h3 id="sparsity-of-a-matrix">Sparsity of a Matrix</h3>
+<p>$$
+\text{Sparsity of } A = \dfrac{k}{n \times m}
+$$</p>
+<p>where $k$ = number of non-zero cells.</p>
+<p>The more sparse a matrix is, the more efficient sparse-matrix representations become.</p>
+<h3 id="code-explanation-bag-of-words-using-scikit-learn">Code Explanation (Bag of Words using scikit-learn)</h3>
+<pre><code class="language-python"># BoW
+count_vect = CountVectorizer()                    # Create a CountVectorizer object
+count_vect.fit(preprocessed_reviews)              # Learn the vocabulary from the reviews
+
+print(&quot;Some Feature names &quot;, count_vect.get_feature_names_out()[:10])
+print('='*50)
+
+final_counts = count_vect.transform(preprocessed_reviews)   # Convert reviews into BoW matrix
+
+print(&quot;the type of count vectorizer &quot;, type(final_counts))
+print(&quot;the shape of out text BOW vectorizer &quot;, final_counts.get_shape())
+print(&quot;the number of unique words &quot;, final_counts.get_shape()[1])
+</code></pre>
+<p><a href="https://scikit-learn.org/stable/modules/generated/sklearn.feature_extraction.text.CountVectorizer.html">https://scikit-learn.org/stable/modules/generated/sklearn.feature_extraction.text.CountVectorizer.html</a></p>
+<p><strong>Line-by-line explanation:</strong></p>
+<table>
+<thead>
+<tr>
+  <th>Code</th>
+  <th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>CountVectorizer()</code></td>
+  <td>Creates a Bag-of-Words vectorizer from scikit-learn</td>
+</tr>
+<tr>
+  <td><code>.fit(preprocessed_reviews)</code></td>
+  <td>Learns the vocabulary (all unique words) from the given reviews</td>
+</tr>
+<tr>
+  <td><code>.get_feature_names_out()[:10]</code></td>
+  <td>Shows the first 10 words in the learned vocabulary</td>
+</tr>
+<tr>
+  <td><code>.transform(preprocessed_reviews)</code></td>
+  <td>Converts each review into a BoW vector (count of each word)</td>
+</tr>
+<tr>
+  <td><code>type(final_counts)</code></td>
+  <td>Shows that the result is a <strong>sparse matrix</strong> (not a normal dense NumPy array)</td>
+</tr>
+<tr>
+  <td><code>final_counts.get_shape()</code></td>
+  <td>Returns <code>(number of reviews, number of unique words)</code></td>
+</tr>
+<tr>
+  <td><code>final_counts.get_shape()[1]</code></td>
+  <td>Gives the size of the vocabulary (number of unique words)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Key Point:</strong><br />
+<code>final_counts</code> is stored as a <strong>sparse matrix</strong> (usually CSR format) because most of the entries are zero. This saves a huge amount of memory compared to a dense matrix.</p>
+<h2 id="12-text-preprocessing-code-sample">12. Text Preprocessing (Code Sample)</h2>
+<p>See Lecture.ipynb</p>
+<h2 id="13-bi-grams-and-n-grams-code-sample">13. Bi-Grams and N-Grams (Code Sample)</h2>
+<p>See Lecture.ipynb</p>
+<h2 id="14-tf-idf-code-sample">14. TF-IDF (Code Sample)</h2>
+<p>See Lecture.ipynb</p>
+<h2 id="15-word2vec-code-sample">15. Word2Vec (Code Sample)</h2>
+<p>See Lecture.ipynb</p>
+<h2 id="16-avg-word2vec-and-tfidf-word2vec-code-sample">16. Avg-Word2Vec and TFIDF-Word2Vec (Code Sample)</h2>
+<p>See Lecture.ipynb</p>
+<h2 id="17-assignment-2-apply-t-sne">17. Assignment-2: Apply t-SNE</h2>
+<p><a href="./02.%20Amazon_TSNE.ipynb">Amazon_TSNE</a></p>
+</main><aside class="note-toc" aria-label="On this page"><h2>On This Page</h2>
+<ul>
+<li><a href="#01-dataset-overview-amazon-fine-food-reviews-eda">01. Dataset Overview Amazon Fine Food Reviews (EDA)</a></li>
+<li><a href="#02-data-cleaning-deduplication">02. Data Cleaning Deduplication</a></li>
+<li><a href="#03-why-convert-text-to-a-vector">03. Why Convert Text to a Vector</a></li>
+<li><a href="#04-bag-of-words-bow">04. Bag of Words (BoW)</a></li>
+<li><a href="#05-stop-word-removal-tokenization-lemmatization">05. Stop-word removal, Tokenization, Lemmatization</a></li>
+<li><a href="#06-uni-gram-bi-gram-n-grams">06. Uni-Gram, Bi-Gram, N-Grams</a></li>
+<li><a href="#07-tf-idf-term-frequency-inverse-document-frequency">07. TF-IDF (Term Frequency-Inverse Document Frequency)</a></li>
+<li><a href="#08-why-use-log-in-idf">08. Why Use Log in IDF</a></li>
+<li><a href="#09-word2vec">09. Word2Vec</a></li>
+<li><a href="#10-avg-word2vec-tf-idf-weighted-word2vec">10. Avg-Word2Vec, TF-IDF Weighted Word2Vec</a></li>
+<li><a href="#11-bag-of-words-code-sample">11. Bag of Words (Code Sample)</a></li>
+<li><a href="#12-text-preprocessing-code-sample">12. Text Preprocessing (Code Sample)</a></li>
+<li><a href="#13-bi-grams-and-n-grams-code-sample">13. Bi-Grams and N-Grams (Code Sample)</a></li>
+<li><a href="#14-tf-idf-code-sample">14. TF-IDF (Code Sample)</a></li>
+<li><a href="#15-word2vec-code-sample">15. Word2Vec (Code Sample)</a></li>
+<li><a href="#16-avg-word2vec-and-tfidf-word2vec-code-sample">16. Avg-Word2Vec and TFIDF-Word2Vec (Code Sample)</a></li>
+<li><a href="#17-assignment-2-apply-t-sne">17. Assignment-2: Apply t-SNE</a></li>
+</ul>
+</aside></div></div><script>
+if(window.hljs)document.querySelectorAll("pre code[class*='language-']").forEach((block)=>window.hljs.highlightElement(block));
+(()=>{const links=[...document.querySelectorAll(".note-toc a")],heads=links.map(l=>document.getElementById(decodeURIComponent(l.hash.slice(1)))).filter(Boolean);if(!links.length||!heads.length||!("IntersectionObserver"in window))return;const set=h=>links.forEach(l=>l.classList.toggle("is-active",l.hash===`#${h.id}`));const ob=new IntersectionObserver(es=>{const v=es.filter(e=>e.isIntersecting).sort((a,b)=>a.boundingClientRect.top-b.boundingClientRect.top);if(v.length)set(v[0].target)},{rootMargin:"-10% 0px -75% 0px",threshold:0});heads.forEach(h=>ob.observe(h))})();
+</script>
+</body>
+</html>

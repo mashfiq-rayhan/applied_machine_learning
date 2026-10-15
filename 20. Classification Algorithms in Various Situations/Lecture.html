@@ -1,0 +1,2904 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Classification Algorithms in Various Situations | Applied Machine Learning</title>
+    <link rel="stylesheet" href="../HTMLs/theme.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
+    <script>
+      window.MathJax = {
+        tex: {
+          inlineMath: [
+            ["$", "$"],
+            ["\\(", "\\)"],
+          ],
+          displayMath: [
+            ["$$", "$$"],
+            ["\\[", "\\]"],
+          ],
+          processEscapes: true,
+          processEnvironments: true,
+        },
+        options: {
+          skipHtmlTags: ["script", "noscript", "style", "textarea", "pre", "code"],
+        },
+      };
+    </script>
+    <script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-svg.js"></script>
+  </head>
+  <body class="site-page">
+    <div class="site-layout">
+      <nav class="curriculum-nav" aria-label="Main curriculum navigation">
+        <iframe src="../HTMLs/table-of-contents.html" title="Machine learning curriculum"></iframe>
+      </nav>
+      <div class="note-layout">
+        <main class="note-content">
+          <style>
+            @import url("https://fonts.googleapis.com/css2?family=Play:wght@400;700&display=swap");
+            @import url("https://cdnjs.cloudflare.com/ajax/libs/latin-modern/1.1.0/css/latinmodern-math.min.css");
+
+            :root {
+              --la-ink: #3f6386;
+              --la-teal: #3f6386;
+              --la-teal-soft: #e8f6f7;
+              --la-coral: #9333ea;
+              --la-coral-soft: #fff1ed;
+              --la-cdf: #17283a;
+              --la-line: #5b5c5c;
+              --la-surface: #f7faf9;
+              --la-text: #c9c9c9;
+              --la-panel: #00070e;
+              --la-chip: #17283a;
+              --la-amber: #9a6b16;
+              --la-amber-soft: #fff8e6;
+            }
+
+            *,
+            *::before,
+            *::after {
+              font-family: "Play", sans-serif !important;
+            }
+
+            pre,
+            pre code {
+              font-family: Consolas, "Courier New", monospace !important;
+            }
+
+            body,
+            .markdown-body,
+            p,
+            li {
+              color: var(--la-text) !important;
+            }
+
+            h1 {
+              color: var(--la-ink);
+              border-bottom: 4px solid var(--la-teal);
+              padding-bottom: 0.35em;
+            }
+
+            h2 {
+              color: var(--la-teal);
+              border-left: 6px solid var(--la-teal);
+              padding-left: 0.55em;
+              margin-top: 2em;
+            }
+
+            h3,
+            h4 {
+              color: var(--la-coral);
+            }
+
+            a {
+              color: var(--la-coral);
+              text-decoration: none;
+            }
+
+            a:hover {
+              text-decoration: underline;
+            }
+
+            blockquote {
+              background: var(--la-panel);
+              border-left: 5px solid var(--la-cdf) !important;
+              border-radius: 6px;
+              color: var(--la-text);
+              padding: 0.75em 1em;
+            }
+
+            code {
+              background: var(--la-chip);
+              border-radius: 4px;
+              color: var(--la-text);
+              padding: 0.1em 0.3em;
+            }
+
+            pre {
+              background: var(--la-panel);
+              border: 1px solid var(--la-line);
+              border-radius: 8px;
+              overflow-x: auto;
+              padding: 1em;
+            }
+
+            table {
+              border: 1px solid var(--la-line);
+              border-collapse: collapse;
+              border-radius: 8px;
+              overflow: hidden;
+              width: 100%;
+            }
+
+            th {
+              background: var(--la-panel);
+              color: var(--la-text);
+              padding: 0.7em 0.8em;
+              text-align: left;
+            }
+
+            td {
+              color: var(--la-text);
+              padding: 0.7em 0.8em;
+            }
+
+            tr:nth-child(even) {
+              background: var(--la-chip);
+            }
+
+            hr {
+              border: 0;
+              border-top: 2px solid var(--la-line);
+              margin: 2.2em 0;
+            }
+
+            .summary-grid,
+            .ml-grid,
+            .intuition-grid {
+              display: flex;
+              gap: 1em;
+              margin: 1.25em 0;
+            }
+
+            .summary-card,
+            .ml-card,
+            .intuition-card {
+              background: var(--la-panel);
+              border-radius: 7px;
+              color: var(--la-text);
+              flex: 1 1 0;
+              min-width: 0;
+              padding: 1em;
+            }
+
+            .summary-card {
+              border-top: 5px solid var(--la-teal);
+            }
+
+            .summary-card.pdf,
+            .ml-card.diagnostics,
+            .intuition-card.pdf {
+              border-top-color: var(--la-coral);
+            }
+
+            .summary-card.cdf,
+            .intuition-card.cdf {
+              border-top-color: var(--la-cdf);
+            }
+
+            .summary-card h3,
+            .ml-card h3,
+            .intuition-card h3 {
+              margin-top: 0;
+            }
+
+            .summary-tag,
+            .panel-kicker {
+              color: var(--la-teal);
+              font-size: 0.82em;
+              font-weight: 700;
+              letter-spacing: 0.04em;
+              text-transform: uppercase;
+            }
+
+            .relationship-banner,
+            .ml-workflow {
+              align-items: center;
+              background: var(--la-panel);
+              border: 1px solid var(--la-teal);
+              border-radius: 7px;
+              color: var(--la-text);
+              display: flex;
+              flex-wrap: wrap;
+              gap: 0.6em;
+              justify-content: center;
+              margin: 1.25em 0;
+              padding: 0.85em 1em;
+              text-align: center;
+            }
+
+            .relationship-banner strong,
+            .ml-workflow strong,
+            .relationship-item strong,
+            .insight-item strong {
+              color: var(--la-coral);
+            }
+
+            .relationship-banner .arrow {
+              color: var(--la-teal);
+              font-size: 1.2em;
+            }
+
+            .relationship-item,
+            .insight-item {
+              background: var(--la-panel);
+              border-left: 5px solid var(--la-teal);
+              border-radius: 5px;
+              color: var(--la-text);
+              margin: 0.65em 0;
+              padding: 0.55em 0.85em;
+            }
+
+            .insight-item {
+              border-left-color: var(--la-coral);
+            }
+
+            .insight-list,
+            .feature-chips {
+              display: flex;
+              flex-wrap: wrap;
+              gap: 0.55em;
+              list-style: none;
+              margin: 0.5em 0 1em;
+              padding: 0;
+            }
+
+            .insight-list li,
+            .feature-chips li {
+              background: var(--la-chip);
+              border: 1px solid var(--la-teal);
+              border-radius: 999px;
+              color: var(--la-text);
+              padding: 0.35em 0.75em;
+            }
+
+            .feature-chips li {
+              border-radius: 4px;
+              border-left: 3px solid var(--la-coral);
+              border-right: none;
+              border-top: none;
+              border-bottom: none;
+              flex: 1 1 calc(50% - 0.45em);
+            }
+
+            .concept-flow {
+              align-items: center;
+              display: flex;
+              flex-direction: column;
+              margin: 1.25em 0;
+            }
+
+            .concept-flow .flow-step {
+              background: var(--la-panel);
+              border: 1px solid var(--la-teal);
+              border-radius: 7px;
+              color: var(--la-text);
+              max-width: 22em;
+              padding: 0.7em 1.2em;
+              text-align: center;
+              width: 100%;
+            }
+
+            .concept-flow .flow-step strong {
+              color: var(--la-coral);
+            }
+
+            .concept-flow .flow-arrow {
+              color: var(--la-teal);
+              font-size: 1.35em;
+              line-height: 1.25;
+            }
+
+            .percentile-callout {
+              background: var(--la-panel);
+              border-left: 5px solid var(--la-cdf);
+              border-radius: 7px;
+              color: var(--la-text);
+              margin: 1.25em 0;
+              padding: 1em;
+            }
+
+            .percentile-callout strong {
+              color: var(--la-cdf);
+            }
+
+            .katex-display,
+            .math,
+            .math-block {
+              background: #00070e;
+              border-left: 6px solid #2f005c;
+              border-radius: 6px;
+              padding: 0.6em 0.8em;
+              overflow-x: auto;
+              color: #c9c9c9 !important;
+              font-family: "Latin Modern Math", "Cambria Math", "STIX Two Math", serif !important;
+            }
+
+            .katex,
+            .katex * {
+              color: #9b9a9a !important;
+              font-family: "Latin Modern Math", "Cambria Math", "STIX Two Math", serif !important;
+            }
+
+            @media (max-width: 700px) {
+              .summary-grid,
+              .ml-grid,
+              .intuition-grid {
+                flex-direction: column;
+              }
+            }
+          </style>
+
+          <h1 id="classification-algorithms-in-various-situations">
+            Classification Algorithms in Various Situations
+          </h1>
+          <h2 id="01-introduction">01. Introduction</h2>
+          <p><img src="./assets/01.jpg" alt="20" /></p>
+          <h3 id="overview">Overview</h3>
+          <p>We have studied several classification algorithms:</p>
+          <ul>
+            <li><strong>K-NN</strong></li>
+            <li>Logistic Regression</li>
+            <li>Decision Trees (DT)</li>
+            <li>Random Forest (RF)</li>
+            <li>… and others</li>
+          </ul>
+          <p>
+            Now we look at how these algorithms behave in <strong>real-world cases</strong>,
+            especially when the data is highly imbalanced.
+          </p>
+          <h3 id="real-world-case-imbalanced-data">Real-World Case: Imbalanced Data</h3>
+          <p>
+            In many practical problems (especially medical applications), the two classes are
+            <strong>not equally represented</strong>.
+          </p>
+          <p><strong>Example:</strong></p>
+          <p>Dataset size: $n = 10{,}000$</p>
+          <ul>
+            <li>Positive class ($+$ve): only <strong>100</strong> points (very few)</li>
+            <li>Negative class ($-$ve): <strong>9{,}900</strong> points</li>
+          </ul>
+          <p>Or even more extreme:</p>
+          <ul>
+            <li>Positive: 1{,}000</li>
+            <li>Negative: 1 Million (1M)</li>
+          </ul>
+          <p>This kind of severe class imbalance is very common in:</p>
+          <ul>
+            <li>Medical diagnosis (disease vs healthy)</li>
+            <li>Fraud detection</li>
+            <li>Rare event prediction</li>
+          </ul>
+          <h3 id="key-challenge">Key Challenge</h3>
+          <p>When the positive class is extremely rare:</p>
+          <ul>
+            <li>
+              A model that always predicts the majority class (negative) can achieve very high
+              accuracy.
+            </li>
+            <li>
+              But such a model is useless in practice because it never detects the rare (but
+              important) positive cases.
+            </li>
+          </ul>
+          <p>
+            This is why we need to carefully choose and evaluate classification algorithms in
+            imbalanced settings.
+          </p>
+          <h2 id="02-imbalanced-vs-balanced-dataset">02. Imbalanced vs Balanced Dataset</h2>
+          <p><img src="./assets/02.jpg" alt="20" /></p>
+          <h3 id="definition">Definition</h3>
+          <p>In a 2-class classification problem:</p>
+          <p>$$ D_n = { n_1 \text{ positive points},; n_2 \text{ negative points} } $$</p>
+          <p>where $n_1 + n_2 = n$.</p>
+          <ul>
+            <li><strong>Balanced Dataset</strong>: $n_1 \approx n_2$</li>
+            <li><strong>Imbalanced Dataset</strong>: $n_1 \ll n_2$ or $n_2 \ll n_1$</li>
+          </ul>
+          <p><strong>Examples of Imbalance:</strong></p>
+          <table>
+            <thead>
+              <tr>
+                <th>Positive ($n_1$)</th>
+                <th>Negative ($n_2$)</th>
+                <th>Type</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>580</td>
+                <td>420</td>
+                <td>Slightly imbalanced</td>
+              </tr>
+              <tr>
+                <td>100</td>
+                <td>900</td>
+                <td>Imbalanced</td>
+              </tr>
+              <tr>
+                <td>50</td>
+                <td>950</td>
+                <td>Severely imbalanced</td>
+              </tr>
+            </tbody>
+          </table>
+          <h3 id="problem-with-k-nn-on-imbalanced-data">Problem with K-NN on Imbalanced Data</h3>
+          <p>When the majority class dominates (e.g., 950 negative vs 50 positive):</p>
+          <ul>
+            <li>K-NN uses <strong>majority vote</strong>.</li>
+            <li>The majority class becomes the <strong>dominant class</strong>.</li>
+            <li>
+              Most query points will be classified as the majority class simply because most
+              neighbors belong to it.
+            </li>
+          </ul>
+          <p>
+            This is <strong>not always</strong> desirable, especially when the minority class is the
+            important one (e.g., disease detection).
+          </p>
+          <h3 id="how-to-work-around-imbalanced-dataset-issues">
+            How to Work Around Imbalanced Dataset Issues
+          </h3>
+          <h4 id="1-undersampling">1. Undersampling</h4>
+          <ul>
+            <li>Keep all minority class points.</li>
+            <li>Randomly sample the same number of majority class points.</li>
+            <li>Create a new balanced dataset $D_n'$.</li>
+          </ul>
+          <p><strong>Example:</strong></p>
+          <ul>
+            <li>Original: 100 positive + 900 negative</li>
+            <li>After undersampling: 100 positive + 100 negative</li>
+          </ul>
+          <p><strong>Problem with Undersampling:</strong></p>
+          <ul>
+            <li>We throw away a large amount of data (e.g., 800 points).</li>
+            <li>The model is trained on a much smaller dataset → information loss.</li>
+          </ul>
+          <h4 id="2-oversampling">2. Oversampling</h4>
+          <ul>
+            <li>Keep all majority class points.</li>
+            <li>
+              Repeat (duplicate) the minority class points multiple times until the classes become
+              balanced.
+            </li>
+          </ul>
+          <p><strong>Example:</strong></p>
+          <ul>
+            <li>Original: 100 positive + 900 negative</li>
+            <li>Repeat the 100 positive points 9 times → 900 positive + 900 negative</li>
+          </ul>
+          <p><strong>Visual Idea:</strong></p>
+          <ul>
+            <li>We place more copies of the minority class points into the dataset.</li>
+          </ul>
+          <h4 id="3-synthetic-points-advanced-oversampling">
+            3. Synthetic Points (Advanced Oversampling)
+          </h4>
+          <p>
+            Instead of simply duplicating points, we can generate
+            <strong>artificial / synthetic</strong> points by extrapolation around the existing
+            minority class points.
+          </p>
+          <p>This is the idea behind techniques like SMOTE.</p>
+          <h4 id="4-class-weight-in-sklearn">4. Class-Weight (in sklearn)</h4>
+          <p>
+            Instead of changing the data, we can give <strong>higher weight</strong> to the minority
+            class during training.
+          </p>
+          <p><strong>Example:</strong></p>
+          <ul>
+            <li>100 positive, 900 negative</li>
+            <li>
+              Set <code>class_weight</code>:
+              <ul>
+                <li>$w_{+} = 9$ (more weight to minority)</li>
+                <li>$w_{-} = 1$ (less weight to majority)</li>
+              </ul>
+            </li>
+          </ul>
+          <p>
+            In K-NN, this is equivalent to treating each positive point as if it were repeated 9
+            times.
+          </p>
+          <h3 id="why-accuracy-is-misleading-on-imbalanced-data">
+            Why Accuracy is Misleading on Imbalanced Data
+          </h3>
+          <p><strong>Example:</strong></p>
+          <ul>
+            <li>Dataset: 100 positive + 900 negative (ratio 1:9)</li>
+            <li>Train: 700 points (630 negative, 70 positive)</li>
+            <li>Test: 300 points (270 negative, 30 positive)</li>
+          </ul>
+          <p>A <strong>dumb model</strong> that always predicts “negative” achieves:</p>
+          <p>$$ \text{Accuracy} = \dfrac{270}{300} = 90% $$</p>
+          <p>
+            This looks excellent, but the model never detects any positive case → completely useless
+            in practice.
+          </p>
+          <h3 id="real-world-examples-of-imbalanced-data">
+            Real-World Examples of Imbalanced Data
+          </h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Domain</th>
+                <th>Minority Class</th>
+                <th>Majority Class</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Medical</td>
+                <td>Cancer (10%)</td>
+                <td>Non-Cancer (90%)</td>
+              </tr>
+              <tr>
+                <td>E-Commerce</td>
+                <td>Customers who buy (10%)</td>
+                <td>Customers who do not buy (90%)</td>
+              </tr>
+            </tbody>
+          </table>
+          <h3 id="summary-of-solutions">Summary of Solutions</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Method</th>
+                <th>Idea</th>
+                <th>Drawback / Note</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Undersampling</td>
+                <td>Reduce majority class</td>
+                <td>Throws away data</td>
+              </tr>
+              <tr>
+                <td>Oversampling</td>
+                <td>Duplicate minority class</td>
+                <td>Can cause overfitting</td>
+              </tr>
+              <tr>
+                <td>Synthetic points</td>
+                <td>Generate new minority points</td>
+                <td>Better than simple duplication</td>
+              </tr>
+              <tr>
+                <td>Class-weight</td>
+                <td>Give higher weight to minority</td>
+                <td>No change to data size</td>
+              </tr>
+            </tbody>
+          </table>
+          <p>
+            <strong>Key Takeaway:</strong><br />
+            Never rely only on accuracy when the dataset is imbalanced. Always look at metrics that
+            focus on the minority class (Precision, Recall, F1-score, etc.).
+          </p>
+          <h2 id="03-multi-class-classification">03. Multi-Class Classification</h2>
+          <p><img src="./assets/03.jpg" alt="20" /></p>
+          <h3 id="binary-vs-multi-class">Binary vs Multi-Class</h3>
+          <ul>
+            <li>
+              <p>
+                <strong>Binary Classifier</strong>:<br />
+                $y_i \in {0, 1}$
+              </p>
+            </li>
+            <li>
+              <p>
+                <strong>Multi-Class Classifier</strong>:<br />
+                $y_i \in {0, 1, 2, \dots, 9}$<br />
+                (Example: MNIST digit classification → 10 classes)
+              </p>
+            </li>
+          </ul>
+          <p>In general, for a $c$-class problem:</p>
+          <p>
+            $$ D_n = \big{ (x_i, y_i) ;\big|; x_i \in \mathbb{R}^d,; y_i \in {1, 2, 3, \dots, c}
+            \big} $$
+          </p>
+          <h3 id="k-nn-for-multi-class-classification">K-NN for Multi-Class Classification</h3>
+          <p>K-NN extends <strong>very easily</strong> to multi-class problems.</p>
+          <p><strong>Example (7-NN):</strong></p>
+          <p>For a query point $x_q$, the 7 nearest neighbors belong to classes:</p>
+          <table>
+            <thead>
+              <tr>
+                <th>Class</th>
+                <th>Count</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>1</td>
+                <td>0</td>
+              </tr>
+              <tr>
+                <td>2</td>
+                <td>6</td>
+              </tr>
+              <tr>
+                <td>3</td>
+                <td>1</td>
+              </tr>
+              <tr>
+                <td>…</td>
+                <td>0</td>
+              </tr>
+            </tbody>
+          </table>
+          <ul>
+            <li>
+              <p>
+                <strong>Majority Vote</strong> → Predict class 2<br />
+                ($y_q = 2$)
+              </p>
+            </li>
+            <li>
+              <p><strong>Probabilistic Classifier</strong>:</p>
+            </li>
+          </ul>
+          <p>
+            $$ P(y_q = 2) = \dfrac{6}{7}, \quad P(y_q = 3) = \dfrac{1}{7}, \quad P(y_q = 1) = 0,;
+            \dots $$
+          </p>
+          <h3 id="logistic-regression-and-multi-class">Logistic Regression and Multi-Class</h3>
+          <p>
+            Logistic Regression is fundamentally a <strong>binary classifier</strong>.<br />
+            It cannot directly handle multi-class problems the way K-NN can.
+          </p>
+          <p>
+            <strong>Question:</strong><br />
+            Given a multi-class classification problem, can we convert it into binary classification
+            problems?
+          </p>
+          <h3 id="one-vs-rest-ovr-strategy">One-vs-Rest (OvR) Strategy</h3>
+          <p>
+            Yes. We can reduce a $c$-class problem into
+            <strong>$c$ binary classification problems</strong>.
+          </p>
+          <p><strong>Idea:</strong></p>
+          <p>For each class $k = 1$ to $c$:</p>
+          <ul>
+            <li>Treat class $k$ as the <strong>positive</strong> class</li>
+            <li>Treat all other classes as the <strong>negative</strong> class</li>
+            <li>
+              Train a binary classifier $f_k(x)$ that answers:<br />
+              “Is this point class $k$ or not?”
+            </li>
+          </ul>
+          <p><strong>Result:</strong></p>
+          <p>We obtain $c$ binary classifiers:</p>
+          <p>
+            $$ \begin{align*} f_1(x) &amp;\rightarrow \text{Class 1 or not} \ f_2(x)
+            &amp;\rightarrow \text{Class 2 or not} \ &amp;\vdots \ f_c(x) &amp;\rightarrow
+            \text{Class } c \text{ or not} \end{align*} $$
+          </p>
+          <p>This approach is called <strong>One-vs-Rest</strong> (also known as One-vs-All).</p>
+          <h3 id="summary">Summary</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Algorithm</th>
+                <th>Multi-class Support</th>
+                <th>How?</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>K-NN</td>
+                <td>Native</td>
+                <td>Majority vote / probabilities</td>
+              </tr>
+              <tr>
+                <td>Logistic Regression</td>
+                <td>Needs conversion</td>
+                <td>One-vs-Rest (OvR)</td>
+              </tr>
+            </tbody>
+          </table>
+          <p>
+            One-vs-Rest is a standard and widely used technique to extend any binary classifier to
+            multi-class problems.
+          </p>
+          <h2 id="04-k-nn-given-a-distance-or-similarity-matrix">
+            04. k-NN, Given a Distance or Similarity Matrix
+          </h2>
+          <p><img src="./assets/04.jpg" alt="20" /></p>
+          <h3 id="the-standard-assumption">The Standard Assumption</h3>
+          <p>In normal classification, we assume:</p>
+          <p>$$ x_i \in \mathbb{R}^d $$</p>
+          <p>i.e., every data point is available as a <strong>numeric feature vector</strong>.</p>
+          <h3 id="real-world-situation-where-vectors-are-hard">
+            Real-World Situation Where Vectors Are Hard
+          </h3>
+          <p>
+            Sometimes it is <strong>not easy</strong> (or not natural) to represent the data as
+            numeric vectors.
+          </p>
+          <p><strong>Example (Pharmaceutical / Chemical domain):</strong></p>
+          <ul>
+            <li>Each $x_i$ is a <strong>chemical compound</strong> (e.g., Paracetamol).</li>
+            <li>
+              Converting a chemical structure into a fixed-length numeric vector is non-trivial.
+            </li>
+            <li>
+              However, domain experts (pharmacists / chemists) can easily define a
+              <strong>similarity</strong> between two compounds:
+            </li>
+          </ul>
+          <p>$$ \text{Sim}(x_i, x_j) $$</p>
+          <h3 id="similarity-matrix--distance-matrix">Similarity Matrix / Distance Matrix</h3>
+          <p>
+            When we have $n$ data points, we can construct an $n \times n$
+            <strong>Similarity Matrix</strong> $S$:
+          </p>
+          <p>$$ S_{ij} = \text{Sim}(x_i, x_j) $$</p>
+          <p>We can convert similarity into distance:</p>
+          <p>$$ d_{ij} = \dfrac{1}{S_{ij}} $$</p>
+          <p>(or any other decreasing transformation).</p>
+          <h3 id="k-nn-works-directly-with-similarity-or-distance-matrix">
+            K-NN Works Directly with Similarity or Distance Matrix
+          </h3>
+          <p>
+            K-NN does <strong>not</strong> require the original feature vectors $x_i \in
+            \mathbb{R}^d$.
+          </p>
+          <p>It only needs:</p>
+          <ul>
+            <li>Either the Similarity Matrix $S$, or</li>
+            <li>The Distance Matrix $D$</li>
+          </ul>
+          <p>
+            Given any query point, we can still find its $K$ nearest neighbors using the precomputed
+            distances/similarities and apply majority vote (or probabilistic prediction).
+          </p>
+          <h3 id="comparison-with-other-algorithms">Comparison with Other Algorithms</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Algorithm</th>
+                <th>Needs explicit feature vectors $x_i \in \mathbb{R}^d$?</th>
+                <th>Works with only Similarity / Distance Matrix?</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>K-NN</strong></td>
+                <td>No</td>
+                <td>Yes (works very well)</td>
+              </tr>
+              <tr>
+                <td>Logistic Regression</td>
+                <td>Yes</td>
+                <td>No</td>
+              </tr>
+              <tr>
+                <td>Most other models</td>
+                <td>Yes</td>
+                <td>No</td>
+              </tr>
+            </tbody>
+          </table>
+          <h3 id="key-takeaway">Key Takeaway</h3>
+          <p>K-NN is extremely flexible:</p>
+          <ul>
+            <li>
+              It only needs a notion of <strong>distance</strong> or
+              <strong>similarity</strong> between points.
+            </li>
+            <li>It does not require the points to be embedded in a Euclidean vector space.</li>
+            <li>
+              This makes it useful in domains (chemistry, biology, graphs, text, etc.) where
+              defining a good feature vector is hard, but defining a similarity is natural.
+            </li>
+          </ul>
+          <h2 id="05-train-and-test-set-differences">05. Train and Test Set Differences</h2>
+          <p><img src="./assets/05.jpg" alt="20" /></p>
+          <h3 id="random-split-vs-time-based-split-tbs">Random Split vs Time-Based Split (TBS)</h3>
+          <p>When we split $D_n$ into $D_{\text{Train}}$ and $D_{\text{Test}}$:</p>
+          <ul>
+            <li>
+              <strong>Random Split (R)</strong>: Points are randomly assigned → Train and Test
+              usually come from the same distribution.
+            </li>
+            <li><strong>Time-Based Split (TBS)</strong>: Older data → Train, newer data → Test.</li>
+          </ul>
+          <p><strong>Example: Amazon Food Reviews</strong></p>
+          <ul>
+            <li>Train: reviews from $t-40$ to $t-10$</li>
+            <li>Test: reviews from $t-10$ to $t$</li>
+          </ul>
+          <p>Over time:</p>
+          <ul>
+            <li>Old product categories may be removed</li>
+            <li>New categories (e.g., Wine) may appear</li>
+            <li>Language, preferences, and product distribution can change</li>
+          </ul>
+          <p>
+            → $D_{\text{Train}}$ and $D_{\text{Test}}$ can become <strong>very different</strong>.
+          </p>
+          <h3 id="consequence-of-distribution-shift">Consequence of Distribution Shift</h3>
+          <p>If the distribution of data changes significantly:</p>
+          <ul>
+            <li>
+              A model (e.g., K-NN) that performs <strong>very well</strong> on $D_{\text{Train}}$
+            </li>
+            <li>Can perform <strong>very badly</strong> on $D_{\text{Test}}$</li>
+          </ul>
+          <p>
+            This happens because the decision boundary learned on Train no longer matches the Test
+            distribution.
+          </p>
+          <p><strong>Symptom:</strong></p>
+          <ul>
+            <li>CV error → Low</li>
+            <li>Test error → High</li>
+          </ul>
+          <h3 id="how-to-check-if-train-and-test-have-different-distributions">
+            How to Check if Train and Test Have Different Distributions
+          </h3>
+          <p><strong>Idea:</strong> Convert the problem into a binary classification task.</p>
+          <ol>
+            <li>
+              <p>Create a new dataset $D_n'$:</p>
+              <ul>
+                <li>All points from $D_{\text{Train}}$ get label $y' = 1$</li>
+                <li>All points from $D_{\text{Test}}$ get label $y' = 0$</li>
+                <li>Features $x'$ can be the original features (or concatenated features)</li>
+              </ul>
+            </li>
+            <li>
+              <p>Train a binary classifier (e.g., K-NN) on $D_n'$ to distinguish Train vs Test.</p>
+            </li>
+            <li><p>Look at the accuracy of this binary classifier:</p></li>
+          </ol>
+          <table>
+            <thead>
+              <tr>
+                <th>Case</th>
+                <th>Overlap between Train &amp; Test</th>
+                <th>Binary Classifier Accuracy</th>
+                <th>Conclusion</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>1</td>
+                <td>Almost overlapping</td>
+                <td>Low</td>
+                <td>Distributions are very similar</td>
+              </tr>
+              <tr>
+                <td>2</td>
+                <td>Medium overlap</td>
+                <td>Medium</td>
+                <td>Distributions are somewhat different</td>
+              </tr>
+              <tr>
+                <td>3</td>
+                <td>Very low overlap</td>
+                <td>High</td>
+                <td>Distributions are very different</td>
+              </tr>
+            </tbody>
+          </table>
+          <p><strong>Interpretation:</strong></p>
+          <ul>
+            <li>
+              If the binary classifier can easily separate Train from Test (high accuracy) → the two
+              sets come from different distributions.
+            </li>
+            <li>
+              If it cannot separate them well (accuracy near random) → the distributions are
+              similar.
+            </li>
+          </ul>
+          <h3 id="what-to-do-when-distributions-differ">What to Do When Distributions Differ</h3>
+          <p>If features are <strong>not temporally stable</strong> (they change over time):</p>
+          <ul>
+            <li>
+              We need to <strong>change / redesign / build new features</strong> that are more
+              robust to temporal shifts.
+            </li>
+          </ul>
+          <h3 id="key-takeaway-2">Key Takeaway</h3>
+          <p>When using Time-Based Splitting (common in real-world systems):</p>
+          <ul>
+            <li>
+              Always check whether $D_{\text{Train}}$ and $D_{\text{Test}}$ come from the same
+              distribution.
+            </li>
+            <li>
+              A simple binary classifier that tries to distinguish Train vs Test is a practical
+              diagnostic tool.
+            </li>
+            <li>High accuracy of this classifier is a warning sign of distribution shift.</li>
+          </ul>
+          <h2 id="06-impact-of-outliers">06. Impact of Outliers</h2>
+          <p><img src="./assets/06.jpg" alt="20" /></p>
+          <h3 id="what-is-an-outlier">What is an Outlier?</h3>
+          <p>
+            An outlier is a data point that lies far away from the majority of the points of its
+            class.
+          </p>
+          <h3 id="effect-on-models">Effect on Models</h3>
+          <p>The model $f$ roughly corresponds to the <strong>decision surface</strong>.</p>
+          <ul>
+            <li>
+              <p>
+                <strong>Logistic Regression</strong>:<br />
+                Relatively robust. A few outliers usually do not drastically change the decision
+                boundary.
+              </p>
+            </li>
+            <li>
+              <p>
+                <strong>K-NN</strong>:<br />
+                More prone to outliers, especially when $K$ is small.
+              </p>
+            </li>
+          </ul>
+          <h3 id="why-k-nn-is-sensitive-to-outliers">Why K-NN is Sensitive to Outliers</h3>
+          <p>When $K$ is small (particularly $K=1$):</p>
+          <ul>
+            <li>
+              The prediction for a query point is completely determined by its nearest neighbor(s).
+            </li>
+            <li>
+              A single outlier can create a small “island” of the wrong class in the decision
+              surface.
+            </li>
+            <li>This leads to overfitting and poor generalization.</li>
+          </ul>
+          <p><strong>Rule of thumb:</strong></p>
+          <ul>
+            <li>Smaller $K$ → more sensitive to outliers</li>
+            <li>Larger $K$ → more robust to outliers (but can underfit)</li>
+          </ul>
+          <h3 id="evidence-from-cross-validation">Evidence from Cross-Validation</h3>
+          <p>Using 10-fold CV:</p>
+          <table>
+            <thead>
+              <tr>
+                <th>$K$</th>
+                <th>Accuracy</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>1</td>
+                <td>97%</td>
+              </tr>
+              <tr>
+                <td>2</td>
+                <td>97%</td>
+              </tr>
+              <tr>
+                <td>3</td>
+                <td>97%</td>
+              </tr>
+              <tr>
+                <td>4</td>
+                <td>97%</td>
+              </tr>
+              <tr>
+                <td>5</td>
+                <td>97%</td>
+              </tr>
+              <tr>
+                <td>6</td>
+                <td>95%</td>
+              </tr>
+              <tr>
+                <td>7</td>
+                <td>92%</td>
+              </tr>
+            </tbody>
+          </table>
+          <p>
+            Even though $K=1$ to $K=5$ give similar accuracy,<br />
+            <strong>$K=5$ is less prone to outliers than $K=1$</strong>.
+          </p>
+          <h3 id="what-if-we-can-detect-outliers">What If We Can Detect Outliers?</h3>
+          <p>If we can reliably detect and remove outliers before training:</p>
+          <ul>
+            <li>The negative impact on K-NN can be greatly reduced.</li>
+          </ul>
+          <p>
+            One common technique for detecting outliers is based on
+            <strong>Local Outlier Factor (LOF)</strong>, which itself uses the idea of K-NN (local
+            density comparison).
+          </p>
+          <h3 id="key-takeaway-3">Key Takeaway</h3>
+          <ul>
+            <li>K-NN with small $K$ is highly sensitive to outliers.</li>
+            <li>Prefer moderately larger $K$ when outliers are present.</li>
+            <li>
+              Outlier detection and removal (or robust distance measures) can improve K-NN
+              performance.
+            </li>
+          </ul>
+          <h2 id="07-local-outlier-factor-simple-solution-mean-distance-to-k-nn">
+            07. Local Outlier Factor (Simple Solution: Mean Distance to k-NN)
+          </h2>
+          <p><img src="./assets/07.jpg" alt="20" /></p>
+          <h3 id="purpose">Purpose</h3>
+          <p>
+            <strong>Local Outlier Factor (LOF)</strong> is a method to
+            <strong>detect outliers</strong>.<br />
+            It is heavily inspired by the idea of K-Nearest Neighbors.
+          </p>
+          <h3 id="intuition">Intuition</h3>
+          <p>Consider two clusters:</p>
+          <ul>
+            <li>$C_1$: Very dense cluster</li>
+            <li>$C_2$: Sparser cluster</li>
+          </ul>
+          <p>And two points:</p>
+          <ul>
+            <li>$x_1$: Lies near the dense cluster $C_1$ → <strong>not an outlier</strong></li>
+            <li>$x_2$: Lies far from both clusters → <strong>outlier</strong></li>
+          </ul>
+          <p>
+            Even if the absolute distance of $x_1$ to its neighbors is small and the distance of
+            $x_2$ is large, the key idea is to look at <strong>local density</strong>.
+          </p>
+          <h3 id="simple-solution-basic-idea">Simple Solution (Basic Idea)</h3>
+          <p>Let $K = 5$.</p>
+          <p>For every point $x_i$:</p>
+          <ol>
+            <li>Find its $K$ nearest neighbors.</li>
+            <li>
+              Compute the <strong>average distance</strong> from $x_i$ to its $K$ nearest neighbors.
+            </li>
+            <li>Sort all points by this average distance.</li>
+            <li>
+              Points with <strong>very high average distance</strong> are considered outliers.
+            </li>
+          </ol>
+          <p>This simple approach already captures the idea of local density.</p>
+          <h3 id="local-density">Local Density</h3>
+          <ul>
+            <li>Dense region → small average distance to $K$-NN</li>
+            <li>Sparse region / outlier → large average distance to $K$-NN</li>
+          </ul>
+          <p>
+            LOF formalizes this idea more carefully by comparing the local density of a point with
+            the local densities of its neighbors.
+          </p>
+          <h3 id="key-takeaway-4">Key Takeaway</h3>
+          <ul>
+            <li>LOF is a <strong>K-NN inspired</strong> outlier detection technique.</li>
+            <li>
+              It looks at how isolated a point is
+              <strong>relative to its local neighborhood</strong>.
+            </li>
+            <li>
+              A simple practical version:
+              <ol>
+                <li>Compute mean distance to $K$ nearest neighbors for every point.</li>
+                <li>
+                  Points with the largest mean distances are the strongest outlier candidates.
+                </li>
+              </ol>
+            </li>
+          </ul>
+          <h2 id="08-k-distance">08. k-Distance</h2>
+          <p><img src="./assets/08.jpg" alt="20" /></p>
+          <h3 id="1-k-distance">1. K-distance</h3>
+          <p>
+            $$ \text{K-distance}(x_i) = \text{distance to the } K^{\text{th}} \text{ nearest
+            neighbor of } x_i $$
+          </p>
+          <p><strong>Example:</strong></p>
+          <ul>
+            <li>If $K = 5$, then 5-distance$(x_i) = d_5$ (distance to the 5th nearest neighbor)</li>
+            <li>1-distance$(x_i) = d_1$ (distance to the nearest neighbor)</li>
+          </ul>
+          <h3 id="2-neighborhood-of-a-point">2. Neighborhood of a Point</h3>
+          <p>
+            $$ N_K(x_i) = \text{Set of all points that belong to the } K\text{-nearest neighbors of
+            } x_i $$
+          </p>
+          <p><strong>Notation:</strong></p>
+          <ul>
+            <li>$N_{K=3}(x_i) = {x_1, x_2, x_3}$</li>
+            <li>$N_{K=5}(x_i) = {x_1, x_2, x_3, x_4, x_5}$</li>
+          </ul>
+          <h3 id="visual-intuition">Visual Intuition</h3>
+          <p>For a point $x_i$:</p>
+          <ul>
+            <li>Draw a circle centered at $x_i$ that just reaches its $K$-th nearest neighbor.</li>
+            <li>All points lying inside or on this circle form the neighborhood $N_K(x_i)$.</li>
+            <li>The radius of this circle is exactly the <strong>K-distance</strong> of $x_i$.</li>
+          </ul>
+          <p>
+            These two quantities (K-distance and the neighborhood set) are the basic building blocks
+            used to compute local density and eventually the Local Outlier Factor.
+          </p>
+          <h2 id="09-reachability-distance-a-b">09. Reachability-Distance (A, B)</h2>
+          <p><img src="./assets/09.jpg" alt="20" /></p>
+          <h3 id="definition-2">Definition</h3>
+          <p>
+            The <strong>reachability distance</strong> of a point $x_i$ with respect to a point
+            $x_j$ is defined as:
+          </p>
+          <p>
+            $$ \text{reachability-distance}_K(x_i, x_j) = \max\big( \text{K-distance}(x_j),;
+            \text{dist}(x_i, x_j) \big) $$
+          </p>
+          <p>Where:</p>
+          <ul>
+            <li>$\text{K-distance}(x_j)$ = distance from $x_j$ to its $K$-th nearest neighbor</li>
+            <li>
+              $\text{dist}(x_i, x_j)$ = actual Euclidean (or other) distance between $x_i$ and $x_j$
+            </li>
+          </ul>
+          <h3 id="intuition-2">Intuition</h3>
+          <ul>
+            <li>
+              <p>
+                If $x_i$ is <strong>inside</strong> the $K$-neighborhood of $x_j$ (i.e., $x_i \in
+                N_K(x_j)$),<br />
+                then the reachability distance is simply the <strong>K-distance</strong> of $x_j$.
+              </p>
+            </li>
+            <li>
+              <p>
+                If $x_i$ is <strong>outside</strong> the $K$-neighborhood of $x_j$,<br />
+                then the reachability distance is the actual distance $\text{dist}(x_i, x_j)$.
+              </p>
+            </li>
+          </ul>
+          <p>In other words:</p>
+          <p>
+            $$ \text{reach-dist}_K(x_i, x_j) = \begin{cases} \text{K-distance}(x_j) &amp; \text{if }
+            x_i \in N_K(x_j) \ \text{dist}(x_i, x_j) &amp; \text{otherwise} \end{cases} $$
+          </p>
+          <h3 id="why-this-definition">Why This Definition?</h3>
+          <p>
+            This “smoothing” effect prevents points that are very close to $x_j$ from having
+            artificially small reachability distances.<br />
+            It makes the density estimate more stable.
+          </p>
+          <h3 id="visual-example-k5">Visual Example ($K=5$)</h3>
+          <ul>
+            <li>Circle around $x_j$ has radius = 5-distance$(x_j) = d_5$</li>
+            <li>
+              For a point $x_i$ outside this circle:<br />
+              $\text{reach-dist}(x_i, x_j) = \text{dist}(x_i, x_j) = d$
+            </li>
+            <li>
+              For a point inside the circle:<br />
+              $\text{reach-dist}(x_i, x_j) = d_5$
+            </li>
+          </ul>
+          <h2 id="10-local-reachability-density-a">10. Local Reachability-Density (A)</h2>
+          <p><img src="./assets/10.jpg" alt="20" /></p>
+          <h3 id="definition-3">Definition</h3>
+          <p>
+            The <strong>Local Reachability Density</strong> ( <code>lrd</code> ) of a point $x_i$ is
+            defined as:
+          </p>
+          <p>
+            $$ \text{lrd}(x_i) = \dfrac{|N(x_i)|}{\displaystyle\sum_{x_j \in N(x_i)}
+            \text{reach-dist}(x_i, x_j)} $$
+          </p>
+          <p>Where:</p>
+          <ul>
+            <li>$N(x_i)$ = set of $K$-nearest neighbors of $x_i$</li>
+            <li>$|N(x_i)|$ = number of points in the neighborhood</li>
+            <li>
+              $\text{reach-dist}(x_i, x_j)$ = reachability distance of $x_i$ with respect to $x_j$
+            </li>
+          </ul>
+          <h3 id="english-interpretation">English Interpretation</h3>
+          <p>
+            $$ \text{lrd}(x_i) = \text{inverse of the average reachability distance of } x_i \text{
+            from its neighbors} $$
+          </p>
+          <p>In short:</p>
+          <p>$$ \text{lrd}(x_i) \propto \dfrac{1}{\text{average reach-dist of } x_i} $$</p>
+          <h3 id="intuition-3">Intuition</h3>
+          <ul>
+            <li>
+              If the average reachability distance from $x_i$ to its neighbors is
+              <strong>small</strong> → the point is in a <strong>dense</strong> region →
+              <strong>high</strong> lrd.
+            </li>
+            <li>
+              If the average reachability distance is <strong>large</strong> → the point is in a
+              <strong>sparse</strong> region → <strong>low</strong> lrd.
+            </li>
+          </ul>
+          <h3 id="visual-idea">Visual Idea</h3>
+          <ul>
+            <li>Dense cluster → small average reach-dist → high local reachability density</li>
+            <li>
+              Sparse region / outlier → large average reach-dist → low local reachability density
+            </li>
+          </ul>
+          <p>This local density estimate is the key quantity used in the final LOF score.</p>
+          <h2 id="11-local-outlier-factor-a">11. Local Outlier Factor (A)</h2>
+          <p><img src="./assets/11.jpg" alt="20" /></p>
+          <p>
+            <a href="https://en.wikipedia.org/wiki/Local_outlier_factor"
+              >https://en.wikipedia.org/wiki/Local_outlier_factor</a
+            >
+          </p>
+          <blockquote>
+            <h3 id="lofipynb">
+              <a href="./LOF.ipynb"><code>LOF.ipynb</code></a>
+            </h3>
+          </blockquote>
+          <p>
+            <a
+              href="https://scikit-learn.org/stable/auto_examples/neighbors/plot_lof_outlier_detection.html"
+              >https://scikit-learn.org/stable/auto_examples/neighbors/plot_lof_outlier_detection.html</a
+            >
+          </p>
+          <p>
+            <a
+              href="https://scikit-learn.org/stable/modules/generated/sklearn.neighbors.LocalOutlierFactor.html"
+              >https://scikit-learn.org/stable/modules/generated/sklearn.neighbors.LocalOutlierFactor.html</a
+            >
+          </p>
+          <h3 id="definition-4">Definition</h3>
+          <p>The <strong>Local Outlier Factor</strong> of a point $x_i$ is defined as:</p>
+          <p>
+            $$ \text{LOF}(x_i) = \dfrac{\displaystyle\sum_{x_j \in N(x_i)}
+            \text{lrd}(x_j)}{|N(x_i)|} ;\bigg/; \text{lrd}(x_i) $$
+          </p>
+          <p>In other words:</p>
+          <p>
+            $$ \text{LOF}(x_i) = \dfrac{\text{average lrd of the neighbors of } x_i}{\text{lrd of }
+            x_i} $$
+          </p>
+          <h3 id="interpretation">Interpretation</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>LOF Value</th>
+                <th>Meaning</th>
+                <th>Conclusion</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>LOF$(x_i)$ is <strong>large</strong></td>
+                <td>Density of $x_i$ is much smaller than the density of its neighbors</td>
+                <td><strong>Outlier</strong></td>
+              </tr>
+              <tr>
+                <td>LOF$(x_i)$ is <strong>small</strong> (≈ 1)</td>
+                <td>Density of $x_i$ is similar to the density of its neighbors</td>
+                <td><strong>Inlier</strong></td>
+              </tr>
+            </tbody>
+          </table>
+          <h3 id="visual-understanding">Visual Understanding</h3>
+          <ul>
+            <li>Points inside a dense cluster ($C_1$ or $C_2$) → LOF ≈ 1 (small) → inliers</li>
+            <li>Points lying far away from clusters → LOF ≫ 1 (large) → outliers</li>
+          </ul>
+          <p><strong>Examples:</strong></p>
+          <ul>
+            <li>$x_1 \in C_1$ → LOF small</li>
+            <li>$x_2$ (isolated) → LOF large → outlier</li>
+            <li>$x_3 \in C_2$ → LOF small</li>
+            <li>$x_4$ (isolated) → LOF large → outlier</li>
+          </ul>
+          <h3 id="how-to-use-lof-in-practice">How to Use LOF in Practice</h3>
+          <ol>
+            <li>For every point $x_i$, compute LOF$(x_i)$.</li>
+            <li>Sort the points in decreasing order of LOF.</li>
+            <li>
+              The points with the <strong>highest LOF scores</strong> are the strongest outliers.
+            </li>
+          </ol>
+          <h3 id="summary-of-the-lof-pipeline">Summary of the LOF Pipeline</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Step</th>
+                <th>Quantity</th>
+                <th>Meaning</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>1</td>
+                <td>K-distance$(x_i)$</td>
+                <td>Distance to the $K$-th nearest neighbor</td>
+              </tr>
+              <tr>
+                <td>2</td>
+                <td>$N_K(x_i)$</td>
+                <td>Set of $K$ nearest neighbors</td>
+              </tr>
+              <tr>
+                <td>3</td>
+                <td>reach-dist$(x_i, x_j)$</td>
+                <td>max(K-distance$(x_j)$, dist$(x_i,x_j)$)</td>
+              </tr>
+              <tr>
+                <td>4</td>
+                <td>lrd$(x_i)$</td>
+                <td>Inverse of average reachability distance</td>
+              </tr>
+              <tr>
+                <td>5</td>
+                <td>LOF$(x_i)$</td>
+                <td>Ratio of average neighbor lrd to own lrd</td>
+              </tr>
+            </tbody>
+          </table>
+          <h3 id="final-note">Final Note</h3>
+          <p>
+            LOF is a powerful <strong>K-NN inspired</strong> outlier detection technique.<br />
+            There are many other outlier detection methods, but LOF is one of the most popular
+            density-based approaches.
+          </p>
+          <h2 id="12-impact-of-scale--column-standardization">
+            12. Impact of Scale &amp; Column Standardization
+          </h2>
+          <p><img src="./assets/12.01.jpg" alt="20" /> <img src="./assets/12.02.jpg" alt="20" /></p>
+          <h3 id="why-scale-matters">Why Scale Matters</h3>
+          <p>Features often have very different scales.</p>
+          <p><strong>Example:</strong></p>
+          <table>
+            <thead>
+              <tr>
+                <th>Point</th>
+                <th>$f_1$ (0–100)</th>
+                <th>$f_2$ (0–1)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>$x_1$</td>
+                <td>23</td>
+                <td>0.2</td>
+              </tr>
+              <tr>
+                <td>$x_2$</td>
+                <td>28</td>
+                <td>0.2</td>
+              </tr>
+              <tr>
+                <td>$x_3$</td>
+                <td>23</td>
+                <td>1.0</td>
+              </tr>
+            </tbody>
+          </table>
+          <p>Euclidean distances:</p>
+          <p>$$ \text{dist}(x_1, x_2) = 5 $$</p>
+          <p>$$ \text{dist}(x_1, x_3) = 0.8 $$</p>
+          <p>
+            <strong>Problem:</strong><br />
+            Logically, $x_1$ and $x_2$ are very similar (only $f_1$ differs by 5 on a 0–100 scale),
+            while $x_1$ and $x_3$ differ significantly in $f_2$.<br />
+            But because of the scale difference, the distance calculation is dominated by $f_1$.
+          </p>
+          <h3 id="column-standardization">Column Standardization</h3>
+          <p>
+            To remove the effect of different scales, we apply
+            <strong>Column Standardization</strong> (also called Z-score normalization):
+          </p>
+          <p>For each feature $f_j$:</p>
+          <p>$$ a' = \dfrac{a - \mu_j}{\sigma_j} $$</p>
+          <p>After transformation:</p>
+          <ul>
+            <li>Mean of each feature = 0</li>
+            <li>Standard deviation of each feature = 1</li>
+          </ul>
+          <h3 id="importance-for-k-nn">Importance for K-NN</h3>
+          <ul>
+            <li>Euclidean distance is <strong>highly sensitive</strong> to feature scale.</li>
+            <li>
+              Therefore,
+              <strong>always perform Column Standardization before applying K-NN</strong> (when
+              using Euclidean distance).
+            </li>
+          </ul>
+          <h3 id="comparison-with-other-algorithms-2">Comparison with Other Algorithms</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Algorithm</th>
+                <th>Sensitive to Feature Scale?</th>
+                <th>Recommendation</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>K-NN (Euclidean)</td>
+                <td>Yes</td>
+                <td>Must do Column Standardization</td>
+              </tr>
+              <tr>
+                <td>Decision Trees (DT)</td>
+                <td>No</td>
+                <td>Scale-independent</td>
+              </tr>
+              <tr>
+                <td>Random Forest</td>
+                <td>No</td>
+                <td>Scale-independent</td>
+              </tr>
+            </tbody>
+          </table>
+          <h3 id="key-takeaway-5">Key Takeaway</h3>
+          <p>
+            Whenever you use a distance-based algorithm (especially K-NN with Euclidean distance),
+            always standardize the features first so that no single feature dominates the distance
+            calculation because of its scale.
+          </p>
+          <h2 id="13-interpretability">13. Interpretability</h2>
+          <p><img src="./assets/13.01.jpg" alt="20" /> <img src="./assets/13.02.jpg" alt="20" /></p>
+          <blockquote>
+            <h3 id="model-interpretability-vs-black-box-models">
+              Model Interpretability vs Black-box Models
+            </h3>
+          </blockquote>
+          <h3 id="the-medical-scenario">The Medical Scenario</h3>
+          <p>In medical applications (e.g., Cancer / Not Cancer):</p>
+          <ol>
+            <li>We train a model $f$ on a dataset $D$.</li>
+            <li>
+              For a new patient (query $x_q$ with features $f_1, f_2, \dots, f_{10}$), the model
+              predicts a label $y_q$.
+            </li>
+            <li>
+              The prediction is given to the <strong>doctor</strong>, who then communicates with the
+              patient.
+            </li>
+          </ol>
+          <h3 id="why-interpretability-matters">Why Interpretability Matters</h3>
+          <p>
+            If the model only outputs a class label (Cancer / Not Cancer)
+            <strong>without any reasoning</strong>, the doctor may not trust or understand the
+            decision.
+          </p>
+          <p><strong>What doctors really need:</strong></p>
+          <blockquote>
+            <p>Reasoning on <em>why</em> the model thinks $y_q = 1$ (Cancer).</p>
+          </blockquote>
+          <p><strong>Example of useful reasoning:</strong></p>
+          <ul>
+            <li>Feature $f_5$ (Test 5) value is very high</li>
+            <li>
+              Feature $f_8$ (Test 8) value is very low<br />
+              → Therefore the model predicts Cancer.
+            </li>
+          </ul>
+          <p>This kind of explanation is extremely valuable in high-stakes domains.</p>
+          <h3 id="interpretable-model-vs-black-box-model">
+            Interpretable Model vs Black-box Model
+          </h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Type</th>
+                <th>Example</th>
+                <th>Can we understand the decision?</th>
+                <th>Typical Behavior</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Interpretable Model</td>
+                <td>K-NN</td>
+                <td>Yes</td>
+                <td>We can see the neighbors</td>
+              </tr>
+              <tr>
+                <td>Black-box Model</td>
+                <td>Deep Neural Networks, complex ensembles</td>
+                <td>No (or very hard)</td>
+                <td>Just input → output</td>
+              </tr>
+            </tbody>
+          </table>
+          <h3 id="why-k-nn-is-interpretable">Why K-NN is Interpretable</h3>
+          <p>K-NN is an <strong>interpretable model</strong>, especially when:</p>
+          <ul>
+            <li>Dimensionality $d$ is small, and</li>
+            <li>$K$ is small</li>
+          </ul>
+          <p><strong>Example ($K=7$):</strong></p>
+          <ul>
+            <li>Query point $x_q$</li>
+            <li>All 7 nearest neighbors are labeled 1</li>
+            <li>Therefore $y_q = 1$</li>
+          </ul>
+          <p>
+            The doctor can actually look at the 7 nearest patients and understand why the prediction
+            was made.
+          </p>
+          <h3 id="key-takeaway-for-medical-domain">Key Takeaway for Medical Domain</h3>
+          <ul>
+            <li>
+              K-NN is particularly useful in medical applications because it is interpretable when
+              $d$ and $K$ are small.
+            </li>
+            <li>Interpretability allows doctors to verify and trust the model’s decisions.</li>
+            <li>
+              Black-box models may achieve higher accuracy but often lack the transparency required
+              in critical domains.
+            </li>
+          </ul>
+          <h2 id="14-feature-importance-and-forward-feature-selection">
+            14. Feature Importance and Forward Feature Selection
+          </h2>
+          <p><img src="./assets/14.01.jpg" alt="20" /> <img src="./assets/14.02.jpg" alt="20" /></p>
+          <h3 id="what-is-feature-importance">What is Feature Importance?</h3>
+          <p>Given a dataset with features $f_1, f_2, \dots, f_{10}$ and a model $f$:</p>
+          <p>
+            <strong>Question:</strong> Which features are most useful for the classification /
+            regression task?
+          </p>
+          <p>
+            <strong>Example:</strong> Predicting height of a person<br />
+            Possible features: Weight, Hair color, Hair length, Skin color, Gender, Country, …
+          </p>
+          <p>Feature Importance helps us:</p>
+          <ul>
+            <li>Understand the model better</li>
+            <li>Increase interpretability</li>
+            <li>Rank features in decreasing order of importance</li>
+          </ul>
+          <p>
+            <strong>Note:</strong><br />
+            Basic K-NN does <strong>not</strong> provide feature importance directly.<br />
+            Models like Logistic Regression and Decision Trees do.
+          </p>
+          <h3 id="forward-feature-selection">Forward Feature Selection</h3>
+          <p><strong>Goal:</strong> Select a small subset of the most useful features.</p>
+          <p><strong>Setting:</strong></p>
+          <ul>
+            <li>Task: Classification</li>
+            <li>Model: K-NN / Logistic Regression / …</li>
+            <li>Data: $D = {Train, Test}$</li>
+          </ul>
+          <p>
+            <strong>High-level idea (especially useful when $d$ is large, e.g. 1000-dim):</strong>
+          </p>
+          <ul>
+            <li>Discard most features</li>
+            <li>Keep only the top useful ones (e.g. top 100)</li>
+            <li>Can be combined with PCA / t-SNE later</li>
+          </ul>
+          <h3 id="how-forward-selection-works">How Forward Selection Works</h3>
+          <p><strong>Step 1: Find the single best feature</strong></p>
+          <ul>
+            <li>Train a model using only $f_1$ → get accuracy $a_1$ on Test</li>
+            <li>Train using only $f_2$ → get accuracy $a_2$</li>
+            <li>…</li>
+            <li>Train using only $f_d$ → get accuracy $a_d$</li>
+          </ul>
+          <p>
+            Pick the feature with the <strong>highest accuracy</strong>.<br />
+            Suppose $f_{10}$ has the highest accuracy → select $f_{10}$.
+          </p>
+          <p><strong>Step 2: Add the next best feature</strong></p>
+          <p>Now we already have ${f_{10}}$.</p>
+          <ul>
+            <li>Try adding $f_1$ → train on ${f_1, f_{10}}$ → accuracy $a_1$</li>
+            <li>Try adding $f_2$ → train on ${f_2, f_{10}}$ → accuracy $a_2$</li>
+            <li>…</li>
+            <li>Try adding each remaining feature</li>
+          </ul>
+          <p>
+            Pick the feature that gives the <strong>highest accuracy</strong> when added.<br />
+            Suppose $f_5$ is the best → now selected set = ${f_{10}, f_5}$
+          </p>
+          <p><strong>Step 3: Repeat</strong></p>
+          <p>
+            Continue adding one feature at a time, always choosing the feature that improves the
+            model the most, given the features already selected.
+          </p>
+          <p>At each stage the question is:</p>
+          <blockquote>
+            <p>
+              Given that I already have some features, which new feature adds the most value to my
+              model?
+            </p>
+          </blockquote>
+          <h3 id="backward-feature-selection">Backward Feature Selection</h3>
+          <p>Opposite of Forward Selection:</p>
+          <ul>
+            <li>Start with <strong>all</strong> features ${f_1, f_2, \dots, f_d}$</li>
+            <li>
+              In each iteration, <strong>remove</strong> the feature whose removal causes the
+              <strong>lowest drop</strong> in accuracy
+            </li>
+            <li>Continue until the desired number of features remains</li>
+          </ul>
+          <h3 id="time-complexity">Time Complexity</h3>
+          <p>Forward / Backward selection is <strong>model-agnostic</strong> but expensive:</p>
+          <p>In each iteration we need to train and test multiple models:</p>
+          <ul>
+            <li>Iteration 1 → train $d$ models</li>
+            <li>Iteration 2 → train $d-1$ models</li>
+            <li>Iteration 3 → train $d-2$ models</li>
+            <li>…</li>
+          </ul>
+          <p>Total number of models trained ≈ $\dfrac{d(d+1)}{2}$</p>
+          <h3 id="summary-2">Summary</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Method</th>
+                <th>Direction</th>
+                <th>Key Idea</th>
+                <th>Cost</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Forward Selection</td>
+                <td>Start empty → add</td>
+                <td>Greedily add the most useful feature</td>
+                <td>High</td>
+              </tr>
+              <tr>
+                <td>Backward Selection</td>
+                <td>Start full → remove</td>
+                <td>Greedily remove the least useful feature</td>
+                <td>High</td>
+              </tr>
+              <tr>
+                <td>Feature Importance</td>
+                <td>Model-dependent</td>
+                <td>Rank features by how much they help the model</td>
+                <td>Depends on model</td>
+              </tr>
+            </tbody>
+          </table>
+          <p>
+            These techniques help us build simpler, more interpretable, and often
+            better-generalizing models by removing irrelevant or redundant features.
+          </p>
+          <h2 id="15-handling-categorical-and-numerical-features">
+            15. Handling Categorical and Numerical Features
+          </h2>
+          <p>
+            <img src="./assets/15.01.jpg" alt="20" /><br />
+            <img src="./assets/15.02.jpg" alt="20" />
+          </p>
+          <h3 id="background">Background</h3>
+          <p>In many datasets (e.g. Iris), features are real-valued numbers (SL, SW, PL, PW).</p>
+          <p>But real-world data often contains:</p>
+          <ul>
+            <li><strong>Categorical features</strong> (e.g. Hair color, Country)</li>
+            <li><strong>Ordinal features</strong> (e.g. Rating: Very Good → Very Bad)</li>
+            <li>
+              <strong>Text</strong> (which we convert to numerical vectors using BoW, TF-IDF,
+              Word2Vec, etc.)
+            </li>
+          </ul>
+          <p>
+            Most ML models expect $x_i \in \mathbb{R}^d$ (numerical vectors).<br />
+            So we need ways to convert categorical / ordinal features into numbers.
+          </p>
+          <h3 id="example">Example</h3>
+          <p>Predicting height ($y$ = height):</p>
+          <table>
+            <thead>
+              <tr>
+                <th>Weight</th>
+                <th>Hair Color</th>
+                <th>Country</th>
+                <th>…</th>
+                <th>Height</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>100</td>
+                <td>Black</td>
+                <td>US</td>
+                <td>…</td>
+                <td>180</td>
+              </tr>
+            </tbody>
+          </table>
+          <ul>
+            <li>Weight → already numerical → keep as-is</li>
+            <li>
+              Hair Color → categorical feature<br />
+              Possible values: {Black, Brown, Red, Golden, Gray}
+            </li>
+          </ul>
+          <h3 id="ways-to-handle-categorical-features">Ways to Handle Categorical Features</h3>
+          <h4 id="1-give-a-number-label-encoding">1. Give a Number (Label Encoding)</h4>
+          <p>Assign numbers: Black=1, Brown=2, Red=3, Golden=4, Gray=5</p>
+          <p>
+            <strong>Problem:</strong><br />
+            Numbers have an inherent order (Red &gt; Black), but hair colors have
+            <strong>no natural order</strong>.<br />
+            This is wrong for pure categorical features → creates false ordinal relationship.
+          </p>
+          <h4 id="2-one-hot-encoding">2. One-Hot Encoding</h4>
+          <p>Create a binary vector of size = number of distinct categories.</p>
+          <p>Hair Color = {Bl, Br, Red, G, Gray}</p>
+          <ul>
+            <li>Black → [1, 0, 0, 0, 0]</li>
+            <li>Brown → [0, 1, 0, 0, 0]</li>
+            <li>Golden → [0, 0, 0, 1, 0]</li>
+          </ul>
+          <p>
+            <strong>Definition:</strong><br />
+            One-hot encoding = binary vector of the size of the number of distinct elements.
+          </p>
+          <p><strong>Issue when number of categories is large:</strong></p>
+          <ul>
+            <li>Country ≈ 200 values → 200-dimensional sparse vector</li>
+            <li>Creates very sparse and high-dimensional data</li>
+            <li>Similar to Bag-of-Words</li>
+          </ul>
+          <h4 id="3-mean-replacement-target-encoding">3. Mean Replacement (Target Encoding)</h4>
+          <p>
+            <strong>Idea:</strong> Replace the categorical value by the
+            <strong>average value of the target</strong> for that category.
+          </p>
+          <p>Example (predicting height):</p>
+          <ul>
+            <li>Country = India → average height of people from India = 152 cm</li>
+            <li>Country = US → average height of people from US = 160 cm</li>
+          </ul>
+          <p>Now the feature becomes numerical.</p>
+          <p>
+            This is also called <strong>mean encoding</strong> or <strong>target encoding</strong>.
+          </p>
+          <h4 id="4-domain-knowledge">4. Domain Knowledge</h4>
+          <p>
+            Convert categorical feature into a meaningful numerical feature using domain knowledge.
+          </p>
+          <p>Example:</p>
+          <ul>
+            <li>Country → Distance from India (or from equator)</li>
+            <li>
+              Distance from equator is related to height (people farther from equator tend to be
+              taller)
+            </li>
+          </ul>
+          <h3 id="ordinal-features">Ordinal Features</h3>
+          <p>Features that have a <strong>natural order</strong>.</p>
+          <p>
+            Example:<br />
+            “How do you rate Indian food?”
+          </p>
+          <table>
+            <thead>
+              <tr>
+                <th>Rating</th>
+                <th>Numeric Code</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Very Good</td>
+                <td>5</td>
+              </tr>
+              <tr>
+                <td>Good</td>
+                <td>4</td>
+              </tr>
+              <tr>
+                <td>Average</td>
+                <td>3</td>
+              </tr>
+              <tr>
+                <td>Bad</td>
+                <td>2</td>
+              </tr>
+              <tr>
+                <td>Very Bad</td>
+                <td>1</td>
+              </tr>
+            </tbody>
+          </table>
+          <p>Because there is a logical ordering, we can directly convert them to numbers.</p>
+          <h3 id="summary-of-strategies">Summary of Strategies</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Feature Type</th>
+                <th>Common Techniques</th>
+                <th>Notes</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Categorical</td>
+                <td>One-Hot Encoding, Mean Replacement, Domain Knowledge</td>
+                <td>Try all; problem-dependent</td>
+              </tr>
+              <tr>
+                <td>Ordinal</td>
+                <td>Label Encoding (ordered numbers)</td>
+                <td>Preserves natural order</td>
+              </tr>
+              <tr>
+                <td>Text</td>
+                <td>BoW, TF-IDF, Word2Vec, Avg Word2Vec, TF-IDF weighted Word2Vec</td>
+                <td>Try all of them</td>
+              </tr>
+            </tbody>
+          </table>
+          <p>
+            <strong>Key Advice:</strong><br />
+            There is no single best method.<br />
+            The choice is <strong>problem-dependent</strong> — always experiment with multiple
+            encodings and see what works best for your data and model.
+          </p>
+          <h2 id="16-handling-missing-values-by-imputation">
+            16. Handling Missing Values by Imputation
+          </h2>
+          <p>
+            <img src="./assets/16.01.jpg" alt="20" /><br />
+            <img src="./assets/16.02.jpg" alt="20" />
+          </p>
+          <p>
+            <a href="https://scikit-learn.org/stable/api/sklearn.impute.html"
+              >https://scikit-learn.org/stable/api/sklearn.impute.html</a
+            >
+          </p>
+          <h3 id="why-do-missing-values-occur">Why Do Missing Values Occur?</h3>
+          <ul>
+            <li>Data corruption</li>
+            <li>Collection errors</li>
+            <li>Sensor failures, user skipping questions, etc.</li>
+          </ul>
+          <p>Missing values are usually represented as:</p>
+          <ul>
+            <li>NaN</li>
+            <li>null</li>
+            <li>-1</li>
+            <li>or simply blank</li>
+          </ul>
+          <h3 id="common-imputation-techniques">Common Imputation Techniques</h3>
+          <h4 id="1-simple-statistical-imputation">1. Simple Statistical Imputation</h4>
+          <p>
+            Replace the missing value with a statistic computed from the non-missing values of that
+            feature:
+          </p>
+          <ul>
+            <li><strong>Mean</strong></li>
+            <li><strong>Median</strong></li>
+            <li><strong>Most frequent value (Mode)</strong></li>
+          </ul>
+          <p>
+            Example:<br />
+            If $x_i$ has $f_3$ missing → fill it with the mean / median / mode of all non-missing
+            values of $f_3$.
+          </p>
+          <h4 id="2-class-label-based-imputation-for-classification">
+            2. Class-label based Imputation (for Classification)
+          </h4>
+          <p>When the task is classification ($y \in {0,1}$):</p>
+          <ul>
+            <li>Look at the class label of the point that has the missing value.</li>
+            <li>Impute using only the points that belong to the <strong>same class</strong>.</li>
+          </ul>
+          <p>
+            Example:<br />
+            $x_i$ has $f_3$ missing and $y_i = 1$<br />
+            → Fill $f_3$ with the mean of $f_3$ computed only on points whose class label is 1.
+          </p>
+          <p>
+            This often works better than global mean/median because the distribution of a feature
+            can be different across classes.
+          </p>
+          <h4 id="3-create-new-missing-value-indicator-features">
+            3. Create New “Missing Value” Indicator Features
+          </h4>
+          <p>Missingness itself can be informative.</p>
+          <p><strong>Idea:</strong></p>
+          <ul>
+            <li>
+              For every feature that has missing values, create a new binary feature:
+              <ul>
+                <li>1 → value was missing</li>
+                <li>0 → value was present</li>
+              </ul>
+            </li>
+            <li>Then perform normal imputation on the original feature.</li>
+          </ul>
+          <p>
+            This way the model can learn whether “the fact that the value is missing” carries
+            predictive signal.
+          </p>
+          <h4 id="4-model-based-imputation">4. Model-based Imputation</h4>
+          <p>
+            Treat the feature with missing values as the <strong>target</strong> and use the other
+            features to predict it.
+          </p>
+          <p><strong>Steps:</strong></p>
+          <ol>
+            <li>Take all points where the feature is <strong>not</strong> missing → Train set</li>
+            <li>Take points where the feature <strong>is</strong> missing → Test set</li>
+            <li>
+              Train a model (very commonly <strong>K-NN</strong>) to predict the missing feature
+              using the other features.
+            </li>
+            <li>Use the trained model to fill the missing values.</li>
+          </ol>
+          <ul>
+            <li>If the feature is categorical → use classification</li>
+            <li>If the feature is numerical → use regression</li>
+          </ul>
+          <p><strong>Why K-NN is popular for this:</strong></p>
+          <ul>
+            <li>It finds the nearest neighbors of the point (using the other features)</li>
+            <li>Then uses the values of those neighbors to impute the missing feature</li>
+          </ul>
+          <h3 id="summary-of-techniques">Summary of Techniques</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Method</th>
+                <th>Idea</th>
+                <th>When useful</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Mean / Median / Mode</td>
+                <td>Simple statistic</td>
+                <td>Quick baseline</td>
+              </tr>
+              <tr>
+                <td>Class-label based</td>
+                <td>Impute using same class only</td>
+                <td>Classification problems</td>
+              </tr>
+              <tr>
+                <td>Missing indicator features</td>
+                <td>Add binary flags for missingness</td>
+                <td>When missingness itself is informative</td>
+              </tr>
+              <tr>
+                <td>Model-based (K-NN etc.)</td>
+                <td>Predict missing value from other features</td>
+                <td>More accurate, especially with correlated features</td>
+              </tr>
+            </tbody>
+          </table>
+          <p>
+            <strong>Practical Advice:</strong><br />
+            Always try multiple imputation strategies and evaluate their impact on the final model
+            performance. There is no universally best method.
+          </p>
+          <h2 id="17-curse-of-dimensionality">17. Curse of Dimensionality</h2>
+          <p>
+            <img src="./assets/17.01.jpg" alt="20" /><br />
+            <img src="./assets/17.02.jpg" alt="20" />
+          </p>
+          <p>
+            <a href="https://en.wikipedia.org/wiki/Curse_of_dimensionality"
+              >https://en.wikipedia.org/wiki/Curse_of_dimensionality</a
+            >
+          </p>
+          <blockquote>
+            <h3 id="curse-of-dimensionality">Curse of Dimensionality</h3>
+          </blockquote>
+          <p>
+            When the number of dimensions $d$ becomes very high, many intuitive properties of data
+            break down. This is known as the <strong>Curse of Dimensionality</strong>.
+          </p>
+          <h3 id="1-exponential-growth-of-data-requirement">
+            1. Exponential Growth of Data Requirement
+          </h3>
+          <p>For binary features:</p>
+          <ul>
+            <li>3 features → $2^3 = 8$ possible data points</li>
+            <li>10 features → $2^{10} = 1024$ possible data points</li>
+          </ul>
+          <p>
+            <strong>Key Observation:</strong><br />
+            As dimensionality increases, the number of data points needed to perform good
+            classification / modeling increases <strong>exponentially</strong>.
+          </p>
+          <p>
+            <strong>Hughes Phenomenon:</strong><br />
+            When the size of the dataset is fixed ($n$ is constant), model performance starts
+            decreasing as dimensionality increases.
+          </p>
+          <h3 id="2-distance-functions-break-down-especially-euclidean">
+            2. Distance Functions Break Down (Especially Euclidean)
+          </h3>
+          <p>In low dimensions (1D, 2D, 3D) we have a clear notion of “near” and “far”.</p>
+          <p>Define for a point $x_i$:</p>
+          <p>$$ \text{dist-min}(x_i) = \min_{x_j \neq x_i} \text{dist}(x_i, x_j) $$</p>
+          <p>$$ \text{dist-max}(x_i) = \max_{x_j \neq x_i} \text{dist}(x_i, x_j) $$</p>
+          <p>In low dimensions:</p>
+          <p>
+            $$ \frac{\text{dist-max}(x_i) - \text{dist-min}(x_i)}{\text{dist-min}(x_i)} &gt; 0 $$
+          </p>
+          <p>But as dimension $d \to \infty$:</p>
+          <p>
+            $$ \lim_{d \to \infty} \frac{\text{dist-max}(x_i) -
+            \text{dist-min}(x_i)}{\text{dist-min}(x_i)} \to 0 $$
+          </p>
+          <p>
+            <strong>Meaning:</strong><br />
+            In very high dimensions,<br />
+            $\text{dist-max}(x_i) \approx \text{dist-min}(x_i)$
+          </p>
+          <p>
+            → Every pair of points becomes almost equally distant from each other.<br />
+            → The concept of “nearest neighbor” loses meaning.
+          </p>
+          <h3 id="impact-on-k-nn">Impact on K-NN</h3>
+          <ul>
+            <li>K-NN relies heavily on Euclidean distance.</li>
+            <li>In high-dimensional spaces, Euclidean distance becomes less meaningful.</li>
+            <li>Therefore <strong>K-NN does not work well in high dimensions</strong>.</li>
+          </ul>
+          <p><strong>Common Solutions:</strong></p>
+          <ul>
+            <li>
+              Use <strong>Cosine Similarity</strong> instead of Euclidean distance (especially for
+              text data).
+            </li>
+            <li>
+              Prefer sparse representations (BoW, TF-IDF) over dense ones (Word2Vec) when
+              dimensionality is extremely high.
+            </li>
+          </ul>
+          <h3 id="dense-vs-sparse-high-dimensional-data">Dense vs Sparse High-Dimensional Data</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Type of Data</th>
+                <th>Impact of High Dimensionality</th>
+                <th>Reason</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>High-dim <strong>&amp; Dense</strong></td>
+                <td>Impact is <strong>high</strong></td>
+                <td>Points are spread everywhere</td>
+              </tr>
+              <tr>
+                <td>High-dim <strong>&amp; Sparse</strong></td>
+                <td>Impact is <strong>lower</strong></td>
+                <td>Data is not uniformly / randomly spread</td>
+              </tr>
+            </tbody>
+          </table>
+          <p>
+            Sparse data (e.g., text with BoW) suffers less from the curse compared to dense random
+            high-dimensional data.
+          </p>
+          <h3 id="3-overfitting-increases-with-dimensionality">
+            3. Overfitting Increases with Dimensionality
+          </h3>
+          <p>
+            As $d$ increases → model capacity increases → risk of
+            <strong>overfitting</strong> increases.
+          </p>
+          <p><strong>Ways to handle this:</strong></p>
+          <ul>
+            <li>
+              <strong>Forward Feature Selection</strong> → pick only the most useful subset of
+              features (classification-oriented)
+            </li>
+            <li>
+              <strong>Dimensionality Reduction</strong> (PCA, t-SNE) → not class-label oriented
+            </li>
+            <li>Prefer simpler model families when $d$ is large</li>
+          </ul>
+          <h3 id="practical-advice-for-text-data">Practical Advice for Text Data</h3>
+          <p>When applying K-NN on text data:</p>
+          <ul>
+            <li>Prefer <strong>Cosine Similarity</strong> over Euclidean distance</li>
+            <li>
+              Prefer <strong>Sparse representations</strong> (BoW / TF-IDF) over dense
+              representations (Word2Vec)
+            </li>
+          </ul>
+          <h3 id="summary-3">Summary</h3>
+          <p>The Curse of Dimensionality manifests in three major ways:</p>
+          <ol>
+            <li>Exponentially more data is required</li>
+            <li>Distance metrics (especially Euclidean) become less meaningful</li>
+            <li>Models tend to overfit more easily</li>
+          </ol>
+          <p>
+            Understanding these effects is crucial when working with high-dimensional data such as
+            text, images, or one-hot encoded categorical features.
+          </p>
+          <h2 id="18-bias-variance-tradeoff">18. Bias-Variance Tradeoff</h2>
+          <p>
+            <img src="./assets/18.01.jpg" alt="20" /><br />
+            <img src="./assets/18.02.jpg" alt="20" />
+          </p>
+          <p>
+            <a href="https://en.wikipedia.org/wiki/Bias%E2%80%93variance_tradeoff"
+              >https://en.wikipedia.org/wiki/Bias%E2%80%93variance_tradeoff</a
+            >
+          </p>
+          <p>
+            Bias-Variance Tradeoff is one of the most important ideas in the
+            <strong>Theory of Machine Learning</strong> (Statistical ML).
+          </p>
+          <p>
+            It gives the mathematical basis for understanding <strong>Underfitting</strong> and
+            <strong>Overfitting</strong>.
+          </p>
+          <h3 id="generalization-error-decomposition">Generalization Error Decomposition</h3>
+          <p>For a model (especially easy to prove for Linear Regression):</p>
+          <p>
+            $$ \text{Generalization Error} = \text{Bias}^2 + \text{Variance} + \text{Irreducible
+            Error} $$
+          </p>
+          <ul>
+            <li><strong>Generalization Error</strong> = Error on future unseen data</li>
+            <li>
+              <strong>Irreducible Error</strong> = Error that cannot be reduced further for a given
+              model / problem (noise in the data)
+            </li>
+          </ul>
+          <h3 id="1-bias">1. Bias</h3>
+          <p><strong>Bias</strong> = Error due to simplifying assumptions made by the model.</p>
+          <ul>
+            <li>High Bias → <strong>Underfitting</strong></li>
+            <li>Classic example in K-NN: when $K = n$ (very large K)</li>
+          </ul>
+          <p>When $K = n$:</p>
+          <ul>
+            <li>The model always predicts the dominant class in the entire training set</li>
+            <li>It ignores the local structure completely</li>
+            <li>This is a strong simplifying assumption → High Bias → Underfitting</li>
+          </ul>
+          <p><strong>Visual intuition:</strong></p>
+          <ul>
+            <li>True decision boundary is a curve</li>
+            <li>Model assumes a straight line / plane → simplifying assumption → High Bias</li>
+          </ul>
+          <h3 id="2-variance">2. Variance</h3>
+          <p>
+            <strong>Variance</strong> = How much the model (decision surface) changes when the
+            training data changes.
+          </p>
+          <ul>
+            <li>High Variance → <strong>Overfitting</strong></li>
+            <li>Classic example in K-NN: when $K = 1$</li>
+          </ul>
+          <p>When $K = 1$:</p>
+          <ul>
+            <li>Small changes in the training data lead to very different decision surfaces</li>
+            <li>The model is extremely sensitive to the training set</li>
+            <li>This is High Variance → Overfitting</li>
+          </ul>
+          <p><strong>As $K$ increases:</strong></p>
+          <ul>
+            <li>Variance decreases</li>
+            <li>Bias increases</li>
+          </ul>
+          <h3 id="bias-variance-behavior-in-k-nn">Bias-Variance Behavior in K-NN</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Value of K</th>
+                <th>Bias</th>
+                <th>Variance</th>
+                <th>Behavior</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>$K = 1$</td>
+                <td>Low</td>
+                <td>Very High</td>
+                <td>Overfitting</td>
+              </tr>
+              <tr>
+                <td>$K$ medium</td>
+                <td>Balanced</td>
+                <td>Balanced</td>
+                <td>Best tradeoff</td>
+              </tr>
+              <tr>
+                <td>$K = n$</td>
+                <td>High</td>
+                <td>Low</td>
+                <td>Underfitting</td>
+              </tr>
+            </tbody>
+          </table>
+          <h3 id="numerical-illustration">Numerical Illustration</h3>
+          <p>$$ \text{Gen. Error} = \text{Bias}^2 + \text{Var} + \text{Irreducible Error} $$</p>
+          <p>Example numbers:</p>
+          <table>
+            <thead>
+              <tr>
+                <th>K</th>
+                <th>Bias²</th>
+                <th>Variance</th>
+                <th>Irreducible</th>
+                <th>Total Gen. Error</th>
+                <th>Diagnosis</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>K=1</td>
+                <td>10</td>
+                <td>100</td>
+                <td>3</td>
+                <td>113</td>
+                <td>Overfit</td>
+              </tr>
+              <tr>
+                <td>K=5</td>
+                <td>12</td>
+                <td>10</td>
+                <td>3</td>
+                <td>25</td>
+                <td>Good</td>
+              </tr>
+              <tr>
+                <td>K=n</td>
+                <td>100</td>
+                <td>2</td>
+                <td>3</td>
+                <td>105</td>
+                <td>Underfit</td>
+              </tr>
+            </tbody>
+          </table>
+          <h3 id="key-takeaways">Key Takeaways</h3>
+          <ul>
+            <li>We cannot simultaneously make Bias and Variance zero.</li>
+            <li>There is always a <strong>tradeoff</strong>.</li>
+            <li>
+              The goal is to find the sweet spot where the sum (Bias² + Variance) is minimized.
+            </li>
+            <li>
+              This tradeoff is fundamental and appears in almost every model family (K-NN, Linear
+              Regression, Decision Trees, Neural Networks, etc.).
+            </li>
+          </ul>
+          <p>
+            Bias-Variance Tradeoff is the theoretical foundation that explains why we need
+            techniques like cross-validation, regularization, and careful model selection.
+          </p>
+          <h2 id="19-intuitive-understanding-of-bias-variance">
+            19. Intuitive Understanding of Bias-Variance
+          </h2>
+          <p>
+            <img src="./assets/19.01.jpg" alt="20" /><br />
+            <img src="./assets/19.02.jpg" alt="20" />
+          </p>
+          <blockquote>
+            <h3 id="intuitive-understanding-of-bias--variance">
+              Intuitive Understanding of Bias &amp; Variance
+            </h3>
+          </blockquote>
+          <p>We split the data $D$ into $D_{\text{Train}}$ and $D_{\text{Test}}$.</p>
+          <ul>
+            <li>Train a model on $D_{\text{Train}}$</li>
+            <li>Measure errors on both Train and Test sets</li>
+          </ul>
+          <p>
+            $$ \text{Train Error} = \text{difference}(y_i, \hat{y}_i) \quad \text{on training data}
+            $$
+          </p>
+          <p>
+            $$ \text{Test Error} = \text{difference}(y_i, \hat{y}_i) \quad \text{on test data} $$
+          </p>
+          <h3 id="1-high-bias-underfitting">1. High Bias (Underfitting)</h3>
+          <p><strong>Symptoms:</strong></p>
+          <ul>
+            <li>Train Error is <strong>high</strong></li>
+            <li>Test Error is also high</li>
+          </ul>
+          <p><strong>Rule of thumb:</strong></p>
+          <ul>
+            <li>High Train Error → High Bias → Underfitting</li>
+          </ul>
+          <p><strong>Classic example:</strong> K-NN with $K = n$</p>
+          <p>When Train Error is low → Bias is low.</p>
+          <h3 id="2-high-variance-overfitting">2. High Variance (Overfitting)</h3>
+          <p><strong>Symptoms:</strong></p>
+          <ul>
+            <li>Train Error is <strong>very low</strong></li>
+            <li>Test Error is <strong>high</strong></li>
+          </ul>
+          <p><strong>Example:</strong></p>
+          <ul>
+            <li>Train accuracy = 99.9% (error ≈ 0.1%)</li>
+            <li>Test accuracy = 90% (error ≈ 10%)</li>
+          </ul>
+          <p>This gap indicates <strong>Overfitting</strong> (High Variance).</p>
+          <p><strong>Another intuition:</strong></p>
+          <ul>
+            <li>
+              Small changes in the training data cause large changes in the model (decision surface)
+            </li>
+            <li>Classic example: K-NN with $K = 1$</li>
+          </ul>
+          <h3 id="quick-diagnostic-table">Quick Diagnostic Table</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Train Error</th>
+                <th>Test Error</th>
+                <th>Diagnosis</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>High</td>
+                <td>High</td>
+                <td>High Bias (Underfit)</td>
+              </tr>
+              <tr>
+                <td>Low</td>
+                <td>High</td>
+                <td>High Variance (Overfit)</td>
+              </tr>
+              <tr>
+                <td>Low</td>
+                <td>Low</td>
+                <td>Good model</td>
+              </tr>
+            </tbody>
+          </table>
+          <p>
+            These simple observations from Train vs Test error give a very practical and intuitive
+            way to detect bias and variance problems.
+          </p>
+          <h2 id="20-best-and-worst-case-of-algorithm">20. Best and Worst Case of Algorithm</h2>
+          <p>
+            <img src="./assets/20.01.jpg" alt="20" /><br />
+            <img src="./assets/20.02.jpg" alt="20" />
+          </p>
+          <h3 id="1-dimensionality">1. Dimensionality</h3>
+          <p><strong>Best case for K-NN:</strong></p>
+          <ul>
+            <li>Dimensionality $d$ is <strong>small</strong> ($d &lt; 10$)</li>
+          </ul>
+          <p><strong>When dimensionality increases:</strong></p>
+          <ul>
+            <li>Curse of dimensionality hurts Euclidean distance</li>
+            <li>Interpretability decreases</li>
+            <li>
+              Runtime complexity of exact methods (Kd-tree) and approximate methods (LSH) increases
+            </li>
+          </ul>
+          <p>→ K-NN becomes less attractive as $d$ grows large.</p>
+          <h3 id="2-latency-requirements">2. Latency Requirements</h3>
+          <p>
+            <strong>Low-latency systems</strong> need results extremely fast (e.g. Google Search
+            &lt; 10 ms).
+          </p>
+          <ul>
+            <li>Brute-force K-NN is too slow for such applications</li>
+            <li>
+              Even with Kd-tree or LSH, K-NN is generally <strong>not preferred</strong> in strict
+              low-latency production systems
+            </li>
+          </ul>
+          <p>
+            <strong>Recommendation:</strong><br />
+            Avoid K-NN when the application demands very low latency.
+          </p>
+          <h3 id="3-choice-of-distance--similarity-measure">
+            3. Choice of Distance / Similarity Measure
+          </h3>
+          <p>K-NN is only as good as the distance (or similarity) measure you use.</p>
+          <p><strong>Examples:</strong></p>
+          <ul>
+            <li>Text data → Cosine Similarity works well</li>
+            <li>Genome data → Euclidean distance is often suitable</li>
+            <li>
+              When only a Similarity matrix or Distance matrix is available → K-NN can still be
+              applied directly
+            </li>
+          </ul>
+          <p>
+            <strong>Key point:</strong><br />
+            Always choose the right distance/similarity measure for the domain. A good distance
+            measure can make K-NN perform very well; a poor one will make it fail.
+          </p>
+          <h3 id="summary-when-to-use-k-nn">Summary: When to Use K-NN</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Situation</th>
+                <th>Recommendation for K-NN</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Low dimensionality ($d &lt; 10$)</td>
+                <td>Good choice</td>
+              </tr>
+              <tr>
+                <td>High dimensionality</td>
+                <td>Avoid or use with caution</td>
+              </tr>
+              <tr>
+                <td>Need very low latency</td>
+                <td>Avoid</td>
+              </tr>
+              <tr>
+                <td>Good domain-specific distance</td>
+                <td>Strong candidate</td>
+              </tr>
+              <tr>
+                <td>Need high interpretability</td>
+                <td>Good choice (especially small $K$)</td>
+              </tr>
+            </tbody>
+          </table>
+          <p>
+            K-NN shines in low-dimensional problems where interpretability matters and a meaningful
+            distance measure exists.
+          </p>
+          <h2 id="21-revision-questions">21. Revision Questions</h2>
+          <ol>
+            <li>
+              <a href="#1-what-is-imbalanced-and-balanced-dataset"
+                >What is Imbalanced and balanced dataset?</a
+              >
+            </li>
+            <li>
+              <a href="#2-define-multi-class-classification">Define Multi-class classification?</a>
+            </li>
+            <li><a href="#3-explain-impact-of-outliers">Explain Impact of Outliers?</a></li>
+            <li><a href="#4-what-is-local-outlier-factor">What is Local Outlier Factor?</a></li>
+            <li><a href="#5-what-is-k-distancea-na">What is k-distance(A), N(A)?</a></li>
+            <li>
+              <a href="#6-define-reachability-distancea-b">Define reachability-distance(A, B)?</a>
+            </li>
+            <li>
+              <a href="#7-what-is-local-reachability-densitya"
+                >What is Local-reachability-density(A)?</a
+              >
+            </li>
+            <li><a href="#8-define-lofa">Define LOF(A)?</a></li>
+            <li>
+              <a href="#9-impact-of-scale--column-standardization"
+                >Impact of Scale &amp; Column standardization?</a
+              >
+            </li>
+            <li><a href="#10-what-is-interpretability">What is Interpretability?</a></li>
+            <li>
+              <a href="#11-handling-categorical-and-numerical-features"
+                >Handling categorical and numerical features?</a
+              >
+            </li>
+            <li>
+              <a href="#12-handling-missing-values-by-imputation"
+                >Handling missing values by imputation?</a
+              >
+            </li>
+            <li><a href="#13-bias-variance-tradeoff">Bias-Variance tradeoff?</a></li>
+          </ol>
+          <h3 id="1-what-is-imbalanced-and-balanced-dataset">
+            1. What is Imbalanced and balanced dataset?
+          </h3>
+          <p>
+            <strong>Balanced dataset</strong>: Classes have roughly equal number of samples (e.g.,
+            50-50 for binary classification). Models train well without bias toward any class.
+          </p>
+          <p>
+            <strong>Imbalanced dataset</strong>: One or more classes have significantly fewer
+            samples (minority class) than others (majority class). Example: fraud detection (0.1%
+            fraud cases).
+          </p>
+          <p>
+            <strong>Problems</strong>: Model becomes biased toward majority class → high accuracy
+            but poor recall/precision on minority class.<br />
+            <strong>Solutions</strong>: Oversampling (SMOTE), undersampling, class weights, ensemble
+            methods, anomaly detection techniques, collecting more data.
+          </p>
+          <h3 id="2-define-multi-class-classification">2. Define Multi-class classification?</h3>
+          <p>
+            Multi-class classification is a supervised learning task where the target variable has
+            <strong>more than two classes</strong>.
+          </p>
+          <p>Examples:</p>
+          <ul>
+            <li>Digit recognition (0–9)</li>
+            <li>News categorization (sports, politics, tech, …)</li>
+            <li>Image classification (cat, dog, bird, car, …)</li>
+          </ul>
+          <p>Approaches:</p>
+          <ul>
+            <li>One-vs-Rest (OvR)</li>
+            <li>One-vs-One (OvO)</li>
+            <li>Softmax (multinomial logistic regression, neural nets)</li>
+            <li>
+              Algorithms that natively support multi-class (Random Forest, k-NN, Naive Bayes, etc.)
+            </li>
+          </ul>
+          <h3 id="3-explain-impact-of-outliers">3. Explain Impact of Outliers?</h3>
+          <p>
+            Outliers are data points that differ significantly from the rest of the observations.
+          </p>
+          <p><strong>Impact</strong>:</p>
+          <ul>
+            <li>
+              <strong>Distance-based models</strong> (k-NN, k-Means, SVM with RBF kernel) → outliers
+              distort neighborhoods and decision boundaries.
+            </li>
+            <li>
+              <strong>Linear models</strong> (Linear Regression, Logistic Regression) → outliers
+              pull the fitted line/hyperplane strongly (high leverage).
+            </li>
+            <li>
+              <strong>Statistics</strong> → mean and variance become unreliable; median/IQR are more
+              robust.
+            </li>
+            <li>Can lead to overfitting or poor generalization.</li>
+            <li>May represent rare but important events (fraud, defects) or data errors.</li>
+          </ul>
+          <p>
+            <strong>Handling</strong>: Detection (Z-score, IQR, Isolation Forest, LOF) + removal /
+            capping / robust models / transformation.
+          </p>
+          <h3 id="4-what-is-local-outlier-factor">4. What is Local Outlier Factor?</h3>
+          <p>
+            <strong>Local Outlier Factor (LOF)</strong> is an unsupervised anomaly detection
+            algorithm that measures the <strong>local density deviation</strong> of a data point
+            with respect to its neighbors.
+          </p>
+          <ul>
+            <li>
+              A point is considered an outlier if its local density is much lower than the densities
+              of its neighbors.
+            </li>
+            <li>LOF score ≈ 1 → similar density (inlier)</li>
+            <li>LOF score ≫ 1 → lower density than neighbors (outlier)</li>
+          </ul>
+          <p>
+            It works well for datasets with varying density regions (unlike global methods such as
+            Isolation Forest or simple distance-to-mean).
+          </p>
+          <h3 id="5-what-is-k-distancea-na">5. What is k-distance(A), N(A)?</h3>
+          <ul>
+            <li>
+              <p>
+                <strong>k-distance(A)</strong>: Distance from point A to its
+                <strong>k-th nearest neighbor</strong>.<br />
+                Formally: ( k\text{-distance}(A) = d(A, p_k) ) where ( p_k ) is the k-th closest
+                point to A.
+              </p>
+            </li>
+            <li>
+              <p>
+                <strong>N(A)</strong> or <strong>( N_k(A) )</strong>: The
+                <strong>k-nearest neighborhood</strong> of A – the set of all points whose distance
+                from A is ≤ k-distance(A).<br />
+                (It can contain more than k points if ties exist.)
+              </p>
+            </li>
+          </ul>
+          <p>These are fundamental building blocks of the LOF algorithm.</p>
+          <h3 id="6-define-reachability-distancea-b">6. Define reachability-distance(A, B)?</h3>
+          <p><strong>Reachability-distance</strong> of point A with respect to point B is:</p>
+          <p>[ \text{reach-dist}_k(A, B) = \max{ k\text{-distance}(B),\ d(A, B) } ]</p>
+          <p><strong>Intuition</strong>:</p>
+          <ul>
+            <li>If A is far from B, use the actual distance ( d(A,B) ).</li>
+            <li>If A is inside the k-neighborhood of B, “smooth” it by using k-distance(B).</li>
+          </ul>
+          <p>
+            This prevents points that are very close to a dense region from getting artificially low
+            reachability distances.
+          </p>
+          <h3 id="7-what-is-local-reachability-densitya">
+            7. What is Local-reachability-density(A)?
+          </h3>
+          <p>
+            <strong>Local Reachability Density (LRD)</strong> of point A is the inverse of the
+            average reachability distance of A from its k-nearest neighbors:
+          </p>
+          <p>
+            [ \text{lrd}<em>k(A) = \frac{|N_k(A)|}{\sum</em>{B \in N_k(A)} \text{reach-dist}_k(A,
+            B)} ]
+          </p>
+          <ul>
+            <li>High LRD → point lies in a dense region.</li>
+            <li>Low LRD → point lies in a sparse region.</li>
+          </ul>
+          <h3 id="8-define-lofa">8. Define LOF(A)?</h3>
+          <p>
+            <strong>Local Outlier Factor</strong> of point A is the average ratio of the local
+            reachability densities of A’s neighbors to the local reachability density of A itself:
+          </p>
+          <p>
+            [ \text{LOF}<em>k(A) = \frac{\sum</em>{B \in N_k(A)}
+            \frac{\text{lrd}_k(B)}{\text{lrd}_k(A)}}{|N_k(A)|} ]
+          </p>
+          <ul>
+            <li>LOF(A) ≈ 1 → A has similar density to its neighbors (inlier)</li>
+            <li>
+              LOF(A) &gt; 1 (typically &gt; 1.5–2) → A is less dense than its neighbors → outlier
+            </li>
+          </ul>
+          <h3 id="9-impact-of-scale--column-standardization">
+            9. Impact of Scale &amp; Column standardization?
+          </h3>
+          <p><strong>Impact of different scales</strong>:</p>
+          <ul>
+            <li>
+              Features with larger numeric ranges dominate distance calculations (Euclidean,
+              Manhattan, etc.).
+            </li>
+            <li>Affects k-NN, k-Means, SVM, PCA, Gradient Descent, Regularization, etc.</li>
+            <li>Can make the model biased toward high-magnitude features.</li>
+          </ul>
+          <p>
+            <strong>Column Standardization</strong> (Z-score normalization): [ x' = \frac{x -
+            \mu}{\sigma} ]
+          </p>
+          <ul>
+            <li>Makes every feature mean = 0, std = 1.</li>
+            <li>Removes scale differences while preserving distribution shape.</li>
+            <li>Preferred when algorithms assume Gaussian-like features or use regularization.</li>
+          </ul>
+          <p>
+            <strong>Min-Max Scaling</strong> is an alternative when you need values in a fixed range
+            [0,1].
+          </p>
+          <p>Always apply scaling <strong>after</strong> train-test split (fit only on train).</p>
+          <h3 id="10-what-is-interpretability">10. What is Interpretability?</h3>
+          <p>
+            <strong>Interpretability</strong> is the degree to which a human can understand the
+            cause of a decision / prediction made by a machine learning model.
+          </p>
+          <ul>
+            <li>
+              <strong>High interpretability</strong>: Linear Regression, Logistic Regression,
+              Decision Trees, Rule-based models.
+            </li>
+            <li>
+              <strong>Low interpretability (black-box)</strong>: Deep Neural Networks, Gradient
+              Boosting, complex ensembles.
+            </li>
+          </ul>
+          <p>Why it matters:</p>
+          <ul>
+            <li>Trust &amp; accountability (especially in healthcare, finance, law)</li>
+            <li>Debugging &amp; improving models</li>
+            <li>Regulatory compliance (GDPR “right to explanation”)</li>
+            <li>Domain expert validation</li>
+          </ul>
+          <p>
+            Techniques to improve interpretability of black-box models: SHAP, LIME, Partial
+            Dependence Plots, Feature Importance, attention mechanisms, etc.
+          </p>
+          <h3 id="11-handling-categorical-and-numerical-features">
+            11. Handling categorical and numerical features?
+          </h3>
+          <p><strong>Numerical features</strong>:</p>
+          <ul>
+            <li>Scaling / Standardization / Normalization</li>
+            <li>Binning (discretization)</li>
+            <li>Log / Power transforms for skewed data</li>
+            <li>Handling outliers</li>
+          </ul>
+          <p><strong>Categorical features</strong>:</p>
+          <ul>
+            <li>
+              <strong>Nominal</strong> (no order): One-Hot Encoding, Dummy Encoding, Target
+              Encoding, Embedding
+            </li>
+            <li>
+              <strong>Ordinal</strong> (ordered): Ordinal Encoding, Label Encoding (with care)
+            </li>
+            <li>High-cardinality: Frequency Encoding, Hashing, Target Encoding, Embeddings</li>
+          </ul>
+          <p><strong>Mixed data</strong>:</p>
+          <ul>
+            <li>Keep numerical as-is (after scaling) + encode categorical</li>
+            <li>
+              Tree-based models (Random Forest, XGBoost, LightGBM) can handle categorical natively
+              (or with simple integer encoding)
+            </li>
+            <li>Distance-based models require proper encoding + scaling</li>
+          </ul>
+          <h3 id="12-handling-missing-values-by-imputation">
+            12. Handling missing values by imputation?
+          </h3>
+          <p>
+            <strong>Imputation</strong> = filling missing values with estimated values instead of
+            dropping rows/columns.
+          </p>
+          <p>Common strategies:</p>
+          <table>
+            <thead>
+              <tr>
+                <th>Strategy</th>
+                <th>When to use</th>
+                <th>Pros / Cons</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Mean / Median</td>
+                <td>Numerical, MCAR</td>
+                <td>Simple; median more robust to outliers</td>
+              </tr>
+              <tr>
+                <td>Mode</td>
+                <td>Categorical</td>
+                <td>Simple</td>
+              </tr>
+              <tr>
+                <td>Constant (0, -1, “Missing”)</td>
+                <td>When missingness is informative</td>
+                <td>Preserves missing pattern</td>
+              </tr>
+              <tr>
+                <td>KNN Imputation</td>
+                <td>Numerical / mixed</td>
+                <td>Uses local similarity</td>
+              </tr>
+              <tr>
+                <td>Multivariate (MICE, IterativeImputer)</td>
+                <td>Complex relationships</td>
+                <td>More accurate but slower</td>
+              </tr>
+              <tr>
+                <td>Model-based (Predict missing with another model)</td>
+                <td>When strong predictors exist</td>
+                <td>Powerful</td>
+              </tr>
+            </tbody>
+          </table>
+          <p><strong>Important</strong>:</p>
+          <ul>
+            <li>Fit imputation only on training data</li>
+            <li>Create a missing indicator feature if missingness carries information</li>
+            <li>Never impute the target variable for supervised learning</li>
+          </ul>
+          <h3 id="13-bias-variance-tradeoff">13. Bias-Variance tradeoff?</h3>
+          <p>
+            <strong>Bias</strong>: Error due to overly simplistic assumptions in the learning
+            algorithm (underfitting).<br />
+            <strong>Variance</strong>: Error due to the model being too sensitive to small
+            fluctuations in the training data (overfitting).
+          </p>
+          <p><strong>Trade-off</strong>:</p>
+          <ul>
+            <li>
+              High Bias + Low Variance → Underfitting (simple models: linear regression on
+              non-linear data)
+            </li>
+            <li>
+              Low Bias + High Variance → Overfitting (very deep trees, high-degree polynomials)
+            </li>
+            <li>
+              Goal: Find the sweet spot with low total error = Bias² + Variance + Irreducible error
+            </li>
+          </ul>
+          <p><strong>How to control</strong>:</p>
+          <ul>
+            <li>Increase model complexity → ↓ Bias, ↑ Variance</li>
+            <li>
+              Regularization, more data, cross-validation, ensemble methods, early stopping → reduce
+              variance
+            </li>
+            <li>Feature engineering, better algorithms → reduce bias</li>
+          </ul>
+          <p>This is one of the most fundamental concepts in machine learning model selection.</p>
+        </main>
+        <aside class="note-toc" aria-label="On this page">
+          <h2>On This Page</h2>
+          <ul>
+            <li><a href="#01-introduction">01. Introduction</a></li>
+            <li>
+              <a href="#02-imbalanced-vs-balanced-dataset">02. Imbalanced vs Balanced Dataset</a>
+            </li>
+            <li><a href="#03-multi-class-classification">03. Multi-Class Classification</a></li>
+            <li>
+              <a href="#04-k-nn-given-a-distance-or-similarity-matrix"
+                >04. k-NN, Given a Distance or Similarity Matrix</a
+              >
+            </li>
+            <li>
+              <a href="#05-train-and-test-set-differences">05. Train and Test Set Differences</a>
+            </li>
+            <li><a href="#06-impact-of-outliers">06. Impact of Outliers</a></li>
+            <li>
+              <a href="#07-local-outlier-factor-simple-solution-mean-distance-to-k-nn"
+                >07. Local Outlier Factor (Simple Solution: Mean Distance to k-NN)</a
+              >
+            </li>
+            <li><a href="#08-k-distance">08. k-Distance</a></li>
+            <li><a href="#09-reachability-distance-a-b">09. Reachability-Distance (A, B)</a></li>
+            <li>
+              <a href="#10-local-reachability-density-a">10. Local Reachability-Density (A)</a>
+            </li>
+            <li><a href="#11-local-outlier-factor-a">11. Local Outlier Factor (A)</a></li>
+            <li>
+              <a href="#12-impact-of-scale--column-standardization"
+                >12. Impact of Scale &amp; Column Standardization</a
+              >
+            </li>
+            <li><a href="#13-interpretability">13. Interpretability</a></li>
+            <li>
+              <a href="#14-feature-importance-and-forward-feature-selection"
+                >14. Feature Importance and Forward Feature Selection</a
+              >
+            </li>
+            <li>
+              <a href="#15-handling-categorical-and-numerical-features"
+                >15. Handling Categorical and Numerical Features</a
+              >
+            </li>
+            <li>
+              <a href="#16-handling-missing-values-by-imputation"
+                >16. Handling Missing Values by Imputation</a
+              >
+            </li>
+            <li><a href="#17-curse-of-dimensionality">17. Curse of Dimensionality</a></li>
+            <li><a href="#18-bias-variance-tradeoff">18. Bias-Variance Tradeoff</a></li>
+            <li>
+              <a href="#19-intuitive-understanding-of-bias-variance"
+                >19. Intuitive Understanding of Bias-Variance</a
+              >
+            </li>
+            <li>
+              <a href="#20-best-and-worst-case-of-algorithm"
+                >20. Best and Worst Case of Algorithm</a
+              >
+            </li>
+            <li><a href="#21-revision-questions">21. Revision Questions</a></li>
+          </ul>
+        </aside>
+      </div>
+    </div>
+    <script>
+      if (window.hljs)
+        document
+          .querySelectorAll("pre code[class*='language-']")
+          .forEach((block) => window.hljs.highlightElement(block));
+      (() => {
+        const links = [...document.querySelectorAll(".note-toc a")],
+          heads = links
+            .map((l) => document.getElementById(decodeURIComponent(l.hash.slice(1))))
+            .filter(Boolean);
+        if (!links.length || !heads.length || !("IntersectionObserver" in window)) return;
+        const set = (h) =>
+          links.forEach((l) => l.classList.toggle("is-active", l.hash === `#${h.id}`));
+        const ob = new IntersectionObserver(
+          (es) => {
+            const v = es
+              .filter((e) => e.isIntersecting)
+              .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
+            if (v.length) set(v[0].target);
+          },
+          { rootMargin: "-10% 0px -75% 0px", threshold: 0 },
+        );
+        heads.forEach((h) => ob.observe(h));
+      })();
+    </script>
+  </body>
+</html>

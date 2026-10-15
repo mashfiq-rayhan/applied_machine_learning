@@ -1,0 +1,334 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Pandas | Applied Machine Learning</title>
+    <link rel="stylesheet" href="../HTMLs/theme.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
+    <script>
+      window.MathJax = {
+        tex: {
+          inlineMath: [
+            ["$", "$"],
+            ["\\(", "\\)"],
+          ],
+          displayMath: [
+            ["$$", "$$"],
+            ["\\[", "\\]"],
+          ],
+          processEscapes: true,
+          processEnvironments: true,
+        },
+        options: {
+          skipHtmlTags: ["script", "noscript", "style", "textarea", "pre", "code"],
+        },
+      };
+    </script>
+    <script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-svg.js"></script>
+  </head>
+  <body class="site-page">
+    <div class="site-layout">
+      <nav class="curriculum-nav" aria-label="Main curriculum navigation">
+        <iframe src="../HTMLs/table-of-contents.html" title="Machine learning curriculum"></iframe>
+      </nav>
+      <div class="note-layout">
+        <main class="note-content">
+          <img
+            src="https://pandas.pydata.org/static/img/pandas.svg"
+            alt="Pandas Logo"
+            width="200"
+            height="100" />
+
+          <h3 id="getting-started">Getting Started</h3>
+
+          <div class="code-cell">
+            <pre><code class="language-python">import pandas as pd</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python">df = pd.read_csv(&#x27;./Materials/1_getting_started/nyc_weather.csv&#x27;)
+df</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python"># Max Temperature
+df[&#x27;Temperature&#x27;].max()</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python"># Days rained
+df[&#x27;EST&#x27;][df[&#x27;Events&#x27;] == &#x27;Rain&#x27;]</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python">df[&#x27;WindSpeedMPH&#x27;].mean()</code></pre>
+          </div>
+          <h3 id="dataframe">DataFrame</h3>
+
+          <div class="code-cell">
+            <pre><code class="language-python">import pandas as pd</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python">df = pd.read_csv(&#x27;./Materials/2_dataframe_basics/weather_data.csv&#x27;)
+df</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python"># List of Tuples
+#list of tuples
+
+weather_data = [(&#x27;1/1/2017&#x27;, 32, 6, &#x27;Rain&#x27;),
+                (&#x27;1/2/2017&#x27;, 35, 7, &#x27;Sunny&#x27;),
+                (&#x27;1/3/2017&#x27;, 28, 2, &#x27;Snow&#x27;),
+                (&#x27;1/4/2017&#x27;, 24, 7, &#x27;Snow&#x27;),
+                (&#x27;1/5/2017&#x27;, 32, 4, &#x27;Rain&#x27;),
+                (&#x27;1/6/2017&#x27;, 31, 2, &#x27;Sunny&#x27;)
+               ]
+df = pd.DataFrame(weather_data, columns=[&#x27;day&#x27;, &#x27;temperature&#x27;, &#x27;windspeed&#x27;, &#x27;event&#x27;])
+df</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python">df.shape</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python">df.head</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python">df.tail</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python"># Slicing
+df[2:5]</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python">df.columns</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python">df.day</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python">df[&#x27;day&#x27;]</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python">df[[&#x27;day&#x27;, &#x27;event&#x27;]]</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python"># get all day temperature
+df[&#x27;temperature&#x27;]</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python">df.temperature</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python"># max Tempture
+df[&#x27;temperature&#x27;].max()</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python"># min Temperature
+df.temperature.min()</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python"># Describe a Data Frame Column
+df[&#x27;temperature&#x27;].describe()</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python"># Select rows which has maximum Temperature
+df[df.temperature == df.temperature.max()]</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python"># select only a column which has a specific condition
+df.day[df.temperature == df.temperature.max()]</code></pre>
+          </div>
+          <h3 id="key-operations-on-a-data-frame">Key Operations on a Data Frame</h3>
+
+          <div class="code-cell">
+            <pre><code class="language-python">import pandas as pd</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python">df = pd.read_csv(&#x27;./Materials/3_Key operations on Dataframes/weather_data.csv&#x27;)
+df</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python">dx = pd.read_excel(&#x27;./Materials/3_Key operations on Dataframes/weather_data.xlsx&#x27;)
+dx</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python">#write excel to csv
+dx.to_csv(&#x27;./Materials/3_Key operations on Dataframes/weather_data_new.csv&#x27;)
+dx.to_csv(&#x27;./Materials/3_Key operations on Dataframes/weather_data_new_noIndex.csv&#x27;, index=False)</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python">#write csv to Excel
+df.to_excel(&#x27;new.xlsx&#x27;, sheet_name=&#x27;weather_data&#x27;)</code></pre>
+          </div>
+          <h3 id="group-by">GROUP-BY</h3>
+
+          <div class="code-cell">
+            <pre><code class="language-python">import pandas as pd</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python">df = pd.read_csv(&#x27;./Materials/3_Key operations on Dataframes/weather_data_cities.csv&#x27;)
+df</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python">gc = df.groupby(&#x27;city&#x27;)
+gc</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python">for city, city_df in gc:
+    print(city)
+    print(city_df)</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python">gc.get_group(&#x27;new york&#x27;)</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python">gc.get_group(&#x27;mumbai&#x27;)</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python">gc.get_group(&#x27;paris&#x27;)</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python">gc.max()</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python">print(gc.max())</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python">gc.min()</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python">gc[[&#x27;temperature&#x27;, &#x27;windspeed&#x27;]].mean()</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python">gc.describe()</code></pre>
+          </div>
+          <h3 id="concatenate-data-frames">concatenate Data Frames</h3>
+
+          <div class="code-cell">
+            <pre><code class="language-python">import pandas as pd
+india_weather = pd.DataFrame({
+    &quot;city&quot;: [&quot;mumbai&quot;,&quot;delhi&quot;,&quot;banglore&quot;],
+    &quot;temperature&quot;: [32,45,30],
+    &quot;humidity&quot;: [80, 60, 78]
+})
+
+india_weather</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python">us_weather = pd.DataFrame({
+    &quot;city&quot;: [&quot;new york&quot;,&quot;chicago&quot;,&quot;orlando&quot;],
+    &quot;temperature&quot;: [21,14,35],
+    &quot;humidity&quot;: [68, 65, 75]
+})
+us_weather</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python">df = pd.concat([india_weather, us_weather])
+df</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python">df = pd.concat([india_weather, us_weather], ignore_index=True)
+df</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python">df = pd.concat([india_weather, us_weather], ignore_index=True, axis=1)
+df</code></pre>
+          </div>
+          <h3 id="merge-dataframes">Merge DataFrames</h3>
+
+          <div class="code-cell">
+            <pre><code class="language-python">temperature_df = pd.DataFrame({
+    &quot;city&quot;: [&quot;mumbai&quot;,&quot;delhi&quot;,&quot;banglore&quot;, &#x27;hyderabad&#x27;],
+    &quot;temperature&quot;: [32,45,30,40]})
+temperature_df</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python">humidity_df = pd.DataFrame({
+    &quot;city&quot;: [&quot;delhi&quot;,&quot;mumbai&quot;,&quot;banglore&quot;],
+    &quot;humidity&quot;: [68, 65, 75]})
+humidity_df</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python"># merge two dataframes with out explicitly mention index
+df = pd.merge(temperature_df, humidity_df, on=&#x27;city&#x27;)
+df</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python"># OUTER-JOIN
+df = pd.merge(temperature_df, humidity_df, on=&#x27;city&#x27;, how=&#x27;outer&#x27;)
+df</code></pre>
+          </div>
+          <h3 id="numerical-indexing-loc-vs-iloc">Numerical Indexing (.loc vs iloc)</h3>
+
+          <div class="code-cell">
+            <pre><code class="language-python">import pandas as pd
+import numpy as np</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python">df = pd.DataFrame([1,2,3,4,5,6,7,8,9,19])
+df</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python">df = pd.DataFrame([1,2,3,4,5,6,7,8,9,19], index=[49,48,47,46,45, 1, 2, 3, 4, 5])
+df</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python">df.loc[46]</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python">df.iloc[3]</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python">df.loc[45]</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python">df.loc[:2]</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python">df.iloc[:2]</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python">df.iloc[:]</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python"></code></pre>
+          </div>
+        </main>
+        <aside class="note-toc" aria-label="On this page">
+          <h2>On This Page</h2>
+          <ul>
+            <li><a href="#getting-started">Getting Started</a></li>
+            <li><a href="#dataframe">DataFrame</a></li>
+            <li><a href="#key-operations-on-a-data-frame">Key Operations on a Data Frame</a></li>
+            <li><a href="#group-by">GROUP-BY</a></li>
+            <li><a href="#concatenate-data-frames">concatenate Data Frames</a></li>
+            <li><a href="#merge-dataframes">Merge DataFrames</a></li>
+            <li><a href="#numerical-indexing-loc-vs-iloc">Numerical Indexing (.loc vs iloc)</a></li>
+          </ul>
+        </aside>
+      </div>
+    </div>
+    <script>
+      if (window.hljs)
+        document
+          .querySelectorAll("pre code[class*='language-']")
+          .forEach((block) => window.hljs.highlightElement(block));
+      (() => {
+        const links = [...document.querySelectorAll(".note-toc a")],
+          heads = links
+            .map((l) => document.getElementById(decodeURIComponent(l.hash.slice(1))))
+            .filter(Boolean);
+        if (!links.length || !heads.length || !("IntersectionObserver" in window)) return;
+        const set = (h) =>
+          links.forEach((l) => l.classList.toggle("is-active", l.hash === `#${h.id}`));
+        const ob = new IntersectionObserver(
+          (es) => {
+            const v = es
+              .filter((e) => e.isIntersecting)
+              .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
+            if (v.length) set(v[0].target);
+          },
+          { rootMargin: "-10% 0px -75% 0px", threshold: 0 },
+        );
+        heads.forEach((h) => ob.observe(h));
+      })();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ML Curriculum</title>
+  <style>
+    :root {
+      --bg: #000000;
+      --surface: #00070e;
+      --surface-hover: #17283a;
+      --border: #5b5c5c;
+      --text: #c9c9c9;
+      --muted: #9b9a9a;
+      --accent: #9333ea;
+      --accent-soft: rgba(147, 51, 234, 0.14);
+      --accent-strong: #3f6386;
+      --radius: 12px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.5;
+    }
+
+    .landing-layout {
+      align-items: start;
+      display: grid;
+      grid-template-columns: 20% 80%;
+      min-height: 100vh;
+    }
+
+    .landing-nav {
+      min-width: 0;
+      padding: 2rem 1.5rem 2rem 1rem;
+      position: sticky;
+      top: 0;
+    }
+
+    .landing-nav iframe {
+      border: 0;
+      display: block;
+      height: calc(100vh - 4rem);
+      width: 100%;
+    }
+
+    .page {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem 3rem;
+      width: 100%;
+    }
+
+    /* Header */
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1.5rem;
+      margin-bottom: 1.75rem;
+      flex-wrap: wrap;
+    }
+
+    header h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      color: var(--text);
+    }
+
+    header h1 span {
+      color: var(--accent);
+    }
+
+    .search-wrap {
+      position: relative;
+      flex: 1;
+      max-width: 320px;
+      min-width: 200px;
+    }
+
+    .search-wrap input {
+      width: 100%;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      color: var(--text);
+      padding: 0.65rem 1rem 0.65rem 2.4rem;
+      font-size: 0.9rem;
+      outline: none;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+
+    .search-wrap input::placeholder {
+      color: var(--muted);
+    }
+
+    .search-wrap input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-soft);
+    }
+
+    .search-wrap svg {
+      position: absolute;
+      left: 0.8rem;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 16px;
+      height: 16px;
+      color: var(--muted);
+      pointer-events: none;
+    }
+
+    /* Meta line */
+    .meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.1rem;
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    /* Grid */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.75rem;
+    }
+
+    .card {
+      background: #000000;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 0.9rem 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+      text-decoration: none;
+      color: inherit;
+      transition: background 0.15s, border-color 0.15s, transform 0.12s;
+    }
+
+    .card:hover {
+      background: #00070e;
+      border-color: var(--accent);
+      transform: translateY(-1px);
+    }
+
+    .card:hover .title {
+      color: var(--accent);
+    }
+
+    .card[aria-current="page"] {
+      border-color: var(--accent);
+      background: #000000;
+    }
+
+    .card .num {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--accent);
+      flex: 0 0 auto;
+    }
+
+    .card .title {
+      font-size: 0.92rem;
+      font-weight: 550;
+      color: #707070;
+      line-height: 1.35;
+      min-width: 0;
+    }
+
+    .card .num,
+    .card .title {
+      display: inline;
+    }
+
+    .card-heading {
+      align-items: baseline;
+      display: flex;
+      gap: 0.35rem;
+      min-width: 0;
+    }
+
+    .empty {
+      display: none;
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 3rem 1rem;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    /* Responsive */
+    @media (max-width: 860px) {
+      .grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 520px) {
+      .landing-layout {
+        display: block;
+      }
+
+      .landing-nav {
+        padding: 1rem;
+        position: static;
+      }
+
+      .landing-nav iframe {
+        height: 18rem;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      header {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .search-wrap {
+        max-width: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="landing-layout">
+    <nav class="landing-nav" aria-label="Main curriculum navigation">
+      <iframe src="HTMLs/table-of-contents.html" title="Machine learning curriculum"></iframe>
+    </nav>
+    <div class="page">
+      <header>
+        <h1><span style="color: #3f6386;">Machine Learning Curriculum</span></h1>
+        <div class="search-wrap">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35M11 18a7 7 0 100-14 7 7 0 000 14z"/>
+          </svg>
+          <input type="search" id="search" placeholder="Search courses…" aria-label="Search courses">
+        </div>
+      </header>
+
+      <div class="meta">
+        <span id="count-label">0 courses</span>
+        <span id="visible-label"></span>
+      </div>
+
+      <div class="grid" id="grid"></div>
+      <p class="empty" id="empty">No courses match your search.</p>
+    </div>
+  </div>
+
+  <script>
+    const courses = [
+      { num: "01", title: "Python", href: "../01. Python/python.html" },
+      { num: "02", title: "MySQL", href: "../02. MySQL/MySQL.html" },
+      { num: "05", title: "NumPy", href: "../05. Numpy/Numpy.html" },
+      { num: "06", title: "Matplotlib", href: "../06. Matplotlib/Matplotlib.html" },
+      { num: "07", title: "Pandas", href: "../07. Pandas/Pandas.html" },
+      { num: "08", title: "Computational Complexity", href: "../08. Computational Complexity/ComputationalComplexity.html" },
+      { num: "09", title: "Exploratory Data Analysis", href: "../09. EDA/EDA.html" },
+      { num: "10", title: "Linear Algebra", href: "../10. Linear Algebra/LinearAlgebra.html" },
+      { num: "11", title: "Probability and Statistics", href: "../11. Probability and Statistics/Probability and Statistics.html" },
+      { num: "13", title: "Dimensionality", href: "../13. Dimensionality/Dimensionality.html" },
+      { num: "14", title: "Principal Component Analysis", href: "../14. Principle Component Analysis/PCA.html" },
+      { num: "15", title: "Stochastic Neighbor Embedding", href: "../15. Stochastic Neighbor Embedding/t-SNE.html" },
+      { num: "17", title: "Data Processing", href: "../17. Data Processing/Data Processing.html" },
+      { num: "18", title: "KNN", href: "../18. KNN/KNN.html" },
+      { num: "20", title: "Classification Algorithms", href: "../20. Classification Algorithms in Various Situations/Lecture.html" },
+      { num: "21", title: "Performance Measures", href: "../21. Performance Measure of Models/Lecture.html" },
+      { num: "23", title: "Naive Bayes", href: "../23. Naive Bayes/NaiveBayes.html" },
+      { num: "24", title: "Logistic Regression", href: "../24. Logistic Regression/LogisticRegression.html" },
+      { num: "25", title: "Linear Regression", href: "../25. Linear Regression/LinearRegression.html" },
+      { num: "26", title: "Optimization Problems", href: "../26. Solving Optimization Problems/SolvingOptimizationProblems.html" },
+      { num: "28", title: "Support Vector Machines", href: "../28. Support Vector Machines (SVM)/SVM.html" },
+      { num: "30", title: "Decision Trees", href: "../30. Decision Trees/DecisionTrees.html" },
+      { num: "32", title: "Ensemble Models", href: "../32. Ensemble Models/EnsembleModels.html" },
+      { num: "33", title: "Feature Engineering", href: "../33. Featurization and Feature Engineering/FeatureEngineering.html" },
+      { num: "34", title: "Model Calibration", href: "../34. Calibration of Models/Calibration.html" },
+      { num: "35", title: "Case Study 1: Quora", href: "../35. Case Study 1 Quora question Pair Similarity Problem/Quora.html" },
+      { num: "36", title: "Case Study 2: Cancer Diagnosis", href: "../36. Case Study 2 Personalized Cancer Diagnosis/CancerDiagnosis.html" },
+      { num: "37", title: "Case Study 3: Facebook", href: "../37. Case Study 3 Facebook Friend Recommendation using Graph Mining/Facebook.html" },
+      { num: "38", title: "Case Study 4: Taxi Demand", href: "../38. Case study 4 Taxi Demand Prediction in New York City/TaxiDemand.html" },
+      { num: "39", title: "Case Study 5: Stack Overflow", href: "../39. Case study 5 Stackoverflow Tag Predictor/Stackoverflow.html" },
+      { num: "40", title: "Case Study 6: Malware Detection", href: "../40. Case Study 6 Microsoft Malware Detection/Lecture.html" },
+      { num: "41", title: "Case Study 7: Ad Click Prediction", href: "../41. Case Study 7 Ad Click Prediction LIVE session/Lecture.html" },
+      { num: "42", title: "Unsupervised Clustering", href: "../42. Unsupervised Learning Clustering/Clustering.html" },
+      { num: "43", title: "Hierarchical Clustering", href: "../43. Hierarchical Clustering Technique/HierarchicalClustering.html" },
+      { num: "44", title: "DBSCAN", href: "../44. DBSCAN (Density Based Clustering) Technique/DBSCAN.html" },
+      { num: "45", title: "Recommender Systems", href: "../45. Recommender Systems and Matrix Factorization/RecommenderSystems.html" },
+      { num: "47", title: "Case Study 8: Amazon Fashion", href: "../47. Case Study 8 Amazon Fashion Discovery Engine/AmazonFashionDiscoveryEngine.html" },
+      { num: "48", title: "Case Study 9: Netflix", href: "../48. Case Study 9 Netflix Movie Recommendation System/Netflix.html" },
+      { num: "49", title: "Neural Networks", href: "../49. Neural Networks/NeuralNetworks.html" },
+      { num: "50", title: "Deep Multi-layer Perceptrons", href: "../50. Deep Multi-layer Perceptrons/DeepLearning.html" },
+      { num: "51", title: "TensorFlow and Keras", href: "../51. Tensorflow and Keras/TensorFlowKeras.html" },
+      { num: "52", title: "Convolutional Neural Networks", href: "../52. Convolutional Neural Nets/CNN.html" },
+      { num: "53", title: "RNNs and LSTM", href: "../53. RNNS - LSTM/RNN.html" },
+      { num: "55", title: "Self-driving Car Problem", href: "../55. Self Driving Car Problem definition/SelfDrivingCar.html" },
+      { num: "56", title: "Real-world Problem", href: "../56. Real-world problem/MusicGeneration.html" },
+      { num: "57", title: "Human Activity Recognition", href: "../57. Human Activity Recognition Problem definition/HumanActivityRecognition.html" },
+    ];
+
+    const grid = document.getElementById("grid");
+    const search = document.getElementById("search");
+    const empty = document.getElementById("empty");
+    const countLabel = document.getElementById("count-label");
+    const visibleLabel = document.getElementById("visible-label");
+
+    // Highlight current page if possible
+    const normalize = (v) => {
+      try {
+        return decodeURIComponent(v).replace(/\\/g, "/").replace(/^\/+/, "").replace(/\/+$/, "").toLowerCase();
+      } catch { return v.toLowerCase(); }
+    };
+
+    let currentPath = "";
+    try {
+      if (document.referrer) currentPath = normalize(new URL(document.referrer).pathname);
+      else if (window.parent !== window) currentPath = normalize(window.parent.location.pathname);
+      else currentPath = normalize(window.location.pathname);
+    } catch {}
+
+    const render = () => {
+      const q = search.value.trim().toLowerCase();
+      const visible = courses.filter(c =>
+        c.title.toLowerCase().includes(q) || c.num.includes(q)
+      );
+
+      grid.innerHTML = visible.map(c => {
+        const linkPath = normalize(new URL(c.href, window.location.href).pathname);
+        const isCurrent = currentPath && (currentPath === linkPath || currentPath.endsWith("/" + linkPath));
+        return `
+          <a class="card" href="${c.href}" target="_top" ${isCurrent ? 'aria-current="page"' : ""}>
+            <span class="card-heading">
+              <span class="num">${c.num}</span>
+              <span class="title">${c.title}</span>
+            </span>
+          </a>`;
+      }).join("");
+
+      countLabel.textContent = `${courses.length} courses`;
+      visibleLabel.textContent = q ? `${visible.length} shown` : "";
+      empty.style.display = visible.length ? "none" : "block";
+    };
+
+    search.addEventListener("input", render);
+    render();
+  </script>
+</body>
+</html>

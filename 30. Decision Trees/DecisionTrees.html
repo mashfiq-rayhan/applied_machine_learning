@@ -1,0 +1,1610 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Decision Trees | Applied Machine Learning</title>
+    <link rel="stylesheet" href="../HTMLs/theme.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
+    <script>
+      window.MathJax = {
+        tex: {
+          inlineMath: [
+            ["$", "$"],
+            ["\\(", "\\)"],
+          ],
+          displayMath: [
+            ["$$", "$$"],
+            ["\\[", "\\]"],
+          ],
+          processEscapes: true,
+          processEnvironments: true,
+        },
+        options: {
+          skipHtmlTags: ["script", "noscript", "style", "textarea", "pre", "code"],
+        },
+      };
+    </script>
+    <script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-svg.js"></script>
+  </head>
+  <body class="site-page">
+    <div class="site-layout">
+      <nav class="curriculum-nav" aria-label="Main curriculum navigation">
+        <iframe src="../HTMLs/table-of-contents.html" title="Machine learning curriculum"></iframe>
+      </nav>
+      <div class="note-layout">
+        <main class="note-content">
+          <style>
+            @import url("https://fonts.googleapis.com/css2?family=Play:wght@400;700&display=swap");
+            @import url("https://cdnjs.cloudflare.com/ajax/libs/latin-modern/1.1.0/css/latinmodern-math.min.css");
+
+            :root {
+              --la-ink: #3f6386;
+              --la-teal: #3f6386;
+              --la-teal-soft: #e8f6f7;
+              --la-coral: #9333ea;
+              --la-coral-soft: #fff1ed;
+              --la-cdf: #17283a;
+              --la-line: #5b5c5c;
+              --la-surface: #f7faf9;
+              --la-text: #c9c9c9;
+              --la-panel: #00070e;
+              --la-chip: #17283a;
+              --la-amber: #9a6b16;
+              --la-amber-soft: #fff8e6;
+            }
+
+            *,
+            *::before,
+            *::after {
+              font-family: "Play", sans-serif !important;
+            }
+
+            pre,
+            pre code {
+              font-family: Consolas, "Courier New", monospace !important;
+            }
+
+            body,
+            .markdown-body,
+            p,
+            li {
+              color: var(--la-text) !important;
+            }
+
+            h1 {
+              color: var(--la-ink);
+              border-bottom: 4px solid var(--la-teal);
+              padding-bottom: 0.35em;
+            }
+
+            h2 {
+              color: var(--la-teal);
+              border-left: 6px solid var(--la-teal);
+              padding-left: 0.55em;
+              margin-top: 2em;
+            }
+
+            h3,
+            h4 {
+              color: var(--la-coral);
+            }
+
+            a {
+              color: var(--la-coral);
+              text-decoration: none;
+            }
+
+            a:hover {
+              text-decoration: underline;
+            }
+
+            blockquote {
+              background: var(--la-panel);
+              border-left: 5px solid var(--la-cdf) !important;
+              border-radius: 6px;
+              color: var(--la-text);
+              padding: 0.75em 1em;
+            }
+
+            code {
+              background: var(--la-chip);
+              border-radius: 4px;
+              color: var(--la-text);
+              padding: 0.1em 0.3em;
+            }
+
+            pre {
+              background: var(--la-panel);
+              border: 1px solid var(--la-line);
+              border-radius: 8px;
+              overflow-x: auto;
+              padding: 1em;
+            }
+
+            table {
+              border: 1px solid var(--la-line);
+              border-collapse: collapse;
+              border-radius: 8px;
+              overflow: hidden;
+              width: 100%;
+            }
+
+            th {
+              background: var(--la-panel);
+              color: var(--la-text);
+              padding: 0.7em 0.8em;
+              text-align: left;
+            }
+
+            td {
+              color: var(--la-text);
+              padding: 0.7em 0.8em;
+            }
+
+            tr:nth-child(even) {
+              background: var(--la-chip);
+            }
+
+            hr {
+              border: 0;
+              border-top: 2px solid var(--la-line);
+              margin: 2.2em 0;
+            }
+
+            .summary-grid,
+            .ml-grid,
+            .intuition-grid {
+              display: flex;
+              gap: 1em;
+              margin: 1.25em 0;
+            }
+
+            .summary-card,
+            .ml-card,
+            .intuition-card {
+              background: var(--la-panel);
+              border-radius: 7px;
+              color: var(--la-text);
+              flex: 1 1 0;
+              min-width: 0;
+              padding: 1em;
+            }
+
+            .summary-card {
+              border-top: 5px solid var(--la-teal);
+            }
+
+            .summary-card.pdf,
+            .ml-card.diagnostics,
+            .intuition-card.pdf {
+              border-top-color: var(--la-coral);
+            }
+
+            .summary-card.cdf,
+            .intuition-card.cdf {
+              border-top-color: var(--la-cdf);
+            }
+
+            .summary-card h3,
+            .ml-card h3,
+            .intuition-card h3 {
+              margin-top: 0;
+            }
+
+            .summary-tag,
+            .panel-kicker {
+              color: var(--la-teal);
+              font-size: 0.82em;
+              font-weight: 700;
+              letter-spacing: 0.04em;
+              text-transform: uppercase;
+            }
+
+            .relationship-banner,
+            .ml-workflow {
+              align-items: center;
+              background: var(--la-panel);
+              border: 1px solid var(--la-teal);
+              border-radius: 7px;
+              color: var(--la-text);
+              display: flex;
+              flex-wrap: wrap;
+              gap: 0.6em;
+              justify-content: center;
+              margin: 1.25em 0;
+              padding: 0.85em 1em;
+              text-align: center;
+            }
+
+            .relationship-banner strong,
+            .ml-workflow strong,
+            .relationship-item strong,
+            .insight-item strong {
+              color: var(--la-coral);
+            }
+
+            .relationship-banner .arrow {
+              color: var(--la-teal);
+              font-size: 1.2em;
+            }
+
+            .relationship-item,
+            .insight-item {
+              background: var(--la-panel);
+              border-left: 5px solid var(--la-teal);
+              border-radius: 5px;
+              color: var(--la-text);
+              margin: 0.65em 0;
+              padding: 0.55em 0.85em;
+            }
+
+            .insight-item {
+              border-left-color: var(--la-coral);
+            }
+
+            .insight-list,
+            .feature-chips {
+              display: flex;
+              flex-wrap: wrap;
+              gap: 0.55em;
+              list-style: none;
+              margin: 0.5em 0 1em;
+              padding: 0;
+            }
+
+            .insight-list li,
+            .feature-chips li {
+              background: var(--la-chip);
+              border: 1px solid var(--la-teal);
+              border-radius: 999px;
+              color: var(--la-text);
+              padding: 0.35em 0.75em;
+            }
+
+            .feature-chips li {
+              border-radius: 4px;
+              border-left: 3px solid var(--la-coral);
+              border-right: none;
+              border-top: none;
+              border-bottom: none;
+              flex: 1 1 calc(50% - 0.45em);
+            }
+
+            .concept-flow {
+              align-items: center;
+              display: flex;
+              flex-direction: column;
+              margin: 1.25em 0;
+            }
+
+            .concept-flow .flow-step {
+              background: var(--la-panel);
+              border: 1px solid var(--la-teal);
+              border-radius: 7px;
+              color: var(--la-text);
+              max-width: 22em;
+              padding: 0.7em 1.2em;
+              text-align: center;
+              width: 100%;
+            }
+
+            .concept-flow .flow-step strong {
+              color: var(--la-coral);
+            }
+
+            .concept-flow .flow-arrow {
+              color: var(--la-teal);
+              font-size: 1.35em;
+              line-height: 1.25;
+            }
+
+            .percentile-callout {
+              background: var(--la-panel);
+              border-left: 5px solid var(--la-cdf);
+              border-radius: 7px;
+              color: var(--la-text);
+              margin: 1.25em 0;
+              padding: 1em;
+            }
+
+            .percentile-callout strong {
+              color: var(--la-cdf);
+            }
+
+            .katex-display,
+            .math,
+            .math-block {
+              background: #00070e;
+              border-left: 6px solid #2f005c;
+              border-radius: 6px;
+              padding: 0.6em 0.8em;
+              overflow-x: auto;
+              color: #c9c9c9 !important;
+              font-family: "Latin Modern Math", "Cambria Math", "STIX Two Math", serif !important;
+            }
+
+            .katex,
+            .katex * {
+              color: #9b9a9a !important;
+              font-family: "Latin Modern Math", "Cambria Math", "STIX Two Math", serif !important;
+            }
+
+            @media (max-width: 700px) {
+              .summary-grid,
+              .ml-grid,
+              .intuition-grid {
+                flex-direction: column;
+              }
+            }
+          </style>
+
+          <h1 id="decision-trees">Decision Trees</h1>
+          <h2 id="01-geometric-intuition-of-decision-tree-axis-parallel-hyperplanes">
+            01. Geometric Intuition of Decision Tree: Axis-Parallel Hyperplanes
+          </h2>
+          <p><img src="./assets/01.01.jpg" alt="LR" /></p>
+          <p><img src="./assets/01.02.jpg" alt="LR" /></p>
+          <blockquote>
+            <p><strong>Decision Trees (DT)</strong></p>
+          </blockquote>
+          <h3 id="positioning-among-classifiers">Positioning among Classifiers</h3>
+          <ul>
+            <li>$k$-NN, Naive Bayes → instance-based / probabilistic methods</li>
+            <li>Logistic Regression, Linear Regression, SVM → geometric (hyperplane) methods</li>
+            <li>
+              <strong>Decision Trees</strong> → nested <code>if … else</code> classifier
+              (programmatic)
+            </li>
+          </ul>
+          <p>A Decision Tree is simply a nested if-else classifier.</p>
+          <h3 id="example-iris-dataset-eda">Example: Iris Dataset (EDA)</h3>
+          <p>
+            Features:<br />
+            $\mathbf{x}_i = \langle SL, SW, PL, PW \rangle$<br />
+            Labels: $y_i \in {1,2,3}$
+          </p>
+          <p>Simple rule:</p>
+          <pre><code class="language-text">if PL &lt; 5 then y_i = 1
+</code></pre>
+          <p>Nested if-else (the actual model):</p>
+          <pre><code class="language-text">if PL &lt; a then
+    y_i = 1
+else
+    if SL &lt; b then
+        class = 2
+    else
+        class = 3
+</code></pre>
+          <p>This nested structure is drawn as a <strong>tree</strong>.</p>
+          <h3 id="tree-terminology">Tree Terminology</h3>
+          <ul>
+            <li><strong>Root-node</strong> – the first decision</li>
+            <li><strong>Internal-node</strong> – any non-leaf decision node</li>
+            <li><strong>Leaf-node</strong> – terminal node that outputs a class label</li>
+          </ul>
+          <p>
+            Non-leaf nodes = decisions in a DT.<br />
+            (Node = vertex)
+          </p>
+          <h3 id="geometric-intuition">Geometric Intuition</h3>
+          <p>A Decision Tree is a set of <strong>axis-parallel hyperplanes</strong>.</p>
+          <ul>
+            <li>Every split is of the form “feature $j$ ≤ threshold”.</li>
+            <li>All decision boundaries are parallel to the coordinate axes.</li>
+          </ul>
+          <p>Example (Iris):</p>
+          <ul>
+            <li>First split: $PL &lt; a$ (vertical line)</li>
+            <li>Second split: $SL &lt; b$ (horizontal line)</li>
+          </ul>
+          <p>Regions:</p>
+          <ul>
+            <li>$y_i=1$ on one side of the first plane</li>
+            <li>$y_i=2$ and $y_i=3$ on the other side, separated by the second plane</li>
+          </ul>
+          <h3 id="two-equivalent-views-of-a-dt">Two Equivalent Views of a DT</h3>
+          <ol>
+            <li><strong>Programmatic view</strong> – nested if-else statements</li>
+            <li><strong>Geometric view</strong> – set of axis-parallel hyperplanes</li>
+          </ol>
+          <h2 id="02-sample-decision-tree">02. Sample Decision Tree</h2>
+          <p><img src="./assets/02.01.jpg" alt="LR" /></p>
+          <p><img src="./assets/02.02.jpg" alt="LR" /></p>
+          <blockquote>
+            <p><strong>Play Tennis Example (Classic Decision-Tree Illustration)</strong></p>
+          </blockquote>
+          <h3 id="dataset">Dataset</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Outlook</th>
+                <th>Temperature</th>
+                <th>Humidity</th>
+                <th>Windy</th>
+                <th>PlayTennis</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Sunny</td>
+                <td>Hot</td>
+                <td>High</td>
+                <td>False</td>
+                <td>No</td>
+              </tr>
+              <tr>
+                <td>Sunny</td>
+                <td>Hot</td>
+                <td>High</td>
+                <td>True</td>
+                <td>No</td>
+              </tr>
+              <tr>
+                <td>Overcast</td>
+                <td>Hot</td>
+                <td>High</td>
+                <td>False</td>
+                <td>Yes</td>
+              </tr>
+              <tr>
+                <td>Rainy</td>
+                <td>Mild</td>
+                <td>High</td>
+                <td>False</td>
+                <td>Yes</td>
+              </tr>
+              <tr>
+                <td>Rainy</td>
+                <td>Cool</td>
+                <td>Normal</td>
+                <td>False</td>
+                <td>Yes</td>
+              </tr>
+              <tr>
+                <td>Rainy</td>
+                <td>Cool</td>
+                <td>Normal</td>
+                <td>True</td>
+                <td>No</td>
+              </tr>
+              <tr>
+                <td>Overcast</td>
+                <td>Cool</td>
+                <td>Normal</td>
+                <td>True</td>
+                <td>Yes</td>
+              </tr>
+              <tr>
+                <td>Sunny</td>
+                <td>Mild</td>
+                <td>High</td>
+                <td>False</td>
+                <td>No</td>
+              </tr>
+              <tr>
+                <td>Sunny</td>
+                <td>Cool</td>
+                <td>Normal</td>
+                <td>False</td>
+                <td>Yes</td>
+              </tr>
+              <tr>
+                <td>Rainy</td>
+                <td>Mild</td>
+                <td>Normal</td>
+                <td>False</td>
+                <td>Yes</td>
+              </tr>
+              <tr>
+                <td>Sunny</td>
+                <td>Mild</td>
+                <td>Normal</td>
+                <td>True</td>
+                <td>Yes</td>
+              </tr>
+              <tr>
+                <td>Overcast</td>
+                <td>Mild</td>
+                <td>High</td>
+                <td>True</td>
+                <td>Yes</td>
+              </tr>
+              <tr>
+                <td>Overcast</td>
+                <td>Hot</td>
+                <td>Normal</td>
+                <td>False</td>
+                <td>Yes</td>
+              </tr>
+              <tr>
+                <td>Rainy</td>
+                <td>Mild</td>
+                <td>High</td>
+                <td>True</td>
+                <td>No</td>
+              </tr>
+            </tbody>
+          </table>
+          <ul>
+            <li>All features are <strong>categorical</strong>.</li>
+            <li>Outlook has 3 categories; the target PlayTennis is binary (Yes/No).</li>
+          </ul>
+          <h3 id="decision-tree-the-model">Decision Tree (the model)</h3>
+          <pre><code>Outlook
+├── Sunny → Humidity
+│           ├── High → No
+│           └── Normal → Yes
+├── Overcast → Yes
+└── Rain → Wind
+            ├── Strong → No
+            └── Weak → Yes
+</code></pre>
+          <h3 id="how-the-tree-classifies-a-query-point">How the Tree Classifies a Query Point</h3>
+          <p>
+            Example query:<br />
+            $\mathbf{x}_q = [\text{Sunny},\ \text{Hot},\ \text{High},\ \text{True}]$
+          </p>
+          <ol>
+            <li>Root test: Outlook = Sunny → go left</li>
+            <li>Humidity = High → leaf “No”</li>
+          </ol>
+          <p>$$ y_q = \text{No} $$</p>
+          <p>The tree is simply a nested if-else:</p>
+          <pre><code class="language-text">if Outlook == Sunny then
+    if Humidity == High then No
+    else Yes
+else if Outlook == Overcast then Yes
+else  // Rain
+    if Wind == Strong then No
+    else Yes
+</code></pre>
+          <p>This is the classic “Play Tennis” Decision Tree used to explain how a DT works.</p>
+          <h2 id="03-building-a-decision-tree-entropy">03. Building a Decision Tree: Entropy</h2>
+          <p><img src="./assets/03.01.jpg" alt="LR" /></p>
+          <p><img src="./assets/03.02.jpg" alt="LR" /></p>
+          <blockquote>
+            <p><strong>Building a Decision Tree: Entropy</strong></p>
+          </blockquote>
+          <h3 id="from-training-data-to-tree">From Training Data to Tree</h3>
+          <p>$$ D_{\text{train}} ;\longrightarrow; \text{DT} $$</p>
+          <p>
+            The key quantity used to build the tree is <strong>Entropy</strong> (from Information
+            Theory / Physics).
+          </p>
+          <h3 id="definition-of-entropy">Definition of Entropy</h3>
+          <p>Let $Y$ be a discrete random variable that takes values $y_1,y_2,\dots,y_K$.</p>
+          <p>$$ H(Y) = -\sum_{i=1}^{K} p(y_i),\log_b\bigl(p(y_i)\bigr) $$</p>
+          <ul>
+            <li>$p(y_i) = P(Y=y_i)$</li>
+            <li>
+              Base $b=2$ (bits) or $b=e$ (nats).<br />
+              In ML we almost always use $\log_2$ (written $\lg$).
+            </li>
+          </ul>
+          <h3 id="play-tennis-example">Play-Tennis Example</h3>
+          <p>$Y =$ PlayTennis</p>
+          <ul>
+            <li>9 positive examples → $P(Y_+)=\dfrac{9}{14}$</li>
+            <li>5 negative examples → $P(Y_-)=\dfrac{5}{14}$</li>
+          </ul>
+          <p>$$ H(Y) = -\frac{9}{14}\lg\frac{9}{14} -\frac{5}{14}\lg\frac{5}{14} \approx 0.94 $$</p>
+          <h3 id="properties-of-entropy-2-class-case">Properties of Entropy (2-class case)</h3>
+          <p>
+            <strong>Case 1</strong> – almost pure<br />
+            $P(Y_+)=0.99$, $P(Y_-)=0.01$
+          </p>
+          <p>$$ H(Y)\approx 0.0801 \quad\text{(very small)} $$</p>
+          <p>
+            <strong>Case 2</strong> – balanced<br />
+            $P(Y_+)=P(Y_-)=0.5$
+          </p>
+          <p>$$ H(Y)=1 \quad\text{(maximum)} $$</p>
+          <p>
+            <strong>Case 3</strong> – completely pure<br />
+            $P(Y_+)=0$ or $1$
+          </p>
+          <p>$$ H(Y)=0 $$</p>
+          <h3 id="entropy-curve-2-class">Entropy Curve (2-class)</h3>
+          <p>
+            $H(Y)$ reaches its maximum value of 1 when $P(Y_+)=0.5$ and falls to 0 at the extremes
+            $P=0$ or $P=1$.
+          </p>
+          <h3 id="general-intuition">General Intuition</h3>
+          <ul>
+            <li>
+              When the distribution is <strong>equi-probable</strong> → entropy is
+              <strong>maximum</strong>.
+            </li>
+            <li>
+              When the distribution is <strong>highly peaked</strong> (one class dominates) →
+              entropy is <strong>minimum</strong>.
+            </li>
+          </ul>
+          <p>More peaked a distribution is, the smaller its entropy.</p>
+          <h2 id="04-building-a-decision-tree-information-gain">
+            04. Building a Decision Tree: Information Gain
+          </h2>
+          <p><img src="./assets/04.01.jpg" alt="LR" /></p>
+          <p><img src="./assets/04.02.jpg" alt="LR" /></p>
+          <blockquote>
+            <p><strong>Partitioning the Data Set – Information Gain (IG)</strong></p>
+          </blockquote>
+          <h3 id="splitting-on-outlook">Splitting on Outlook</h3>
+          <p>Original data $D$ ($|D|=14$):</p>
+          <p>$$ H_D(Y) \approx 0.94 $$</p>
+          <p>After splitting on <strong>Outlook</strong> we obtain three subsets:</p>
+          <table>
+            <thead>
+              <tr>
+                <th>Subset</th>
+                <th>Size</th>
+                <th>Entropy</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>$D_1$ (Sunny)</td>
+                <td>5</td>
+                <td>$H_{D_1}(Y)\approx 0.97$</td>
+              </tr>
+              <tr>
+                <td>$D_2$ (Overcast)</td>
+                <td>4</td>
+                <td>$H_{D_2}(Y)=0$</td>
+              </tr>
+              <tr>
+                <td>$D_3$ (Rainy)</td>
+                <td>5</td>
+                <td>$H_{D_3}(Y)\approx 0.97$</td>
+              </tr>
+            </tbody>
+          </table>
+          <h3 id="weighted-average-entropy-after-the-split">
+            Weighted Average Entropy after the Split
+          </h3>
+          <p>$$ \begin{align*} \text{Weighted Entropy} &amp;= \frac{|D_1|}{|D|}H_{D_1}(Y)</p>
+          <ul>
+            <li>\frac{|D_2|}{|D|}H_{D_2}(Y)</li>
+            <li>\frac{|D_3|}{|D|}H_{D_3}(Y) \[6pt] &amp;= \frac{5}{14}\cdot 0.97</li>
+            <li>\frac{4}{14}\cdot 0</li>
+            <li>\frac{5}{14}\cdot 0.97 \approx 0.69 \end{align*} $$</li>
+          </ul>
+          <p>(The slide also shows the un-weighted average $\approx 0.64$.)</p>
+          <h3 id="information-gain">Information Gain</h3>
+          <p>
+            $$ \begin{align*} IG(Y,\text{Outlook}) &amp;= H_D(Y) - \text{Weighted Entropy after
+            split} \[4pt] &amp;= 0.94 - 0.69 \approx 0.25 \end{align*} $$
+          </p>
+          <p>
+            (The handwritten calculation on the board writes it in the opposite order, but the
+            definition is parent entropy minus child weighted entropy.)
+          </p>
+          <h3 id="general-formula">General Formula</h3>
+          <p>When a feature (var) partitions $D$ into subsets $D_1,D_2,\dots,D_K$:</p>
+          <p>$$ IG(Y,\text{var}) = H_D(Y)</p>
+          <ul>
+            <li><p>\sum_{i=1}^{K}\frac{|D_i|}{|D|},H_{D_i}(Y) $$</p></li>
+            <li><p>Parent node = $D$</p></li>
+            <li><p>Child nodes = $D_1,D_2,\dots,D_K$</p></li>
+          </ul>
+          <p>
+            Information Gain measures how much uncertainty about $Y$ is reduced by knowing the value
+            of the feature.
+          </p>
+          <h2 id="05-building-a-decision-tree-gini-impurity">
+            05. Building a Decision Tree: Gini Impurity
+          </h2>
+          <p><img src="./assets/05.01.jpg" alt="LR" /></p>
+          <p><img src="./assets/05.02.jpg" alt="LR" /></p>
+          <blockquote>
+            <p><strong>Gini Impurity</strong></p>
+          </blockquote>
+          <p>
+            Gini Impurity is very similar to Entropy and is used as an alternative impurity measure
+            when building Decision Trees.
+          </p>
+          <h3 id="definition">Definition</h3>
+          <p>For a discrete random variable $Y$ that takes values $y_1,y_2,\dots,y_K$:</p>
+          <p>$$ I_G(Y) = 1 - \sum_{i=1}^{K}\bigl(p(y_i)\bigr)^2 $$</p>
+          <h3 id="two-class-case-y-y-">Two-class Case ($Y_+$, $Y_-$)</h3>
+          <p>
+            <strong>Case 1</strong> – balanced<br />
+            $p(Y_+)=0.5$, $p(Y_-)=0.5$
+          </p>
+          <p>$$ I_G(Y) = 1 - (0.25+0.25) = 0.5 $$</p>
+          <p>(Entropy $H(Y)=1$)</p>
+          <p>
+            <strong>Case 2</strong> – pure<br />
+            $p(Y_+)=1$, $p(Y_-)=0$
+          </p>
+          <p>$$ I_G(Y) = 1 - (1+0) = 0 $$</p>
+          <p>(Entropy $H(Y)=0$)</p>
+          <h3 id="comparison-of-the-two-curves-2-class">Comparison of the Two Curves (2-class)</h3>
+          <p>Both Entropy and Gini Impurity:</p>
+          <ul>
+            <li>reach their maximum at $p(Y_+)=0.5$</li>
+            <li>fall to 0 at the pure extremes $p=0$ or $p=1$</li>
+          </ul>
+          <p>Gini is a smoother, slightly flatter curve than Entropy.</p>
+          <h3 id="computational-advantage">Computational Advantage</h3>
+          <p>Gini Impurity needs <strong>no logarithm</strong>:</p>
+          <p>$$ I_G(Y) = 1 - \bigl(p(Y_+)^2 + p(Y_-)^2\bigr) $$</p>
+          <p>Entropy needs a log:</p>
+          <p>$$ H(Y) = -p(Y_+)\log_2 p(Y_+) - p(Y_-)\log_2 p(Y_-) $$</p>
+          <p>→ Gini is more computationally efficient.</p>
+          <p><strong>scikit-learn</strong> Decision Trees use Gini Impurity by default.</p>
+          <h2 id="06-building-a-decision-tree-constructing-a-dt">
+            06. Building a Decision Tree: Constructing a DT
+          </h2>
+          <p><img src="./assets/06.01.jpg" alt="LR" /></p>
+          <p><img src="./assets/06.02.jpg" alt="LR" /></p>
+          <blockquote>
+            <p><strong>Constructing a Decision Tree</strong></p>
+          </blockquote>
+          <p>We use Entropy $H$, Information Gain $IG$, or Gini Impurity $I_G$.</p>
+          <h3 id="step-by-step-on-play-tennis-data">Step-by-step on Play-Tennis Data</h3>
+          <ol>
+            <li>
+              <p>
+                Original data $D$: 9 positive, 5 negative<br />
+                $$H_D(Y)\approx 0.94$$
+              </p>
+            </li>
+            <li>
+              <p>
+                Compute Information Gain for every feature and choose the best split (root node).
+              </p>
+              <ul>
+                <li>$IG(Y,\text{Outlook})=0.25$ (highest)</li>
+                <li>
+                  $IG(Y,\text{Temperature})$, $IG(Y,\text{Humidity})$, $IG(Y,\text{Windy})$ are
+                  smaller.
+                </li>
+              </ul>
+              <p>→ Root node = <strong>Outlook</strong></p>
+            </li>
+            <li>
+              <p>After the split we obtain three child nodes:</p>
+              <ul>
+                <li>Sunny ($D_1$): 2+, 3−</li>
+                <li>Overcast ($D_2$): 4+, 0− → <strong>pure node</strong> (stop)</li>
+                <li>Rainy ($D_3$): 2+, 3−</li>
+              </ul>
+            </li>
+            <li>
+              <p>
+                Recursively split the non-pure nodes using the same IG criterion<br />
+                (Humidity on the Sunny branch, Wind on the Rainy branch, …).
+              </p>
+            </li>
+          </ol>
+          <h3 id="general-formula-choosing-any-node">General Formula (choosing any node)</h3>
+          <p>$$ IG(Y,f) = H_D(Y)</p>
+          <ul>
+            <li>\sum_{i}\frac{|D_i|}{|D|},H_{D_i}(Y) $$</li>
+          </ul>
+          <p>= entropy at parent − weighted entropy at children.</p>
+          <h3 id="stopping-criteria-when-to-stop-growing-a-node">
+            Stopping Criteria (when to stop growing a node)
+          </h3>
+          <ol>
+            <li>The node is <strong>pure</strong> (all examples have the same class).</li>
+            <li>There are <strong>too few points</strong> left at the node.</li>
+            <li>The tree has already become <strong>too deep</strong>.</li>
+          </ol>
+          <p>Growing further on very few (or noisy) points leads to overfitting.</p>
+          <h3 id="depth-as-hyper-parameter">Depth as Hyper-parameter</h3>
+          <ul>
+            <li>
+              Larger depth → higher chance of overfitting (especially when leaves contain few
+              points).
+            </li>
+            <li>Very small depth → underfitting.</li>
+          </ul>
+          <p>
+            Depth is therefore a hyper-parameter of a Decision Tree (analogous to $\lambda$ in
+            logistic regression or $C$ in SVM) and is chosen by cross-validation.
+          </p>
+          <h2 id="07-building-a-decision-tree-splitting-numerical-features">
+            07. Building a Decision Tree: Splitting Numerical Features
+          </h2>
+          <p><img src="./assets/07.01.jpg" alt="LR" /></p>
+          <p><img src="./assets/07.02.jpg" alt="LR" /></p>
+          <blockquote>
+            <p><strong>Splitting Numerical Features</strong></p>
+          </blockquote>
+          <p>
+            When constructing a Decision Tree we split a node by maximising Information Gain (or
+            Gini impurity).<br />
+            So far we have only seen <strong>categorical</strong> features. Now we handle
+            <strong>numerical</strong> features.
+          </p>
+          <h3 id="numerical-feature">Numerical Feature</h3>
+          <p>A feature $f_1$ can be integer-valued or real-valued.</p>
+          <p>Example data:</p>
+          <table>
+            <thead>
+              <tr>
+                <th>$f_1$</th>
+                <th>$Y$</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>2.2</td>
+                <td>1</td>
+              </tr>
+              <tr>
+                <td>2.6</td>
+                <td>1</td>
+              </tr>
+              <tr>
+                <td>3.5</td>
+                <td>0</td>
+              </tr>
+              <tr>
+                <td>3.8</td>
+                <td>0</td>
+              </tr>
+              <tr>
+                <td>4.6</td>
+                <td>1</td>
+              </tr>
+              <tr>
+                <td>5.3</td>
+                <td>0</td>
+              </tr>
+            </tbody>
+          </table>
+          <h3 id="how-to-generate-candidate-splits">How to Generate Candidate Splits</h3>
+          <ol>
+            <li>Sort the numerical feature in ascending order.</li>
+            <li>
+              Consider every possible threshold that lies <strong>between</strong> consecutive
+              distinct values:
+            </li>
+          </ol>
+          <p>
+            $$ \begin{align*} f_1 &amp;&lt; 2.2 \ f_1 &amp;&lt; 2.6 \ f_1 &amp;&lt; 3.5 \ f_1
+            &amp;&lt; 3.8 \ f_1 &amp;&lt; 4.6 \ f_1 &amp;&lt; 5.3 \end{align*} $$
+          </p>
+          <p>
+            Each of these thresholds produces a binary split of the current node into two child sets
+            $D_1$ and $D_2$.
+          </p>
+          <h3 id="choosing-the-best-split">Choosing the Best Split</h3>
+          <ul>
+            <li>For every candidate threshold compute the Information Gain (or Gini).</li>
+            <li>Select the threshold that gives the <strong>maximum IG</strong>.</li>
+            <li>That threshold becomes the decision at the current node:</li>
+          </ul>
+          <p>$$ \text{if } f_1 &lt; t^* \quad\text{then go left, else go right.} $$</p>
+          <h3 id="summary">Summary</h3>
+          <ul>
+            <li>Categorical feature → one branch per category.</li>
+            <li>
+              Numerical feature → many candidate binary thresholds; pick the one with highest
+              Information Gain.
+            </li>
+          </ul>
+          <p>This is how a Decision Tree handles mixed (categorical + numerical) data.</p>
+          <h2 id="08-feature-standardization">08. Feature Standardization</h2>
+          <p><img src="./assets/08.01.jpg" alt="LR" /></p>
+          <p><img src="./assets/08.02.jpg" alt="LR" /></p>
+          <blockquote>
+            <p><strong>Feature Standardization</strong></p>
+          </blockquote>
+          <h3 id="distance-based-methods-need-standardization">
+            Distance-based Methods Need Standardization
+          </h3>
+          <p>Models that rely on <strong>distances</strong> require feature standardization:</p>
+          <ul>
+            <li>Logistic Regression</li>
+            <li>SVM</li>
+            <li>$k$-NN</li>
+          </ul>
+          <p>For every feature $j$:</p>
+          <p>$$ x_{ij}' = \frac{x_{ij}-\mu_j}{\sigma_j} $$</p>
+          <p>where $\mu_j$ and $\sigma_j$ are the mean and standard deviation of column $j$.</p>
+          <h3 id="decision-trees-do-not-need-feature-standardization">
+            Decision Trees Do <strong>Not</strong> Need Feature Standardization
+          </h3>
+          <p>A Decision Tree is <strong>not</strong> a distance-based method.</p>
+          <ul>
+            <li>
+              At each node we only <strong>sort</strong> a single column and pick a threshold $t$.
+            </li>
+            <li>The split is of the form</li>
+          </ul>
+          <p>$$ \text{if } f_j &lt; t \quad\text{then left, else right.} $$</p>
+          <ul>
+            <li>
+              Because we only look at the <strong>order</strong> of the values (not their absolute
+              magnitudes or distances), scaling or centering the features does not change the
+              ordering and therefore does not change the tree.
+            </li>
+          </ul>
+          <p>
+            <strong>Conclusion</strong><br />
+            Feature standardization is unnecessary (and has no effect) for Decision Trees.
+          </p>
+          <h2 id="09-building-a-decision-tree-categorical-features-with-many-possible-values">
+            09. Building a Decision Tree: Categorical Features with Many Possible Values
+          </h2>
+          <p><img src="./assets/09.01.jpg" alt="LR" /></p>
+          <p><img src="./assets/09.02.jpg" alt="LR" /></p>
+          <blockquote>
+            <p><strong>Categorical Features with Many Categories (High Cardinality)</strong></p>
+          </blockquote>
+          <h3 id="the-problem">The Problem</h3>
+          <p>
+            Features such as <strong>Pincode / Zipcode</strong> can have thousands of distinct
+            levels (e.g. 10 000+).
+          </p>
+          <p>If we treat them as ordinary categorical features:</p>
+          <ul>
+            <li>The tree creates one branch per unique value.</li>
+            <li>Most child nodes become extremely small.</li>
+            <li>The split is almost useless and leads to severe overfitting.</li>
+          </ul>
+          <h3 id="feature-engineering-hack">Feature-Engineering Hack</h3>
+          <p>
+            Convert the high-cardinality categorical feature into a
+            <strong>numerical</strong> feature that carries useful signal.
+          </p>
+          <p>For each pincode $p_j$ compute the empirical probability of the positive class:</p>
+          <p>
+            $$ p_j ;\longmapsto; P(Y=1\mid p_j) = \frac{#{y_i=1 ;\text{and}; p_i=p_j}}{#{p_i=p_j}}
+            $$
+          </p>
+          <p>Example: a particular pincode appears 20 times and 19 of those times $y=1$</p>
+          <p>$$ P(Y=1\mid p_j)=\frac{19}{20}=0.95 $$</p>
+          <h3 id="what-we-do-in-practice">What We Do in Practice</h3>
+          <ol>
+            <li>Remove the original pincode column from $D$.</li>
+            <li>
+              Replace it by the new numerical column<br />
+              $$ \text{numerical feature} = P(Y=1\mid\text{pincode}) $$
+            </li>
+            <li>
+              Now the Decision Tree can split on this numerical feature in the usual way (threshold
+              splits).
+            </li>
+          </ol>
+          <h3 id="resulting-tree-behaviour">Resulting Tree Behaviour</h3>
+          <p>
+            Instead of creating thousands of tiny pure leaves, the tree makes a few meaningful
+            binary splits such as
+          </p>
+          <p>
+            $$ \text{if } P(Y=1\mid\text{pincode}) &lt; 0.2 \quad\text{then left, else right.} $$
+          </p>
+          <p>This keeps the tree compact and statistically reliable.</p>
+          <h2 id="10-overfitting-and-underfitting">10. Overfitting and Underfitting</h2>
+          <p><img src="./assets/10.01.jpg" alt="LR" /></p>
+          <p><img src="./assets/10.02.jpg" alt="LR" /></p>
+          <blockquote>
+            <p><strong>Overfitting &amp; Underfitting in Decision Trees</strong></p>
+          </blockquote>
+          <h3 id="effect-of-depth">Effect of Depth</h3>
+          <ul>
+            <li>
+              <p>As <strong>depth increases</strong>:</p>
+              <ul>
+                <li>Possibility of having very few points at a leaf node increases.</li>
+                <li>Interpretability of the model decreases (long nested if-else chains).</li>
+                <li>The model starts fitting noise → <strong>overfitting</strong>.</li>
+              </ul>
+            </li>
+            <li>
+              <p>
+                <strong>Depth = 1</strong> is called a <strong>Decision Stump</strong><br />
+                (only one split, two leaves).
+              </p>
+            </li>
+          </ul>
+          <h3 id="geometric-view">Geometric View</h3>
+          <ul>
+            <li>Axis-parallel splits.</li>
+            <li>Too deep → many tiny rectangular regions that capture noise → overfitting.</li>
+            <li>Too shallow → under-fitting (the decision boundary is too coarse).</li>
+          </ul>
+          <h3 id="controlling-depth">Controlling Depth</h3>
+          <p>
+            Depth is the main hyper-parameter of a Decision Tree.<br />
+            It is chosen by <strong>cross-validation</strong> (exactly like $\lambda$ in logistic
+            regression or $C$ in SVM).
+          </p>
+          <p><strong>Summary</strong></p>
+          <table>
+            <thead>
+              <tr>
+                <th>Depth</th>
+                <th>Behaviour</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>too large</td>
+                <td>overfitting</td>
+              </tr>
+              <tr>
+                <td>too small</td>
+                <td>underfitting</td>
+              </tr>
+              <tr>
+                <td>chosen by CV</td>
+                <td>good bias-variance trade-off</td>
+              </tr>
+            </tbody>
+          </table>
+          <h2 id="11-train-and-run-time-complexity">11. Train and Run Time Complexity</h2>
+          <p><img src="./assets/11.01.jpg" alt="LR" /></p>
+          <p><img src="./assets/11.02.jpg" alt="LR" /></p>
+          <blockquote>
+            <p><strong>Train &amp; Run-time Complexity of Decision Trees</strong></p>
+          </blockquote>
+          <h3 id="training-time-complexity">Training Time Complexity</h3>
+          <p>$$ \text{Train time} ;\sim; O\bigl(n\log n\cdot d\bigr) $$</p>
+          <ul>
+            <li>$n$ = number of training points</li>
+            <li>$d$ = dimensionality</li>
+          </ul>
+          <p>
+            Dominant cost comes from <strong>sorting</strong> each numerical feature (needed to
+            evaluate candidate thresholds for Information Gain / Gini).
+          </p>
+          <p>For large $d$ the complexity becomes $O(n\log n\cdot d)$.</p>
+          <h3 id="space-complexity-after-training">Space Complexity (after training)</h3>
+          <p>We only need to store the tree:</p>
+          <ul>
+            <li>number of internal nodes + number of leaf nodes</li>
+            <li>essentially a nested if-else structure</li>
+          </ul>
+          <p>Space is proportional to the number of nodes in the tree.</p>
+          <h3 id="run-time-prediction-complexity">Run-time (Prediction) Complexity</h3>
+          <p>
+            To classify a query point $\mathbf{x}_q$ we simply walk from the root down to a leaf.
+          </p>
+          <p>$$ \text{Prediction time} = O(\text{depth}) $$</p>
+          <ul>
+            <li>At most a few comparisons (one per level).</li>
+            <li>Extremely fast → low-latency prediction.</li>
+          </ul>
+          <p>Example: a tree of depth 3 needs at most 3 comparisons.</p>
+          <h3 id="practical-implications">Practical Implications</h3>
+          <p>
+            Decision Trees (and their ensembles RF / GBDT) are very popular in internet applications
+            because:
+          </p>
+          <ul>
+            <li>They handle large data when dimensionality is not huge.</li>
+            <li>Prediction latency is $O(\text{depth})$ – excellent for real-time systems.</li>
+          </ul>
+          <h2 id="12-regression-using-decision-trees">12. Regression Using Decision Trees</h2>
+          <p><img src="./assets/12.01.jpg" alt="LR" /></p>
+          <p><img src="./assets/12.02.jpg" alt="LR" /></p>
+          <blockquote>
+            <p><strong>Regression using Decision Trees</strong></p>
+          </blockquote>
+          <p>
+            Decision Trees can be used for both <strong>classification</strong> and
+            <strong>regression</strong>.
+          </p>
+          <h3 id="classification-vs-regression">Classification vs Regression</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Task</th>
+                <th>Splitting Criterion</th>
+                <th>Value predicted at a leaf</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Classification</td>
+                <td>Information Gain / Gini</td>
+                <td>Majority class (or class probabilities)</td>
+              </tr>
+              <tr>
+                <td>Regression</td>
+                <td>MSE or MAE</td>
+                <td>Mean (or median) of the target values</td>
+              </tr>
+            </tbody>
+          </table>
+          <h3 id="regression-criterion">Regression Criterion</h3>
+          <p>We want to reduce the impurity of the real-valued targets $y_i\in\mathbb{R}$.</p>
+          <p><strong>Mean Squared Error (MSE)</strong></p>
+          <p>$$ \text{MSE} = \frac{1}{n}\sum_{i=1}^{n}(y_i-\hat{y}_i)^2 $$</p>
+          <p><strong>Mean Absolute Error (MAE)</strong> (also called Mean Absolute Deviation)</p>
+          <p>$$ \text{MAE} = \text{median}\bigl(|y_i-\hat{y}_i|\bigr) $$</p>
+          <p>
+            When we split a node into two children $D_1$ and $D_2$, we choose the split that
+            minimises the <strong>weighted</strong> MSE (or MAE):
+          </p>
+          <p>$$ w_1\cdot\text{MSE}<em>{D_1} + w_2\cdot\text{MSE}</em>{D_2} $$</p>
+          <h3 id="prediction-at-a-leaf">Prediction at a Leaf</h3>
+          <p>For a leaf node that contains the set of points $D$:</p>
+          <p>
+            $$ \hat{y} = \text{mean}(y_i)<em
+              >{i\in D} \quad\text{or}\quad \hat{y} = \text{median}(y_i)</em
+            >{i\in D} $$
+          </p>
+          <h3 id="geometric-view-2">Geometric View</h3>
+          <ul>
+            <li>Classification → axis-parallel hyperplanes that separate class regions.</li>
+            <li>
+              Regression → axis-parallel <strong>piece-wise constant</strong> function (step
+              function).
+            </li>
+          </ul>
+          <h3 id="effect-of-depth-same-as-classification">
+            Effect of Depth (same as classification)
+          </h3>
+          <ul>
+            <li>Small depth → under-fitting (coarse step function).</li>
+            <li>Large depth → over-fitting (very wiggly step function that follows noise).</li>
+          </ul>
+          <p>The plots illustrate this clearly:</p>
+          <ul>
+            <li><code>max_depth=2</code> → smooth, coarse approximation.</li>
+            <li>
+              <code>max_depth=5</code> → much more detailed (and potentially over-fit) step
+              function.
+            </li>
+          </ul>
+          <p>Depth is again chosen by cross-validation.</p>
+          <h2 id="13-cases">13. Cases</h2>
+          <p><img src="./assets/13.01.jpg" alt="LR" /></p>
+          <p><img src="./assets/13.02.jpg" alt="LR" /></p>
+          <blockquote>
+            <p><strong>Cases: Decision Trees</strong></p>
+          </blockquote>
+          <h3 id="1-imbalanced-data">1. Imbalanced Data</h3>
+          <ul>
+            <li>
+              Highly imbalanced data (e.g. 90% +ve, 10% –ve) impacts Entropy / MSE calculations.
+            </li>
+            <li>
+              Solution: <strong>balance</strong> the data<br />
+              → Upsampling the minority class<br />
+              → or class-weighting / downsampling.
+            </li>
+          </ul>
+          <h3 id="2-large-dimensionality-d-large">2. Large Dimensionality ($d$ large)</h3>
+          <ul>
+            <li>At every node we evaluate Information Gain for <strong>every</strong> feature.</li>
+            <li>Training-time complexity increases significantly.</li>
+            <li>
+              For categorical features: <strong>avoid one-hot encoding</strong> (it explodes
+              dimensionality).<br />
+              Example: 1 categorical feature with 10 levels → 10 binary features → $d$ increases.
+            </li>
+          </ul>
+          <h3 id="3-categorical-features-with-many-levels">
+            3. Categorical Features with Many Levels
+          </h3>
+          <ul>
+            <li>Convert high-cardinality categorical feature into a numerical feature:</li>
+          </ul>
+          <p>$$ P(Y=1 \mid f = c_i) $$</p>
+          <ul>
+            <li>
+              Decision Trees need the features <strong>explicitly</strong> (they do
+              <strong>not</strong> work with a similarity / kernel matrix).
+            </li>
+          </ul>
+          <h3 id="4-multi-class-classification">4. Multi-class Classification</h3>
+          <ul>
+            <li>Decision Trees handle multi-class naturally (no OvR needed).</li>
+            <li>Entropy / Gini Impurity work directly with $Y = {1,2,3,\dots}$.</li>
+            <li>At a leaf the prediction is the majority class (or class distribution).</li>
+          </ul>
+          <h3 id="5-decision-surfaces">5. Decision Surfaces</h3>
+          <ul>
+            <li>Non-linear.</li>
+            <li>
+              Composed of <strong>axis-parallel hyperplanes</strong> (piece-wise constant regions).
+            </li>
+          </ul>
+          <h3 id="6-feature-interactions-logical">6. Feature Interactions (Logical)</h3>
+          <ul>
+            <li>
+              Trees naturally capture interactions of the form<br />
+              $$ (PL &lt; 3) ;\text{AND}; (SL &gt; 5) $$
+            </li>
+            <li>
+              Contrast with Logistic Regression / Feature Transforms where we must manually create
+              $f_i\times f_j$ or $f_i \land f_j$.
+            </li>
+          </ul>
+          <h3 id="7-outliers">7. Outliers</h3>
+          <ul>
+            <li>When depth is large, outliers can create small pure leaves.</li>
+            <li>This makes the tree <strong>unstable</strong>.</li>
+            <li>Controlling depth (or min-samples-leaf) mitigates the effect.</li>
+          </ul>
+          <h3 id="8-interpretability">8. Interpretability</h3>
+          <ul>
+            <li>
+              Extremely high: the model is simply a nested <strong>if-else</strong> rule set.<br />
+              $$ \mathbf{x}_q ;\longrightarrow; y_q $$
+            </li>
+          </ul>
+          <h3 id="9-feature-importance">9. Feature Importance</h3>
+          <ul>
+            <li>
+              For each feature $f_i$ we accumulate the total reduction in impurity (Entropy or Gini)
+              caused by splits on $f_i$.
+            </li>
+            <li>These reductions are normalised to obtain Feature Importance scores.</li>
+            <li>Scikit-learn exposes them as <code>feature_importances_</code>.</li>
+          </ul>
+          <h2 id="14-code-samples">14. Code Samples</h2>
+          <p>
+            <a href="https://scikit-learn.org/stable/modules/tree.html"
+              >https://scikit-learn.org/stable/modules/tree.html</a
+            >
+          </p>
+          <p>
+            <a
+              href="https://scikit-learn.org/stable/modules/generated/sklearn.tree.DecisionTreeClassifier.html"
+              >https://scikit-learn.org/stable/modules/generated/sklearn.tree.DecisionTreeClassifier.html</a
+            >
+          </p>
+          <p>
+            <a
+              href="https://scikit-learn.org/stable/auto_examples/tree/plot_unveil_tree_structure.html"
+              >https://scikit-learn.org/stable/auto_examples/tree/plot_unveil_tree_structure.html</a
+            >
+          </p>
+          <h2 id="15-assignment-8-apply-decision-trees">15. Assignment-8: Apply Decision Trees</h2>
+          <h2 id="16-revision-questions">16. Revision Questions</h2>
+          <p><strong>Questions</strong></p>
+          <p>
+            <a href="#1-how-to-building-a-decision-tree">1. How to Building a decision Tree?</a
+            ><br />
+            <a href="#2-what-is-entropy">2. What is Entropy?</a><br />
+            <a href="#3-what-is-information-gain">3. What is information Gain?</a><br />
+            <a href="#4-what-is-gini-impurity">4. What is Gini Impurity?</a><br />
+            <a href="#5-how-to-constructing-a-dt">5. How to Constructing a DT?</a><br />
+            <a href="#6-importance-of-splitting-numerical-features"
+              >6. Importance of Splitting numerical features?</a
+            ><br />
+            <a href="#7-how-to-handle-overfitting-and-underfitting-in-dt"
+              >7. How to handle Overfitting and Underfitting in DT?</a
+            ><br />
+            <a href="#8-what-are-train-and-run-time-complexity-for-dt"
+              >8. What are Train and Run time complexity for DT?</a
+            ><br />
+            <a href="#9-how-to-implement-regression-using-decision-trees"
+              >9. How to implement Regression using Decision Trees?</a
+            >
+          </p>
+          <h3 id="1-how-to-building-a-decision-tree">1. How to Building a decision Tree?</h3>
+          <p>
+            A Decision Tree is built by recursively partitioning the data using
+            <strong>axis-parallel hyperplanes</strong>.
+          </p>
+          <p><strong>Geometric Intuition</strong>:</p>
+          <ul>
+            <li>Each internal node represents a decision based on one feature</li>
+            <li>The split is always parallel to one of the axes (e.g., $ x_j \leq threshold $)</li>
+            <li>The tree divides the feature space into rectangular regions</li>
+            <li>
+              Each leaf corresponds to one region and makes a prediction (majority class or average
+              value)
+            </li>
+          </ul>
+          <p><strong>High-level process</strong>:</p>
+          <ol>
+            <li>Start with the entire dataset at the root</li>
+            <li>Choose the best feature and split point that maximizes purity</li>
+            <li>Recursively repeat the process on the child nodes</li>
+            <li>Stop when a stopping criterion is met (pure node, max depth, min samples, etc.)</li>
+          </ol>
+          <h3 id="2-what-is-entropy">2. What is Entropy?</h3>
+          <p><strong>Entropy</strong> measures the impurity or uncertainty in a set of labels.</p>
+          <p>
+            For a binary classification problem with proportions $ p $ (positive) and $ 1-p $
+            (negative):
+          </p>
+          <p>$ H(S) = -p \log_2(p) - (1-p)\log_2(1-p) $</p>
+          <p><strong>Properties</strong>:</p>
+          <ul>
+            <li>Entropy = 0 when the set is pure (all examples belong to one class)</li>
+            <li>Entropy is maximum (= 1 for binary) when classes are equally distributed</li>
+            <li>Higher entropy → more impurity → harder to classify</li>
+          </ul>
+          <p>
+            Entropy is the basis for the Information Gain criterion used in ID3 / C4.5 style
+            decision trees.
+          </p>
+          <h3 id="3-what-is-information-gain">3. What is information Gain?</h3>
+          <p>
+            <strong>Information Gain</strong> measures how much uncertainty is reduced after
+            splitting on a feature.
+          </p>
+          <p>
+            $ \text{Information Gain}(S, A) = H(S) - \sum_{v \in Values(A)} \frac{|S_v|}{|S|} H(S_v)
+            $
+          </p>
+          <p>where:</p>
+          <ul>
+            <li>$ H(S) $ = entropy of the parent node</li>
+            <li>$ S_v $ = subset of data where feature $ A $ takes value $ v $</li>
+          </ul>
+          <p><strong>Interpretation</strong>:</p>
+          <ul>
+            <li>Higher Information Gain → better feature for splitting</li>
+            <li>We choose the feature that gives the maximum Information Gain at each node</li>
+          </ul>
+          <p>
+            Information Gain tends to prefer features with many distinct values (can be biased).
+            This is why Gain Ratio is sometimes used.
+          </p>
+          <h3 id="4-what-is-gini-impurity">4. What is Gini Impurity?</h3>
+          <p>
+            <strong>Gini Impurity</strong> is another measure of node impurity, used in CART trees.
+          </p>
+          <p>For a node with class proportions $ p_k $:</p>
+          <p>$ \text{Gini}(S) = 1 - \sum_{k} p_k^2 $</p>
+          <p><strong>Properties</strong>:</p>
+          <ul>
+            <li>Gini = 0 when the node is pure</li>
+            <li>Gini is maximum when classes are equally mixed</li>
+            <li>Computationally cheaper than Entropy (no logarithms)</li>
+          </ul>
+          <p><strong>Gini Gain</strong> (used for splitting):</p>
+          <p>
+            $ \text{Gini Gain} = \text{Gini}(parent) - \sum \frac{|S_v|}{|S|} \text{Gini}(S_v) $
+          </p>
+          <p>CART uses Gini Impurity by default, while ID3/C4.5 use Entropy / Information Gain.</p>
+          <h3 id="5-how-to-constructing-a-dt">5. How to Constructing a DT?</h3>
+          <p><strong>Step-by-step construction</strong>:</p>
+          <ol>
+            <li><strong>Start</strong> with the full training set at the root</li>
+            <li>
+              <strong>For each possible feature</strong>:
+              <ul>
+                <li>Evaluate all possible split points</li>
+                <li>Compute Information Gain or Gini Gain</li>
+              </ul>
+            </li>
+            <li><strong>Select</strong> the feature + threshold with the highest gain</li>
+            <li><strong>Create</strong> two (or more) child nodes</li>
+            <li><strong>Recursively</strong> repeat the process on each child</li>
+            <li>
+              <strong>Stopping criteria</strong> (any of these):
+              <ul>
+                <li>Node is pure</li>
+                <li>Maximum depth reached</li>
+                <li>Minimum number of samples in a node</li>
+                <li>Minimum gain threshold</li>
+                <li>No more features left</li>
+              </ul>
+            </li>
+          </ol>
+          <p>The final tree consists of decision nodes and leaf nodes (predictions).</p>
+          <h3 id="6-importance-of-splitting-numerical-features">
+            6. Importance of Splitting numerical features?
+          </h3>
+          <p>
+            Numerical features are continuous, so we cannot split on every unique value efficiently.
+          </p>
+          <p><strong>How splitting is done</strong>:</p>
+          <ul>
+            <li>Sort the feature values</li>
+            <li>Consider possible thresholds between consecutive values</li>
+            <li>
+              For each threshold, compute the impurity reduction (Information Gain or Gini Gain)
+            </li>
+            <li>Choose the threshold that gives the best gain</li>
+          </ul>
+          <p><strong>Importance</strong>:</p>
+          <ul>
+            <li>Good split points on numerical features can create very pure child nodes</li>
+            <li>
+              Axis-parallel splits on numerical features are the main way decision trees partition
+              continuous space
+            </li>
+            <li>Efficient algorithms (e.g., sorting once) make this feasible</li>
+          </ul>
+          <p>
+            Without careful handling of numerical features, trees would either be too coarse or
+            computationally expensive.
+          </p>
+          <h3 id="7-how-to-handle-overfitting-and-underfitting-in-dt">
+            7. How to handle Overfitting and Underfitting in DT?
+          </h3>
+          <p>
+            Decision Trees are prone to <strong>overfitting</strong> because they can keep growing
+            until every leaf is pure.
+          </p>
+          <p><strong>Overfitting solutions</strong>:</p>
+          <ul>
+            <li>
+              <strong>Pre-pruning</strong>: Stop growing early using max_depth, min_samples_split,
+              min_samples_leaf, min_impurity_decrease
+            </li>
+            <li>
+              <strong>Post-pruning</strong>: Grow a full tree and then prune back (cost-complexity
+              pruning)
+            </li>
+            <li>Limit maximum number of leaf nodes</li>
+            <li>Use ensemble methods (Random Forest, Gradient Boosting)</li>
+          </ul>
+          <p><strong>Underfitting solutions</strong>:</p>
+          <ul>
+            <li>Allow the tree to grow deeper</li>
+            <li>Reduce min_samples_split / min_samples_leaf</li>
+            <li>Decrease regularization strength</li>
+          </ul>
+          <p>
+            The most common practical approach is to use cross-validation to tune max_depth and
+            min_samples_leaf.
+          </p>
+          <h3 id="8-what-are-train-and-run-time-complexity-for-dt">
+            8. What are Train and Run time complexity for DT?
+          </h3>
+          <p><strong>Training Time Complexity</strong>:</p>
+          <ul>
+            <li>
+              Roughly $ O(n \cdot d \cdot \log n) $ for balanced trees
+              <ul>
+                <li>$ n $ = number of samples</li>
+                <li>$ d $ = number of features</li>
+              </ul>
+            </li>
+            <li>In the worst case (very unbalanced) it can be higher</li>
+            <li>Sorting numerical features dominates the cost</li>
+          </ul>
+          <p><strong>Prediction (Run-time) Complexity</strong>:</p>
+          <ul>
+            <li>$ O(depth) $ which is typically $ O(\log n) $ for balanced trees</li>
+            <li>Very fast at inference time</li>
+          </ul>
+          <p><strong>Space Complexity</strong>:</p>
+          <ul>
+            <li>$ O(number\ of\ nodes) $ which is usually $ O(n) $ in the worst case</li>
+          </ul>
+          <p>
+            Decision Trees are relatively fast to train on medium-sized datasets and extremely fast
+            at prediction.
+          </p>
+          <h3 id="9-how-to-implement-regression-using-decision-trees">
+            9. How to implement Regression using Decision Trees?
+          </h3>
+          <p>
+            <strong>Decision Tree Regressor</strong> works almost the same way as the classifier,
+            with two key differences:
+          </p>
+          <ol>
+            <li>
+              <p><strong>Impurity measure</strong>:</p>
+              <ul>
+                <li>
+                  Instead of Entropy or Gini, we use <strong>variance</strong> (or mean squared
+                  error)
+                </li>
+                <li>Variance of a node: $ \frac{1}{|S|} \sum (y_i - \bar{y})^2 $</li>
+              </ul>
+            </li>
+            <li>
+              <p><strong>Prediction at leaf</strong>:</p>
+              <ul>
+                <li>
+                  Instead of majority class, the leaf predicts the <strong>average</strong> of the
+                  target values in that leaf
+                </li>
+              </ul>
+            </li>
+          </ol>
+          <p><strong>Splitting criterion</strong>:</p>
+          <ul>
+            <li>Choose the split that minimizes the weighted variance of the child nodes</li>
+          </ul>
+          <p><strong>Advantages</strong>:</p>
+          <ul>
+            <li>Can model non-linear relationships</li>
+            <li>Handles mixed feature types</li>
+            <li>No need for feature scaling</li>
+          </ul>
+          <p><strong>Disadvantages</strong>:</p>
+          <ul>
+            <li>Still prone to overfitting</li>
+            <li>Predictions are piecewise constant (staircase-like)</li>
+          </ul>
+        </main>
+        <aside class="note-toc" aria-label="On this page">
+          <h2>On This Page</h2>
+          <ul>
+            <li>
+              <a href="#01-geometric-intuition-of-decision-tree-axis-parallel-hyperplanes">
+                01. Geometric Intuition of Decision Tree: Axis-Parallel Hyperplanes
+              </a>
+            </li>
+            <li><a href="#02-sample-decision-tree">02. Sample Decision Tree</a></li>
+            <li>
+              <a href="#03-building-a-decision-tree-entropy">
+                03. Building a Decision Tree: Entropy
+              </a>
+            </li>
+            <li>
+              <a href="#04-building-a-decision-tree-information-gain">
+                04. Building a Decision Tree: Information Gain
+              </a>
+            </li>
+            <li>
+              <a href="#05-building-a-decision-tree-gini-impurity">
+                05. Building a Decision Tree: Gini Impurity
+              </a>
+            </li>
+            <li>
+              <a href="#06-building-a-decision-tree-constructing-a-dt">
+                06. Building a Decision Tree: Constructing a DT
+              </a>
+            </li>
+            <li>
+              <a href="#07-building-a-decision-tree-splitting-numerical-features">
+                07. Building a Decision Tree: Splitting Numerical Features
+              </a>
+            </li>
+            <li><a href="#08-feature-standardization">08. Feature Standardization</a></li>
+            <li>
+              <a href="#09-building-a-decision-tree-categorical-features-with-many-possible-values">
+                09. Building a Decision Tree: Categorical Features with Many Possible Values
+              </a>
+            </li>
+            <li><a href="#10-overfitting-and-underfitting">10. Overfitting and Underfitting</a></li>
+            <li>
+              <a href="#11-train-and-run-time-complexity">
+                11. Train and Run Time Complexity
+              </a>
+            </li>
+            <li>
+              <a href="#12-regression-using-decision-trees">
+                12. Regression Using Decision Trees
+              </a>
+            </li>
+            <li><a href="#13-cases">13. Cases</a></li>
+            <li><a href="#14-code-samples">14. Code Samples</a></li>
+            <li>
+              <a href="#15-assignment-8-apply-decision-trees">
+                15. Assignment-8: Apply Decision Trees
+              </a>
+            </li>
+            <li><a href="#16-revision-questions">16. Revision Questions</a></li>
+          </ul>
+        </aside>
+      </div>
+    </div>
+    <script>
+      if (window.hljs)
+        document
+          .querySelectorAll("pre code[class*='language-']")
+          .forEach((block) => window.hljs.highlightElement(block));
+      (() => {
+        const links = [...document.querySelectorAll(".note-toc a")],
+          heads = links
+            .map((l) => document.getElementById(decodeURIComponent(l.hash.slice(1))))
+            .filter(Boolean);
+        if (!links.length || !heads.length || !("IntersectionObserver" in window)) return;
+        const set = (h) =>
+          links.forEach((l) => l.classList.toggle("is-active", l.hash === `#${h.id}`));
+        const ob = new IntersectionObserver(
+          (es) => {
+            const v = es
+              .filter((e) => e.isIntersecting)
+              .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
+            if (v.length) set(v[0].target);
+          },
+          { rootMargin: "-10% 0px -75% 0px", threshold: 0 },
+        );
+        heads.forEach((h) => ob.observe(h));
+      })();
+    </script>
+  </body>
+</html>

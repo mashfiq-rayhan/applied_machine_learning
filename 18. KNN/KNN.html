@@ -1,0 +1,3187 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>KNN | Applied Machine Learning</title>
+    <link rel="stylesheet" href="../HTMLs/theme.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
+    <script>
+      window.MathJax = {
+        tex: {
+          inlineMath: [
+            ["$", "$"],
+            ["\\(", "\\)"],
+          ],
+          displayMath: [
+            ["$$", "$$"],
+            ["\\[", "\\]"],
+          ],
+          processEscapes: true,
+          processEnvironments: true,
+        },
+        options: {
+          skipHtmlTags: ["script", "noscript", "style", "textarea", "pre", "code"],
+        },
+      };
+    </script>
+    <script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-svg.js"></script>
+  </head>
+  <body class="site-page">
+    <div class="site-layout">
+      <nav class="curriculum-nav" aria-label="Main curriculum navigation">
+        <iframe src="../HTMLs/table-of-contents.html" title="Machine learning curriculum"></iframe>
+      </nav>
+      <div class="note-layout">
+        <main class="note-content">
+          
+          <h1 id="k-nearest-neighbours-knn">K-Nearest Neighbours (KNN)</h1>
+
+          <style>
+            @import url("https://fonts.googleapis.com/css2?family=Play:wght@400;700&display=swap");
+            @import url("https://cdnjs.cloudflare.com/ajax/libs/latin-modern/1.1.0/css/latinmodern-math.min.css");
+
+            :root {
+              --la-ink: #3f6386;
+              --la-teal: #3f6386;
+              --la-teal-soft: #e8f6f7;
+              --la-coral: #9333ea;
+              --la-coral-soft: #fff1ed;
+              --la-cdf: #17283a;
+              --la-line: #5b5c5c;
+              --la-surface: #f7faf9;
+              --la-text: #c9c9c9;
+              --la-panel: #00070e;
+              --la-chip: #17283a;
+              --la-amber: #9a6b16;
+              --la-amber-soft: #fff8e6;
+            }
+
+            *,
+            *::before,
+            *::after {
+              font-family: "Play", sans-serif !important;
+            }
+
+            pre,
+            pre code {
+              font-family: Consolas, "Courier New", monospace !important;
+            }
+
+            body,
+            .markdown-body,
+            p,
+            li {
+              color: var(--la-text) !important;
+            }
+
+            h1 {
+              color: var(--la-ink);
+              border-bottom: 4px solid var(--la-teal);
+              padding-bottom: 0.35em;
+            }
+
+            h2 {
+              color: var(--la-teal);
+              border-left: 6px solid var(--la-teal);
+              padding-left: 0.55em;
+              margin-top: 2em;
+            }
+
+            h3,
+            h4 {
+              color: var(--la-coral);
+            }
+
+            a {
+              color: var(--la-coral);
+              text-decoration: none;
+            }
+
+            a:hover {
+              text-decoration: underline;
+            }
+
+            blockquote {
+              background: var(--la-panel);
+              border-left: 5px solid var(--la-cdf) !important;
+              border-radius: 6px;
+              color: var(--la-text);
+              padding: 0.75em 1em;
+            }
+
+            code {
+              background: var(--la-chip);
+              border-radius: 4px;
+              color: var(--la-text);
+              padding: 0.1em 0.3em;
+            }
+
+            pre {
+              background: var(--la-panel);
+              border: 1px solid var(--la-line);
+              border-radius: 8px;
+              overflow-x: auto;
+              padding: 1em;
+            }
+
+            table {
+              border: 1px solid var(--la-line);
+              border-collapse: collapse;
+              border-radius: 8px;
+              overflow: hidden;
+              width: 100%;
+            }
+
+            th {
+              background: var(--la-panel);
+              color: var(--la-text);
+              padding: 0.7em 0.8em;
+              text-align: left;
+            }
+
+            td {
+              color: var(--la-text);
+              padding: 0.7em 0.8em;
+            }
+
+            tr:nth-child(even) {
+              background: var(--la-chip);
+            }
+
+            hr {
+              border: 0;
+              border-top: 2px solid var(--la-line);
+              margin: 2.2em 0;
+            }
+
+            .summary-grid,
+            .ml-grid,
+            .intuition-grid {
+              display: flex;
+              gap: 1em;
+              margin: 1.25em 0;
+            }
+
+            .summary-card,
+            .ml-card,
+            .intuition-card {
+              background: var(--la-panel);
+              border-radius: 7px;
+              color: var(--la-text);
+              flex: 1 1 0;
+              min-width: 0;
+              padding: 1em;
+            }
+
+            .summary-card {
+              border-top: 5px solid var(--la-teal);
+            }
+
+            .summary-card.pdf,
+            .ml-card.diagnostics,
+            .intuition-card.pdf {
+              border-top-color: var(--la-coral);
+            }
+
+            .summary-card.cdf,
+            .intuition-card.cdf {
+              border-top-color: var(--la-cdf);
+            }
+
+            .summary-card h3,
+            .ml-card h3,
+            .intuition-card h3 {
+              margin-top: 0;
+            }
+
+            .summary-tag,
+            .panel-kicker {
+              color: var(--la-teal);
+              font-size: 0.82em;
+              font-weight: 700;
+              letter-spacing: 0.04em;
+              text-transform: uppercase;
+            }
+
+            .relationship-banner,
+            .ml-workflow {
+              align-items: center;
+              background: var(--la-panel);
+              border: 1px solid var(--la-teal);
+              border-radius: 7px;
+              color: var(--la-text);
+              display: flex;
+              flex-wrap: wrap;
+              gap: 0.6em;
+              justify-content: center;
+              margin: 1.25em 0;
+              padding: 0.85em 1em;
+              text-align: center;
+            }
+
+            .relationship-banner strong,
+            .ml-workflow strong,
+            .relationship-item strong,
+            .insight-item strong {
+              color: var(--la-coral);
+            }
+
+            .relationship-banner .arrow {
+              color: var(--la-teal);
+              font-size: 1.2em;
+            }
+
+            .relationship-item,
+            .insight-item {
+              background: var(--la-panel);
+              border-left: 5px solid var(--la-teal);
+              border-radius: 5px;
+              color: var(--la-text);
+              margin: 0.65em 0;
+              padding: 0.55em 0.85em;
+            }
+
+            .insight-item {
+              border-left-color: var(--la-coral);
+            }
+
+            .insight-list,
+            .feature-chips {
+              display: flex;
+              flex-wrap: wrap;
+              gap: 0.55em;
+              list-style: none;
+              margin: 0.5em 0 1em;
+              padding: 0;
+            }
+
+            .insight-list li,
+            .feature-chips li {
+              background: var(--la-chip);
+              border: 1px solid var(--la-teal);
+              border-radius: 999px;
+              color: var(--la-text);
+              padding: 0.35em 0.75em;
+            }
+
+            .feature-chips li {
+              border-radius: 4px;
+              border-left: 3px solid var(--la-coral);
+              border-right: none;
+              border-top: none;
+              border-bottom: none;
+              flex: 1 1 calc(50% - 0.45em);
+            }
+
+            .concept-flow {
+              align-items: center;
+              display: flex;
+              flex-direction: column;
+              margin: 1.25em 0;
+            }
+
+            .concept-flow .flow-step {
+              background: var(--la-panel);
+              border: 1px solid var(--la-teal);
+              border-radius: 7px;
+              color: var(--la-text);
+              max-width: 22em;
+              padding: 0.7em 1.2em;
+              text-align: center;
+              width: 100%;
+            }
+
+            .concept-flow .flow-step strong {
+              color: var(--la-coral);
+            }
+
+            .concept-flow .flow-arrow {
+              color: var(--la-teal);
+              font-size: 1.35em;
+              line-height: 1.25;
+            }
+
+            .percentile-callout {
+              background: var(--la-panel);
+              border-left: 5px solid var(--la-cdf);
+              border-radius: 7px;
+              color: var(--la-text);
+              margin: 1.25em 0;
+              padding: 1em;
+            }
+
+            .percentile-callout strong {
+              color: var(--la-cdf);
+            }
+
+            .katex-display,
+            .math,
+            .math-block {
+              background: #00070e;
+              border-left: 6px solid #2f005c;
+              border-radius: 6px;
+              padding: 0.6em 0.8em;
+              overflow-x: auto;
+              color: #c9c9c9 !important;
+              font-family: "Latin Modern Math", "Cambria Math", "STIX Two Math", serif !important;
+            }
+
+            .katex,
+            .katex * {
+              color: #9b9a9a !important;
+              font-family: "Latin Modern Math", "Cambria Math", "STIX Two Math", serif !important;
+            }
+
+            @media (max-width: 700px) {
+              .summary-grid,
+              .ml-grid,
+              .intuition-grid {
+                flex-direction: column;
+              }
+            }
+          </style>
+
+          <h2 id="01-how-classification-works">01. How Classification Works</h2>
+          <p><img src="./assets/01.jpg" alt="KNN" /></p>
+          <h3 id="how-classification-works">How Classification Works</h3>
+          <p><strong>Real-world examples:</strong></p>
+          <ul>
+            <li>Amazon Food Reviews → Positive / Negative</li>
+            <li>MNIST digits → {0, 1, 2, …, 9} (after PCA / t-SNE)</li>
+          </ul>
+          <p><strong>Pipeline:</strong></p>
+          <p>
+            $$ r_i ;\xrightarrow{\text{Text}}; \text{Vector} \quad (\text{BoW / TF-IDF / W2V}) $$
+          </p>
+          <p>We have a dataset of <strong>364K</strong> reviews:</p>
+          <p>$$ r_i ;\longrightarrow; (x_i,; +ve / -ve) $$</p>
+          <p>
+            <strong>Goal:</strong><br />
+            Given a new review text $x_q$, determine / predict whether the review is
+            <strong>positive</strong> or <strong>negative</strong>.
+          </p>
+          <p>$$ y = f(x) $$</p>
+          <ul>
+            <li>$x$ = review text (converted to vector)</li>
+            <li>$y$ = +ve / –ve</li>
+          </ul>
+          <p>This function $f$ is the <strong>central concept</strong> of classification.</p>
+          <h3 id="how-a-classification-algorithm-works">How a Classification Algorithm Works</h3>
+          <p><strong>Training Stage</strong></p>
+          <p>We are given labeled data:</p>
+          <p>$$ {(x_1, y_1),; (x_2, y_2),; \dots,; (x_n, y_n)} $$</p>
+          <p>The algorithm learns a function $f$ such that:</p>
+          <p>$$ f(x_i) \approx y_i \quad \text{for } i = 1 \text{ to } n $$</p>
+          <p><strong>Test / Evaluation Stage</strong></p>
+          <p>For a new query point $x_q$:</p>
+          <p>$$ y_q = f(x_q) $$</p>
+          <p>where $y_q \in {+ve,; -ve}$ (or any finite set of classes).</p>
+          <h3 id="summary">Summary</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Stage</th>
+                <th>Input</th>
+                <th>Output</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Training</td>
+                <td>Labeled data ${(x_i, y_i)}$</td>
+                <td>Learned function $f$</td>
+              </tr>
+              <tr>
+                <td>Prediction</td>
+                <td>New review $x_q$</td>
+                <td>Predicted class $y_q$</td>
+              </tr>
+            </tbody>
+          </table>
+          <p>Classification algorithms try to learn the mapping</p>
+          <p>$$ y_q = f(x_q) $$</p>
+          <p>from the training data so that they can correctly classify unseen reviews.</p>
+          <h2 id="02-data-matrix-notation">02. Data Matrix Notation</h2>
+          <p><img src="./assets/02.jpg" alt="KNN" /></p>
+          <blockquote>
+            <p>Notation</p>
+          </blockquote>
+          <p>We have a dataset of $n$ reviews:</p>
+          <p>$$ D = \big{ (x_i, y_i) \big}_{i=1}^{n} $$</p>
+          <p>where:</p>
+          <ul>
+            <li>
+              $x_i \in \mathbb{R}^d$ → $d$-dimensional vector obtained from the review text<br />
+              (using BoW / TF-IDF / Word2Vec etc.)
+            </li>
+            <li>
+              $y_i \in {0, 1}$ → class label
+              <ul>
+                <li>$0$ = negative</li>
+                <li>$1$ = positive</li>
+              </ul>
+            </li>
+          </ul>
+          <p><strong>Matrix view of the data:</strong></p>
+          <p>
+            $$ X = \begin{bmatrix} \begin{array}{c|c} &amp; \ \hline &amp; x_i^\top \ &amp; \
+            \end{array} \end{bmatrix}<em
+              >{n \times d} \qquad Y = \begin{bmatrix} y_1 \ y_2 \ \vdots \ y_i \ \vdots \ y_n
+              \end{bmatrix}</em
+            >{n \times 1} $$
+          </p>
+          <ul>
+            <li>Each row of $X$ is one data point $x_i^\top$</li>
+            <li>$x_i$ is a <strong>column vector</strong> of size $d \times 1$</li>
+            <li>$Y$ is the label vector of size $n \times 1$</li>
+          </ul>
+          <h3 id="classification-goal">Classification Goal</h3>
+          <p>Learn a function $f$ such that:</p>
+          <p>$$ f(x_i) = y_i $$</p>
+          <p>For a new query review $x_q$:</p>
+          <p>$$ y_q = f(x_q) \quad \in {0, 1} $$</p>
+          <h2 id="03-classification-vs-regression-examples">
+            03. Classification vs Regression (Examples)
+          </h2>
+          <p><img src="./assets/03.jpg" alt="KNN" /></p>
+          <h3 id="dataset-notation">Dataset Notation</h3>
+          <p>
+            $$ D = \big{ (x_i, y_i) \big}_{i=1}^{n} \quad \text{where }; x_i \in \mathbb{R}^d,; y_i
+            \in {0,1} $$
+          </p>
+          <h3 id="classification">Classification</h3>
+          <p>
+            When the output $y_i$ belongs to a <strong>finite set of classes</strong>, the problem
+            is called <strong>Classification</strong>.
+          </p>
+          <p><strong>Examples:</strong></p>
+          <table>
+            <thead>
+              <tr>
+                <th>Dataset</th>
+                <th>Possible values of $y_i$</th>
+                <th>Type of Classification</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Amazon Food Reviews</td>
+                <td>${0, 1}$ (Negative / Positive)</td>
+                <td>2-class / Binary</td>
+              </tr>
+              <tr>
+                <td>MNIST</td>
+                <td>${0,1,2,3,4,5,6,7,8,9}$</td>
+                <td>10-class / Multi-class</td>
+              </tr>
+            </tbody>
+          </table>
+          <h3 id="regression">Regression</h3>
+          <p>
+            When the output $y_i$ is a <strong>real number</strong> ($y_i \in \mathbb{R}$), the
+            problem is called <strong>Regression</strong>.
+          </p>
+          <p>
+            In regression, $y_i$ is <strong>no longer</strong> part of a small finite set of
+            classes.
+          </p>
+          <p><strong>Example:</strong></p>
+          <ul>
+            <li>
+              Input: $x_i = \langle \text{weight},; \text{age},; \text{gender},; \text{race}
+              \rangle$
+            </li>
+            <li>Output: $y_i = \text{height}$ (a real number such as 182.6 cm, 152.7 cm, …)</li>
+          </ul>
+          <p>$$ y_i = f(x_i) $$</p>
+          <h3 id="quick-summary">Quick Summary</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Type of $y_i$</th>
+                <th>Problem Type</th>
+                <th>Symbol</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>$y_i \in {0,1}$ or finite set of classes</td>
+                <td>Classification</td>
+                <td>C</td>
+              </tr>
+              <tr>
+                <td>$y_i \in \mathbb{R}$</td>
+                <td>Regression</td>
+                <td>R</td>
+              </tr>
+            </tbody>
+          </table>
+          <h2 id="04-k-nearest-neighbours-geometric-intuition-with-a-toy-example">
+            04. K-Nearest Neighbours: Geometric Intuition with a Toy Example
+          </h2>
+          <p><img src="./assets/04.jpg" alt="KNN" /></p>
+          <h3 id="binary-classification-setting">Binary Classification Setting</h3>
+          <p>Dataset:</p>
+          <p>
+            $$ D = \big{ (x_i, y_i) \big} \quad \text{where }; x_i \in \mathbb{R}^2,; y_i \in {0,1}
+            $$
+          </p>
+          <ul>
+            <li>Blue points → Positive class ($+ve$)</li>
+            <li>Orange points → Negative class ($-ve$)</li>
+          </ul>
+          <p>
+            <strong>Goal:</strong> Given a query point $x_q$, predict its class $y_q \in {0,1}$.
+          </p>
+          <h3 id="geometric-idea">Geometric Idea</h3>
+          <p>Look at the points that are <strong>closest</strong> to $x_q$ (its neighbors).</p>
+          <p>
+            If most of the neighbors are blue → conclude $x_q$ is positive.<br />
+            If most of the neighbors are orange → conclude $x_q$ is negative.
+          </p>
+          <h3 id="k-nn-algorithm-steps">K-NN Algorithm (Steps)</h3>
+          <ol>
+            <li>
+              <p><strong>Find the K nearest points</strong> to $x_q$ in the dataset $D$.</p>
+              <p>Example: Let $K = 3$</p>
+              <p>$$ {x_1, x_2, x_3} \quad \text{(3 nearest neighbors of } x_q\text{)} $$</p>
+              <p>Their labels: ${y_1, y_2, y_3}$</p>
+            </li>
+            <li>
+              <p><strong>Apply Majority Vote</strong> on the labels of these K neighbors.</p>
+              <p>$$ y_q = \text{Majority class among } {y_1, y_2, \dots, y_K} $$</p>
+            </li>
+          </ol>
+          <h3 id="why-k-is-usually-chosen-as-odd">Why K is usually chosen as odd?</h3>
+          <p>When $K$ is odd, there cannot be a tie in binary classification.</p>
+          <p><strong>Examples ($K=3$):</strong></p>
+          <table>
+            <thead>
+              <tr>
+                <th>Neighbor labels</th>
+                <th>Majority</th>
+                <th>Predicted $y_q$</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>$+, +, +$</td>
+                <td>$+$</td>
+                <td>Positive</td>
+              </tr>
+              <tr>
+                <td>$+, +, -$</td>
+                <td>$+$</td>
+                <td>Positive</td>
+              </tr>
+            </tbody>
+          </table>
+          <p>
+            If $K=4$ and labels are $+, +, -, -$, then we have a <strong>tie</strong> (ambiguous).
+          </p>
+          <h3 id="summary-flow">Summary Flow</h3>
+          <p>$$ x_q ;\longrightarrow; \text{K nearest neighbors } {x_1, x_2, \dots, x_K} $$</p>
+          <p>$$ {y_1, y_2, \dots, y_K} ;\xrightarrow{\text{Majority Vote}}; y_q $$</p>
+          <p>This is the complete geometric idea behind K-Nearest Neighbors for classification.</p>
+          <h2 id="05-failure-cases-of-knn">05. Failure Cases of KNN</h2>
+          <p><img src="./assets/05.jpg" alt="KNN" /></p>
+          <p>
+            K-Nearest Neighbors can fail in certain situations. Two important failure cases are:
+          </p>
+          <h3 id="1-query-point-is-far-away-from-all-points-in-the-dataset">
+            1. Query point is far away from all points in the dataset
+          </h3>
+          <p>
+            When $x_q$ lies in a region that has <strong>no nearby training points</strong>, the
+            nearest neighbors are actually far away.
+          </p>
+          <ul>
+            <li>The algorithm is forced to use distant points.</li>
+            <li>Decision becomes unreliable (“not sure”).</li>
+            <li>Example: A point lying far from both the positive and negative clusters.</li>
+          </ul>
+          <h3 id="2-classes-are-randomly-mixed--overlapping">
+            2. Classes are randomly mixed / overlapping
+          </h3>
+          <p>
+            When positive and negative points are <strong>heavily interleaved</strong> (jumbled
+            together):
+          </p>
+          <ul>
+            <li>Even the nearest neighbors belong to different classes.</li>
+            <li>Local neighborhood contains mixed labels.</li>
+            <li>Majority vote gives almost random predictions.</li>
+            <li>No useful local structure / information is present.</li>
+          </ul>
+          <h3 id="visual-summary">Visual Summary</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Situation</th>
+                <th>What happens with K-NN</th>
+                <th>Result</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>$x_q$ far from all data</td>
+                <td>Neighbors are distant</td>
+                <td>Unreliable prediction</td>
+              </tr>
+              <tr>
+                <td>Classes heavily overlapping</td>
+                <td>Neighborhood is mixed</td>
+                <td>Almost random decision</td>
+              </tr>
+            </tbody>
+          </table>
+          <p>
+            In both cases, the fundamental assumption of K-NN (that nearby points have similar
+            labels) is violated.
+          </p>
+          <h2 id="06-distance-measures-euclidean-l2-manhattan-l1-minkowski-hamming">
+            06. Distance Measures: Euclidean (L2), Manhattan (L1), Minkowski, Hamming
+          </h2>
+          <p><img src="./assets/06.jpg" alt="KNN" /></p>
+          <h3 id="euclidean-distance">Euclidean Distance</h3>
+          <p>For two points in 2D:</p>
+          <p>$$ x_1 = (x_{11}, x_{12}), \quad x_2 = (x_{21}, x_{22}) $$</p>
+          <p>$$ d = \sqrt{(x_{21}-x_{11})^2 + (x_{22}-x_{12})^2} = |x_1 - x_2| $$</p>
+          <p>This is the length of the shortest (straight) line between the two points.</p>
+          <p><strong>General form (d-dimensions):</strong></p>
+          <p>
+            $$ |x_1 - x_2|<em>2 = \left( \sum</em>{i=1}^{d} (x_{1i} - x_{2i})^2 \right)^{1/2} $$
+          </p>
+          <ul>
+            <li>Also called the <strong>L2-norm</strong> of the vector $(x_1 - x_2)$</li>
+            <li>$|x|_2$ = Euclidean distance of $x$ from the origin</li>
+          </ul>
+          <h3 id="manhattan-distance">Manhattan Distance</h3>
+          <p>
+            $$ \text{Manhattan dist}(x_1, x_2) = |x_1 - x_2|<em>1 = \sum</em>{i=1}^{d} |x_{1i} -
+            x_{2i}| $$
+          </p>
+          <ul>
+            <li>Also called the <strong>L1-norm</strong> of the vector $(x_1 - x_2)$</li>
+            <li>
+              Corresponds to the distance when you can only move along the axes (like city blocks)
+            </li>
+          </ul>
+          <p>$$ |x|<em>1 = \sum</em>{i=1}^{d} |x_i| $$</p>
+          <h3 id="minkowski-distance-lp-norm">Minkowski Distance (Lp-norm)</h3>
+          <p>General family of distances:</p>
+          <p>
+            $$ |x_1 - x_2|<em>p = \left( \sum</em>{i=1}^{d} |x_{1i} - x_{2i}|^p \right)^{1/p} $$
+          </p>
+          <ul>
+            <li>$p = 2$ → Euclidean distance</li>
+            <li>$p = 1$ → Manhattan distance</li>
+          </ul>
+          <p>
+            This is called the <strong>Minkowski distance</strong> or <strong>Lp distance</strong>.
+          </p>
+          <p><strong>Lp-norm of a vector:</strong></p>
+          <p>$$ |x|<em>p = \left( \sum</em>{i=1}^{d} |x_i|^p \right)^{1/p} \quad (p &gt; 0) $$</p>
+          <h3 id="hamming-distance">Hamming Distance</h3>
+          <p>Used for <strong>boolean / binary vectors</strong> (e.g. Binary Bag-of-Words).</p>
+          <p>
+            $$ \text{Hamming dist}(x_1, x_2) = \text{number of positions where the two binary
+            vectors differ} $$
+          </p>
+          <p><strong>Example:</strong></p>
+          <p>
+            $$ \begin{align*} x_1 &amp;= [0,;1,;1,;0,;1,;0,;1] \ x_2 &amp;= [1,;0,;1,;0,;1,;0,;1]
+            \end{align*} $$
+          </p>
+          <p>They differ in 3 positions → Hamming distance = 3</p>
+          <p>Also used for strings / gene sequences (AGTC):</p>
+          <p>
+            $$ \begin{align*} x_1 &amp;= \text{A A G T C T C A G} \ x_2 &amp;= \text{A G A T C T C G
+            A} \end{align*} $$
+          </p>
+          <p>Differ in 4 positions → Hamming distance = 4</p>
+          <h3 id="summary-2">Summary</h3>
+          <p>
+            | Distance | Formula | Also known as | Typical use | | --------- |
+            ----------------------------- | ------------- | ------------------------ | ------- |
+            ------------------- | | Euclidean | $\displaystyle\left(\sum | x_i-y_i |
+            ^2\right)^{1/2}$ | L2-norm | Continuous features | | Manhattan | $\displaystyle\sum |
+            x_i-y_i | $ | L1-norm | Continuous features | | Minkowski | $\displaystyle\left(\sum |
+            x_i-y_i | ^p\right)^{1/p}$ | Lp-norm | Generalization | | Hamming | Number of differing
+            positions | – | Binary vectors / strings |
+          </p>
+          <h2 id="07-cosine-distance--cosine-similarity">
+            07. Cosine Distance &amp; Cosine Similarity
+          </h2>
+          <p>
+            <img src="./assets/07.jpg" alt="KNN" />
+            <img src="./assets/07.01.jpg" alt="KNN" />
+            <img src="./assets/07.02.jpg" alt="KNN" />
+            <img src="./assets/07.03.jpg" alt="KNN" />
+            <img src="./assets/07.04.jpg" alt="KNN" />
+            <img src="./assets/07.05.jpg" alt="KNN" />
+            <img src="./assets/07.06.jpg" alt="KNN" />
+          </p>
+          <h3 id="relationship-between-similarity-and-distance">
+            Relationship between Similarity and Distance
+          </h3>
+          <ul>
+            <li>Similarity ↑ → Distance ↓ (they are opposite)</li>
+            <li>Cosine Similarity ranges in $[-1,; 1]$</li>
+          </ul>
+          <p>$$ \text{Cosine Distance}(x_1, x_2) = 1 - \text{Cosine Similarity}(x_1, x_2) $$</p>
+          <table>
+            <thead>
+              <tr>
+                <th>Cosine Similarity</th>
+                <th>Meaning</th>
+                <th>Cosine Distance</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>$+1$</td>
+                <td>Very similar</td>
+                <td>$0$</td>
+              </tr>
+              <tr>
+                <td>$0$</td>
+                <td>Orthogonal</td>
+                <td>$1$</td>
+              </tr>
+              <tr>
+                <td>$-1$</td>
+                <td>Completely dissimilar</td>
+                <td>$2$</td>
+              </tr>
+            </tbody>
+          </table>
+          <h3 id="geometric-meaning">Geometric Meaning</h3>
+          <p>
+            Cosine Similarity is the <strong>cosine of the angle</strong> $\theta$ between the two
+            vectors:
+          </p>
+          <p>$$ \text{Cos-Sim}(x_1, x_2) = \cos\theta $$</p>
+          <p>where $\theta$ is the angle between $x_1$ and $x_2$.</p>
+          <h3 id="formula">Formula</h3>
+          <p>$$ \cos\theta = \dfrac{x_1 \cdot x_2}{|x_1|_2 ; |x_2|_2} $$</p>
+          <p><strong>Special case – Unit vectors:</strong></p>
+          <p>If $|x_1|_2 = |x_2|_2 = 1$, then</p>
+          <p>$$ \cos\theta = x_1 \cdot x_2 $$</p>
+          <h3 id="relationship-with-euclidean-distance">Relationship with Euclidean Distance</h3>
+          <p>When $x_1$ and $x_2$ are <strong>unit vectors</strong>:</p>
+          <p>
+            $$ \big[\text{Euc-dist}(x_1, x_2)\big]^2 = 2\big(1 - \cos\theta\big) = 2 \times
+            \text{Cos-dist}(x_1, x_2) $$
+          </p>
+          <p>Derivation:</p>
+          <p>$$ |x_1 - x_2|^2 = |x_1|^2 + |x_2|^2 - 2, x_1^\top x_2 $$</p>
+          <p>For unit vectors ($|x_1| = |x_2| = 1$):</p>
+          <p>$$ |x_1 - x_2|^2 = 2 - 2\cos\theta = 2(1 - \cos\theta) $$</p>
+          <h3 id="key-observations">Key Observations</h3>
+          <ul>
+            <li>
+              Cosine similarity cares only about the <strong>direction</strong> (angle), not the
+              magnitude.
+            </li>
+            <li>
+              Two vectors can be far in Euclidean distance but still have high cosine similarity if
+              they point in almost the same direction.
+            </li>
+            <li>
+              Very useful for text data (BoW / TF-IDF / Word2Vec) where the length of the vector
+              often depends on document length.
+            </li>
+          </ul>
+          <h2 id="08-how-to-measure-the-effectiveness-of-knn">
+            08. How to Measure the Effectiveness of KNN
+          </h2>
+          <p><img src="./assets/08.jpg" alt="KNN" /></p>
+          <h3 id="problem-setting">Problem Setting</h3>
+          <p>Amazon Food Reviews dataset:</p>
+          <p>$$ D = \big{(x_i, y_i)\big}_{i=1}^{n} \quad (n \approx 364\text{K}) $$</p>
+          <ul>
+            <li>$x_i$ = text review converted to vector (BoW / TF-IDF / W2V)</li>
+            <li>$y_i \in {0,1}$ → Negative / Positive</li>
+          </ul>
+          <p><strong>Task:</strong> Given a new review $x_q$, predict its polarity $y_q$.</p>
+          <p>We use <strong>K-NN + Majority Vote</strong>.</p>
+          <h3 id="train-test-split">Train-Test Split</h3>
+          <p>We randomly split the whole dataset $D_n$ into two parts:</p>
+          <p>$$ D_n = D_{\text{Train}} ;\cup; D_{\text{Test}} $$</p>
+          <p>$$ D_{\text{Train}} ;\cap; D_{\text{Test}} = \emptyset $$</p>
+          <p>Typical split:</p>
+          <ul>
+            <li>$D_{\text{Train}}$ → 70% of data ($n_1 \approx 0.7n$)</li>
+            <li>$D_{\text{Test}}$ → 30% of data ($n_2 \approx 0.3n$)</li>
+          </ul>
+          <h3 id="evaluation-procedure">Evaluation Procedure</h3>
+          <ol>
+            <li>Train K-NN using only $D_{\text{Train}}$.</li>
+            <li>
+              For <strong>every</strong> point $x_i$ in $D_{\text{Test}}$:
+              <ul>
+                <li>Treat it as a query point $x_q = x_i$</li>
+                <li>Predict $\hat{y}<em>q$ using K-NN on $D</em>{\text{Train}}$</li>
+                <li>Compare $\hat{y}_q$ with the true label $y_i$</li>
+              </ul>
+            </li>
+            <li>Count how many times the prediction was correct.</li>
+          </ol>
+          <h3 id="accuracy">Accuracy</h3>
+          <p>
+            $$ \text{Accuracy} = \dfrac{\text{Number of correctly predicted points in }
+            D_{\text{Test}}}{n_2} $$
+          </p>
+          <p>$$ 0 \le \text{Accuracy} \le 1 $$</p>
+          <p>
+            <strong>Example:</strong><br />
+            If Accuracy = 0.91 → the model is correct <strong>91%</strong> of the time on unseen
+            data.
+          </p>
+          <h3 id="conclusion">Conclusion</h3>
+          <p>
+            By splitting the data into Train and Test sets and computing Accuracy on the Test set,
+            we get a reliable measure of how good K-NN is for the Amazon Food Reviews polarity
+            prediction task.
+          </p>
+          <h2 id="09-test-evaluation-time-and-space-complexity">
+            09. Test Evaluation: Time and Space Complexity
+          </h2>
+          <p><img src="./assets/09.jpg" alt="KNN" /></p>
+          <h3 id="k-nn-algorithm-test--evaluation-phase">
+            K-NN Algorithm (Test / Evaluation Phase)
+          </h3>
+          <p><strong>Input:</strong></p>
+          <ul>
+            <li>Training set $D_{\text{Train}}$ ($n$ points, each in $d$ dimensions)</li>
+            <li>Query point $x_q \in \mathbb{R}^d$</li>
+            <li>Integer $K$ (usually small, e.g. 5 or 10)</li>
+          </ul>
+          <p><strong>Output:</strong> Predicted class $y_q$</p>
+          <pre><code class="language-text">KNNpts = []                          # list to store (x_i, y_i, distance)
+
+for each x_i in D_Train:
+    compute d(x_i, x_q) → d_i        # O(d) time
+    keep the smallest K distances    # maintain top-K
+
+# Majority vote
+cnt_pos = 0, cnt_neg = 0
+for each point in KNNpts:            # O(K)
+    if y_i is +ve → cnt_pos += 1
+    else → cnt_neg += 1
+
+if cnt_pos &gt; cnt_neg:
+    return y_q = 1                   # +ve
+else:
+    return y_q = 0                   # -ve
+</code></pre>
+          <h3 id="time-complexity">Time Complexity</h3>
+          <ul>
+            <li>Computing distance for all $n$ points: $O(nd)$</li>
+            <li>Finding the $K$ nearest neighbors + majority vote: $O(K)$ (very small)</li>
+          </ul>
+          <p><strong>Overall:</strong></p>
+          <p>$$ O(nd) + O(K) \approx O(nd) $$</p>
+          <p>When $d \ll n$:</p>
+          <p>$$ O(nd) \approx O(n) $$</p>
+          <h3 id="space-complexity">Space Complexity</h3>
+          <p>We must keep the entire training set in memory:</p>
+          <p>$$ \text{Space} = O(nd) $$</p>
+          <p><strong>Example (Amazon Food Reviews):</strong></p>
+          <ul>
+            <li>$n \approx 364\text{K}$</li>
+            <li>$d \approx 100\text{K}$ (BoW) or $\approx 300$ (TF-IDF / W2V)</li>
+          </ul>
+          <p>→ Requires a lot of RAM.</p>
+          <h3 id="summary-3">Summary</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Complexity</th>
+                <th>Value</th>
+                <th>Notes</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Time (per query)</td>
+                <td>$O(nd)$</td>
+                <td>Dominated by distance computations</td>
+              </tr>
+              <tr>
+                <td>Space</td>
+                <td>$O(nd)$</td>
+                <td>Whole training set must stay in memory</td>
+              </tr>
+            </tbody>
+          </table>
+          <p>
+            <strong>Key Point:</strong><br />
+            K-NN does almost all its work at <strong>test / evaluation time</strong>. This makes it
+            slow and memory-intensive for large datasets.
+          </p>
+          <h2 id="10-knn-limitations">10. KNN Limitations</h2>
+          <p><img src="./assets/10.jpg" alt="KNN" /></p>
+          <h3 id="1-space-complexity-problem">1. Space Complexity Problem</h3>
+          <p>For Amazon Fine Food Reviews:</p>
+          <ul>
+            <li>$n \approx 364\text{K}$</li>
+            <li>$d \approx 100\text{K}$ (BoW)</li>
+          </ul>
+          <p>
+            $$ \text{Space} = O(nd) \approx 364\text{K} \times 100\text{K} = 36.4 \text{ Billion
+            values} \approx \mathbf{36,GB} $$
+          </p>
+          <p>
+            Even with 64 GB RAM, storing the entire training set becomes very expensive /
+            impractical for production systems.
+          </p>
+          <h3 id="2-time-complexity-problem">2. Time Complexity Problem</h3>
+          <p>$$ \text{Time per query} = O(nd) $$</p>
+          <ul>
+            <li>36 Billion computations per prediction</li>
+            <li>
+              In low-latency applications (Internet, Trading, etc.) we often need answers in
+              <strong>1 ms</strong>
+            </li>
+            <li>
+              K-NN with the simple implementation can take <strong>seconds</strong> → too slow
+            </li>
+          </ul>
+          <table>
+            <thead>
+              <tr>
+                <th>Application Type</th>
+                <th>Required Latency</th>
+                <th>Simple K-NN</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Internet / Trading</td>
+                <td>~1 ms</td>
+                <td>Too slow</td>
+              </tr>
+              <tr>
+                <td>Medicine (offline)</td>
+                <td>few seconds / 1 min</td>
+                <td>Acceptable</td>
+              </tr>
+            </tbody>
+          </table>
+          <h3 id="3-overall-limitation-of-simple-implementation">
+            3. Overall Limitation of Simple Implementation
+          </h3>
+          <p>The basic (brute-force) K-NN is:</p>
+          <ul>
+            <li>Very simple</li>
+            <li>Intuitive</li>
+            <li>Easy to implement</li>
+          </ul>
+          <p>But it has severe practical limitations:</p>
+          <p>$$ \text{Time} = O(nd), \quad \text{Space} = O(nd) $$</p>
+          <h3 id="better-alternatives">Better Alternatives</h3>
+          <p>To overcome these limitations, we use more advanced techniques:</p>
+          <ul>
+            <li><strong>KD-Tree</strong></li>
+            <li><strong>Locality Sensitive Hashing (LSH)</strong></li>
+            <li>Other approximate nearest neighbor methods</li>
+          </ul>
+          <p>
+            These methods try to reduce both time and space while still giving good approximate
+            neighbors.
+          </p>
+          <h2 id="11-decision-surface-for-k-nn-as-k-changes">
+            11. Decision Surface for K-NN as K Changes
+          </h2>
+          <p><img src="./assets/11.jpg" alt="KNN" /></p>
+          <blockquote>
+            <p><code>K</code> in <code>K-NN</code> (<code>Hyperparameter</code>)</p>
+          </blockquote>
+          <p>$K$ is the most important <strong>hyperparameter</strong> in K-Nearest Neighbors.</p>
+          <h3 id="effect-of-k-on-the-decision-surface">Effect of K on the Decision Surface</h3>
+          <p>
+            The decision surface is the boundary that separates the positive class from the negative
+            class.
+          </p>
+          <table>
+            <thead>
+              <tr>
+                <th>Value of K</th>
+                <th>Decision Surface</th>
+                <th>Characteristics</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>$K = 1$</td>
+                <td>Very complex / non-smooth</td>
+                <td>Overfits, sensitive to noise</td>
+              </tr>
+              <tr>
+                <td>Small K</td>
+                <td>Complex, wiggly</td>
+                <td>High variance</td>
+              </tr>
+              <tr>
+                <td>Large K</td>
+                <td>Smooth</td>
+                <td>High bias</td>
+              </tr>
+              <tr>
+                <td>$K = n$</td>
+                <td>Completely flat</td>
+                <td>Always predicts the majority class</td>
+              </tr>
+            </tbody>
+          </table>
+          <h3 id="geometric-intuition">Geometric Intuition</h3>
+          <ul>
+            <li>
+              <p>
+                <strong>K = 1 (1-NN)</strong><br />
+                The decision boundary tightly follows the training points.<br />
+                It creates many small regions and is highly non-smooth.
+              </p>
+            </li>
+            <li>
+              <p>
+                <strong>As K increases</strong> (3, 5, 7, 15 …)<br />
+                The decision boundary becomes smoother because more neighbors participate in the
+                majority vote.
+              </p>
+            </li>
+            <li>
+              <p>
+                <strong>K = n</strong> (maximum possible value)<br />
+                Every query point looks at <strong>all</strong> training points.<br />
+                The prediction is simply the majority class in the entire dataset.
+              </p>
+            </li>
+          </ul>
+          <p><strong>Example:</strong></p>
+          <ul>
+            <li>Total points $n = 1000$</li>
+            <li>Positive points $n_1 = 600$</li>
+            <li>Negative points $n_2 = 400$</li>
+          </ul>
+          <p>
+            When $K = 1000$, every point is classified as <strong>Positive</strong> (majority
+            class).
+          </p>
+          <h3 id="summary-4">Summary</h3>
+          <ul>
+            <li>Small $K$ → Complex decision surface (can overfit)</li>
+            <li>Large $K$ → Smooth decision surface (can underfit)</li>
+            <li>$K = n$ → Always predicts the majority class</li>
+          </ul>
+          <p>Choosing the right $K$ is a trade-off between bias and variance.</p>
+          <h2 id="12-overfitting-and-underfitting">12. Overfitting and Underfitting</h2>
+          <p><img src="./assets/12.jpg" alt="KNN" /></p>
+          <h3 id="fundamental-concepts">Fundamental Concepts</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Situation</th>
+                <th>Decision Surface</th>
+                <th>Behavior</th>
+                <th>Typical K</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Overfitting</strong></td>
+                <td>Very complex / non-smooth</td>
+                <td>Fits noise &amp; outliers perfectly</td>
+                <td>$K = 1$</td>
+              </tr>
+              <tr>
+                <td><strong>Well-fit</strong></td>
+                <td>Smooth</td>
+                <td>Robust, less sensitive to noise</td>
+                <td>Moderate $K$ (e.g. 5)</td>
+              </tr>
+              <tr>
+                <td><strong>Underfitting</strong></td>
+                <td>Extremely simple</td>
+                <td>Always predicts majority class</td>
+                <td>$K = n$</td>
+              </tr>
+            </tbody>
+          </table>
+          <h3 id="visual-understanding">Visual Understanding</h3>
+          <p><strong>1. Overfitting ($K = 1$)</strong></p>
+          <ul>
+            <li>Decision boundary tightly follows every training point</li>
+            <li>Classifies all training points correctly (no mistakes on $D_{\text{Train}}$)</li>
+            <li>Highly sensitive to noisy points and outliers</li>
+            <li>Poor generalization to new points</li>
+          </ul>
+          <p><strong>2. Good Fit (e.g. $K = 5$)</strong></p>
+          <ul>
+            <li>Decision boundary becomes smoother</li>
+            <li>Less affected by individual noisy points</li>
+            <li>Better balance between bias and variance</li>
+            <li>More robust predictions</li>
+          </ul>
+          <p><strong>3. Underfitting ($K = n$)</strong></p>
+          <ul>
+            <li>Decision surface becomes completely flat</li>
+            <li>
+              Every query point is assigned the <strong>majority class</strong> of the entire
+              training set
+            </li>
+            <li>Model is too simple / “lazy”</li>
+            <li>Ignores local structure completely</li>
+          </ul>
+          <h3 id="key-takeaway">Key Takeaway</h3>
+          <p>In K-NN:</p>
+          <ul>
+            <li>
+              <strong>Small $K$</strong> → Low bias, High variance → Risk of
+              <strong>Overfitting</strong>
+            </li>
+            <li>
+              <strong>Large $K$</strong> → High bias, Low variance → Risk of
+              <strong>Underfitting</strong>
+            </li>
+          </ul>
+          <p>Choosing the right $K$ is about finding the sweet spot between these two extremes.</p>
+          <h2 id="13-need-for-cross-validation">13. Need for Cross Validation</h2>
+          <p><img src="./assets/13.jpg" alt="KNN" /></p>
+          <h3 id="how-to-choose-the-best-k">How to Choose the Best K?</h3>
+          <p>One simple idea:</p>
+          <ol>
+            <li>
+              <p>Randomly split the data</p>
+              <ul>
+                <li>$D_{\text{Train}}$ (70%)</li>
+                <li>$D_{\text{Test}}$ (30%)</li>
+              </ul>
+            </li>
+            <li>
+              <p>For different values of $K = 1, 2, 3, \dots$</p>
+              <ul>
+                <li>Train K-NN on $D_{\text{Train}}$</li>
+                <li>Compute Accuracy on $D_{\text{Test}}$</li>
+              </ul>
+            </li>
+            <li><p>Pick the $K$ that gives the highest Accuracy on $D_{\text{Test}}$.</p></li>
+          </ol>
+          <p><strong>Typical result:</strong></p>
+          <table>
+            <thead>
+              <tr>
+                <th>K</th>
+                <th>Accuracy on $D_{\text{Test}}$</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>1</td>
+                <td>0.78</td>
+              </tr>
+              <tr>
+                <td>2</td>
+                <td>0.82</td>
+              </tr>
+              <tr>
+                <td>3</td>
+                <td>0.85</td>
+              </tr>
+              <tr>
+                <td>…</td>
+                <td>…</td>
+              </tr>
+              <tr>
+                <td>6</td>
+                <td><strong>0.96</strong> (highest)</td>
+              </tr>
+            </tbody>
+          </table>
+          <h3 id="the-problem-with-this-approach">The Problem with This Approach</h3>
+          <p>We used $D_{\text{Test}}$ to <strong>select</strong> the best $K$.</p>
+          <p>Therefore $D_{\text{Test}}$ is no longer a pure unseen set.</p>
+          <p>
+            <strong>Question:</strong><br />
+            Can I honestly say that my model will give 96% accuracy on future data?
+          </p>
+          <p><strong>Answer:</strong> No.</p>
+          <h3 id="objective-of-a-good-model">Objective of a Good Model</h3>
+          <p>
+            We want the model to perform well on <strong>future unseen points</strong> — points that
+            were never used during training <strong>or</strong> model selection.
+          </p>
+          <h3 id="solution-cross-validation-cv">Solution: Cross-Validation (CV)</h3>
+          <p>We create a separate set only for choosing hyperparameters.</p>
+          <p><strong>Proper 3-way split:</strong></p>
+          <p>
+            $$ D_n \xrightarrow{\text{random}} \begin{cases} D_{\text{Train}} &amp; (60%) \
+            D_{\text{CV}} &amp; (20%) \ D_{\text{Test}} &amp; (20%) \end{cases} $$
+          </p>
+          <p><strong>Correct Procedure:</strong></p>
+          <ol>
+            <li>Use $D_{\text{Train}}$ + different values of $K$</li>
+            <li>Evaluate Accuracy on $D_{\text{CV}}$ → select the best $K$</li>
+            <li>Finally test the chosen model <strong>only once</strong> on $D_{\text{Test}}$</li>
+          </ol>
+          <p>
+            This final Accuracy on $D_{\text{Test}}$ is a reliable estimate of
+            <strong>Generalization Accuracy</strong>.
+          </p>
+          <h3 id="summary-5">Summary</h3>
+          <ul>
+            <li>Never use the Test set to choose $K$.</li>
+            <li>Use a Cross-Validation (Validation) set for hyperparameter selection.</li>
+            <li>Report performance only on the held-out Test set.</li>
+          </ul>
+          <p>This is why <strong>Cross-Validation</strong> is necessary.</p>
+          <h2 id="14-k-fold-cross-validation">14. K-Fold Cross Validation</h2>
+          <p><img src="./assets/14.jpg" alt="KNN" /></p>
+          <h3 id="why-do-we-need-k-fold-cv">Why do we need K'-Fold CV?</h3>
+          <p>In the simple 60-20-20 split:</p>
+          <ul>
+            <li>Only <strong>60%</strong> of the data is used for training the model</li>
+            <li>Only <strong>20%</strong> is used for choosing $K$</li>
+          </ul>
+          <p>
+            <strong>Problem:</strong><br />
+            We are throwing away a lot of data.<br />
+            More training data → better algorithm.
+          </p>
+          <p>
+            <strong>Goal:</strong> Use as much data as possible for training while still getting a
+            reliable estimate of performance.
+          </p>
+          <h3 id="k-fold-cross-validation-procedure">K'-Fold Cross-Validation Procedure</h3>
+          <p>
+            <strong>Step 1:</strong><br />
+            Keep a pure Test set aside (usually 20%).
+          </p>
+          <p>
+            $$ D_n \xrightarrow{\text{random}} \begin{cases} D_{\text{Train+CV}} &amp; (80%) \
+            D_{\text{Test}} &amp; (20%) \end{cases} $$
+          </p>
+          <p>
+            <strong>Step 2:</strong><br />
+            Randomly divide $D_{\text{Train+CV}}$ into $K'$ equal-sized parts (folds).
+          </p>
+          <p>Example for <strong>4-fold CV</strong>:</p>
+          <p>$$ D_{\text{Train+CV}} = D_1 \cup D_2 \cup D_3 \cup D_4 $$</p>
+          <p>
+            <strong>Step 3:</strong><br />
+            For each value of $K$ (the hyperparameter of K-NN):
+          </p>
+          <ul>
+            <li>
+              <p>Repeat $K'$ times:</p>
+              <ul>
+                <li>Use $K'-1$ folds as Training set</li>
+                <li>Use the remaining 1 fold as CV set</li>
+                <li>Compute Accuracy on that CV fold</li>
+              </ul>
+            </li>
+            <li>
+              <p>
+                Average the $K'$ accuracies → get a robust estimate of performance for that $K$.
+              </p>
+            </li>
+          </ul>
+          <p><strong>Example (4-fold CV for $K=1$):</strong></p>
+          <table>
+            <thead>
+              <tr>
+                <th>Fold</th>
+                <th>Train Set</th>
+                <th>CV Set</th>
+                <th>Accuracy</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>1</td>
+                <td>$D_1 D_2 D_3$</td>
+                <td>$D_4$</td>
+                <td>$a_4$</td>
+              </tr>
+              <tr>
+                <td>2</td>
+                <td>$D_1 D_2 D_4$</td>
+                <td>$D_3$</td>
+                <td>$a_3$</td>
+              </tr>
+              <tr>
+                <td>3</td>
+                <td>$D_1 D_3 D_4$</td>
+                <td>$D_2$</td>
+                <td>$a_2$</td>
+              </tr>
+              <tr>
+                <td>4</td>
+                <td>$D_2 D_3 D_4$</td>
+                <td>$D_1$</td>
+                <td>$a_1$</td>
+              </tr>
+            </tbody>
+          </table>
+          <p>$$ \text{Average Accuracy for } K=1 = \dfrac{a_1 + a_2 + a_3 + a_4}{4} $$</p>
+          <p>
+            Do the same for $K=2, 3, 4, \dots$ and pick the $K$ with the highest average CV
+            accuracy.
+          </p>
+          <p>
+            <strong>Step 4:</strong><br />
+            Train the final model using the best $K$ on the entire $D_{\text{Train+CV}}$, then
+            evaluate <strong>once</strong> on the held-out $D_{\text{Test}}$.
+          </p>
+          <h3 id="choosing-the-number-of-folds-k">Choosing the number of folds ($K'$)</h3>
+          <p>Common choices:</p>
+          <ul>
+            <li>$K' = 4$</li>
+            <li>$K' = 10$ ← <strong>Rule of thumb</strong></li>
+            <li>$K' = n$ (Leave-One-Out CV)</li>
+          </ul>
+          <p><strong>Rule of thumb:</strong> Prefer <strong>10-fold Cross-Validation</strong>.</p>
+          <h3 id="time-complexity-2">Time Complexity</h3>
+          <p>
+            Time required to find the best $K$ increases by a factor of $K'$<br />
+            (because we train the model $K'$ times for every candidate $K$).
+          </p>
+          <h3 id="key-benefits-of-k-fold-cv">Key Benefits of K'-Fold CV</h3>
+          <ul>
+            <li>Uses much more data for training (almost 80% instead of 60%)</li>
+            <li>Gives a more stable and reliable estimate of performance</li>
+            <li>Still keeps a pure Test set for final evaluation</li>
+          </ul>
+          <h2 id="15-visualizing-train-validation-and-test-datasets">
+            15. Visualizing Train, Validation and Test Datasets
+          </h2>
+          <p><img src="./assets/15.jpg" alt="KNN" /></p>
+          <h3 id="random-split">Random Split</h3>
+          <p>We randomly divide the full dataset $D_n$ into three parts:</p>
+          <p>
+            $$ D_n \xrightarrow{\text{random}} \begin{cases} D_{\text{Train}} &amp; (60%) \
+            D_{\text{CV}} &amp; (20%) \ D_{\text{Test}} &amp; (20%) \end{cases} $$
+          </p>
+          <p>Each point is a pair $(x_i, y_i)$ where $y_i$ is the class label (+ve or –ve).</p>
+          <h3 id="important-observations">Important Observations</h3>
+          <ol>
+            <li>
+              <p>
+                <strong>$D_{\text{Train}}$ and $D_{\text{CV}}$ do not overlap perfectly</strong
+                ><br />
+                When we sample randomly, the two sets are different.
+              </p>
+            </li>
+            <li>
+              <p>
+                <strong>High-density regions</strong><br />
+                If a region contains many +ve (or –ve) points from $D_{\text{Train}}$,<br />
+                it is highly likely that we will also find many points of the same class from
+                $D_{\text{CV}}$ in that region.
+              </p>
+            </li>
+            <li>
+              <p>
+                <strong>Low-density / sparse regions</strong><br />
+                If a region has very few points from $D_{\text{Train}}$,<br />
+                it is very unlikely to find points from $D_{\text{CV}}$ in that region.<br />
+                (These sparse regions often contain noise, errors, or outliers.)
+              </p>
+            </li>
+          </ol>
+          <h3 id="intuitive-understanding">Intuitive Understanding</h3>
+          <ul>
+            <li>
+              Dense cloud of +ve points in Train → high chance of finding +ve points from CV in the
+              same area.
+            </li>
+            <li>
+              Dense cloud of –ve points in Train → high chance of finding –ve points from CV nearby.
+            </li>
+            <li>
+              Very sparse regions → CV points are rare; these areas are less reliable for decision
+              making.
+            </li>
+          </ul>
+          <h3 id="visual-summary-2">Visual Summary</h3>
+          <ul>
+            <li>Orange / Blue crosses → points belonging to $D_{\text{Train}}$</li>
+            <li>
+              Circled points → points belonging to $D_{\text{CV}}$ (overlaid on the same space)
+            </li>
+            <li>
+              The overall shape of the two classes is preserved across Train and CV because of
+              random sampling.
+            </li>
+          </ul>
+          <p>
+            This visualization helps us understand why Cross-Validation works: the CV set is a good
+            representative sample of the same underlying distribution as the training data.
+          </p>
+          <h2 id="16-how-to-determine-overfitting-and-underfitting">
+            16. How to Determine Overfitting and Underfitting
+          </h2>
+          <p><img src="./assets/16.jpg" alt="KNN" /></p>
+          <h3 id="using-k-fold-cv-to-choose-best-k">Using K-Fold CV to Choose Best K</h3>
+          <p>We use K-fold Cross-Validation on $D_{\text{CV}}$ to select the best $K$.</p>
+          <p>
+            The goal is to find a $K$ that is <strong>neither overfitting nor underfitting</strong>.
+          </p>
+          <h3 id="accuracy-and-error">Accuracy and Error</h3>
+          <p>
+            $$ \text{Accuracy} = \dfrac{\text{Number of correctly classified points}}{\text{Total
+            number of points}} $$
+          </p>
+          <p>$$ \text{Error} = 1 - \text{Accuracy} $$</p>
+          <p>
+            Example:<br />
+            If Accuracy = 0.93 → Error = 0.07 (7%)
+          </p>
+          <h3 id="training-error-vs-validation-error">Training Error vs Validation Error</h3>
+          <p>
+            <strong>Training Error:</strong><br />
+            Error of the model when evaluated on $D_{\text{Train}}$ itself.
+          </p>
+          <p>
+            <strong>Validation (CV) Error:</strong><br />
+            Error of the model when evaluated on $D_{\text{CV}}$.
+          </p>
+          <h3 id="how-errors-behave-with-k">How Errors Behave with K</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Situation</th>
+                <th>Train Error</th>
+                <th>Validation Error</th>
+                <th>Interpretation</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>$K = 1$</td>
+                <td>Very Low</td>
+                <td>High</td>
+                <td><strong>Overfitting</strong></td>
+              </tr>
+              <tr>
+                <td>Moderate $K$ (e.g. 5)</td>
+                <td>Low</td>
+                <td>Low</td>
+                <td><strong>Good fit</strong></td>
+              </tr>
+              <tr>
+                <td>$K = n$</td>
+                <td>High</td>
+                <td>High</td>
+                <td><strong>Underfitting</strong></td>
+              </tr>
+            </tbody>
+          </table>
+          <h3 id="classic-error-curves">Classic Error Curves</h3>
+          <ul>
+            <li>
+              <p>As $K$ increases from 1:</p>
+              <ul>
+                <li>Train Error <strong>increases</strong></li>
+                <li>
+                  Validation Error first <strong>decreases</strong>, reaches a minimum, then
+                  <strong>increases</strong>
+                </li>
+              </ul>
+            </li>
+            <li><p>The best $K$ is the one where Validation Error is minimum (sweet spot).</p></li>
+          </ul>
+          <h3 id="visual-summary-3">Visual Summary</h3>
+          <ul>
+            <li>
+              <p>
+                <strong>$K = 1$</strong>:<br />
+                Decision boundary is very complex.<br />
+                Train error is almost zero, but Validation error is high → Overfitting.
+              </p>
+            </li>
+            <li>
+              <p>
+                <strong>$K = 5$</strong> (example):<br />
+                Decision boundary is smoother.<br />
+                Both Train error and Validation error are reasonably low → Good fit.
+              </p>
+            </li>
+            <li>
+              <p>
+                <strong>Very large $K$</strong>:<br />
+                Model becomes too simple.<br />
+                Both errors become high → Underfitting.
+              </p>
+            </li>
+          </ul>
+          <h3 id="key-rule">Key Rule</h3>
+          <ul>
+            <li><strong>Low Train Error + High Validation Error</strong> → Overfitting</li>
+            <li><strong>High Train Error + High Validation Error</strong> → Underfitting</li>
+            <li><strong>Low Train Error + Low Validation Error</strong> → Good model</li>
+          </ul>
+          <p>
+            By plotting Train Error and Validation Error against $K$, we can clearly see the region
+            of overfitting, good fit, and underfitting, and select the best $K$.
+          </p>
+          <h2 id="17-time-based-splitting">17. Time Based Splitting</h2>
+          <p><img src="./assets/17.jpg" alt="KNN" /></p>
+          <blockquote>
+            <h3 id="time-based-splitting-vs-random-splitting">
+              Time-Based Splitting vs Random Splitting
+            </h3>
+          </blockquote>
+          <h3 id="amazon-food-reviews-dataset">Amazon Food Reviews Dataset</h3>
+          <p>We have two common ways to split the data into Train, CV, and Test:</p>
+          <ol>
+            <li><strong>Random Splitting (RS)</strong></li>
+            <li><strong>Time-Based Splitting (TBS)</strong></li>
+          </ol>
+          <h3 id="random-splitting">Random Splitting</h3>
+          <ul>
+            <li>Randomly shuffle all reviews</li>
+            <li>
+              Then divide into:
+              <ul>
+                <li>$D_{\text{Train}}$ → 60%</li>
+                <li>$D_{\text{CV}}$ → 20%</li>
+                <li>$D_{\text{Test}}$ → 20%</li>
+              </ul>
+            </li>
+          </ul>
+          <p>
+            <strong>Problem:</strong><br />
+            Reviews from different time periods get mixed together.
+          </p>
+          <h3 id="time-based-splitting-tbs">Time-Based Splitting (TBS)</h3>
+          <p><strong>Steps:</strong></p>
+          <ol>
+            <li>Sort the entire dataset $D_n$ in <strong>ascending order of time</strong>.</li>
+            <li>Take the oldest reviews as Training set.</li>
+            <li>Take the next portion as CV set.</li>
+            <li>Take the most recent reviews as Test set.</li>
+          </ol>
+          <p>Example:</p>
+          <ul>
+            <li>Oldest 60% → $D_{\text{Train}}$</li>
+            <li>Next 20% → $D_{\text{CV}}$</li>
+            <li>Latest 20% → $D_{\text{Test}}$</li>
+          </ul>
+          <h3 id="why-time-based-splitting-is-better">Why Time-Based Splitting is Better</h3>
+          <p>In real-world scenarios (especially Amazon reviews):</p>
+          <ul>
+            <li>Products change over time</li>
+            <li>Customer language and review style change over time</li>
+            <li>New products keep appearing</li>
+          </ul>
+          <p>
+            If we use <strong>Random Splitting</strong>, the model may see future reviews during
+            training.<br />
+            This creates an unrealistically optimistic accuracy.
+          </p>
+          <p><strong>Example:</strong></p>
+          <ul>
+            <li>With Random Splitting we may get 93% accuracy.</li>
+            <li>
+              But when the model is deployed, new reviews come in the future → actual performance
+              may drop.
+            </li>
+          </ul>
+          <p>With <strong>Time-Based Splitting</strong>:</p>
+          <ul>
+            <li>We train on past data</li>
+            <li>Validate and test on more recent data</li>
+            <li>This better simulates the real deployment situation.</li>
+          </ul>
+          <h3 id="key-rule-2">Key Rule</h3>
+          <blockquote>
+            <p>
+              Whenever <strong>time</strong> is available <strong>and</strong> the data / behavior
+              changes over time,<br />
+              <strong>Time-Based Splitting is preferable</strong> to Random Splitting.
+            </p>
+          </blockquote>
+          <h3 id="summary-6">Summary</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Method</th>
+                <th>When to Use</th>
+                <th>Advantage</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Random Splitting</td>
+                <td>Time information not available</td>
+                <td>Simple</td>
+              </tr>
+              <tr>
+                <td>Time-Based Splitting</td>
+                <td>Time is available &amp; data changes over time</td>
+                <td>More realistic evaluation of future performance</td>
+              </tr>
+            </tbody>
+          </table>
+          <h2 id="18-k-nn-for-regression">18. K-NN for Regression</h2>
+          <p><img src="./assets/18.jpg" alt="KNN" /></p>
+          <h3 id="classification-vs-regression">Classification vs Regression</h3>
+          <p><strong>Classification (2-class):</strong></p>
+          <p>
+            $$ D = \left{ (x_i, y_i) \right}_{i=1}^{n} \quad \text{where} \quad x_i \in
+            \mathbb{R}^d,; y_i \in {0,1} $$
+          </p>
+          <ul>
+            <li>Output of K-NN: Class label (using <strong>Majority Vote</strong>)</li>
+          </ul>
+          <p><strong>Regression:</strong></p>
+          <p>
+            $$ D = \left{ (x_i, y_i) \right}_{i=1}^{n} \quad \text{where} \quad x_i \in
+            \mathbb{R}^d,; y_i \in \mathbb{R} $$
+          </p>
+          <ul>
+            <li>Output of K-NN: A real number</li>
+          </ul>
+          <p>
+            K-NN for regression is a <strong>simple extension / modification</strong> of K-NN
+            classification.
+          </p>
+          <h3 id="how-k-nn-regression-works">How K-NN Regression Works</h3>
+          <p>
+            <strong>Step 1:</strong><br />
+            Given a query point $x_q$, find its $K$ nearest neighbors:
+          </p>
+          <p>$$ (x_1, y_1),; (x_2, y_2),; \dots,; (x_K, y_K) $$</p>
+          <p>
+            <strong>Step 2:</strong><br />
+            Predict the output $y_q$ using the $y$-values of the neighbors.
+          </p>
+          <p>Two common ways:</p>
+          <ol>
+            <li><strong>Mean</strong> (most common):</li>
+          </ol>
+          <p>$$ y_q = \text{mean}(y_1, y_2, \dots, y_K) = \dfrac{1}{K} \sum_{i=1}^{K} y_i $$</p>
+          <ol start="2">
+            <li><strong>Median</strong> (more robust):</li>
+          </ol>
+          <p>$$ y_q = \text{median}(y_1, y_2, \dots, y_K) $$</p>
+          <h3 id="why-median-is-useful">Why Median is Useful?</h3>
+          <p>
+            Using the <strong>median</strong> makes the prediction
+            <strong>less prone to outliers</strong>.
+          </p>
+          <h3 id="summary-7">Summary</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Task</th>
+                <th>Output Type</th>
+                <th>Aggregation Method</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Classification</td>
+                <td>Class label</td>
+                <td>Majority Vote</td>
+              </tr>
+              <tr>
+                <td>Regression</td>
+                <td>Real number</td>
+                <td>Mean or Median of neighbors</td>
+              </tr>
+            </tbody>
+          </table>
+          <p>
+            K-NN Regression is simply K-NN Classification where instead of voting for a class, we
+            average (or take median of) the target values of the nearest neighbors.
+          </p>
+          <h2 id="19-weighted-k-nn">19. Weighted K-NN</h2>
+          <p><img src="./assets/19.jpg" alt="KNN" /></p>
+          <h3 id="motivation">Motivation</h3>
+          <p>In standard K-NN, all $K$ neighbors contribute equally (one vote each).</p>
+          <p>But intuitively:</p>
+          <ul>
+            <li>
+              A neighbor that is <strong>very close</strong> to the query point $x_q$ should have
+              <strong>more influence</strong>.
+            </li>
+            <li>
+              A neighbor that is <strong>far</strong> should have <strong>less influence</strong>.
+            </li>
+          </ul>
+          <p>This idea leads to <strong>Weighted K-NN</strong>.</p>
+          <h3 id="how-weighted-k-nn-works">How Weighted K-NN Works</h3>
+          <p>
+            <strong>Step 1:</strong><br />
+            Given query point $x_q$, find its $K$ nearest neighbors along with their distances:
+          </p>
+          <p>$$ (x_1, y_1, d_1),; (x_2, y_2, d_2),; \dots,; (x_K, y_K, d_K) $$</p>
+          <p>
+            <strong>Step 2:</strong><br />
+            Assign a weight to each neighbor.<br />
+            The simplest and most common weight is:
+          </p>
+          <p>$$ w_i = \dfrac{1}{d_i} $$</p>
+          <p><strong>Properties of this weight:</strong></p>
+          <ul>
+            <li>As distance $d_i$ ↑ → weight $w_i$ ↓</li>
+            <li>As distance $d_i$ ↓ → weight $w_i$ ↑</li>
+          </ul>
+          <p>
+            <strong>Step 3:</strong><br />
+            For classification, compute the weighted votes for each class and choose the class with
+            higher total weight.
+          </p>
+          <h3 id="example-5-nn">Example (5-NN)</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Neighbor</th>
+                <th>Class</th>
+                <th>Distance $d_i$</th>
+                <th>Weight $w_i = 1/d_i$</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>$x_1$</td>
+                <td>–ve</td>
+                <td>0.1</td>
+                <td>10</td>
+              </tr>
+              <tr>
+                <td>$x_2$</td>
+                <td>–ve</td>
+                <td>0.2</td>
+                <td>5</td>
+              </tr>
+              <tr>
+                <td>$x_3$</td>
+                <td>+ve</td>
+                <td>1.0</td>
+                <td>1</td>
+              </tr>
+              <tr>
+                <td>$x_4$</td>
+                <td>+ve</td>
+                <td>2.0</td>
+                <td>0.5</td>
+              </tr>
+              <tr>
+                <td>$x_5$</td>
+                <td>+ve</td>
+                <td>4.0</td>
+                <td>0.25</td>
+              </tr>
+            </tbody>
+          </table>
+          <p><strong>Weighted votes:</strong></p>
+          <ul>
+            <li>Total weight for –ve class = $10 + 5 = 15$</li>
+            <li>Total weight for +ve class = $1 + 0.5 + 0.25 = 1.75$</li>
+          </ul>
+          <p>
+            <strong>Decision:</strong><br />
+            Even though there are more +ve neighbors (3 vs 2), the –ve class wins because the
+            closest neighbors are –ve.
+          </p>
+          <p>$$ y_q = \text{–ve} $$</p>
+          <p>(If we had used simple majority vote, the prediction would have been +ve.)</p>
+          <h3 id="key-takeaway-2">Key Takeaway</h3>
+          <p>
+            Weighted K-NN gives more importance to closer neighbors.<br />
+            The simplest and widely used weight function is:
+          </p>
+          <p>$$ w_i = \dfrac{1}{d_i} $$</p>
+          <h2 id="20-voronoi-diagram">20. Voronoi Diagram</h2>
+          <p><img src="./assets/20.jpg" alt="KNN" /> <img src="./assets/20.gif" alt="KNN" /></p>
+          <blockquote>
+            <h3 id="voronoi-diagram-and-1-nn">Voronoi Diagram and 1-NN</h3>
+          </blockquote>
+          <h3 id="what-is-a-voronoi-diagram">What is a Voronoi Diagram?</h3>
+          <p>
+            A <strong>Voronoi diagram</strong> is a partitioning of a plane into regions based on
+            distance to a specific set of points (called seeds, sites, or generators).
+          </p>
+          <ul>
+            <li>
+              For each seed point, there is a corresponding region consisting of
+              <strong>all points closer to that seed than to any other seed</strong>.
+            </li>
+            <li>These regions are called <strong>Voronoi cells</strong>.</li>
+          </ul>
+          <p>It is also known as:</p>
+          <ul>
+            <li>Voronoi tessellation</li>
+            <li>Voronoi decomposition</li>
+            <li>Voronoi partition</li>
+            <li>Dirichlet tessellation</li>
+            <li>Thiessen polygons</li>
+          </ul>
+          <h3 id="connection-to-1-nn">Connection to 1-NN</h3>
+          <p>When we use <strong>K-NN with $K = 1$</strong> (i.e., 1-Nearest Neighbor):</p>
+          <ul>
+            <li>
+              The decision boundary created by 1-NN is exactly the
+              <strong>Voronoi diagram</strong> of the training points.
+            </li>
+            <li>Each training point owns a Voronoi cell.</li>
+            <li>
+              Any query point that falls inside a particular cell is assigned the class label of the
+              training point that owns that cell.
+            </li>
+          </ul>
+          <h3 id="visual-intuition">Visual Intuition</h3>
+          <ul>
+            <li>Black dots = training points (seeds)</li>
+            <li>Colored regions = Voronoi cells</li>
+            <li>Each cell contains all locations that are closest to its seed point.</li>
+          </ul>
+          <p>
+            This is why 1-NN creates a piecewise-linear decision boundary that perfectly separates
+            the space according to the nearest training example.
+          </p>
+          <h2 id="21-binary-search-tree">21. Binary Search Tree</h2>
+          <p><img src="./assets/21.jpg" alt="KNN" /></p>
+          <h3 id="limitation-of-simple-k-nn">Limitation of Simple K-NN</h3>
+          <p>In the simple (brute-force) implementation of K-NN:</p>
+          <ul>
+            <li>
+              <strong>Time Complexity</strong> (per query): $O(n)$<br />
+              (when $d$ is small and $K$ is small)
+            </li>
+            <li><strong>Space Complexity</strong>: $O(n)$</li>
+          </ul>
+          <p>For large $n$, this becomes slow.</p>
+          <p>
+            <strong>Example:</strong><br />
+            If $n = 1024$, then $\log_2(n) = 10$.<br />
+            We want to reduce the query time from $O(n)$ to roughly $O(\log n)$.
+          </p>
+          <h3 id="solution-kd-tree">Solution: Kd-Tree</h3>
+          <p>
+            <strong>Kd-Tree</strong> (K-dimensional Tree) is a data structure that helps speed up
+            nearest neighbor search.
+          </p>
+          <ul>
+            <li>Invented around 1975</li>
+            <li>
+              Originally used in <strong>Computational Geometry</strong> and
+              <strong>Computer Graphics</strong>
+            </li>
+            <li>Reduces average query time from $O(n)$ to $O(\log n)$ (when $d$ is small)</li>
+          </ul>
+          <h3 id="binary-search-tree-bst--the-inspiration">
+            Binary Search Tree (BST) – The Inspiration
+          </h3>
+          <p>
+            <strong>Problem:</strong><br />
+            Given a sorted array, check whether a number is present or not.
+          </p>
+          <ul>
+            <li>Linear Search → $O(n)$</li>
+            <li>Binary Search → $O(\log n)$</li>
+          </ul>
+          <p>
+            <strong>Binary Search Tree</strong> is a data structure that enables $O(\log n)$ search.
+          </p>
+          <h4 id="key-property-of-bst">Key Property of BST</h4>
+          <p>If a BST has $n$ elements and is reasonably balanced:</p>
+          <p>$$ \text{Depth of the tree} = O(\log n) $$</p>
+          <p><strong>Examples:</strong></p>
+          <table>
+            <thead>
+              <tr>
+                <th>Number of elements ($n$)</th>
+                <th>Depth ($\log_2 n$)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>4</td>
+                <td>2</td>
+              </tr>
+              <tr>
+                <td>8</td>
+                <td>3</td>
+              </tr>
+              <tr>
+                <td>16</td>
+                <td>4</td>
+              </tr>
+              <tr>
+                <td>32</td>
+                <td>5</td>
+              </tr>
+            </tbody>
+          </table>
+          <p>
+            Time complexity of search in a balanced BST is $O(\log n)$ because we only need to
+            travel down the depth of the tree.
+          </p>
+          <h3 id="connection-to-kd-tree">Connection to Kd-Tree</h3>
+          <p>
+            Kd-Tree is a generalization of Binary Search Tree to
+            <strong>multi-dimensional</strong> data.
+          </p>
+          <ul>
+            <li>BST works on 1-dimensional sorted data</li>
+            <li>Kd-Tree works on $d$-dimensional points</li>
+          </ul>
+          <p>
+            This is why Kd-Tree can answer nearest neighbor queries much faster than the simple
+            $O(n)$ approach when the number of dimensions is not too high.
+          </p>
+          <h2 id="22-how-to-build-a-kd-tree">22. How to Build a kd-Tree</h2>
+          <p><img src="./assets/22.01.jpg" alt="KNN" /></p>
+          <p><img src="./assets/22.02.jpg" alt="KNN" /></p>
+          <p>
+            <a href="https://www.wikiwand.com/en/K-d_tree">https://www.wikiwand.com/en/K-d_tree</a>
+          </p>
+          <h3 id="bst-vs-kd-tree">BST vs Kd-Tree</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Data Structure</th>
+                <th>Works on</th>
+                <th>Data Type</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>BST</strong></td>
+                <td>1-Dimensional</td>
+                <td>Sorted scalars</td>
+              </tr>
+              <tr>
+                <td><strong>Kd-Tree</strong></td>
+                <td>2D, 3D, …, nD</td>
+                <td>Multi-dimensional points</td>
+              </tr>
+            </tbody>
+          </table>
+          <p>Kd-Tree is a generalization of Binary Search Tree to higher dimensions.</p>
+          <h3 id="how-to-build-a-kd-tree-2d-example">How to Build a Kd-Tree (2D Example)</h3>
+          <p><strong>Steps:</strong></p>
+          <ol>
+            <li><strong>Pick an axis</strong> (start with $x$-axis).</li>
+            <li>Project all points onto that axis.</li>
+            <li>Find the <strong>median</strong> of the projected values.</li>
+            <li>Split the data into two halves using the median (axis-parallel line).</li>
+            <li>
+              <strong>Alternate</strong> the axis at every level:
+              <ul>
+                <li>Level 1 → split on $x$</li>
+                <li>Level 2 → split on $y$</li>
+                <li>Level 3 → split on $x$</li>
+                <li>and so on…</li>
+              </ul>
+            </li>
+          </ol>
+          <h3 id="geometric-interpretation">Geometric Interpretation</h3>
+          <ul>
+            <li>
+              In <strong>2D</strong>: We keep drawing <strong>axis-parallel lines</strong>. These
+              lines divide the plane into <strong>rectangles</strong>.
+            </li>
+            <li>
+              In <strong>3D</strong>: We use <strong>axis-parallel planes</strong>. These divide the
+              space into <strong>cuboids</strong>.
+            </li>
+            <li>
+              In <strong>nD</strong>: We use <strong>axis-parallel hyperplanes</strong>. These
+              divide the space into <strong>hyper-rectangles</strong> (hypercuboids).
+            </li>
+          </ul>
+          <h3 id="key-idea">Key Idea</h3>
+          <p>
+            A Kd-Tree recursively partitions the space by going through each axis one after another,
+            using axis-parallel splitting hyperplanes, until we reach the leaf nodes (usually
+            containing a small number of points).
+          </p>
+          <p>
+            This hierarchical partitioning is what allows nearest neighbor search to be performed
+            much faster than the brute-force $O(n)$ approach (especially when the number of
+            dimensions is not very high).
+          </p>
+          <h2 id="23-find-nearest-neighbours-using-kd-tree">
+            23. Find Nearest Neighbours Using kd-Tree
+          </h2>
+          <p>
+            <img src="./assets/23.01.jpg" alt="KNN" /> <img src="./assets/23.02.jpg" alt="KNN" />
+          </p>
+          <h3 id="how-1-nn-search-works-in-a-kd-tree">How 1-NN Search Works in a Kd-Tree</h3>
+          <ol>
+            <li>
+              Start from the root and traverse the tree just like a Binary Search Tree (following
+              the splitting conditions) until you reach a <strong>leaf</strong>.
+            </li>
+            <li>
+              The point stored in that leaf becomes the <strong>current best</strong> (candidate for
+              1-NN).
+            </li>
+            <li>Compute the distance $d$ from the query point $q$ to this candidate.</li>
+            <li>
+              Draw a <strong>circle</strong> (in 2D) or <strong>hypersphere</strong> (in higher
+              dimensions) of radius $d$ centered at $q$.
+            </li>
+            <li>
+              While going back up the tree (backtracking), check whether the splitting plane of any
+              node intersects this circle/hypersphere.
+              <ul>
+                <li>
+                  If it does <strong>not</strong> intersect → the entire subtree on the other side
+                  can be <strong>pruned</strong> (no need to search).
+                </li>
+                <li>
+                  If it <strong>does</strong> intersect → there might be a closer point, so we must
+                  search that subtree.
+                </li>
+              </ul>
+            </li>
+          </ol>
+          <p>This pruning is what makes Kd-Tree much faster than brute-force search in practice.</p>
+          <h3 id="time-complexity-of-kd-tree">Time Complexity of Kd-Tree</h3>
+          <h4 id="for-1-nearest-neighbor">For 1-Nearest Neighbor:</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>Case</th>
+                <th>Time Complexity</th>
+                <th>Explanation</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Best Case</td>
+                <td>$O(\log n)$</td>
+                <td>Ideal pruning, balanced tree</td>
+              </tr>
+              <tr>
+                <td>Worst Case</td>
+                <td>$O(n)$</td>
+                <td>Almost no pruning possible</td>
+              </tr>
+            </tbody>
+          </table>
+          <p>
+            A perfect theoretical analysis of the average case is <strong>very complex</strong>.
+          </p>
+          <h4 id="for-k-nearest-neighbors">For K-Nearest Neighbors:</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>Case</th>
+                <th>Time Complexity</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Best Case</td>
+                <td>$O(K \log n)$</td>
+              </tr>
+              <tr>
+                <td>Worst Case</td>
+                <td>$O(K \cdot n)$</td>
+              </tr>
+            </tbody>
+          </table>
+          <h3 id="important-note">Important Note</h3>
+          <p>
+            The efficiency of Kd-Tree degrades as the
+            <strong>number of dimensions</strong> increases (curse of dimensionality).<br />
+            It works best when the dimensionality is relatively low.
+          </p>
+          <h2 id="24-limitations-of-kd-tree">24. Limitations of kd-Tree</h2>
+          <p>
+            <img src="./assets/24.01.jpg" alt="KNN" /> <img src="./assets/24.02.jpg" alt="KNN" />
+          </p>
+          <h3 id="time--space-complexity-recap">Time &amp; Space Complexity (Recap)</h3>
+          <p><strong>Time Complexity of K-NN using Kd-Tree</strong> (when $d$ is small):</p>
+          <table>
+            <thead>
+              <tr>
+                <th>Case</th>
+                <th>Time Complexity</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Best Case</td>
+                <td>$O(K \log n)$</td>
+              </tr>
+              <tr>
+                <td>Worst Case</td>
+                <td>$O(K \cdot n)$</td>
+              </tr>
+            </tbody>
+          </table>
+          <p><strong>Space Complexity:</strong> $O(n)$</p>
+          <h3 id="limitation-1-high-dimensionality">Limitation 1: High Dimensionality</h3>
+          <p>
+            Kd-Tree works well only when the number of dimensions $d$ is
+            <strong>small</strong> (typically $d \leq 5$).
+          </p>
+          <p><strong>Why does it fail in high dimensions?</strong></p>
+          <ul>
+            <li>In $d$ dimensions, each cell can have up to $2^d$ adjacent cells.</li>
+            <li>
+              Examples:
+              <ul>
+                <li>$d = 2$ → 4 neighbors</li>
+                <li>$d = 3$ → 8 neighbors</li>
+                <li>$d = 10$ → $2^{10} = 1024$</li>
+                <li>$d = 20$ → $2^{20} \approx 1$ million</li>
+              </ul>
+            </li>
+          </ul>
+          <p>
+            When $2^d$ becomes comparable to $n$, pruning becomes ineffective and the time
+            complexity approaches $O(n)$.
+          </p>
+          <p><strong>Rule of thumb:</strong></p>
+          <ul>
+            <li>When $d$ is small (2, 3, 4, 5) → Time ≈ $O(\log n)$</li>
+            <li>
+              When $d$ is large (10, 20, …) → Time complexity increases
+              <strong>dramatically</strong> and can become worse than simple $O(n)$ search.
+            </li>
+          </ul>
+          <h3 id="limitation-2-data-distribution">Limitation 2: Data Distribution</h3>
+          <p>
+            The $O(\log n)$ performance assumes that the data is
+            <strong>uniformly distributed</strong>.
+          </p>
+          <p>In real-world datasets:</p>
+          <ul>
+            <li>Data is often clustered</li>
+            <li>Density varies a lot across the space</li>
+          </ul>
+          <p>
+            In such cases, the performance of Kd-Tree can degrade towards $O(n)$ (same as the simple
+            implementation).
+          </p>
+          <h3 id="where-kd-tree-is-still-useful">Where Kd-Tree is Still Useful</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Domain</th>
+                <th>Typical Dimensions</th>
+                <th>Kd-Tree Useful?</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Computer Graphics</td>
+                <td>2D, 3D</td>
+                <td>Yes</td>
+              </tr>
+              <tr>
+                <td>Machine Learning</td>
+                <td>10D, 20D, 100D+</td>
+                <td>Usually No</td>
+              </tr>
+            </tbody>
+          </table>
+          <h3 id="summary-8">Summary</h3>
+          <p>
+            Kd-Tree is a great data structure for low-dimensional nearest neighbor search, but it
+            suffers heavily from the <strong>curse of dimensionality</strong> and non-uniform data
+            distributions, which are very common in Machine Learning.
+          </p>
+          <h2 id="25-extensions">25. Extensions</h2>
+          <p>
+            Variations :
+            <a href="https://en.wikipedia.org/wiki/K-d_tree"
+              >https://en.wikipedia.org/wiki/K-d_tree</a
+            >
+          </p>
+          <h2 id="26-hashing-vs-lsh">26. Hashing vs LSH</h2>
+          <p>
+            <img src="./assets/26.01.jpg" alt="KNN" /> <img src="./assets/26.02.jpg" alt="KNN" />
+          </p>
+          <h3 id="why-do-we-need-lsh">Why do we need LSH?</h3>
+          <p>
+            Kd-Tree works well only when the number of dimensions $d$ is <strong>small</strong>.
+          </p>
+          <p>
+            When $d$ is <strong>large</strong>, we need a different approach →
+            <strong>Locality Sensitive Hashing (LSH)</strong>.
+          </p>
+          <h3 id="classical-hashing-reminder">Classical Hashing (Reminder)</h3>
+          <p>
+            <strong>Problem:</strong><br />
+            Given an unordered array, check whether a number exists or not.
+          </p>
+          <ul>
+            <li>Sequential / Linear Search → $O(n)$</li>
+            <li>Using a <strong>Hash Table</strong> (Dictionary) → Average $O(1)$ time</li>
+          </ul>
+          <p><strong>How it works:</strong></p>
+          <ul>
+            <li>
+              A hash function $h(x)$ maps a value $x$ to a <strong>bucket</strong> (index) in the
+              hash table.
+            </li>
+            <li>All elements that hash to the same value go into the same bucket.</li>
+          </ul>
+          <h3 id="locality-sensitive-hashing-lsh">Locality Sensitive Hashing (LSH)</h3>
+          <p>
+            <strong>Goal:</strong><br />
+            Hash points that are <strong>close to each other</strong> (in the same neighborhood)
+            into the <strong>same bucket</strong> with high probability.
+          </p>
+          <p><strong>Key Idea:</strong></p>
+          <ul>
+            <li>
+              If two points $x_i$ and $x_j$ are very close → $h(x_i) = h(x_j)$ with high
+              probability.
+            </li>
+            <li>If two points are far apart → $h(x_i) \neq h(x_j)$ with high probability.</li>
+          </ul>
+          <p><strong>Visual Intuition:</strong></p>
+          <ul>
+            <li>
+              Points lying in the same local neighborhood are mapped to the same bucket in the hash
+              table.
+            </li>
+            <li>
+              During query time, we only search inside the bucket(s) where the query point hashes to
+              — instead of searching the entire dataset.
+            </li>
+          </ul>
+          <h3 id="lsh-vs-kd-tree">LSH vs Kd-Tree</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Method</th>
+                <th>Best when</th>
+                <th>Limitation</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Kd-Tree</td>
+                <td>$d$ is small</td>
+                <td>Fails when $d$ is large</td>
+              </tr>
+              <tr>
+                <td>LSH</td>
+                <td>$d$ is large</td>
+                <td>Approximate (not exact)</td>
+              </tr>
+            </tbody>
+          </table>
+          <p>
+            LSH is particularly useful for high-dimensional data where exact nearest neighbor search
+            becomes too expensive.
+          </p>
+          <h2 id="27-lsh-for-cosine-similarity">27. LSH for Cosine Similarity</h2>
+          <p>
+            <img src="./assets/27.01.jpg" alt="KNN" /> <img src="./assets/27.02.jpg" alt="KNN" />
+          </p>
+          <h3 id="why-cosine-similarity">Why Cosine Similarity?</h3>
+          <p>
+            Cosine Similarity measures the <strong>angular</strong> closeness between two vectors:
+          </p>
+          <p>$$ \text{Cos-Sim}(x_1, x_2) = \cos(\theta) $$</p>
+          <ul>
+            <li>$\theta$ small → high similarity (vectors point in similar directions)</li>
+            <li>$\theta$ large → low similarity</li>
+          </ul>
+          <p>
+            Cosine Similarity is widely used when we care about the <strong>direction</strong> of
+            vectors rather than their magnitude (common in text data, embeddings, etc.).
+          </p>
+          <h3 id="core-idea-of-lsh-for-cosine-similarity">
+            Core Idea of LSH for Cosine Similarity
+          </h3>
+          <p>We want a hash function such that:</p>
+          <ul>
+            <li>
+              If two points are <strong>angularly close</strong> (small $\theta$), they should fall
+              into the <strong>same bucket</strong> with high probability.
+            </li>
+            <li>
+              If two points are angularly far, they should fall into different buckets with high
+              probability.
+            </li>
+          </ul>
+          <p>
+            LSH is a <strong>randomized algorithm</strong>:<br />
+            It does <strong>not</strong> guarantee the exact nearest neighbor, but returns a correct
+            answer with high probability.
+          </p>
+          <h3 id="random-hyperplane-hashing">Random Hyperplane Hashing</h3>
+          <p>
+            <strong>Key Idea:</strong><br />
+            Use randomly oriented hyperplanes to partition the space.
+          </p>
+          <ol>
+            <li>
+              Generate a random vector $w \in \mathbb{R}^d$ where each component is sampled from
+              $\mathcal{N}(0,1)$:
+            </li>
+          </ol>
+          <p>$$ w = \text{numpy.random.normal}(0, 1, d) $$</p>
+          <ol start="2">
+            <li>The hyperplane is defined by:</li>
+          </ol>
+          <p>$$ w^T x = 0 $$</p>
+          <ol start="3">
+            <li>The hash bit for a point $x$ is:</li>
+          </ol>
+          <p>$$ h(x) = \text{sign}(w^T x) \quad \in {+1, -1} $$</p>
+          <ul>
+            <li>Points on the same side of the hyperplane get the same bit.</li>
+          </ul>
+          <h3 id="creating-the-hash-key-using-m-hyperplanes">
+            Creating the Hash Key (using $m$ hyperplanes)
+          </h3>
+          <p>We generate $m$ independent random hyperplanes: $w_1, w_2, \dots, w_m$.</p>
+          <p>For any point $x$, the hash key is the $m$-dimensional vector of signs:</p>
+          <p>
+            $$ h(x) = \big( \text{sign}(w_1^T x),; \text{sign}(w_2^T x),; \dots,; \text{sign}(w_m^T
+            x) \big) $$
+          </p>
+          <p>This key is used to place the point into a bucket of a hash table.</p>
+          <p><strong>Effect of $m$:</strong></p>
+          <ul>
+            <li>
+              Larger $m$ → more slices → fewer points per bucket → higher precision, but higher
+              chance of missing true neighbors.
+            </li>
+          </ul>
+          <h3 id="building-the-lsh-hash-table">Building the LSH Hash Table</h3>
+          <p>
+            <strong>Input:</strong><br />
+            $n$ points in $d$ dimensions ($d$ can be large).
+          </p>
+          <p><strong>Steps:</strong></p>
+          <ol>
+            <li>Generate $m$ random hyperplanes.</li>
+            <li>For every point $x_i$, compute $h(x_i)$.</li>
+            <li>Insert $x_i$ into the hash table using $h(x_i)$ as the key.</li>
+          </ol>
+          <p><strong>Complexity:</strong></p>
+          <ul>
+            <li>Time to build one hash table: $O(m \cdot d \cdot n)$</li>
+            <li>Space: $O(n)$</li>
+          </ul>
+          <h3 id="querying-with-lsh">Querying with LSH</h3>
+          <p>Given a query point $x_q$:</p>
+          <ol>
+            <li>Compute its hash key $h(x_q)$ using the same $m$ hyperplanes.</li>
+            <li>Retrieve all points that fall into the same bucket.</li>
+            <li>
+              Compute exact distances/similarities only with the points inside that bucket (usually
+              a small number $n'$).
+            </li>
+          </ol>
+          <p><strong>Query Time (single table):</strong></p>
+          <p>$$ O(m d + n' d) $$</p>
+          <p>If $n'$ is small → query is much faster than $O(n d)$.</p>
+          <h3 id="improving-recall-multiple-hash-tables">Improving Recall: Multiple Hash Tables</h3>
+          <p>
+            A single hash table can miss true neighbors (because of the random nature of the
+            hyperplanes).
+          </p>
+          <p>
+            <strong>Solution:</strong> Use $L$ independent hash tables (each with its own set of $m$
+            random hyperplanes).
+          </p>
+          <p>For a query $x_q$:</p>
+          <ul>
+            <li>Query all $L$ tables.</li>
+            <li>Take the <strong>union</strong> of the candidates from all tables.</li>
+            <li>Compute exact similarities only on this candidate set.</li>
+          </ul>
+          <p>This significantly increases the probability of finding the true nearest neighbors.</p>
+          <h3 id="typical-parameter-choices">Typical Parameter Choices</h3>
+          <ul>
+            <li>
+              <p>
+                Number of hyperplanes per table:<br />
+                $$m \approx \log n$$
+              </p>
+            </li>
+            <li><p>Number of tables $L$: kept relatively small.</p></li>
+          </ul>
+          <p><strong>Typical Query Time:</strong></p>
+          <p>$$ O(d \cdot \log n) $$</p>
+          <p>(when parameters are chosen well)</p>
+          <h3 id="important-notes">Important Notes</h3>
+          <ul>
+            <li>
+              LSH for Cosine Similarity can <strong>miss</strong> a true nearest neighbor (it is
+              approximate).
+            </li>
+            <li>It is especially useful when $d$ is large (where Kd-Tree fails).</li>
+            <li>
+              Increasing $m$ makes buckets purer but increases the chance of missing neighbors →
+              compensated by using multiple tables ($L$).
+            </li>
+          </ul>
+          <h3 id="summary-9">Summary</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Component</th>
+                <th>Role</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Random Hyperplanes</td>
+                <td>Create binary hash bits based on side</td>
+              </tr>
+              <tr>
+                <td>$m$ hyperplanes</td>
+                <td>Form the hash key (controls bucket size)</td>
+              </tr>
+              <tr>
+                <td>Hash Table</td>
+                <td>Groups similar points together</td>
+              </tr>
+              <tr>
+                <td>$L$ tables</td>
+                <td>Improves recall (reduces missed neighbors)</td>
+              </tr>
+              <tr>
+                <td>Query</td>
+                <td>Only search inside relevant buckets</td>
+              </tr>
+            </tbody>
+          </table>
+          <h2 id="28-lsh-for-euclidean-distance">28. LSH for Euclidean Distance</h2>
+          <p>
+            <img src="./assets/28.01.jpg" alt="KNN" /> <img src="./assets/28.02.jpg" alt="KNN" />
+          </p>
+          <h3 id="overview">Overview</h3>
+          <ul>
+            <li>
+              LSH for <strong>Cosine Similarity</strong> was based on random hyperplanes and sign
+              bits ($+1$ / $-1$).
+            </li>
+            <li>
+              LSH for <strong>Euclidean Distance</strong> is a simple extension of the same idea.
+            </li>
+          </ul>
+          <h3 id="key-difference-from-cosine-lsh">Key Difference from Cosine LSH</h3>
+          <p>
+            In Cosine LSH, we only care about which <strong>side</strong> of the hyperplane a point
+            lies on (the sign).
+          </p>
+          <p>
+            In Euclidean LSH, we care about <strong>where</strong> the point projects onto the
+            random line (the actual projected value).
+          </p>
+          <h3 id="how-it-works">How it Works</h3>
+          <ol>
+            <li>Take a random hyperplane (or random direction) $w$.</li>
+            <li>Project every point $x$ onto this direction: $$ x_{\text{proj}} = w^T x $$</li>
+            <li>
+              Instead of just taking the sign, we <strong>discretize</strong> the real line into
+              buckets (regions) of fixed width.
+            </li>
+            <li>
+              The hash value is the <strong>bucket ID</strong> (an integer) into which the
+              projection falls.
+            </li>
+          </ol>
+          <p><strong>Example:</strong></p>
+          <ul>
+            <li>The real line is broken into regions of width $a$ (e.g., $a = 8$).</li>
+            <li>Points whose projections fall into the same interval get the same hash value.</li>
+          </ul>
+          <h3 id="visual-intuition-2">Visual Intuition</h3>
+          <ul>
+            <li>
+              Points that are close in Euclidean distance tend to have projections that fall into
+              the <strong>same region</strong>.
+            </li>
+            <li>Points that are far apart are more likely to fall into different regions.</li>
+          </ul>
+          <h3 id="hash-key-construction">Hash Key Construction</h3>
+          <p>We use $m$ independent random directions.</p>
+          <p>For a point $x$, the hash key becomes a vector of $m$ integers (bucket IDs):</p>
+          <p>$$ h(x) = \big( b_1,; b_2,; \dots,; b_m \big) $$</p>
+          <p>
+            where each $b_i$ is the bucket index of the projection onto the $i$-th random direction.
+          </p>
+          <p>This is different from Cosine LSH, where the key consists only of $+1$ and $-1$.</p>
+          <h3 id="multiple-hash-tables">Multiple Hash Tables</h3>
+          <p>
+            Just like in Cosine LSH, we create $L$ independent hash tables (each with its own set of
+            $m$ random directions) to improve the probability of finding true nearest neighbors.
+          </p>
+          <h3 id="important-properties">Important Properties</h3>
+          <ul>
+            <li>LSH is a <strong>probabilistic / randomized</strong> algorithm.</li>
+            <li>It does <strong>not</strong> always return the exact nearest neighbor.</li>
+            <li>It returns the correct answer with high probability.</li>
+            <li>It is used extensively in Computer Vision and other high-dimensional domains.</li>
+          </ul>
+          <h3 id="summary-comparison">Summary Comparison</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Aspect</th>
+                <th>Cosine LSH</th>
+                <th>Euclidean LSH</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Hash bit / value</td>
+                <td>$\text{sign}(w^T x)$ ($+1/-1$)</td>
+                <td>Bucket ID of projection (integer)</td>
+              </tr>
+              <tr>
+                <td>What it captures</td>
+                <td>Angular closeness</td>
+                <td>Euclidean closeness</td>
+              </tr>
+              <tr>
+                <td>Discretization</td>
+                <td>Two sides of hyperplane</td>
+                <td>Multiple intervals on the line</td>
+              </tr>
+              <tr>
+                <td>Nature</td>
+                <td>Approximate / Probabilistic</td>
+                <td>Approximate / Probabilistic</td>
+              </tr>
+            </tbody>
+          </table>
+          <h2 id="29-probabilistic-class-label">29. Probabilistic Class Label</h2>
+          <p>
+            <img src="./assets/29.01.jpg" alt="KNN" /> <img src="./assets/29.02.jpg" alt="KNN" />
+          </p>
+          <h3 id="standard-k-nn-majority-vote">Standard K-NN (Majority Vote)</h3>
+          <p>In binary classification ($y_i \in {0,1}$ or ${+\text{ve}, -\text{ve}}$):</p>
+          <ul>
+            <li>Find the $K$ nearest neighbors of the query point $x_q$.</li>
+            <li>
+              Predict the class that has the <strong>majority</strong> among those $K$ neighbors.
+            </li>
+          </ul>
+          <p><strong>Example (7-NN):</strong></p>
+          <ul>
+            <li>
+              Query point $x_q$ has:
+              <ul>
+                <li>4 negative points</li>
+                <li>3 positive points</li>
+              </ul>
+            </li>
+          </ul>
+          <p>$$ y_q = -\text{ve} \quad (\text{by majority vote}) $$</p>
+          <h3 id="problem-with-hard-labels">Problem with Hard Labels</h3>
+          <p>
+            Majority vote gives only a <strong>hard</strong> prediction.<br />
+            It does not tell us <strong>how confident</strong> we are in that prediction.
+          </p>
+          <h3 id="probabilistic-class-label">Probabilistic Class Label</h3>
+          <p>
+            Instead of returning only the majority class, we can return the
+            <strong>probability</strong> of each class:
+          </p>
+          <p>$$ P(y_q = -\text{ve}) = \dfrac{\text{Number of } -\text{ve neighbors}}{K} $$</p>
+          <p>$$ P(y_q = +\text{ve}) = \dfrac{\text{Number of } +\text{ve neighbors}}{K} $$</p>
+          <p><strong>Example (same 7-NN):</strong></p>
+          <p>$$ P(y_q = -\text{ve}) = \dfrac{4}{7} \approx 0.57 $$</p>
+          <p>$$ P(y_q = +\text{ve}) = \dfrac{3}{7} \approx 0.43 $$</p>
+          <h3 id="interpreting-confidence">Interpreting Confidence</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Situation</th>
+                <th>Probability</th>
+                <th>Confidence Level</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>4 negative, 3 positive</td>
+                <td>$P(-\text{ve}) = 4/7$</td>
+                <td>Moderate certainty</td>
+              </tr>
+              <tr>
+                <td>7 negative, 0 positive</td>
+                <td>$P(-\text{ve}) = 7/7 = 1$</td>
+                <td>Very high certainty</td>
+              </tr>
+              <tr>
+                <td>Probability close to 0.5</td>
+                <td>≈ 0.55</td>
+                <td>Low certainty</td>
+              </tr>
+            </tbody>
+          </table>
+          <h3 id="key-takeaway-3">Key Takeaway</h3>
+          <p>
+            By returning class probabilities instead of only the majority label, K-NN becomes a
+            <strong>probabilistic classifier</strong>.
+          </p>
+          <p>This is useful when:</p>
+          <ul>
+            <li>We need calibrated confidence scores</li>
+            <li>We want to reject low-confidence predictions</li>
+            <li>We need soft labels for downstream tasks</li>
+          </ul>
+          <h2 id="30-code-sample-decision-boundary">30. Code Sample: Decision Boundary</h2>
+          <blockquote>
+            <p><a href="./30.%20KNN.ipynb">KNN.ipynb</a></p>
+          </blockquote>
+          <p>
+            <a
+              href="https://scikit-learn.org/stable/modules/generated/sklearn.neighbors.KNeighborsClassifier.html"
+              >https://scikit-learn.org/stable/modules/generated/sklearn.neighbors.KNeighborsClassifier.html</a
+            >
+          </p>
+          <h2 id="31-code-sample-cross-validation">31. Code Sample: Cross Validation</h2>
+          <blockquote>
+            <p><a href="./31.%20K-fold.ipynb">K-fold.ipynb</a></p>
+          </blockquote>
+          <h2 id="32-revision-questions">32. Revision Questions</h2>
+          <p>
+            <a href="#01-explain-about-k-nearest-neighbors"
+              >01. Explain about K-Nearest Neighbors?</a
+            ><br />
+            <a href="#02-failure-cases-of-knn">02. Failure cases of KNN?</a><br />
+            <a href="#03-define-distance-measures-euclidean-l2-manhattan-l1-minkowski-hamming"
+              >03. Define Distance measures: Euclidean (L2), Manhattan (L1), Minkowski, Hamming?</a
+            ><br />
+            <a href="#04-what-is-cosine-distance--cosine-similarity"
+              >04. What is Cosine Distance &amp; Cosine Similarity?</a
+            ><br />
+            <a href="#05-how-to-measure-the-effectiveness-of-k-nn"
+              >05. How to measure the effectiveness of k-NN?</a
+            ><br />
+            <a href="#06-limitations-of-knn">06. Limitations of KNN?</a><br />
+            <a href="#07-how-to-handle-overfitting-and-underfitting-in-knn"
+              >07. How to handle Overfitting and Underfitting in KNN?</a
+            ><br />
+            <a href="#08-need-for-cross-validation">08. Need for Cross validation?</a><br />
+            <a href="#09-what-is-k-fold-cross-validation">09. What is K-fold cross validation?</a
+            ><br />
+            <a href="#10-what-is-time-based-splitting">10. What is Time based splitting?</a><br />
+            <a href="#11-explain-k-nn-for-regression">11. Explain k-NN for regression?</a><br />
+            <a href="#12-weighted-k-nn">12. Weighted k-NN?</a><br />
+            <a href="#13-how-to-build-a-kd-tree">13. How to build a kd-tree?</a><br />
+            <a href="#14-find-nearest-neighbors-using-kd-tree"
+              >14. Find nearest neighbors using kd-tree?</a
+            ><br />
+            <a href="#15-what-is-locality-sensitive-hashing-lsh"
+              >15. What is Locality Sensitive Hashing (LSH)?</a
+            ><br />
+            <a href="#16-hashing-vs-lsh">16. Hashing vs LSH?</a><br />
+            <a href="#17-lsh-for-cosine-similarity">17. LSH for cosine similarity?</a><br />
+            <a href="#18-lsh-for-euclidean-distance">18. LSH for Euclidean distance?</a>
+          </p>
+          <h3 id="01-explain-about-k-nearest-neighbors">01. Explain about K-Nearest Neighbors?</h3>
+          <p><a id="01-explain-about-k-nearest-neighbors"></a></p>
+          <p>
+            <strong>K-Nearest Neighbors (KNN)</strong> is a simple, non-parametric, lazy learning
+            algorithm used for both <strong>classification</strong> and <strong>regression</strong>.
+          </p>
+          <p>
+            <strong>Core idea (Geometric intuition):</strong><br />
+            Given a query point (x_q), find the (k) closest training points (neighbors) according to
+            a distance metric.
+          </p>
+          <ul>
+            <li>
+              <strong>Classification</strong>: Majority vote of the class labels of the (k)
+              neighbors.
+            </li>
+            <li>
+              <strong>Regression</strong>: Average (or weighted average) of the target values of the
+              (k) neighbors.
+            </li>
+          </ul>
+          <p><strong>Key characteristics:</strong></p>
+          <ul>
+            <li>Instance-based / memory-based learning (stores the entire training set).</li>
+            <li>No explicit training phase (lazy learner).</li>
+            <li>Decision boundary is piecewise linear / Voronoi-like.</li>
+            <li>Works well when the decision surface is highly non-linear.</li>
+          </ul>
+          <p>
+            <strong>Hyper-parameter</strong>: (k) (number of neighbors). Small (k) → complex
+            boundary; large (k) → smoother boundary.
+          </p>
+          <h3 id="02-failure-cases-of-knn">02. Failure cases of KNN?</h3>
+          <p><a id="02-failure-cases-of-knn"></a></p>
+          <p>KNN fails or performs poorly in these situations:</p>
+          <ol>
+            <li>
+              <strong>High-dimensional data</strong> (Curse of Dimensionality) – distances become
+              similar; nearest neighbors lose meaning.
+            </li>
+            <li><strong>Imbalanced classes</strong> – majority class dominates the vote.</li>
+            <li>
+              <strong>Noisy data / outliers</strong> – a single noisy point can change the
+              prediction (especially for small (k)).
+            </li>
+            <li>
+              <strong>Irrelevant or correlated features</strong> – distance is dominated by useless
+              dimensions.
+            </li>
+            <li>
+              <strong>Non-uniform density</strong> – in regions of varying density, fixed (k) can
+              pick points that are too far or too close.
+            </li>
+            <li>
+              <strong>Large datasets</strong> – brute-force search is (O(nd)) per query (slow).
+            </li>
+            <li>
+              <strong>When features are on very different scales</strong> – without normalization,
+              large-scale features dominate.
+            </li>
+          </ol>
+          <h3 id="03-define-distance-measures-euclidean-l2-manhattan-l1-minkowski-hamming">
+            03. Define Distance measures: Euclidean (L2), Manhattan (L1), Minkowski, Hamming?
+          </h3>
+          <p>
+            <a id="03-define-distance-measures-euclidean-l2-manhattan-l1-minkowski-hamming"></a>
+          </p>
+          <p>
+            <strong>1. Euclidean Distance (L2)</strong><br />
+            [ d(\mathbf{x}, \mathbf{y}) = \sqrt{\sum_{i=1}^{d} (x_i - y_i)^2} ] Most common.
+            Sensitive to scale and outliers.
+          </p>
+          <p>
+            <strong>2. Manhattan Distance (L1 / City-block)</strong><br />
+            [ d(\mathbf{x}, \mathbf{y}) = \sum_{i=1}^{d} |x_i - y_i| ] Less sensitive to outliers.
+            Useful in grid-like spaces.
+          </p>
+          <p>
+            <strong>3. Minkowski Distance</strong><br />
+            Generalization of both:<br />
+            [ d(\mathbf{x}, \mathbf{y}) = \left( \sum_{i=1}^{d} |x_i - y_i|^p \right)^{1/p} ]
+          </p>
+          <ul>
+            <li>(p=1) → Manhattan</li>
+            <li>(p=2) → Euclidean</li>
+            <li>(p \to \infty) → Chebyshev distance</li>
+          </ul>
+          <p>
+            <strong>4. Hamming Distance</strong><br />
+            Number of positions at which two binary (or categorical) vectors differ.<br />
+            Used for binary features, strings, DNA sequences, etc.
+          </p>
+          <h3 id="04-what-is-cosine-distance--cosine-similarity">
+            04. What is Cosine Distance &amp; Cosine Similarity?
+          </h3>
+          <p><a id="04-what-is-cosine-distance--cosine-similarity"></a></p>
+          <p>
+            <strong>Cosine Similarity</strong> measures the cosine of the angle between two
+            vectors:<br />
+            [ \text{CosSim}(\mathbf{x}, \mathbf{y}) = \frac{\mathbf{x} \cdot
+            \mathbf{y}}{|\mathbf{x}| |\mathbf{y}|} ] Range: ([-1, 1]) (usually ([0, 1]) for
+            non-negative data).
+          </p>
+          <p><strong>Cosine Distance</strong> = (1 - \text{CosSim})</p>
+          <p><strong>When to use</strong>:</p>
+          <ul>
+            <li>Text data (TF-IDF, word embeddings)</li>
+            <li>When magnitude does not matter, only direction/orientation matters.</li>
+            <li>High-dimensional sparse data.</li>
+          </ul>
+          <h3 id="05-how-to-measure-the-effectiveness-of-k-nn">
+            05. How to measure the effectiveness of k-NN?
+          </h3>
+          <p><a id="05-how-to-measure-the-effectiveness-of-k-nn"></a></p>
+          <p>Common evaluation metrics:</p>
+          <p><strong>Classification</strong></p>
+          <ul>
+            <li>Accuracy</li>
+            <li>Precision, Recall, F1-score</li>
+            <li>Confusion matrix</li>
+            <li>ROC-AUC (for binary / multi-class one-vs-rest)</li>
+          </ul>
+          <p><strong>Regression</strong></p>
+          <ul>
+            <li>Mean Squared Error (MSE)</li>
+            <li>Mean Absolute Error (MAE)</li>
+            <li>(R^2) score</li>
+          </ul>
+          <p>
+            <strong>Best practice</strong>: Always evaluate on a
+            <strong>held-out test set</strong> or use <strong>cross-validation</strong>. Never
+            report training accuracy (KNN can achieve 100% train accuracy for (k=1)).
+          </p>
+          <h3 id="06-limitations-of-knn">06. Limitations of KNN?</h3>
+          <p><a id="06-limitations-of-knn"></a></p>
+          <ul>
+            <li>Computationally expensive at prediction time ((O(nd))).</li>
+            <li>Requires large memory (stores all training points).</li>
+            <li>Sensitive to the choice of (k) and distance metric.</li>
+            <li>Suffers from the curse of dimensionality.</li>
+            <li>Does not handle missing values well natively.</li>
+            <li>Performance degrades with noisy/irrelevant features.</li>
+            <li>
+              No interpretability of “learned” model (no coefficients or feature importance by
+              default).
+            </li>
+          </ul>
+          <h3 id="07-how-to-handle-overfitting-and-underfitting-in-knn">
+            07. How to handle Overfitting and Underfitting in KNN?
+          </h3>
+          <p><a id="07-how-to-handle-overfitting-and-underfitting-in-knn"></a></p>
+          <table>
+            <thead>
+              <tr>
+                <th>Problem</th>
+                <th>Cause</th>
+                <th>Solution</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Overfitting</strong></td>
+                <td>Small (k) (esp. (k=1))</td>
+                <td>Increase (k), use weighted KNN, feature selection/dimensionality reduction</td>
+              </tr>
+              <tr>
+                <td><strong>Underfitting</strong></td>
+                <td>Very large (k)</td>
+                <td>Decrease (k), try different distance metrics</td>
+              </tr>
+            </tbody>
+          </table>
+          <p>Additional techniques:</p>
+          <ul>
+            <li>Feature scaling / normalization</li>
+            <li>Feature selection or PCA</li>
+            <li>Cross-validation to choose optimal (k)</li>
+          </ul>
+          <h3 id="08-need-for-cross-validation">08. Need for Cross validation?</h3>
+          <p><a id="08-need-for-cross-validation"></a></p>
+          <ul>
+            <li>
+              To get a more reliable estimate of model performance than a single train-test split.
+            </li>
+            <li>
+              To select the best hyper-parameters (especially (k)) without overfitting to the test
+              set.
+            </li>
+            <li>Reduces variance of the performance estimate.</li>
+            <li>Makes better use of limited data.</li>
+          </ul>
+          <h3 id="09-what-is-k-fold-cross-validation">09. What is K-fold cross validation?</h3>
+          <p><a id="09-what-is-k-fold-cross-validation"></a></p>
+          <ol>
+            <li>Split the data into (K) equal-sized folds.</li>
+            <li>
+              For each fold (i = 1) to (K):
+              <ul>
+                <li>Train on the remaining (K-1) folds.</li>
+                <li>Validate on fold (i).</li>
+              </ul>
+            </li>
+            <li>Average the (K) validation scores → final performance estimate.</li>
+          </ol>
+          <p>
+            Common values: (K=5) or (K=10).<br />
+            Special case: Leave-One-Out CV when (K = n).
+          </p>
+          <h3 id="10-what-is-time-based-splitting">10. What is Time based splitting?</h3>
+          <p><a id="10-what-is-time-based-splitting"></a></p>
+          <p>
+            Used when data has a temporal order (time-series, sequential data, user activity logs,
+            etc.).
+          </p>
+          <ul>
+            <li>Sort data by time.</li>
+            <li>Train on past data, validate/test on future data.</li>
+            <li>Never randomly shuffle (would cause data leakage).</li>
+          </ul>
+          <p>Common schemes:</p>
+          <ul>
+            <li>Simple chronological split</li>
+            <li>Rolling-window / expanding-window cross-validation</li>
+          </ul>
+          <h3 id="11-explain-k-nn-for-regression">11. Explain k-NN for regression?</h3>
+          <p><a id="11-explain-k-nn-for-regression"></a></p>
+          <p>
+            Instead of majority vote, we take the <strong>average</strong> (or weighted average) of
+            the target values of the (k) nearest neighbors:
+          </p>
+          <p>[ \hat{y}<em>q = \frac{1}{k} \sum</em>{i \in N_k(x_q)} y_i ]</p>
+          <p>or weighted version:</p>
+          <p>[ \hat{y}<em>q = \frac{\sum</em>{i \in N_k} w_i y_i}{\sum_{i \in N_k} w_i} ]</p>
+          <p>where (w_i) is usually inversely proportional to distance.</p>
+          <h3 id="12-weighted-k-nn">12. Weighted k-NN?</h3>
+          <p><a id="12-weighted-k-nn"></a></p>
+          <p>Neighbors closer to the query point get higher weight.</p>
+          <p>Common weighting schemes:</p>
+          <ul>
+            <li>Inverse distance: (w_i = \frac{1}{d(x_q, x_i)})</li>
+            <li>Inverse squared distance</li>
+            <li>Kernel-based weights (Gaussian, Epanechnikov, etc.)</li>
+          </ul>
+          <p>
+            Advantage: Reduces the impact of distant neighbors and often improves performance,
+            especially for small (k).
+          </p>
+          <h3 id="13-how-to-build-a-kd-tree">13. How to build a kd-tree?</h3>
+          <p><a id="13-how-to-build-a-kd-tree"></a></p>
+          <p>
+            A <strong>kd-tree</strong> is a binary space-partitioning tree for organizing points in
+            (k)-dimensional space.
+          </p>
+          <p><strong>Construction (recursive):</strong></p>
+          <ol>
+            <li>
+              Choose a dimension (usually cycle through dimensions or choose the one with highest
+              variance).
+            </li>
+            <li>
+              Find the median of the points along that dimension → this becomes the splitting
+              hyperplane.
+            </li>
+            <li>
+              Recursively build left subtree on points ≤ median and right subtree on points &gt;
+              median.
+            </li>
+            <li>Stop when a leaf contains fewer than a threshold number of points.</li>
+          </ol>
+          <p>Depth is (O(\log n)) on average for balanced trees.</p>
+          <h3 id="14-find-nearest-neighbors-using-kd-tree">
+            14. Find nearest neighbors using kd-tree?
+          </h3>
+          <p><a id="14-find-nearest-neighbors-using-kd-tree"></a></p>
+          <p><strong>Nearest Neighbor Search algorithm:</strong></p>
+          <ol>
+            <li>
+              Start at the root and traverse down to a leaf following the splitting planes (as if
+              inserting the query point).
+            </li>
+            <li>Keep track of the current best (closest) point found.</li>
+            <li>
+              Backtrack: at each node, check if the other side of the splitting plane could contain
+              a closer point (using the distance to the plane).
+            </li>
+            <li>Prune branches that cannot improve the current best distance.</li>
+            <li>Continue until the entire tree has been explored or pruned.</li>
+          </ol>
+          <p>
+            Average time complexity: (O(\log n)) in low dimensions; degrades toward (O(n)) in high
+            dimensions.
+          </p>
+          <h3 id="15-what-is-locality-sensitive-hashing-lsh">
+            15. What is Locality Sensitive Hashing (LSH)?
+          </h3>
+          <p><a id="15-what-is-locality-sensitive-hashing-lsh"></a></p>
+          <p>
+            <strong>Locality Sensitive Hashing</strong> is a technique for approximate nearest
+            neighbor search in high dimensions.
+          </p>
+          <p><strong>Idea</strong>: Design hash functions such that</p>
+          <ul>
+            <li>
+              Similar points (close in the chosen distance) have a high probability of colliding
+              (same hash bucket).
+            </li>
+            <li>Dissimilar points have a low probability of colliding.</li>
+          </ul>
+          <p>
+            Multiple hash tables are usually used to improve recall.<br />
+            Trade-off: Approximate results for massive speed-up.
+          </p>
+          <h3 id="16-hashing-vs-lsh">16. Hashing vs LSH?</h3>
+          <p><a id="16-hashing-vs-lsh"></a></p>
+          <table>
+            <thead>
+              <tr>
+                <th>Aspect</th>
+                <th>Traditional Hashing</th>
+                <th>Locality Sensitive Hashing (LSH)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Goal</td>
+                <td>Minimize collisions</td>
+                <td>Maximize collisions for similar items</td>
+              </tr>
+              <tr>
+                <td>Collision behavior</td>
+                <td>Random / uniform</td>
+                <td>Distance-dependent</td>
+              </tr>
+              <tr>
+                <td>Use case</td>
+                <td>Exact lookup, load balancing</td>
+                <td>Approximate nearest neighbor search</td>
+              </tr>
+              <tr>
+                <td>Hash function design</td>
+                <td>Independent of data similarity</td>
+                <td>Carefully designed for a distance metric</td>
+              </tr>
+            </tbody>
+          </table>
+          <h3 id="17-lsh-for-cosine-similarity">17. LSH for cosine similarity?</h3>
+          <p><a id="17-lsh-for-cosine-similarity"></a></p>
+          <p><strong>Random Projection / SimHash method:</strong></p>
+          <ol>
+            <li>
+              Generate random hyperplanes (random vectors (r) from Gaussian or uniform on sphere).
+            </li>
+            <li>
+              For a data point (x), the hash bit is: [ h_r(x) = \begin{cases} 1 &amp; \text{if } x
+              \cdot r \ge 0 \ 0 &amp; \text{otherwise} \end{cases} ]
+            </li>
+            <li>Concatenate several such bits to form a hash signature.</li>
+            <li>
+              Points with similar cosine similarity will have similar signatures (Hamming distance
+              of signatures approximates the angle).
+            </li>
+          </ol>
+          <p>This is the classic LSH family for cosine similarity (or angular distance).</p>
+          <h3 id="18-lsh-for-euclidean-distance">18. LSH for Euclidean distance?</h3>
+          <p><a id="18-lsh-for-euclidean-distance"></a></p>
+          <p><strong>p-stable distributions method (mainly for (p=2)):</strong></p>
+          <ol>
+            <li>Choose a random vector (a) from a Gaussian distribution (2-stable).</li>
+            <li>Choose a random offset (b \sim U[0, w]).</li>
+            <li>
+              Hash function: [ h_{a,b}(x) = \left\lfloor \frac{a \cdot x + b}{w} \right\rfloor ]
+              where (w) is the bucket width.
+            </li>
+          </ol>
+          <p>
+            Points that are close in Euclidean distance are more likely to fall into the same
+            bucket.<br />
+            Multiple independent hash functions + multiple tables are used to boost accuracy.
+          </p>
+          <p><strong>Quick Tips for Revision</strong></p>
+          <ul>
+            <li>Always normalize/standardize features before using distance-based methods.</li>
+            <li>Use cross-validation to choose (k).</li>
+            <li>
+              For high-dimensional or large-scale data → consider LSH, kd-trees (low-d), or
+              approximate methods.
+            </li>
+            <li>Weighted KNN + good feature engineering often beats plain KNN.</li>
+          </ul>
+        </main>
+        <aside class="note-toc" aria-label="On this page">
+          <h2>On This Page</h2>
+          <ul>
+            <li><a href="#01-how-classification-works">01. How Classification Works</a></li>
+            <li><a href="#02-data-matrix-notation">02. Data Matrix Notation</a></li>
+            <li>
+              <a href="#03-classification-vs-regression-examples"
+                >03. Classification vs Regression (Examples)</a
+              >
+            </li>
+            <li>
+              <a href="#04-k-nearest-neighbours-geometric-intuition-with-a-toy-example"
+                >04. K-Nearest Neighbours: Geometric Intuition with a Toy Example</a
+              >
+            </li>
+            <li><a href="#05-failure-cases-of-knn">05. Failure Cases of KNN</a></li>
+            <li>
+              <a href="#06-distance-measures-euclidean-l2-manhattan-l1-minkowski-hamming"
+                >06. Distance Measures: Euclidean (L2), Manhattan (L1), Minkowski, Hamming</a
+              >
+            </li>
+            <li>
+              <a href="#07-cosine-distance--cosine-similarity"
+                >07. Cosine Distance &amp; Cosine Similarity</a
+              >
+            </li>
+            <li>
+              <a href="#08-how-to-measure-the-effectiveness-of-knn"
+                >08. How to Measure the Effectiveness of KNN</a
+              >
+            </li>
+            <li>
+              <a href="#09-test-evaluation-time-and-space-complexity"
+                >09. Test Evaluation: Time and Space Complexity</a
+              >
+            </li>
+            <li><a href="#10-knn-limitations">10. KNN Limitations</a></li>
+            <li>
+              <a href="#11-decision-surface-for-k-nn-as-k-changes"
+                >11. Decision Surface for K-NN as K Changes</a
+              >
+            </li>
+            <li><a href="#12-overfitting-and-underfitting">12. Overfitting and Underfitting</a></li>
+            <li><a href="#13-need-for-cross-validation">13. Need for Cross Validation</a></li>
+            <li><a href="#14-k-fold-cross-validation">14. K-Fold Cross Validation</a></li>
+            <li>
+              <a href="#15-visualizing-train-validation-and-test-datasets"
+                >15. Visualizing Train, Validation and Test Datasets</a
+              >
+            </li>
+            <li>
+              <a href="#16-how-to-determine-overfitting-and-underfitting"
+                >16. How to Determine Overfitting and Underfitting</a
+              >
+            </li>
+            <li><a href="#17-time-based-splitting">17. Time Based Splitting</a></li>
+            <li><a href="#18-k-nn-for-regression">18. K-NN for Regression</a></li>
+            <li><a href="#19-weighted-k-nn">19. Weighted K-NN</a></li>
+            <li><a href="#20-voronoi-diagram">20. Voronoi Diagram</a></li>
+            <li><a href="#21-binary-search-tree">21. Binary Search Tree</a></li>
+            <li><a href="#22-how-to-build-a-kd-tree">22. How to Build a kd-Tree</a></li>
+            <li>
+              <a href="#23-find-nearest-neighbours-using-kd-tree"
+                >23. Find Nearest Neighbours Using kd-Tree</a
+              >
+            </li>
+            <li><a href="#24-limitations-of-kd-tree">24. Limitations of kd-Tree</a></li>
+            <li><a href="#25-extensions">25. Extensions</a></li>
+            <li><a href="#26-hashing-vs-lsh">26. Hashing vs LSH</a></li>
+            <li><a href="#27-lsh-for-cosine-similarity">27. LSH for Cosine Similarity</a></li>
+            <li><a href="#28-lsh-for-euclidean-distance">28. LSH for Euclidean Distance</a></li>
+            <li><a href="#29-probabilistic-class-label">29. Probabilistic Class Label</a></li>
+            <li>
+              <a href="#30-code-sample-decision-boundary">30. Code Sample: Decision Boundary</a>
+            </li>
+            <li>
+              <a href="#31-code-sample-cross-validation">31. Code Sample: Cross Validation</a>
+            </li>
+            <li><a href="#32-revision-questions">32. Revision Questions</a></li>
+          </ul>
+        </aside>
+      </div>
+    </div>
+    <script>
+      if (window.hljs)
+        document
+          .querySelectorAll("pre code[class*='language-']")
+          .forEach((block) => window.hljs.highlightElement(block));
+      (() => {
+        const links = [...document.querySelectorAll(".note-toc a")],
+          heads = links
+            .map((l) => document.getElementById(decodeURIComponent(l.hash.slice(1))))
+            .filter(Boolean);
+        if (!links.length || !heads.length || !("IntersectionObserver" in window)) return;
+        const set = (h) =>
+          links.forEach((l) => l.classList.toggle("is-active", l.hash === `#${h.id}`));
+        const ob = new IntersectionObserver(
+          (es) => {
+            const v = es
+              .filter((e) => e.isIntersecting)
+              .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
+            if (v.length) set(v[0].target);
+          },
+          { rootMargin: "-10% 0px -75% 0px", threshold: 0 },
+        );
+        heads.forEach((h) => ob.observe(h));
+      })();
+    </script>
+  </body>
+</html>

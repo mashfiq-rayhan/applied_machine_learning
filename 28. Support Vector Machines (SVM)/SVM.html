@@ -1,0 +1,1568 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Support Vector Machines (SVM) | Applied Machine Learning</title>
+    <link rel="stylesheet" href="../HTMLs/theme.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
+    <script>
+      window.MathJax = {
+        tex: {
+          inlineMath: [
+            ["$", "$"],
+            ["\\(", "\\)"],
+          ],
+          displayMath: [
+            ["$$", "$$"],
+            ["\\[", "\\]"],
+          ],
+          processEscapes: true,
+          processEnvironments: true,
+        },
+        options: {
+          skipHtmlTags: ["script", "noscript", "style", "textarea", "pre", "code"],
+        },
+      };
+    </script>
+    <script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-svg.js"></script>
+  </head>
+  <body class="site-page">
+    <div class="site-layout">
+      <nav class="curriculum-nav" aria-label="Main curriculum navigation">
+        <iframe src="../HTMLs/table-of-contents.html" title="Machine learning curriculum"></iframe>
+      </nav>
+      <div class="note-layout">
+        <main class="note-content">
+          <style>
+            @import url("https://fonts.googleapis.com/css2?family=Play:wght@400;700&display=swap");
+            @import url("https://cdnjs.cloudflare.com/ajax/libs/latin-modern/1.1.0/css/latinmodern-math.min.css");
+
+            :root {
+              --la-ink: #3f6386;
+              --la-teal: #3f6386;
+              --la-teal-soft: #e8f6f7;
+              --la-coral: #9333ea;
+              --la-coral-soft: #fff1ed;
+              --la-cdf: #17283a;
+              --la-line: #5b5c5c;
+              --la-surface: #f7faf9;
+              --la-text: #c9c9c9;
+              --la-panel: #00070e;
+              --la-chip: #17283a;
+              --la-amber: #9a6b16;
+              --la-amber-soft: #fff8e6;
+            }
+
+            *,
+            *::before,
+            *::after {
+              font-family: "Play", sans-serif !important;
+            }
+
+            pre,
+            pre code {
+              font-family: Consolas, "Courier New", monospace !important;
+            }
+
+            body,
+            .markdown-body,
+            p,
+            li {
+              color: var(--la-text) !important;
+            }
+
+            h1 {
+              color: var(--la-ink);
+              border-bottom: 4px solid var(--la-teal);
+              padding-bottom: 0.35em;
+            }
+
+            h2 {
+              color: var(--la-teal);
+              border-left: 6px solid var(--la-teal);
+              padding-left: 0.55em;
+              margin-top: 2em;
+            }
+
+            h3,
+            h4 {
+              color: var(--la-coral);
+            }
+
+            a {
+              color: var(--la-coral);
+              text-decoration: none;
+            }
+
+            a:hover {
+              text-decoration: underline;
+            }
+
+            blockquote {
+              background: var(--la-panel);
+              border-left: 5px solid var(--la-cdf) !important;
+              border-radius: 6px;
+              color: var(--la-text);
+              padding: 0.75em 1em;
+            }
+
+            code {
+              background: var(--la-chip);
+              border-radius: 4px;
+              color: var(--la-text);
+              padding: 0.1em 0.3em;
+            }
+
+            pre {
+              background: var(--la-panel);
+              border: 1px solid var(--la-line);
+              border-radius: 8px;
+              overflow-x: auto;
+              padding: 1em;
+            }
+
+            table {
+              border: 1px solid var(--la-line);
+              border-collapse: collapse;
+              border-radius: 8px;
+              overflow: hidden;
+              width: 100%;
+            }
+
+            th {
+              background: var(--la-panel);
+              color: var(--la-text);
+              padding: 0.7em 0.8em;
+              text-align: left;
+            }
+
+            td {
+              color: var(--la-text);
+              padding: 0.7em 0.8em;
+            }
+
+            tr:nth-child(even) {
+              background: var(--la-chip);
+            }
+
+            hr {
+              border: 0;
+              border-top: 2px solid var(--la-line);
+              margin: 2.2em 0;
+            }
+
+            .summary-grid,
+            .ml-grid,
+            .intuition-grid {
+              display: flex;
+              gap: 1em;
+              margin: 1.25em 0;
+            }
+
+            .summary-card,
+            .ml-card,
+            .intuition-card {
+              background: var(--la-panel);
+              border-radius: 7px;
+              color: var(--la-text);
+              flex: 1 1 0;
+              min-width: 0;
+              padding: 1em;
+            }
+
+            .summary-card {
+              border-top: 5px solid var(--la-teal);
+            }
+
+            .summary-card.pdf,
+            .ml-card.diagnostics,
+            .intuition-card.pdf {
+              border-top-color: var(--la-coral);
+            }
+
+            .summary-card.cdf,
+            .intuition-card.cdf {
+              border-top-color: var(--la-cdf);
+            }
+
+            .summary-card h3,
+            .ml-card h3,
+            .intuition-card h3 {
+              margin-top: 0;
+            }
+
+            .summary-tag,
+            .panel-kicker {
+              color: var(--la-teal);
+              font-size: 0.82em;
+              font-weight: 700;
+              letter-spacing: 0.04em;
+              text-transform: uppercase;
+            }
+
+            .relationship-banner,
+            .ml-workflow {
+              align-items: center;
+              background: var(--la-panel);
+              border: 1px solid var(--la-teal);
+              border-radius: 7px;
+              color: var(--la-text);
+              display: flex;
+              flex-wrap: wrap;
+              gap: 0.6em;
+              justify-content: center;
+              margin: 1.25em 0;
+              padding: 0.85em 1em;
+              text-align: center;
+            }
+
+            .relationship-banner strong,
+            .ml-workflow strong,
+            .relationship-item strong,
+            .insight-item strong {
+              color: var(--la-coral);
+            }
+
+            .relationship-banner .arrow {
+              color: var(--la-teal);
+              font-size: 1.2em;
+            }
+
+            .relationship-item,
+            .insight-item {
+              background: var(--la-panel);
+              border-left: 5px solid var(--la-teal);
+              border-radius: 5px;
+              color: var(--la-text);
+              margin: 0.65em 0;
+              padding: 0.55em 0.85em;
+            }
+
+            .insight-item {
+              border-left-color: var(--la-coral);
+            }
+
+            .insight-list,
+            .feature-chips {
+              display: flex;
+              flex-wrap: wrap;
+              gap: 0.55em;
+              list-style: none;
+              margin: 0.5em 0 1em;
+              padding: 0;
+            }
+
+            .insight-list li,
+            .feature-chips li {
+              background: var(--la-chip);
+              border: 1px solid var(--la-teal);
+              border-radius: 999px;
+              color: var(--la-text);
+              padding: 0.35em 0.75em;
+            }
+
+            .feature-chips li {
+              border-radius: 4px;
+              border-left: 3px solid var(--la-coral);
+              border-right: none;
+              border-top: none;
+              border-bottom: none;
+              flex: 1 1 calc(50% - 0.45em);
+            }
+
+            .concept-flow {
+              align-items: center;
+              display: flex;
+              flex-direction: column;
+              margin: 1.25em 0;
+            }
+
+            .concept-flow .flow-step {
+              background: var(--la-panel);
+              border: 1px solid var(--la-teal);
+              border-radius: 7px;
+              color: var(--la-text);
+              max-width: 22em;
+              padding: 0.7em 1.2em;
+              text-align: center;
+              width: 100%;
+            }
+
+            .concept-flow .flow-step strong {
+              color: var(--la-coral);
+            }
+
+            .concept-flow .flow-arrow {
+              color: var(--la-teal);
+              font-size: 1.35em;
+              line-height: 1.25;
+            }
+
+            .percentile-callout {
+              background: var(--la-panel);
+              border-left: 5px solid var(--la-cdf);
+              border-radius: 7px;
+              color: var(--la-text);
+              margin: 1.25em 0;
+              padding: 1em;
+            }
+
+            .percentile-callout strong {
+              color: var(--la-cdf);
+            }
+
+            .katex-display,
+            .math,
+            .math-block {
+              background: #00070e;
+              border-left: 6px solid #2f005c;
+              border-radius: 6px;
+              padding: 0.6em 0.8em;
+              overflow-x: auto;
+              color: #c9c9c9 !important;
+              font-family: "Latin Modern Math", "Cambria Math", "STIX Two Math", serif !important;
+            }
+
+            .katex,
+            .katex * {
+              color: #9b9a9a !important;
+              font-family: "Latin Modern Math", "Cambria Math", "STIX Two Math", serif !important;
+            }
+
+            @media (max-width: 700px) {
+              .summary-grid,
+              .ml-grid,
+              .intuition-grid {
+                flex-direction: column;
+              }
+            }
+          </style>
+
+          <h1 id="support-vector-machines-svm">Support Vector Machines (SVM)</h1>
+          <h2 id="01-geometric-intuition">01. Geometric Intuition</h2>
+          <p><img src="./assets/01.01.jpg" alt="LR" /></p>
+          <p><img src="./assets/01.02.jpg" alt="LR" /></p>
+          <blockquote>
+            <p><strong>Support Vector Machines (SVM)</strong></p>
+          </blockquote>
+          <p>
+            SVM is a popular Machine Learning algorithm used for both
+            <strong>classification</strong> and <strong>regression</strong>.
+          </p>
+          <p>It became popular in the 1990s.</p>
+          <p>We will first develop the <strong>geometric intuition</strong>.</p>
+          <h3 id="geometric-intuition">Geometric Intuition</h3>
+          <p>
+            There are many hyperplanes $\pi$ that can separate the positive points from the negative
+            points.
+          </p>
+          <p><strong>Key idea of SVM</strong>:</p>
+          <p>
+            Find the hyperplane $\pi$ that separates the positive points from the negative points
+            <strong>as widely as possible</strong>.
+          </p>
+          <p>
+            (The probabilistic view $P(y_i=1)=\sigma(\mathbf{w}^\top\mathbf{x}_i)$ is the Logistic
+            Regression view; SVM has a different geometric motivation.)
+          </p>
+          <h3 id="margin">Margin</h3>
+          <p>
+            Draw two parallel hyperplanes $\pi_+$ and $\pi_-$ that just touch the positive and
+            negative points respectively:
+          </p>
+          <ul>
+            <li>$\pi_+$ is parallel to $\pi$</li>
+            <li>$\pi_-$ is parallel to $\pi$</li>
+            <li>$\pi_+$ and $\pi_-$ are also parallel to each other</li>
+          </ul>
+          <p>The distance between $\pi_+$ and $\pi_-$ is called the <strong>margin</strong>:</p>
+          <p>$$ d = \text{margin} = \operatorname{dist}(\pi_+,\pi_-) $$</p>
+          <p>
+            $\pi$ is the <strong>margin-maximising hyperplane</strong>.<br />
+            $\pi$ is better than any other separating hyperplane $\pi'$.
+          </p>
+          <h3 id="goal-of-svm">Goal of SVM</h3>
+          <p>SVM tries to find a hyperplane $\pi$ that <strong>maximises the margin</strong></p>
+          <p>$$ \text{margin} = \operatorname{dist}(\pi_+,\pi_-) $$</p>
+          <p>Larger margin $\Rightarrow$ better generalisation accuracy.</p>
+          <h3 id="support-vectors-sv">Support Vectors (SV)</h3>
+          <p>
+            The points through which $\pi_+$ or $\pi_-$ pass are called
+            <strong>Support Vectors</strong>.
+          </p>
+          <p>
+            These are the only points that influence the position of the margin-maximising
+            hyperplane.
+          </p>
+          <h3 id="alternative-geometric-intuition-of-svm-convex-hull-view">
+            Alternative Geometric Intuition of SVM (Convex Hull View)
+          </h3>
+          <ol>
+            <li>
+              Compute the <strong>convex hull</strong> of the positive points and the convex hull of
+              the negative points.
+            </li>
+            <li>Find the <strong>shortest line</strong> connecting these two hulls.</li>
+            <li>
+              The hyperplane $\pi$ that <strong>bisects</strong> this shortest line is the
+              margin-maximising hyperplane.
+            </li>
+          </ol>
+          <p>
+            (A convex hull is the smallest convex polygon that contains all the points of a class. A
+            non-convex shape is not a convex hull.)
+          </p>
+          <h2 id="02-mathematical-derivation">02. Mathematical Derivation</h2>
+          <p><img src="./assets/02.01.jpg" alt="LR" /></p>
+          <p><img src="./assets/02.02.jpg" alt="LR" /></p>
+          <blockquote>
+            <p><strong>Mathematical Formulation of SVM</strong></p>
+          </blockquote>
+          <h3 id="hard-margin-svm-linearly-separable-case">
+            Hard-Margin SVM (Linearly Separable Case)
+          </h3>
+          <p>Let the hyperplane be</p>
+          <p>$$ \pi:\ \mathbf{w}^\top\mathbf{x}+b=0 $$</p>
+          <p>The two parallel supporting hyperplanes are</p>
+          <p>
+            $$ \begin{align*} \pi^+&amp;:\ \mathbf{w}^\top\mathbf{x}+b=1 \ \pi^-&amp;:\
+            \mathbf{w}^\top\mathbf{x}+b=-1 \end{align*} $$
+          </p>
+          <p>The margin (distance between $\pi^+$ and $\pi^-$) is</p>
+          <p>$$ d=\frac{2}{|\mathbf{w}|} $$</p>
+          <p><strong>Optimization problem</strong></p>
+          <p>
+            $$ (\mathbf{w}^<em>,b^</em>)=\arg\max_{\mathbf{w},b}\ \frac{2}{|\mathbf{w}|}
+            \quad\text{subject to}\quad y_i(\mathbf{w}^\top\mathbf{x}_i+b)\ge 1\quad\text{for all }i
+            $$
+          </p>
+          <p>This is a constrained optimization problem with $n$ constraints.</p>
+          <p>
+            It is called <strong>Hard-Margin SVM</strong> and assumes the data is linearly
+            separable.
+          </p>
+          <h3 id="soft-margin-svm-non-linearly-separable--almost-linearly-separable">
+            Soft-Margin SVM (Non-linearly Separable / Almost Linearly Separable)
+          </h3>
+          <p>
+            When the data is not linearly separable we introduce
+            <strong>slack variables</strong> $\xi_i\ge 0$.
+          </p>
+          <ul>
+            <li>
+              $\xi_i=0$ → point is correctly classified and lies on the correct side of $\pi^+$ or
+              $\pi^-$
+            </li>
+            <li>
+              $\xi_i&gt;0$ → point is on the wrong side; $\xi_i$ measures how far (in functional
+              distance) the point is from the correct hyperplane
+            </li>
+          </ul>
+          <p>The constraint becomes</p>
+          <p>$$ y_i(\mathbf{w}^\top\mathbf{x}_i+b)\ge 1-\xi_i,\qquad\xi_i\ge 0 $$</p>
+          <h3 id="turning-max-into-min">Turning Max into Min</h3>
+          <p>
+            $$ \arg\max_{\mathbf{w},b}\frac{2}{|\mathbf{w}|}
+            =\arg\min_{\mathbf{w},b}\frac{|\mathbf{w}|}{2} $$
+          </p>
+          <p>(because maximising $f$ is the same as minimising $1/f$).</p>
+          <h3 id="soft-margin-optimization-problem">Soft-Margin Optimization Problem</h3>
+          <p>
+            $$ (\mathbf{w}^<em>,b^</em>) =\arg\min_{\mathbf{w},b} \frac{|\mathbf{w}|}{2}
+            +C\cdot\frac{1}{n}\sum_{i=1}^{n}\xi_i $$
+          </p>
+          <p>subject to</p>
+          <p>$$ y_i(\mathbf{w}^\top\mathbf{x}_i+b)\ge 1-\xi_i,\qquad\xi_i\ge 0\quad\forall i $$</p>
+          <ul>
+            <li>$\dfrac{|\mathbf{w}|}{2}$ → maximises the margin (regularisation term)</li>
+            <li>
+              $\dfrac{1}{n}\sum\xi_i$ → average distance of misclassified points from the correct
+              hyperplanes (hinge-loss term)
+            </li>
+            <li>$C&gt;0$ is a hyper-parameter that controls the trade-off</li>
+          </ul>
+          <p>This is <strong>Soft-Margin SVM</strong>.</p>
+          <p>It can also be written in the familiar regularised form</p>
+          <p>
+            $$ \min_{\mathbf{w},b}\quad \underbrace{C\cdot\text{hinge-loss}}<em
+              >{\text{loss}} +\underbrace{\frac{|\mathbf{w}|}{2}}</em
+            >{\text{regularisation}} $$
+          </p>
+          <p>which is analogous to Logistic Regression:</p>
+          <p>$$ \min_{\mathbf{w}}\quad\text{logistic-loss}+\lambda\cdot\text{regularisation} $$</p>
+          <h3 id="effect-of-the-hyper-parameter-c">Effect of the Hyper-parameter $C$</h3>
+          <ul>
+            <li>
+              $C\uparrow$ → tendency to make fewer mistakes on the training data →
+              <strong>overfitting</strong> (high variance)
+            </li>
+            <li>
+              $C\downarrow$ → more mistakes allowed → <strong>underfitting</strong> (high bias)
+            </li>
+          </ul>
+          <p>In sklearn the relationship with the usual regularisation strength is</p>
+          <p>$$ C=\frac{1}{\lambda} $$</p>
+          <h2 id="03-why-we-take-values-1-and--1-for-support-vector-planes">
+            03. Why We Take Values +1 and -1 for Support Vector Planes
+          </h2>
+          <p><img src="./assets/03.01.jpg" alt="LR" /></p>
+          <p><img src="./assets/03.02.jpg" alt="LR" /></p>
+          <blockquote>
+            <p><strong>Why +1 and –1 on the RHS of $\pi^+$ and $\pi^-$?</strong></p>
+          </blockquote>
+          <h3 id="question">Question</h3>
+          <p>Why do we write</p>
+          <p>
+            $$ \begin{align*} \pi^+&amp;:\ \mathbf{w}^\top\mathbf{x}+b=+1 \ \pi^-&amp;:\
+            \mathbf{w}^\top\mathbf{x}+b=-1 \end{align*} $$
+          </p>
+          <p>instead of some other constants?</p>
+          <h3 id="convenience--scaling-argument">Convenience / Scaling Argument</h3>
+          <p>The margin is</p>
+          <p>$$ d=\frac{2}{|\mathbf{w}|} $$</p>
+          <p>and the optimisation problem is</p>
+          <p>$$ (\mathbf{w}^<em>,b^</em>)=\arg\max_{\mathbf{w},b}\frac{2}{|\mathbf{w}|} $$</p>
+          <p><strong>Important observation</strong></p>
+          <ul>
+            <li>$\mathbf{w}$ need <strong>not</strong> be a unit vector.</li>
+            <li>$|\mathbf{w}|$ can be any positive number.</li>
+          </ul>
+          <h3 id="general-case">General Case</h3>
+          <p>
+            Suppose we write the supporting hyperplanes with an arbitrary positive constant $K$:
+          </p>
+          <p>
+            $$ \begin{align*} \pi^+&amp;:\ \mathbf{w}^\top\mathbf{x}+b=K \ \pi^-&amp;:\
+            \mathbf{w}^\top\mathbf{x}+b=-K \end{align*} \quad(K&gt;0) $$
+          </p>
+          <p>Then the margin becomes</p>
+          <p>$$ d=\frac{2K}{|\mathbf{w}|} $$</p>
+          <p>and the optimisation problem is</p>
+          <p>$$ \arg\max_{\mathbf{w},b}\frac{2K}{|\mathbf{w}|} $$</p>
+          <h3 id="rescaling">Rescaling</h3>
+          <p>We can always rescale the variables:</p>
+          <p>$$ \mathbf{w}'=\frac{\mathbf{w}}{K},\qquad b'=\frac{b}{K} $$</p>
+          <p>Then</p>
+          <p>$$ \pi^+!:\ (\mathbf{w}')^\top\mathbf{x}+b'=1 $$</p>
+          <p>and the problem reduces exactly to the standard form</p>
+          <p>$$ \arg\max\frac{2}{|\mathbf{w}'|} $$</p>
+          <h3 id="conclusion">Conclusion</h3>
+          <p>Choosing the constants $+1$ and $-1$ is purely a <strong>convenience</strong>.</p>
+          <p>
+            It simplifies the mathematics without changing the geometry of the solution (the
+            direction of $\mathbf{w}$ and the location of the hyperplane stay the same).
+          </p>
+          <h2 id="04-loss-function-hinge-loss-based-interpretation">
+            04. Loss Function (Hinge Loss) Based Interpretation
+          </h2>
+          <p><img src="./assets/04.01.jpg" alt="LR" /></p>
+          <p><img src="./assets/04.02.jpg" alt="LR" /></p>
+          <blockquote>
+            <p><strong>Loss-Minimization View: Hinge-Loss</strong></p>
+          </blockquote>
+          <h3 id="comparison-of-loss-functions">Comparison of Loss Functions</h3>
+          <ul>
+            <li>Logistic Regression → logistic-loss + regularisation</li>
+            <li>Linear Regression → squared-loss + regularisation</li>
+            <li>SVM → <strong>hinge-loss + regularisation</strong></li>
+          </ul>
+          <p>Define the signed quantity</p>
+          <p>$$ z_i = y_i,f(\mathbf{x}_i) = y_i(\mathbf{w}^\top\mathbf{x}_i + b) $$</p>
+          <ul>
+            <li>$z_i &gt; 0$ → $\mathbf{x}_i$ is correctly classified</li>
+            <li>$z_i &lt; 0$ → $\mathbf{x}_i$ is incorrectly classified</li>
+          </ul>
+          <h3 id="definition-of-hinge-loss">Definition of Hinge-Loss</h3>
+          <p>
+            $$ \text{hinge-loss} = \begin{cases} 0 &amp; \text{if } z_i \ge 1 \ 1 - z_i &amp;
+            \text{if } z_i &lt; 1 \end{cases} = \max\bigl(0,\ 1 - z_i\bigr) $$
+          </p>
+          <ul>
+            <li>Case 1: $z_i \ge 1$ → $1-z_i$ is negative → $\max(0,1-z_i)=0$</li>
+            <li>Case 2: $z_i &lt; 1$ → $1-z_i &gt; 0$ → $\max(0,1-z_i)=1-z_i$</li>
+          </ul>
+          <h3 id="geometric-formulation--loss-minimization">
+            Geometric Formulation ↔ Loss-Minimization
+          </h3>
+          <p>For a correctly classified point we have $\xi_i = 0$.</p>
+          <p>For a point $\mathbf{x}_j$ that lies on the wrong side of $\pi^+$ (or $\pi^-$):</p>
+          <p>$$ d_j = 1 - y_j(\mathbf{w}^\top\mathbf{x}_j + b) = 1 - z_j $$</p>
+          <p>
+            $\xi_j$ is exactly the distance of $\mathbf{x}_j$ from the correct supporting
+            hyperplane:
+          </p>
+          <p>$$ \xi_j = 1 - z_j \qquad\text{(when the point is misclassified)} $$</p>
+          <p>Therefore</p>
+          <p>$$ \max(0,\ 1-z_i) = \xi_i $$</p>
+          <h3 id="soft-margin-svm-loss-minimization-form">
+            Soft-Margin SVM (Loss-Minimization Form)
+          </h3>
+          <p>
+            $$ \min_{\mathbf{w},b}<br />
+            \frac{|\mathbf{w}|}{2}
+          </p>
+          <ul>
+            <li>C\sum_{i=1}^{n}\xi_i $$</li>
+          </ul>
+          <p>subject to</p>
+          <p>$$ 1 - y_i(\mathbf{w}^\top\mathbf{x}_i + b) \le \xi_i,\qquad \xi_i \ge 0 $$</p>
+          <p>Equivalently (unconstrained form)</p>
+          <p>
+            $$ \min_{\mathbf{w},b}<br />
+            \sum_{i=1}^{n}\max\bigl(0,\ 1 - y_i(\mathbf{w}^\top\mathbf{x}_i + b)\bigr)
+          </p>
+          <ul>
+            <li>\lambda|\mathbf{w}|^2 $$</li>
+          </ul>
+          <p>
+            (Note: minimising $|\mathbf{w}|$ is the same as minimising $|\mathbf{w}|^2$ because
+            $|\mathbf{w}|\ge 0$.)
+          </p>
+          <h3 id="effect-of-the-hyper-parameter">Effect of the Hyper-parameter</h3>
+          <ul>
+            <li>$C\uparrow$ → overfitting</li>
+            <li>$C\downarrow$ → underfitting</li>
+          </ul>
+          <p>
+            (or equivalently $\lambda\uparrow$ → underfitting, $\lambda\downarrow$ → overfitting)
+          </p>
+          <h2 id="05-dual-form-of-svm-formulation">05. Dual Form of SVM Formulation</h2>
+          <p><img src="./assets/05.01.jpg" alt="LR" /></p>
+          <p><img src="./assets/05.02.jpg" alt="LR" /></p>
+          <blockquote>
+            <p><strong>Dual Form of SVM</strong></p>
+          </blockquote>
+          <h3 id="primal-soft-margin-svm">Primal (Soft-Margin SVM)</h3>
+          <p>
+            $$ \begin{align*} \min_{\mathbf{w},b}\quad &amp;\frac12|\mathbf{w}| +
+            C\sum_{i=1}^{n}\xi_i \ \text{s.t.}\quad &amp;y_i(\mathbf{w}^\top\mathbf{x}_i + b)\ge
+            1-\xi_i,\qquad\xi_i\ge 0\quad\forall i \end{align*} $$
+          </p>
+          <p>This is the <strong>primal</strong> formulation of SVM.</p>
+          <h3 id="dual-formulation-equivalent">Dual Formulation (Equivalent)</h3>
+          <p>
+            $$ \begin{align*} \max_{\alpha_i}\quad &amp;\sum_{i=1}^{n}\alpha_i
+            -\frac12\sum_{i=1}^{n}\sum_{j=1}^{n} \alpha_i\alpha_j y_i
+            y_j,(\mathbf{x}_i^\top\mathbf{x}<em
+              >j) \ \text{s.t.}\quad &amp;\alpha_i\ge 0,\qquad \sum</em
+            >{i=1}^{n}\alpha_i y_i = 0 \end{align*} $$
+          </p>
+          <h3 id="important-observations-from-the-dual">Important Observations from the Dual</h3>
+          <ol>
+            <li>Each training point $\mathbf{x}_i$ gets a dual variable $\alpha_i$.</li>
+            <li>
+              The data points $\mathbf{x}_i$ appear <strong>only</strong> in the form of inner
+              products $\mathbf{x}_i^\top\mathbf{x}_j$.
+            </li>
+            <li>The decision function becomes</li>
+          </ol>
+          <p>
+            $$ f(\mathbf{x}<em>q) = \sum</em>{i=1}^{n}\alpha_i y_i,(\mathbf{x}_i^\top\mathbf{x}_q) +
+            b $$
+          </p>
+          <ol start="4">
+            <li></li>
+          </ol>
+          <ul>
+            <li>$\alpha_i &gt; 0$ → $\mathbf{x}_i$ is a <strong>Support Vector</strong></li>
+            <li>$\alpha_i = 0$ → $\mathbf{x}_i$ is a <strong>non-Support Vector</strong></li>
+          </ul>
+          <p>Only the Support Vectors matter for the final classifier.</p>
+          <h3 id="kernel-trick">Kernel Trick</h3>
+          <p>Because the dual depends on the data only through inner products, we can replace</p>
+          <p>
+            $$ \mathbf{x}_i^\top\mathbf{x}_j \quad\text{by a kernel}\quad
+            K(\mathbf{x}_i,\mathbf{x}_j) $$
+          </p>
+          <p>
+            $$ \max_{\alpha_i} \sum_{i=1}^{n}\alpha_i -\frac12\sum_{i=1}^{n}\sum_{j=1}^{n}
+            \alpha_i\alpha_j y_i y_j,K(\mathbf{x}_i,\mathbf{x}_j) $$
+          </p>
+          <p>subject to the same constraints.</p>
+          <p>
+            $K(\mathbf{x}_i,\mathbf{x}_j)$ is any valid similarity / kernel function (e.g. cosine
+            similarity when the vectors are normalised).
+          </p>
+          <h3 id="runtime-prediction">Runtime Prediction</h3>
+          <p>At test time we only need</p>
+          <p>
+            $$ f(\mathbf{x}<em>q) = \sum</em>{i=1}^{n}\alpha_i y_i,K(\mathbf{x}_i,\mathbf{x}_q) + b
+            $$
+          </p>
+          <p>(Only terms with $\alpha_i &gt; 0$ survive.)</p>
+          <h2 id="06-kernel-trick">06. Kernel Trick</h2>
+          <p><img src="./assets/06.01.jpg" alt="LR" /></p>
+          <p><img src="./assets/06.02.jpg" alt="LR" /></p>
+          <blockquote>
+            <p><strong>Kernel Trick</strong></p>
+          </blockquote>
+          <h3 id="from-linear-svm-to-kernel-svm">From Linear SVM to Kernel SVM</h3>
+          <p>The dual of Linear SVM is</p>
+          <p>
+            $$ \begin{align*} \max_{\alpha_i}\quad &amp;\sum_{i=1}^{n}\alpha_i
+            -\frac12\sum_{i=1}^{n}\sum_{j=1}^{n} \alpha_i\alpha_j y_i
+            y_j,(\mathbf{x}_i^\top\mathbf{x}<em>j) \ \text{s.t.}\quad &amp;\sum</em
+            >{i=1}^{n}\alpha_i y_i=0,\qquad\alpha_i\ge 0 \end{align*} $$
+          </p>
+          <p>
+            The only place the data appears is the inner product $\mathbf{x}_i^\top\mathbf{x}_j$,
+            which can be viewed as a
+            <strong>similarity</strong> $\operatorname{Sim}(\mathbf{x}_i,\mathbf{x}_j)$.
+          </p>
+          <p>We simply replace it by a <strong>kernel function</strong>:</p>
+          <p>
+            $$ \mathbf{x}_i^\top\mathbf{x}_j \quad\longrightarrow\quad K(\mathbf{x}_i,\mathbf{x}_j)
+            $$
+          </p>
+          <p>and obtain <strong>Kernel SVM</strong>:</p>
+          <p>
+            $$ f(\mathbf{x}<em>q) = \sum</em>{i=1}^{n}\alpha_i y_i,K(\mathbf{x}_i,\mathbf{x}_q)+b $$
+          </p>
+          <h3 id="why-the-kernel-trick-is-important">Why the Kernel Trick is Important</h3>
+          <ul>
+            <li>
+              Soft-margin Linear SVM (hyperplanes) ≈ Logistic Regression (both try to find a good
+              linear separator; SVM additionally maximises the margin).
+            </li>
+            <li>
+              The <strong>most important idea</strong> in SVM is the <strong>kernel trick</strong>.
+            </li>
+          </ul>
+          <p>
+            $$ \begin{align*} \text{Linear SVM:}&amp;\quad
+            K(\mathbf{x}_i,\mathbf{x}_j)=\mathbf{x}_i^\top\mathbf{x}_j \ \text{Kernel
+            SVM:}&amp;\quad K(\mathbf{x}_i,\mathbf{x}_j)=\text{any valid kernel} \end{align*} $$
+          </p>
+          <h3 id="handling-non-linearly-separable-data">Handling Non-Linearly Separable Data</h3>
+          <p>When the data is not linearly separable in the original space:</p>
+          <ul>
+            <li>Linear SVM fails</li>
+            <li>Logistic Regression fails</li>
+          </ul>
+          <p>Two successful approaches:</p>
+          <ol>
+            <li>
+              Explicit feature transform (e.g. $(f_1,f_2)\to(f_1^2,f_2^2)$) + Logistic Regression /
+              Linear SVM
+            </li>
+            <li>
+              <strong>Kernel SVM</strong> – chooses the right kernel so that the data becomes
+              linearly separable in a higher-dimensional feature space (without ever computing the
+              explicit mapping).
+            </li>
+          </ol>
+          <p>Kernel SVM is therefore the natural way to handle non-linearly separable data sets.</p>
+          <h3 id="world-changing-idea">World-Changing Idea</h3>
+          <p>
+            <strong>Kernelization</strong> (1990s) – the idea of replacing inner products by kernels
+            – turned Linear SVM into a powerful non-linear classifier and later inspired Kernel
+            Logistic Regression as well:
+          </p>
+          <p>
+            $$ \mathbf{x}_i^\top\mathbf{x}_j \quad\longrightarrow\quad K(\mathbf{x}_i,\mathbf{x}_j)
+            $$
+          </p>
+          <h2 id="07-polynomial-kernel">07. Polynomial Kernel</h2>
+          <p><img src="./assets/07.01.jpg" alt="LR" /></p>
+          <p><img src="./assets/07.02.jpg" alt="LR" /></p>
+          <blockquote>
+            <p><strong>Polynomial Kernel</strong></p>
+          </blockquote>
+          <h3 id="kernelization--implicit-feature-transform">
+            Kernelization = Implicit Feature Transform
+          </h3>
+          <p>Kernelization performs an <strong>implicit feature transform</strong>.</p>
+          <p>The polynomial kernel of degree $d$ is</p>
+          <p>
+            $$ K(\mathbf{x}_1,\mathbf{x}_2) = \bigl(\mathbf{x}_1^\top\mathbf{x}_2 + C\bigr)^d $$
+          </p>
+          <p>(Example – Quadratic kernel, $d=2$, $C=1$)</p>
+          <p>$$ K(\mathbf{x}_1,\mathbf{x}_2) = (1 + \mathbf{x}_1^\top\mathbf{x}_2)^2 $$</p>
+          <p>$C$ is a bias / constant term (bias-variance related hyper-parameter).</p>
+          <h3 id="explicit-mapping-for-the-quadratic-kernel">
+            Explicit Mapping for the Quadratic Kernel
+          </h3>
+          <p>
+            Let $\mathbf{x}<em>1=\langle x</em>{11},x_{12}\rangle$ and $\mathbf{x}<em
+              >2=\langle x</em
+            >{21},x_{22}\rangle$ (2-dimensional).
+          </p>
+          <p>
+            $$ \begin{align*} K(\mathbf{x}<em>1,\mathbf{x}<em>2) &amp;= (1 + x</em>{11}x</em>{21} +
+            x_{12}x_{22})^2 \ &amp;= 1 + x_{11}^2 x_{21}^2 + x_{12}^2 x_{22}^2
+          </p>
+          <ul>
+            <li>2x_{11}x_{21} + 2x_{12}x_{22} + 2x_{11}x_{21}x_{12}x_{22} \end{align*} $$</li>
+          </ul>
+          <p>This is exactly the inner product of the 6-dimensional vectors</p>
+          <p>
+            $$ \begin{align*} \mathbf{x}<em>1' &amp;= \bigl[1,\ x</em>{11}^2,\ x_{12}^2,\
+            \sqrt{2},x_{11},\ \sqrt{2},x_{12},\ \sqrt{2},x_{11}x_{12}\bigr] \ \mathbf{x}<em
+              >2' &amp;= \bigl[1,\ x</em
+            >{21}^2,\ x_{22}^2,\ \sqrt{2},x_{21},\ \sqrt{2},x_{22},\ \sqrt{2},x_{21}x_{22}\bigr]
+            \end{align*} $$
+          </p>
+          <p>i.e.</p>
+          <p>$$ K(\mathbf{x}_1,\mathbf{x}_2) = (\mathbf{x}_1')^\top(\mathbf{x}_2') $$</p>
+          <h3 id="geometric-picture">Geometric Picture</h3>
+          <ul>
+            <li>Original space: 2-D (non-linearly separable)</li>
+            <li>After the implicit feature transform: 6-D (linearly separable)</li>
+            <li>
+              Polynomial kernel of degree 2 realises this mapping
+              <strong>without ever writing the 6-D vectors</strong>.
+            </li>
+          </ul>
+          <h3 id="key-idea-of-kernelization">Key Idea of Kernelization</h3>
+          <p>
+            $$ \begin{align*} \text{dimension }d &amp;\ \xrightarrow{\text{Feature Transform
+            (internally / implicitly)}} \ \text{dimension }d' \quad(d'&gt;d) \end{align*} $$
+          </p>
+          <p>
+            We never compute $\mathbf{x}'$ explicitly; we only evaluate the kernel
+            $K(\mathbf{x}_i,\mathbf{x}_j)$.
+          </p>
+          <h3 id="two-ways-to-obtain-a-non-linear-classifier">
+            Two Ways to Obtain a Non-Linear Classifier
+          </h3>
+          <p><strong>SVM</strong> can be made non-linear in two ways:</p>
+          <ol>
+            <li>Explicit feature transform + Linear SVM / Logistic Regression</li>
+            <li>Kernel trick (implicit feature transform)</li>
+          </ol>
+          <p>
+            Both approaches succeed on data that are not linearly separable in the original space.
+          </p>
+          <h2 id="08-rbf-kernel">08. RBF Kernel</h2>
+          <p><img src="./assets/08.01.jpg" alt="LR" /></p>
+          <p><img src="./assets/08.02.jpg" alt="LR" /></p>
+          <blockquote>
+            <p><strong>Polynomial Kernel – Detailed Expansion &amp; Geometric Effect</strong></p>
+          </blockquote>
+          <h3 id="quadratic-kernel-expansion-again">Quadratic Kernel Expansion (again)</h3>
+          <p>$$ K(\mathbf{x}_1,\mathbf{x}_2) = (1 + \mathbf{x}_1^\top\mathbf{x}_2)^2 $$</p>
+          <p>
+            For 2-D vectors $\mathbf{x}<em>1=\langle x</em>{11},x_{12}\rangle$, $\mathbf{x}<em
+              >2=\langle x</em
+            >{21},x_{22}\rangle$:
+          </p>
+          <p>
+            $$ \begin{align*} K(\mathbf{x}<em>1,\mathbf{x}<em>2) &amp;= (1 + x</em>{11}x</em>{21} +
+            x_{12}x_{22})^2 \ &amp;= 1 + x_{11}^2 x_{21}^2 + x_{12}^2 x_{22}^2
+          </p>
+          <ul>
+            <li>2x_{11}x_{21} + 2x_{12}x_{22} + 2x_{11}x_{21}x_{12}x_{22} \end{align*} $$</li>
+          </ul>
+          <p>This equals the inner product of the explicitly mapped 6-D vectors</p>
+          <p>
+            $$ \begin{align*} \mathbf{x}<em>1' &amp;= \bigl[1,\ x</em>{11}^2,\ x_{12}^2,\
+            \sqrt{2},x_{11},\ \sqrt{2},x_{12},\ \sqrt{2},x_{11}x_{12}\bigr] \ \mathbf{x}<em
+              >2' &amp;= \bigl[1,\ x</em
+            >{21}^2,\ x_{22}^2,\ \sqrt{2},x_{21},\ \sqrt{2},x_{22},\ \sqrt{2},x_{21}x_{22}\bigr]
+            \end{align*} $$
+          </p>
+          <p>i.e. $K(\mathbf{x}_1,\mathbf{x}_2)=(\mathbf{x}_1')^\top(\mathbf{x}_2')$.</p>
+          <h3 id="non-linearly-separable-data--feature-engineering">
+            Non-linearly Separable Data &amp; Feature Engineering
+          </h3>
+          <p>Classic example: two concentric circles (or ellipses) in 2-D.</p>
+          <ul>
+            <li>Original features: $\langle f_1,f_2\rangle$</li>
+            <li>Data is <strong>not</strong> linearly separable.</li>
+          </ul>
+          <p><strong>Explicit feature transform</strong> (Feature Engineering):</p>
+          <p>$$ \begin{align*} f_1' &amp;= f_1^2 \ f_2' &amp;= f_2^2 \end{align*} $$</p>
+          <p>In the new $(f_1',f_2')$ space the two classes become linearly separable.</p>
+          <h3 id="what-the-quadratic-kernel-does">What the Quadratic Kernel Does</h3>
+          <ol>
+            <li>Starts with 2-D points $\mathbf{x}_1,\mathbf{x}_2$.</li>
+            <li>Implicitly maps them to 6-D vectors $\mathbf{x}_1',\mathbf{x}_2'$.</li>
+            <li>Finds a linear separator in that 6-D space.</li>
+            <li>
+              The decision boundary, when pulled back to the original 2-D plane, becomes a
+              <strong>quadratic curve</strong> (circle / ellipse / conic section).
+            </li>
+          </ol>
+          <p>
+            Thus a Polynomial Kernel of degree 2 can separate data that lie on concentric circles or
+            ellipses.
+          </p>
+          <h3 id="summary-picture">Summary Picture</h3>
+          <p>
+            $$ \begin{align*} \text{2-D (non-linear)} &amp;\ \xrightarrow{\text{Quadratic Kernel
+            (implicit FT)}} \ \text{6-D (linearly separable)} \ &amp;\ \xrightarrow{\text{pull
+            back}} \ \text{quadratic decision boundary in 2-D} \end{align*} $$
+          </p>
+          <p>
+            This is exactly why Kernel SVM succeeds on data sets that Linear SVM and ordinary
+            Logistic Regression fail on.
+          </p>
+          <h2 id="09-domain-specific-kernels">09. Domain-Specific Kernels</h2>
+          <p><img src="./assets/09.01.jpg" alt="LR" /></p>
+          <p><img src="./assets/09.02.jpg" alt="LR" /></p>
+          <blockquote>
+            <p><strong>Radial Basis Function (RBF) Kernel</strong></p>
+          </blockquote>
+          <h3 id="most-popular--general-purpose-kernel">Most Popular / General-Purpose Kernel</h3>
+          <p>
+            For Soft-margin Kernel SVM the <strong>most popular</strong> and general-purpose kernel
+            is the <strong>RBF kernel</strong> (also called Gaussian kernel).
+          </p>
+          <p>
+            $$ K_{\text{RBF}}(\mathbf{x}_1,\mathbf{x}_2) =
+            \exp\left(-\frac{|\mathbf{x}_1-\mathbf{x}_2|^2}{2\sigma^2}\right) $$
+          </p>
+          <ul>
+            <li>$|\mathbf{x}_1-\mathbf{x}<em>2|^2 = d</em>{12}^2$ (squared Euclidean distance)</li>
+            <li>$\sigma &gt; 0$ is a hyper-parameter</li>
+          </ul>
+          <p>RBF kernel measures <strong>similarity</strong> (exactly as $k$-NN does).</p>
+          <h3 id="behaviour-with-distance">Behaviour with Distance</h3>
+          <p>
+            $$ K(\mathbf{x}_1,\mathbf{x}<em>2) = \exp\left(-\frac{d</em>{12}^2}{2\sigma^2}\right) $$
+          </p>
+          <ol>
+            <li>
+              <p>
+                As $d_{12}$ increases, $K(\mathbf{x}_1,\mathbf{x}_2)$ decreases<br />
+                (similarity falls when points are farther apart).
+              </p>
+              <p>
+                $$ K(\mathbf{x}_1,\mathbf{x}_2) &gt; K(\mathbf{x}<em
+                  >1,\mathbf{x}<em>3) \quad\text{when}\quad d</em>{12} &lt; d</em
+                >{13} $$
+              </p>
+            </li>
+          </ol>
+          <h3 id="effect-of-the-hyper-parameter-sigma">Effect of the Hyper-parameter $\sigma$</h3>
+          <p>Typical values examined: $\sigma=1$, $\sigma=0.1$, $\sigma=10$.</p>
+          <ul>
+            <li>
+              Small $\sigma$ (e.g. $0.1$) → very peaked similarity curve → only nearest neighbours
+              have high similarity → behaves like <strong>small-$k$ in $k$-NN</strong>.
+            </li>
+            <li>
+              Large $\sigma$ (e.g. $10$) → wide similarity curve → many points receive non-zero
+              similarity → behaves like <strong>large-$k$ in $k$-NN</strong>.
+            </li>
+          </ul>
+          <h3 id="rbf-svm--k-nn">RBF-SVM ≈ $k$-NN</h3>
+          <ul>
+            <li>
+              $k$-NN stores <strong>all</strong> training points and looks at the $k$ nearest ones
+              at test time ($O(nd)$).
+            </li>
+            <li>
+              RBF-SVM keeps only the <strong>Support Vectors</strong> ($\alpha_i&gt;0$).<br />
+              Number of SVs $\ll n$.
+            </li>
+          </ul>
+          <p>Decision function still uses only the SVs:</p>
+          <p>
+            $$ f(\mathbf{x}<em>q) = \sum</em>{i:\alpha_i&gt;0}\alpha_i
+            y_i,K_{\text{RBF}}(\mathbf{x}_i,\mathbf{x}_q)+b $$
+          </p>
+          <p>
+            Hence <strong>RBF-SVM ≈ $k$-NN</strong>, but with a much smaller set of prototypes (the
+            Support Vectors).
+          </p>
+          <h3 id="practical-advice">Practical Advice</h3>
+          <p>When we do <strong>not</strong> know which kernel is best:</p>
+          <ul>
+            <li>Simply use <strong>RBF-SVM</strong>.</li>
+            <li>
+              Tune the two hyper-parameters $C$ (soft-margin) and $\sigma$ (RBF width) by
+              grid-search or random-search.
+            </li>
+          </ul>
+          <p>
+            (Compare with Logistic Regression + Elastic-Net which also has two hyper-parameters
+            $\lambda_1,\lambda_2$.)
+          </p>
+          <h2 id="10-train-and-run-time-complexities">10. Train and Run Time Complexities</h2>
+          <p><img src="./assets/10.01.jpg" alt="LR" /></p>
+          <p><img src="./assets/10.02.jpg" alt="LR" /></p>
+          <blockquote>
+            <p><strong>Domain-Specific Kernels</strong></p>
+          </blockquote>
+          <h3 id="general-purpose-vs-domain-specific">General-Purpose vs Domain-Specific</h3>
+          <ul>
+            <li>
+              <p><strong>General-purpose kernels</strong></p>
+              <ul>
+                <li>Polynomial</li>
+                <li>RBF (most popular) → behaves like $k$-NN</li>
+              </ul>
+            </li>
+            <li>
+              <p>
+                <strong>Domain-specific kernels</strong><br />
+                Designed for a particular type of data / problem.
+              </p>
+            </li>
+          </ul>
+          <p>
+            Kernel-trick ≈ Feature Transform (FT).<br />
+            When we have a concrete problem we can design a specialised kernel instead of inventing
+            an explicit feature transform.
+          </p>
+          <h3 id="example">Example</h3>
+          <p><strong>String Kernels</strong> → used for Text Classification.</p>
+          <h3 id="historical-note">Historical Note</h3>
+          <p>
+            SVM became extremely popular in the 1990s precisely because people could invent
+            specialised kernels for many different domains.
+          </p>
+          <h3 id="feature-transform-vs-kernel">Feature Transform vs Kernel</h3>
+          <p>
+            Explicit Feature Transform ($\log(x)$, $x^2$, $e^x$, …) has always been one of the
+            hardest parts of Machine Learning.
+          </p>
+          <p>
+            Kernel methods partially replace that hard work by the simpler task of<br />
+            <strong>“finding the right kernel”</strong>.
+          </p>
+          <h2 id="11-nu-svm-control-errors-and-support-vectors">
+            11. Nu-SVM: Control Errors and Support Vectors
+          </h2>
+          <p><img src="./assets/11.01.jpg" alt="LR" /></p>
+          <p><img src="./assets/11.02.jpg" alt="LR" /></p>
+          <blockquote>
+            <p><strong>Train &amp; Run-time Complexity of SVM</strong></p>
+          </blockquote>
+          <h3 id="training">Training</h3>
+          <p>Two common ways to train an SVM:</p>
+          <ul>
+            <li>Stochastic Gradient Descent (SGD) on the primal</li>
+            <li>
+              Specialised dual algorithms → <strong>Sequential Minimal Optimization (SMO)</strong>
+            </li>
+          </ul>
+          <p>Best practical libraries:</p>
+          <ul>
+            <li><strong>libSVM</strong> (classic, very solid)</li>
+            <li>scikit-learn (uses libSVM / similar solvers under the hood)</li>
+          </ul>
+          <h3 id="training-time-complexity">Training-time Complexity</h3>
+          <ul>
+            <li>Kernel SVM (with SMO-style solvers): roughly $O(n^2)$</li>
+            <li>More optimised algorithms (around 2007): $O(nd^2)$ when $d &lt; n$</li>
+          </ul>
+          <p><strong>Practical rule</strong></p>
+          <p>
+            If $n$ is very large (Internet-scale data), $O(n^2)$ becomes prohibitive.<br />
+            → Typically <strong>do not use SVM</strong> when $n$ is huge.
+          </p>
+          <h3 id="run-time-prediction-complexity">Run-time (Prediction) Complexity</h3>
+          <p>Decision function:</p>
+          <p>
+            $$ f(\mathbf{x}<em>q) = \sum</em>{i=1}^{n}\alpha_i y_i,K(\mathbf{x}_i,\mathbf{x}_q)+b $$
+          </p>
+          <ul>
+            <li>$\alpha_i=0$ for all non-Support Vectors</li>
+            <li>Only the Support Vectors contribute.</li>
+          </ul>
+          <p>Let $K = $ number of Support Vectors ($1\le K\le n$).</p>
+          <p>
+            Then prediction cost is $O(Kd)$<br />
+            (compare with Logistic Regression which is always $O(d)$).
+          </p>
+          <p>
+            When the number of SVs stays small, prediction is fast even if $n$ is large<br />
+            (e.g. $n=100,000$ but $K=10$).
+          </p>
+          <h3 id="soft-margin-rbf-svm-hyper-parameters">Soft-margin RBF-SVM Hyper-parameters</h3>
+          <p>
+            The usual practical formulation is Soft-margin RBF-SVM controlled by the pair
+            $(C,\sigma)$.<br />
+            (There is also the $\nu$-SVM formulation that directly controls the fraction of Support
+            Vectors.)
+          </p>
+          <h2 id="12-svm-regression">12. SVM Regression</h2>
+          <p><img src="./assets/12.01.jpg" alt="LR" /></p>
+          <p><img src="./assets/12.02.jpg" alt="LR" /></p>
+          <blockquote>
+            <p><strong>ν-SVM</strong></p>
+          </blockquote>
+          <h3 id="two-formulations-of-soft-margin-svm">Two Formulations of Soft-Margin SVM</h3>
+          <ol>
+            <li>
+              <p><strong>C-SVM</strong> (original / classic formulation)</p>
+              <ul>
+                <li>Hyper-parameter $C \ge 0$</li>
+                <li>Controls the trade-off between margin size and number of training errors.</li>
+              </ul>
+            </li>
+            <li>
+              <p><strong>ν-SVM</strong> (alternative formulation)</p>
+              <ul>
+                <li>Hyper-parameter $\nu$ with $0\le\nu\le 1$</li>
+                <li>Has a more direct interpretation:</li>
+              </ul>
+            </li>
+          </ol>
+          <p>
+            $$ \begin{align*} \nu &amp;\ge \text{fraction of training errors} \ \nu &amp;\le
+            \text{fraction of Support Vectors} \end{align*} $$
+          </p>
+          <h3 id="practical-meaning-of">Practical Meaning of ν</h3>
+          <p>Example:</p>
+          <p>
+            $$ \nu = 0.01 \quad\Longrightarrow\quad \begin{cases} \text{percentage of errors}
+            &amp;\le 1% \ \text{number of SVs} &amp;\ge 1%\text{ of }n \end{cases} $$
+          </p>
+          <p>If $n=100,000$ then</p>
+          <p>$$ K = #\text{SVs} \ge 1,000 $$</p>
+          <h3 id="why--svm-is-useful">Why ν-SVM is Useful</h3>
+          <ul>
+            <li>
+              Gives direct control over the <strong>number of Support Vectors</strong> (and
+              therefore over run-time complexity).
+            </li>
+            <li>Fewer SVs → faster prediction.</li>
+            <li>Still needs cross-validation to choose a good value of $\nu$.</li>
+          </ul>
+          <p>
+            (Both C-SVM and ν-SVM are available in standard libraries; C-SVM is more commonly used
+            by default.)
+          </p>
+          <h2 id="13-cases">13. Cases</h2>
+          <p><img src="./assets/13.01.jpg" alt="LR" /></p>
+          <p><img src="./assets/13.02.jpg" alt="LR" /></p>
+          <blockquote>
+            <p><strong>Support Vector Regression (SVR)</strong></p>
+          </blockquote>
+          <h3 id="from-classification-to-regression">From Classification to Regression</h3>
+          <ul>
+            <li>SVM Classification (SVC) → $y_i\in{+1,-1}$</li>
+            <li>Support Vector Regression (SVR) → $y_i\in\mathbb{R}$</li>
+          </ul>
+          <p>Both can be kernelized.</p>
+          <h3 id="linear-formulation-of-svr">Linear Formulation of SVR</h3>
+          <p>
+            $$ \begin{align*} \min_{\mathbf{w},b}\quad &amp;\frac12|\mathbf{w}|^2 \ \text{s.t.}\quad
+            &amp;y_i - (\mathbf{w}^\top\mathbf{x}_i + b) \le\varepsilon \
+            &amp;(\mathbf{w}^\top\mathbf{x}_i + b) - y_i \le\varepsilon \quad\forall i \end{align*}
+            $$
+          </p>
+          <ul>
+            <li>$\varepsilon&gt;0$ is a hyper-parameter (the width of the ε-tube).</li>
+            <li>Prediction: $\hat{y}_i = f(\mathbf{x}_i) = \mathbf{w}^\top\mathbf{x}_i + b$</li>
+            <li>The constraints force $|y_i - \hat{y}_i|\le\varepsilon$.</li>
+          </ul>
+          <h3 id="geometric-picture-2">Geometric Picture</h3>
+          <ul>
+            <li>
+              <strong>Linear SVR</strong>: finds a linear function that stays inside an ε-tube
+              around the data.
+            </li>
+            <li>
+              <strong>Kernel SVR</strong>: the same idea in a higher-dimensional feature space →
+              non-linear regression curve.
+            </li>
+          </ul>
+          <h3 id="effect-of">Effect of ε</h3>
+          <ul>
+            <li>
+              $\varepsilon\downarrow$ → errors on training data become smaller →
+              <strong>overfitting</strong> increases.
+            </li>
+            <li>
+              $\varepsilon\uparrow$ → more training points are allowed to lie outside the tube →
+              <strong>underfitting</strong> increases.
+            </li>
+          </ul>
+          <p>RBF-SVR behaves similarly to $k$-NN regression.</p>
+          <h3 id="visual-example-rbf-kernel">Visual Example (RBF Kernel)</h3>
+          <p>Different values of ε produce different fits:</p>
+          <ul>
+            <li>Very small ε (e.g. 0.01) → tight fit → overfitting</li>
+            <li>Larger ε (e.g. 2.0) → smoother / flatter fit → underfitting</li>
+          </ul>
+          <p>
+            The true underlying function lies between the extreme over-fit and under-fit curves.
+          </p>
+          <h2 id="14-code-sample">14. Code Sample</h2>
+          <p><img src="./assets/14.01.jpg" alt="LR" /></p>
+          <p><img src="./assets/14.02.jpg" alt="LR" /></p>
+          <p><strong>Linear SVR – Optimization Problem &amp; Constraints</strong></p>
+          <h3 id="dataset">Dataset</h3>
+          <p>$$ D = {(\mathbf{x}<em>i,y_i)}</em>{i=1}^{n},\qquad y_i\in\mathbb{R} $$</p>
+          <h3 id="optimization-problem-linear-svr">Optimization Problem (Linear SVR)</h3>
+          <p>
+            $$ \begin{align*} \min_{\mathbf{w},b}\quad &amp;\frac12|\mathbf{w}|^2 \ \text{s.t.}\quad
+            &amp;y_i - (\mathbf{w}^\top\mathbf{x}_i + b) \le\varepsilon \
+            &amp;(\mathbf{w}^\top\mathbf{x}_i + b) - y_i \le\varepsilon \quad\forall i \end{align*}
+            $$
+          </p>
+          <p>with hyper-parameter $\varepsilon&gt;0$.</p>
+          <p>These two inequalities are simply</p>
+          <p>$$ |y_i - \hat{y}_i| \le\varepsilon $$</p>
+          <p>where $\hat{y}_i = \mathbf{w}^\top\mathbf{x}_i + b$.</p>
+          <h3 id="geometric-meaning-of-the-constraints">Geometric Meaning of the Constraints</h3>
+          <p>The regression line $\pi$ is surrounded by a tube of width $2\varepsilon$.</p>
+          <p><strong>Case 1:</strong> $\hat{y}_i &gt; y_i$ (prediction above the true value)</p>
+          <p>
+            $$ \begin{align*} y_i - \hat{y}_i &amp;= -\text{ve} \le 0 \le\varepsilon \ \hat{y}_i -
+            y_i &amp;\le\varepsilon \end{align*} $$
+          </p>
+          <p><strong>Case 2:</strong> $y_i &gt; \hat{y}_i$ (true value above the prediction)</p>
+          <p>
+            $$ \begin{align*} y_i - \hat{y}_i &amp;\le\varepsilon \ \hat{y}_i - y_i &amp;=
+            -\text{ve} \le 0 \le\varepsilon \end{align*} $$
+          </p>
+          <p>In both cases the point lies inside (or on the boundary of) the $\varepsilon$-tube.</p>
+          <h2 id="15-assignment-7-apply-svm">15. Assignment-7: Apply SVM</h2>
+          <p><img src="./assets/15.01.jpg" alt="LR" /></p>
+          <p><img src="./assets/15.02.jpg" alt="LR" /></p>
+          <blockquote>
+            <p><strong>Cases: SVM</strong></p>
+          </blockquote>
+          <h3 id="feature-engineering--feature-transform">
+            Feature Engineering &amp; Feature Transform
+          </h3>
+          <p>
+            Kernel design / finding the right kernel (RBF is the most common general-purpose
+            choice).
+          </p>
+          <h3 id="decision-surface">Decision Surface</h3>
+          <ul>
+            <li>Linear SVM → hyperplane</li>
+            <li>
+              Kernel SVM → non-linear surface<br />
+              (original points $\mathbf{x}_i$ are implicitly mapped to $\mathbf{x}_i'$ where a
+              linear surface is found; the kernel trick realises this mapping).
+            </li>
+          </ul>
+          <h3 id="similarity--distance-function">Similarity / Distance Function</h3>
+          <p>
+            Kernel $K(\mathbf{x}_i,\mathbf{x}_j)$ plays the role of a similarity (or
+            inverse-distance) function.
+          </p>
+          <h3 id="interpretability--feature-importance">
+            Interpretability &amp; Feature Importance
+          </h3>
+          <ul>
+            <li>Kernel SVM itself is hard to interpret.</li>
+            <li>
+              Feature importance for original features can still be estimated (e.g. by forward
+              feature selection).
+            </li>
+          </ul>
+          <h3 id="outliers">Outliers</h3>
+          <ul>
+            <li>Very little impact.</li>
+            <li>Only the Support Vectors matter.</li>
+            <li>RBF with a small $\sigma$ behaves like $k$-NN with a small $k$.</li>
+          </ul>
+          <h3 id="biasvariance">Bias–Variance</h3>
+          <ul>
+            <li>$C\uparrow$ → overfitting → high variance</li>
+            <li>$C\downarrow$ → underfitting → high bias</li>
+            <li>RBF-SVM hyper-parameters: $C$ (loss) and $\sigma$ (RBF width)</li>
+            <li>Tuned by grid-search / cross-validation.</li>
+          </ul>
+          <h3 id="dimensionality">Dimensionality</h3>
+          <p>
+            Large $d$ is very good for SVM (especially with RBF).<br />
+            Kernel methods map $d\to d'$ with $d'\ge d$.
+          </p>
+          <h3 id="best-cases">Best Cases</h3>
+          <p>When we can find the <strong>right kernel</strong>.</p>
+          <h3 id="worst-cases">Worst Cases</h3>
+          <ul>
+            <li>$n$ is very large → training time becomes high (Internet-scale data).</li>
+            <li>
+              Number of Support Vectors $K$ is large → low-latency prediction is not possible.
+            </li>
+            <li>In such situations Logistic Regression is often preferred.</li>
+          </ul>
+          <h2 id="16-revision-questions">16. Revision Questions</h2>
+          <p><strong>Questions</strong></p>
+          <p>
+            <a href="#1-explain-about-svm">1. Explain About SVM?</a>
+            <a href="#2-what-is-hinge-loss">2. What is Hinge Loss?</a><br />
+            <a href="#3-dual-form-of-svm-formulation">3. Dual form of SVM formulation?</a><br />
+            <a href="#4-what-is-kernel-trick">4. What is Kernel trick?</a><br />
+            <a href="#5-what-is-polynomial-kernel">5. What is Polynomial kernel?</a><br />
+            <a href="#6-what-is-rbf-kernel">6. What is RBF-Kernel?</a><br />
+            <a href="#7-explain-about-domain-specific-kernels"
+              >7. Explain about Domain specific Kernels?</a
+            ><br />
+            <a href="#8-find-train-and-run-time-complexities-for-svm"
+              >8. Find Train and run time complexities for SVM?</a
+            ><br />
+            <a href="#9-explain-about-svm-regression">9. Explain about SVM Regression?</a>
+          </p>
+          <h3 id="1-explain-about-svm">1. Explain About SVM?</h3>
+          <p>
+            <strong>Support Vector Machine (SVM)</strong> is a powerful supervised learning
+            algorithm mainly used for classification (and also regression).
+          </p>
+          <p><strong>Geometric Intuition</strong>:</p>
+          <ul>
+            <li>
+              SVM finds the <strong>optimal hyperplane</strong> that best separates the two classes.
+            </li>
+            <li>
+              It maximizes the <strong>margin</strong> (distance between the hyperplane and the
+              nearest points from each class).
+            </li>
+            <li>The nearest points are called <strong>Support Vectors</strong>.</li>
+          </ul>
+          <p><strong>Key ideas</strong>:</p>
+          <ul>
+            <li>Hard-margin SVM → data is perfectly linearly separable</li>
+            <li>
+              Soft-margin SVM → allows some misclassifications using a slack variable (more
+              practical)
+            </li>
+            <li>Can handle non-linear data using the <strong>Kernel Trick</strong></li>
+          </ul>
+          <p>
+            SVM is both a geometric method (maximum margin hyperplane) and can be viewed through a
+            loss-function lens (Hinge Loss).
+          </p>
+          <h3 id="2-what-is-hinge-loss">2. What is Hinge Loss?</h3>
+          <p><strong>Hinge Loss</strong> is the loss function used by Support Vector Machines.</p>
+          <p>For a single point with label $ y_i \in {-1, +1} $:</p>
+          <p>$ L = \max\big(0,\ 1 - y_i (w^T x_i + b)\big) $</p>
+          <p><strong>Interpretation</strong>:</p>
+          <ul>
+            <li>
+              If the point is correctly classified <strong>and</strong> lies outside the margin →
+              loss = 0
+            </li>
+            <li>If the point is inside the margin or misclassified → loss increases linearly</li>
+          </ul>
+          <p><strong>Why it is used</strong>:</p>
+          <ul>
+            <li>Encourages a large margin</li>
+            <li>Only support vectors (and misclassified points) contribute to the loss</li>
+            <li>Convex and suitable for optimization</li>
+          </ul>
+          <p>The overall SVM objective becomes:</p>
+          <p>
+            $ \min*{w,b} \frac{1}{2}|w|^2 + C \sum*{i=1}^{n} \max\big(0,\ 1 - y_i (w^T x_i + b)\big)
+            $
+          </p>
+          <h3 id="3-dual-form-of-svm-formulation">3. Dual form of SVM formulation?</h3>
+          <p>The <strong>Primal form</strong> of hard-margin SVM is:</p>
+          <p>
+            $ \min_{w,b} \frac{1}{2}|w|^2 $<br />
+            subject to $ y_i (w^T x_i + b) \geq 1 $ for all $ i $
+          </p>
+          <p>
+            Using Lagrange multipliers $ \alpha_i \geq 0 $, we get the <strong>Dual form</strong>:
+          </p>
+          <p>
+            $ \max*{\alpha} \sum*{i=1}^{n} \alpha<em>i - \frac{1}{2} \sum</em>{i=1}^{n}
+            \sum_{j=1}^{n} \alpha_i \alpha_j y_i y_j (x_i^T x_j) $
+          </p>
+          <p>subject to $ \alpha_i \geq 0 $ and $ \sum \alpha_i y_i = 0 $</p>
+          <p><strong>Advantages of Dual form</strong>:</p>
+          <ul>
+            <li>Depends only on the <strong>inner product</strong> $ x_i^T x_j $</li>
+            <li>Enables the <strong>Kernel Trick</strong></li>
+            <li>Only support vectors have $ \alpha_i &gt; 0 $</li>
+          </ul>
+          <h3 id="4-what-is-kernel-trick">4. What is Kernel trick?</h3>
+          <p>
+            The <strong>Kernel Trick</strong> allows SVM to work in a high-dimensional feature space
+            <strong>without explicitly computing the transformation</strong>.
+          </p>
+          <p>
+            Instead of mapping data to a higher dimension using $ \phi(x) $ and then computing $
+            \phi(x_i)^T \phi(x_j) $, we directly replace the inner product with a
+            <strong>kernel function</strong>:
+          </p>
+          <p>$ K(x_i, x_j) = \phi(x_i)^T \phi(x_j) $</p>
+          <p><strong>Benefits</strong>:</p>
+          <ul>
+            <li>Can handle non-linearly separable data</li>
+            <li>Computationally efficient (never computes $ \phi(x) $ explicitly)</li>
+            <li>Works with the dual formulation of SVM</li>
+          </ul>
+          <p>Common kernels: Linear, Polynomial, RBF (Gaussian), Sigmoid, etc.</p>
+          <h3 id="5-what-is-polynomial-kernel">5. What is Polynomial kernel?</h3>
+          <p>The <strong>Polynomial Kernel</strong> is defined as:</p>
+          <p>$ K(x_i, x_j) = (x_i^T x_j + c)^d $</p>
+          <p>where:</p>
+          <ul>
+            <li>$ d $ = degree of the polynomial</li>
+            <li>$ c $ = constant (usually 1)</li>
+          </ul>
+          <p><strong>Properties</strong>:</p>
+          <ul>
+            <li>Maps data into a higher-dimensional space of polynomial features</li>
+            <li>Can model polynomial decision boundaries</li>
+            <li>When $ d = 1 $, it reduces to the linear kernel</li>
+          </ul>
+          <p>Useful when the relationship between features is polynomial in nature.</p>
+          <h3 id="6-what-is-rbf-kernel">6. What is RBF-Kernel?</h3>
+          <p>
+            The <strong>RBF (Radial Basis Function) Kernel</strong>, also called Gaussian Kernel,
+            is:
+          </p>
+          <p>$ K(x_i, x_j) = \exp\big(-\gamma |x_i - x_j|^2\big) $</p>
+          <p>where $ \gamma &gt; 0 $ controls the width of the Gaussian.</p>
+          <p><strong>Properties</strong>:</p>
+          <ul>
+            <li>Most popular and widely used kernel</li>
+            <li>Can create highly flexible, non-linear decision boundaries</li>
+            <li>Corresponds to an <strong>infinite-dimensional</strong> feature space</li>
+            <li>
+              $ \gamma $ is an important hyperparameter:
+              <ul>
+                <li>Large $ \gamma $ → more complex boundary (risk of overfitting)</li>
+                <li>Small $ \gamma $ → smoother boundary (risk of underfitting)</li>
+              </ul>
+            </li>
+          </ul>
+          <h3 id="7-explain-about-domain-specific-kernels">
+            7. Explain about Domain specific Kernels?
+          </h3>
+          <p>
+            <strong>Domain-specific kernels</strong> are specially designed kernel functions that
+            incorporate prior knowledge of a particular domain.
+          </p>
+          <p>Examples:</p>
+          <ul>
+            <li><strong>String kernels</strong> → for text and DNA sequences</li>
+            <li><strong>Graph kernels</strong> → for molecules and social networks</li>
+            <li><strong>Tree kernels</strong> → for parse trees in NLP</li>
+            <li><strong>Histogram intersection kernel</strong> → for computer vision</li>
+          </ul>
+          <p><strong>Why they are useful</strong>:</p>
+          <ul>
+            <li>Capture the natural similarity measure of the domain</li>
+            <li>
+              Often perform better than generic kernels (Polynomial / RBF) when domain knowledge is
+              strong
+            </li>
+            <li>Still allow the use of the Kernel Trick inside SVM</li>
+          </ul>
+          <h3 id="8-find-train-and-run-time-complexities-for-svm">
+            8. Find Train and run time complexities for SVM?
+          </h3>
+          <p><strong>Training Time Complexity</strong>:</p>
+          <ul>
+            <li>Standard quadratic programming solvers: $ O(n^3) $ in the worst case</li>
+            <li>
+              With efficient implementations (SMO, LibSVM, etc.): roughly $ O(n^2) $ to $ O(n^3) $
+              depending on the number of support vectors and data
+            </li>
+            <li>
+              Linear SVM (using SGD or LibLinear): can be much faster — approximately $ O(n \cdot d)
+              $
+            </li>
+          </ul>
+          <p><strong>Prediction (Run-time) Complexity</strong>:</p>
+          <ul>
+            <li>$ O(s \cdot d) $ where $ s $ = number of support vectors</li>
+            <li>
+              In the worst case $ s $ can be close to $ n $, so prediction can be slow compared to
+              Logistic Regression
+            </li>
+          </ul>
+          <p><strong>Space Complexity</strong>:</p>
+          <ul>
+            <li>Need to store the support vectors → $ O(s \cdot d) $</li>
+          </ul>
+          <p>
+            SVM training is generally more expensive than Logistic Regression, especially on large
+            datasets.
+          </p>
+          <h3 id="9-explain-about-svm-regression">9. Explain about SVM Regression?</h3>
+          <p>
+            <strong>Support Vector Regression (SVR)</strong> is the regression counterpart of SVM.
+          </p>
+          <p><strong>Key idea</strong>:</p>
+          <ul>
+            <li>
+              Instead of maximizing the margin between classes, SVR tries to fit a function within a
+              tube of width $ 2\varepsilon $ (epsilon-insensitive tube).
+            </li>
+            <li>Errors inside the tube are ignored (loss = 0).</li>
+            <li>Only points outside the tube contribute to the loss.</li>
+          </ul>
+          <p><strong>Loss function</strong> (Epsilon-insensitive loss):</p>
+          <p>$ L = \max\big(0,\ |y_i - (w^T x_i + b)| - \varepsilon\big) $</p>
+          <p><strong>Objective</strong>:</p>
+          <p>
+            $ \min*{w,b} \frac{1}{2}|w|^2 + C \sum*{i=1}^{n} L_{\varepsilon}(y_i, w^T x_i + b) $
+          </p>
+          <p><strong>Advantages</strong>:</p>
+          <ul>
+            <li>Robust to outliers (only points outside the tube matter)</li>
+            <li>Can use kernels for non-linear regression</li>
+            <li>Controls model complexity via $ C $ and $ \varepsilon $</li>
+          </ul>
+        </main>
+        <aside class="note-toc" aria-label="On this page">
+          <h2>On This Page</h2>
+          <ul>
+            <li><a href="#01-geometric-intuition">01. Geometric Intuition</a></li>
+            <li><a href="#02-mathematical-derivation">02. Mathematical Derivation</a></li>
+            <li>
+              <a href="#03-why-we-take-values-1-and--1-for-support-vector-planes">
+                03. Why We Take Values 1 and -1 for Support Vector Planes
+              </a>
+            </li>
+            <li>
+              <a href="#04-loss-function-hinge-loss-based-interpretation">
+                04. Loss Function: Hinge-Loss-Based Interpretation
+              </a>
+            </li>
+            <li><a href="#05-dual-form-of-svm-formulation">05. Dual Form of SVM Formulation</a></li>
+            <li><a href="#06-kernel-trick">06. Kernel Trick</a></li>
+            <li><a href="#07-polynomial-kernel">07. Polynomial Kernel</a></li>
+            <li><a href="#08-rbf-kernel">08. RBF Kernel</a></li>
+            <li><a href="#09-domain-specific-kernels">09. Domain-Specific Kernels</a></li>
+            <li>
+              <a href="#10-train-and-run-time-complexities">
+                10. Train and Run Time Complexities
+              </a>
+            </li>
+            <li>
+              <a href="#11-nu-svm-control-errors-and-support-vectors">
+                11. ν-SVM: Control Errors and Support Vectors
+              </a>
+            </li>
+            <li><a href="#12-svm-regression">12. SVM Regression</a></li>
+            <li><a href="#13-cases">13. Cases</a></li>
+            <li><a href="#14-code-sample">14. Code Sample</a></li>
+            <li><a href="#15-assignment-7-apply-svm">15. Assignment-7: Apply SVM</a></li>
+            <li><a href="#16-revision-questions">16. Revision Questions</a></li>
+          </ul>
+        </aside>
+      </div>
+    </div>
+    <script>
+      if (window.hljs)
+        document
+          .querySelectorAll("pre code[class*='language-']")
+          .forEach((block) => window.hljs.highlightElement(block));
+      (() => {
+        const links = [...document.querySelectorAll(".note-toc a")],
+          heads = links
+            .map((l) => document.getElementById(decodeURIComponent(l.hash.slice(1))))
+            .filter(Boolean);
+        if (!links.length || !heads.length || !("IntersectionObserver" in window)) return;
+        const set = (h) =>
+          links.forEach((l) => l.classList.toggle("is-active", l.hash === `#${h.id}`));
+        const ob = new IntersectionObserver(
+          (es) => {
+            const v = es
+              .filter((e) => e.isIntersecting)
+              .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
+            if (v.length) set(v[0].target);
+          },
+          { rootMargin: "-10% 0px -75% 0px", threshold: 0 },
+        );
+        heads.forEach((h) => ob.observe(h));
+      })();
+    </script>
+  </body>
+</html>

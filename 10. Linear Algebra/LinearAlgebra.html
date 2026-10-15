@@ -1,0 +1,1294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Linear Algebra | Applied Machine Learning</title>
+<link rel="stylesheet" href="../HTMLs/theme.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
+<script>
+window.MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']],
+    displayMath: [['$$', '$$'], ['\\[', '\\]']],
+    processEscapes: true,
+    processEnvironments: true
+  },
+  options: {
+    skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+  }
+};
+</script>
+<script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-svg.js"></script>
+</head>
+<body class="site-page">
+<div class="site-layout"><nav class="curriculum-nav" aria-label="Main curriculum navigation"><iframe src="../HTMLs/table-of-contents.html" title="Machine learning curriculum"></iframe></nav><div class="note-layout"><main class="note-content"><h1>Linear Algebra</h1><style>
+  @import url("https://fonts.googleapis.com/css2?family=Play:wght@400;700&display=swap");
+  @import url("https://cdnjs.cloudflare.com/ajax/libs/latin-modern/1.1.0/css/latinmodern-math.min.css");
+
+  :root {
+    --la-ink: #3f6386;
+    --la-teal: #3f6386;
+    --la-teal-soft: #e8f6f7;
+    --la-coral: #9333ea;
+    --la-coral-soft: #fff1ed;
+    --la-cdf: #17283a;
+    --la-line: #5b5c5c;
+    --la-surface: #f7faf9;
+    --la-text: #c9c9c9;
+    --la-panel: #00070e;
+    --la-chip: #17283a;
+    --la-amber: #9a6b16;
+    --la-amber-soft: #fff8e6;
+  }
+
+  *,
+  *::before,
+  *::after {
+    font-family: "Play", sans-serif !important;
+  }
+
+  pre,
+  pre code {
+    font-family: Consolas, "Courier New", monospace !important;
+  }
+
+  body,
+  .markdown-body,
+  p,
+  li {
+    color: var(--la-text) !important;
+  }
+
+  h1 {
+    color: var(--la-ink);
+    border-bottom: 4px solid var(--la-teal);
+    padding-bottom: 0.35em;
+  }
+
+  h2 {
+    color: var(--la-teal);
+    border-left: 6px solid var(--la-teal);
+    padding-left: 0.55em;
+    margin-top: 2em;
+  }
+
+  h3,
+  h4 {
+    color: var(--la-coral);
+  }
+
+  a {
+    color: var(--la-coral);
+    text-decoration: none;
+  }
+
+  a:hover {
+    text-decoration: underline;
+  }
+
+  blockquote {
+    background: var(--la-panel);
+    border-left: 5px solid var(--la-cdf) !important;
+    border-radius: 6px;
+    color: var(--la-text);
+    padding: 0.75em 1em;
+  }
+
+  code {
+    background: var(--la-chip);
+    border-radius: 4px;
+    color: var(--la-text);
+    padding: 0.1em 0.3em;
+  }
+
+  pre {
+    background: var(--la-panel);
+    border: 1px solid var(--la-line);
+    border-radius: 8px;
+    overflow-x: auto;
+    padding: 1em;
+  }
+
+  table {
+    border: 1px solid var(--la-line);
+    border-collapse: collapse;
+    border-radius: 8px;
+    overflow: hidden;
+    width: 100%;
+  }
+
+  th {
+    background: var(--la-panel);
+    color: var(--la-text);
+    padding: 0.7em 0.8em;
+    text-align: left;
+  }
+
+  td {
+    color: var(--la-text);
+    padding: 0.7em 0.8em;
+  }
+
+  tr:nth-child(even) {
+    background: var(--la-chip);
+  }
+
+  hr {
+    border: 0;
+    border-top: 2px solid var(--la-line);
+    margin: 2.2em 0;
+  }
+
+  .summary-grid,
+  .ml-grid,
+  .intuition-grid {
+    display: flex;
+    gap: 1em;
+    margin: 1.25em 0;
+  }
+
+  .summary-card,
+  .ml-card,
+  .intuition-card {
+    background: var(--la-panel);
+    border-radius: 7px;
+    color: var(--la-text);
+    flex: 1 1 0;
+    min-width: 0;
+    padding: 1em;
+  }
+
+  .summary-card {
+    border-top: 5px solid var(--la-teal);
+  }
+
+  .summary-card.pdf,
+  .ml-card.diagnostics,
+  .intuition-card.pdf {
+    border-top-color: var(--la-coral);
+  }
+
+  .summary-card.cdf,
+  .intuition-card.cdf {
+    border-top-color: var(--la-cdf);
+  }
+
+  .summary-card h3,
+  .ml-card h3,
+  .intuition-card h3 {
+    margin-top: 0;
+  }
+
+  .summary-tag,
+  .panel-kicker {
+    color: var(--la-teal);
+    font-size: 0.82em;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .relationship-banner,
+  .ml-workflow {
+    align-items: center;
+    background: var(--la-panel);
+    border: 1px solid var(--la-teal);
+    border-radius: 7px;
+    color: var(--la-text);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6em;
+    justify-content: center;
+    margin: 1.25em 0;
+    padding: 0.85em 1em;
+    text-align: center;
+  }
+
+  .relationship-banner strong,
+  .ml-workflow strong,
+  .relationship-item strong,
+  .insight-item strong {
+    color: var(--la-coral);
+  }
+
+  .relationship-banner .arrow {
+    color: var(--la-teal);
+    font-size: 1.2em;
+  }
+
+  .relationship-item,
+  .insight-item {
+    background: var(--la-panel);
+    border-left: 5px solid var(--la-teal);
+    border-radius: 5px;
+    color: var(--la-text);
+    margin: 0.65em 0;
+    padding: 0.55em 0.85em;
+  }
+
+  .insight-item {
+    border-left-color: var(--la-coral);
+  }
+
+  .insight-list,
+  .feature-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.55em;
+    list-style: none;
+    margin: 0.5em 0 1em;
+    padding: 0;
+  }
+
+  .insight-list li,
+  .feature-chips li {
+    background: var(--la-chip);
+    border: 1px solid var(--la-teal);
+    border-radius: 999px;
+    color: var(--la-text);
+    padding: 0.35em 0.75em;
+  }
+
+  .feature-chips li {
+    border-radius: 4px;
+    border-left: 3px solid var(--la-coral);
+    border-right: none;
+    border-top: none;
+    border-bottom: none;
+    flex: 1 1 calc(50% - 0.45em);
+  }
+
+  .concept-flow {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    margin: 1.25em 0;
+  }
+
+  .concept-flow .flow-step {
+    background: var(--la-panel);
+    border: 1px solid var(--la-teal);
+    border-radius: 7px;
+    color: var(--la-text);
+    max-width: 22em;
+    padding: 0.7em 1.2em;
+    text-align: center;
+    width: 100%;
+  }
+
+  .concept-flow .flow-step strong {
+    color: var(--la-coral);
+  }
+
+  .concept-flow .flow-arrow {
+    color: var(--la-teal);
+    font-size: 1.35em;
+    line-height: 1.25;
+  }
+
+  .percentile-callout {
+    background: var(--la-panel);
+    border-left: 5px solid var(--la-cdf);
+    border-radius: 7px;
+    color: var(--la-text);
+    margin: 1.25em 0;
+    padding: 1em;
+  }
+
+  .percentile-callout strong {
+    color: var(--la-cdf);
+  }
+
+  .katex-display,
+  .math,
+  .math-block {
+    background: #00070e;
+    border-left: 6px solid #2f005c;
+    border-radius: 6px;
+    padding: 0.6em 0.8em;
+    overflow-x: auto;
+    color: #c9c9c9 !important;
+    font-family: "Latin Modern Math", "Cambria Math", "STIX Two Math", serif !important;
+  }
+
+  .katex,
+  .katex * {
+    color: #9b9a9a !important;
+    font-family: "Latin Modern Math", "Cambria Math", "STIX Two Math", serif !important;
+  }
+
+  @media (max-width: 700px) {
+    .summary-grid,
+    .ml-grid,
+    .intuition-grid {
+      flex-direction: column;
+    }
+  }
+</style>
+
+<h2 id="01-why-learn-it">01. Why Learn It</h2>
+<p><img src="./assets/01.jpg" alt="LA" /></p>
+<h3 id="overview">Overview</h3>
+<p>Linear Algebra is a foundational tool in Machine Learning.<br />
+Most ML problems can be viewed geometrically in a <strong>feature space</strong>.</p>
+<h3 id="feature-space-view">Feature Space View</h3>
+<h4 id="2-dimensional-feature-space">2-Dimensional Feature Space</h4>
+<ul>
+<li><p>Features:</p>
+<ul>
+<li>$ f_1 = $ length (pl)</li>
+<li>$ f_2 = $ width (pw)</li>
+</ul>
+</li>
+<li><p>Data points of two classes:</p>
+<ul>
+<li>Class 1 → $\times$</li>
+<li>Class 0 → $\circ$</li>
+</ul>
+</li>
+</ul>
+<p>A <strong>linear decision boundary</strong> (a line) separates the two classes.</p>
+<h4 id="3-dimensional-feature-space">3-Dimensional Feature Space</h4>
+<p>When we have three features ($f_1, f_2, f_3$), the decision boundary becomes a <strong>plane</strong>.</p>
+<h3 id="higher-dimensions">Higher Dimensions</h3>
+<p>The same idea extends to any number of dimensions:</p>
+<table>
+<thead>
+<tr>
+  <th>Dimension</th>
+  <th>Decision Boundary</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>2-D</td>
+  <td>Line</td>
+</tr>
+<tr>
+  <td>3-D</td>
+  <td>Plane</td>
+</tr>
+<tr>
+  <td>4-D, 5-D, 10-D, … n-D</td>
+  <td>Hyperplane</td>
+</tr>
+</tbody>
+</table>
+<p>In general, for an $n$-dimensional feature space, a linear classifier learns an <strong>$(n-1)$-dimensional hyperplane</strong>.</p>
+<h3 id="key-takeaway">Key Takeaway</h3>
+<blockquote>
+<p>Linear Algebra gives us the language to describe:</p>
+<ul>
+<li>Points (data vectors)</li>
+<li>Lines / Planes / Hyperplanes (decision boundaries)</li>
+<li>Distances, projections, angles, etc.</li>
+</ul>
+</blockquote>
+<p>This geometric view is extremely useful for understanding many ML algorithms (Linear Regression, Logistic Regression, SVMs, PCA, etc.).</p>
+<h2 id="02-introduction-to-vectors-2-d-3-d-n-d-row-vector-and-column-vector">02. Introduction to Vectors (2-D, 3-D, n-D), Row Vector and Column Vector</h2>
+<p><img src="./assets/02.jpg" alt="LA" /></p>
+<p><strong>(2-D, 3-D, n-D), Row Vector &amp; Column Vector</strong></p>
+<h4 id="1-point--vector">1. Point / Vector</h4>
+<ul>
+<li><strong>2D</strong>: $ p = [2, 3] $</li>
+<li><strong>3D</strong>: $ q = [2, 3, 5] $</li>
+<li><strong>nD</strong>: $ x = [2, 3, 4, 1, 5, \dots] $</li>
+</ul>
+<h4 id="2-distance-from-origin">2. Distance from Origin</h4>
+<ul>
+<li><strong>2D</strong>: $ d = \sqrt{a^2 + b^2} $</li>
+<li><strong>3D</strong>: $ d = \sqrt{a^2 + b^2 + c^2} $</li>
+<li><strong>nD</strong>: $ d = \sqrt{a_1^2 + a_2^2 + \dots + a_n^2} $</li>
+</ul>
+<h4 id="3-distance-between-two-points">3. Distance Between Two Points</h4>
+<ul>
+<li><strong>General</strong>: $ d_{pq} = \sqrt{\sum_{i=1}^{n} (a_i - b_i)^2} $</li>
+</ul>
+<h4 id="4-row-vector-vs-column-vector">4. Row Vector vs Column Vector</h4>
+<ul>
+<li><strong>Row Vector</strong>: $ A = [a_1, a_2, \dots, a_n] $ → shape $ 1 \times n $</li>
+<li><strong>Column Vector</strong>: $ b = \begin{bmatrix} b_1 \ b_2 \ \vdots \ b_n \end{bmatrix} $ → shape $ n \times 1 $</li>
+<li><strong>Matrix</strong>: shape $ m \times n $</li>
+</ul>
+<h2 id="03-dot-product-and-angle-between-2-vectors">03. Dot Product and Angle Between 2 Vectors</h2>
+<p><img src="./assets/03.jpg" alt="LA" /></p>
+<h2 id="vector-operations">Vector Operations</h2>
+<p><strong>Addition, Dot Product &amp; Geometric Meaning</strong></p>
+<h3 id="1-vector-addition">1. Vector Addition</h3>
+<p>Given two vectors of the same dimension:</p>
+<p>$$
+\mathbf{a} = [a_1,\ a_2,\ \dots,\ a_n]
+$$</p>
+<p>$$
+\mathbf{b} = [b_1,\ b_2,\ \dots,\ b_n]
+$$</p>
+<p>Their sum is:</p>
+<p>$$
+\mathbf{c} = \mathbf{a} + \mathbf{b} = [a_1 + b_1,\ a_2 + b_2,\ \dots,\ a_n + b_n]
+$$</p>
+<p><strong>Component-wise addition.</strong></p>
+<h3 id="2-dot-product-scalar-product">2. Dot Product (Scalar Product)</h3>
+<h4 id="definition">Definition</h4>
+<p>$$
+\mathbf{a} \cdot \mathbf{b} = a_1 b_1 + a_2 b_2 + \dots + a_n b_n = \sum_{i=1}^{n} a_i b_i
+$$</p>
+<p>In matrix notation:</p>
+<p>$$
+\mathbf{a} \cdot \mathbf{b} = \mathbf{a}^T \mathbf{b}
+$$</p>
+<p>where:</p>
+<ul>
+<li>$\mathbf{a}^T$ is a <strong>row vector</strong> ($1 \times n$)</li>
+<li>$\mathbf{b}$ is a <strong>column vector</strong> ($n \times 1$)</li>
+</ul>
+<h3 id="3-geometric-interpretation-of-dot-product">3. Geometric Interpretation of Dot Product</h3>
+<p>$$
+\mathbf{a} \cdot \mathbf{b} = |\mathbf{a}| |\mathbf{b}| \cos\theta
+$$</p>
+<p>Where:</p>
+<ul>
+<li>$|\mathbf{a}|$ = length (norm) of $\mathbf{a}$</li>
+<li>$|\mathbf{b}|$ = length of $\mathbf{b}$</li>
+<li>$\theta$ = angle between $\mathbf{a}$ and $\mathbf{b}$</li>
+</ul>
+<h4 id="length-norm-of-a-vector">Length (Norm) of a Vector</h4>
+<p>$$
+|\mathbf{a}| = \sqrt{a_1^2 + a_2^2 + \dots + a_n^2}
+$$</p>
+<p>(This is the same as the distance of the point from the origin.)</p>
+<h4 id="finding-the-angle">Finding the Angle</h4>
+<p>$$
+\theta = \cos^{-1} \left( \frac{\mathbf{a} \cdot \mathbf{b}}{|\mathbf{a}| |\mathbf{b}|} \right)
+$$</p>
+<h3 id="4-special-case-orthogonal-vectors">4. Special Case: Orthogonal Vectors</h3>
+<p>If two vectors are <strong>perpendicular</strong> ((\theta = 90^\circ)):</p>
+<p>$$
+\cos 90^\circ = 0 \quad \Rightarrow \quad \mathbf{a} \cdot \mathbf{b} = 0
+$$</p>
+<p><strong>Rule:</strong></p>
+<p>$$
+\mathbf{a} \cdot \mathbf{b} = 0 \quad \Longleftrightarrow \quad \mathbf{a} \perp \mathbf{b}
+$$</p>
+<p>This holds in any dimension (2D, 3D, … nD).</p>
+<h3 id="5-dot-product-of-a-vector-with-itself">5. Dot Product of a Vector with Itself</h3>
+<p>$$
+\mathbf{a} \cdot \mathbf{a} = a_1^2 + a_2^2 + \dots + a_n^2 = |\mathbf{a}|^2
+$$</p>
+<p>Therefore:</p>
+<p>$$
+|\mathbf{a}| = \sqrt{\mathbf{a} \cdot \mathbf{a}}
+$$</p>
+<h3 id="summary-table">Summary Table</h3>
+<table>
+<thead>
+<tr>
+  <th>Operation</th>
+  <th>Formula</th>
+  <th>Result Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Addition</td>
+  <td>$\mathbf{a} + \mathbf{b}$</td>
+  <td>Vector</td>
+</tr>
+<tr>
+  <td>Dot Product</td>
+  <td>$\sum a_i b_i = |\mathbf{a}||\mathbf{b}|\cos\theta$</td>
+  <td>Scalar</td>
+</tr>
+<tr>
+  <td>Norm (Length)</td>
+  <td>$|\mathbf{a}| = \sqrt{\mathbf{a}\cdot\mathbf{a}}$</td>
+  <td>Scalar</td>
+</tr>
+<tr>
+  <td>Angle between vectors</td>
+  <td>$\theta = \cos^{-1}\left(\dfrac{\mathbf{a}\cdot\mathbf{b}}{|\mathbf{a}||\mathbf{b}|}\right)$</td>
+  <td>Angle</td>
+</tr>
+<tr>
+  <td>Orthogonality test</td>
+  <td>$\mathbf{a}\cdot\mathbf{b} = 0$</td>
+  <td>True/False</td>
+</tr>
+</tbody>
+</table>
+<h3 id="key-geometric-insights">Key Geometric Insights</h3>
+<ul>
+<li>Dot product measures <strong>how much two vectors point in the same direction</strong>.</li>
+<li>Positive dot product → acute angle</li>
+<li>Zero dot product → perpendicular</li>
+<li>Negative dot product → obtuse angle</li>
+</ul>
+<p>These ideas work the same way in <strong>2D, 3D, and n-D</strong>.</p>
+<h2 id="04-projection-and-unit-vector">04. Projection and Unit Vector</h2>
+<p><img src="./assets/04.jpg" alt="LA" /></p>
+<h3 id="1-projection-of-a-vector">1. Projection of a Vector</h3>
+<p><strong>Projection of vector $\mathbf{a}$ onto vector $\mathbf{b}$</strong> is the length of the shadow of $\mathbf{a}$ on the direction of $\mathbf{b}$.</p>
+<h4 id="geometric-definition">Geometric Definition</h4>
+<p>$$
+d = |\mathbf{a}| \cos\theta
+$$</p>
+<h4 id="using-dot-product">Using Dot Product</h4>
+<p>We know:
+$$
+\mathbf{a} \cdot \mathbf{b} = |\mathbf{a}| |\mathbf{b}| \cos\theta
+$$</p>
+<p>Therefore, the <strong>scalar projection</strong> of (\mathbf{a}) onto (\mathbf{b}) is:</p>
+<p>$$
+\text{proj}_{\mathbf{b}} \mathbf{a} = d = \dfrac{\mathbf{a} \cdot \mathbf{b}}{|\mathbf{b}|}
+$$</p>
+<p>Or equivalently:</p>
+<p>$$
+d = \dfrac{\mathbf{a} \cdot \mathbf{b}}{|\mathbf{b}|} = |\mathbf{a}| \cos\theta
+$$</p>
+<h3 id="2-unit-vector">2. Unit Vector</h3>
+<p>A <strong>unit vector</strong> in the direction of (\mathbf{a}) is obtained by dividing the vector by its own length:</p>
+<p>$$
+\hat{\mathbf{a}} = \dfrac{\mathbf{a}}{|\mathbf{a}|}
+$$</p>
+<h3 id="properties-of-unit-vector">Properties of Unit Vector</h3>
+<ol>
+<li>$\hat{\mathbf{a}}$ has the <strong>same direction</strong> as $\mathbf{a}$</li>
+<li>$|\hat{\mathbf{a}}| = 1$ (its length is exactly 1)</li>
+</ol>
+<pre><code>        x₂
+         ↑
+         |     ↗ a (a₁, a₂)
+         |   ↗  ||a||
+         | ↗
+         +--------→ x₁
+        0
+</code></pre>
+<h3 id="quick-summary">Quick Summary</h3>
+<table>
+<thead>
+<tr>
+  <th>Concept</th>
+  <th>Formula</th>
+  <th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Scalar Projection</td>
+  <td>$\dfrac{\mathbf{a} \cdot \mathbf{b}}{|\mathbf{b}|}$</td>
+  <td>Length of shadow of $\mathbf{a}$ on $\mathbf{b}$</td>
+</tr>
+<tr>
+  <td>Unit Vector</td>
+  <td>$\hat{\mathbf{a}} = \dfrac{\mathbf{a}}{|\mathbf{a}|}$</td>
+  <td>Vector of length 1 in direction of $\mathbf{a}$</td>
+</tr>
+</tbody>
+</table>
+<h2 id="05-equation-of-a-line-2-d-plane-3-d-and-hyperplane-n-d-plane-passing">05. Equation of a Line (2-D), Plane (3-D) and Hyperplane (n-D), Plane Passing</h2>
+<p><img src="./assets/05.jpg" alt="LA" /></p>
+<h3 id="1-basic-idea">1. Basic Idea</h3>
+<table>
+<thead>
+<tr>
+  <th>Dimension</th>
+  <th>Geometric Object</th>
+  <th>Equation Form</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>2D</td>
+  <td>Line</td>
+  <td>$ ax + by + c = 0 $</td>
+</tr>
+<tr>
+  <td>3D</td>
+  <td>Plane</td>
+  <td>$ ax + by + cz + d = 0 $</td>
+</tr>
+<tr>
+  <td>nD</td>
+  <td>Hyperplane</td>
+  <td>$ w_0 + w_1 x_1 + \dots + w_n x_n = 0 $</td>
+</tr>
+</tbody>
+</table>
+<h3 id="2-equation-of-a-line-2d">2. Equation of a Line (2D)</h3>
+<p><strong>Slope-intercept form:</strong>
+$$
+y = mx + c
+$$</p>
+<p><strong>General form:</strong>
+$$
+ax + by + c = 0
+$$</p>
+<p>Can also be written as:
+$$
+w_1 x_1 + w_2 x_2 + w_0 = 0
+$$</p>
+<p>Solving for $ x_2 $:
+$$
+x_2 = -\frac{w_0}{w_2} - \frac{w_1}{w_2} x_1
+$$</p>
+<ul>
+<li>Slope $ m = -\dfrac{w_1}{w_2} $</li>
+<li>Intercept $ c = -\dfrac{w_0}{w_2} $</li>
+</ul>
+<h3 id="3-equation-of-a-plane-3d">3. Equation of a Plane (3D)</h3>
+<p>$$
+ax + by + cz + d = 0
+$$</p>
+<p>or</p>
+<p>$$
+w_1 x_1 + w_2 x_2 + w_3 x_3 + w_0 = 0
+$$</p>
+<h3 id="4-hyperplane-in-n-dimensions">4. Hyperplane in n-Dimensions</h3>
+<p><strong>General equation:</strong>
+$$
+w_0 + w_1 x_1 + w_2 x_2 + \dots + w_n x_n = 0
+$$</p>
+<p><strong>Compact forms:</strong></p>
+<p><strong>Summation form:</strong>
+$$
+w_0 + \sum_{i=1}^{n} w_i x_i = 0
+$$</p>
+<p><strong>Vector form:</strong>
+$$
+w_0 + \mathbf{w}^T \mathbf{x} = 0
+$$</p>
+<p>where
+$$
+\mathbf{w} = \begin{bmatrix} w_1 \ w_2 \ \vdots \ w_n \end{bmatrix}, \quad
+\mathbf{x} = \begin{bmatrix} x_1 \ x_2 \ \vdots \ x_n \end{bmatrix}
+$$</p>
+<h3 id="5-hyperplane-passing-through-the-origin">5. Hyperplane Passing Through the Origin</h3>
+<p>When the hyperplane passes through the origin, the bias term is zero:</p>
+<p>$$
+\mathbf{w}^T \mathbf{x} = 0
+$$</p>
+<table>
+<thead>
+<tr>
+  <th>Object</th>
+  <th>Equation (through origin)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Line (2D)</td>
+  <td>$ w_1 x_1 + w_2 x_2 = 0 $</td>
+</tr>
+<tr>
+  <td>Plane (3D)</td>
+  <td>$ w_1 x_1 + w_2 x_2 + w_3 x_3 = 0 $</td>
+</tr>
+<tr>
+  <td>Hyperplane</td>
+  <td>$ \mathbf{w}^T \mathbf{x} = 0 $</td>
+</tr>
+</tbody>
+</table>
+<h3 id="6-geometric-meaning-of-mathbfw">6. Geometric Meaning of $\mathbf{w}$</h3>
+<ul>
+<li>$\mathbf{w}$ is the <strong>normal vector</strong> to the hyperplane $\pi$.</li>
+<li>For any point $\mathbf{x}$ lying on the hyperplane:
+$$
+\mathbf{w} \cdot \mathbf{x} = 0 \quad \Rightarrow \quad \mathbf{w} \perp \mathbf{x}
+$$</li>
+</ul>
+<p>That is, the angle between $\mathbf{w}$ and any vector lying on the hyperplane is $ 90^\circ $.</p>
+<p><strong>Unit normal vector:</strong>
+$$
+\hat{\mathbf{w}} = \dfrac{\mathbf{w}}{|\mathbf{w}|}
+$$</p>
+<h3 id="summary">Summary</h3>
+<ul>
+<li>A <strong>hyperplane</strong> is the generalization of a line (2D) and a plane (3D) to higher dimensions.</li>
+<li>The most useful form in Machine Learning is:</li>
+</ul>
+<p>$$
+\boxed{w_0 + \mathbf{w}^T \mathbf{x} = 0}
+$$</p>
+<ul>
+<li>When the hyperplane passes through the origin:</li>
+</ul>
+<p>$$
+\boxed{\mathbf{w}^T \mathbf{x} = 0}
+$$</p>
+<ul>
+<li>$\mathbf{w}$ is always <strong>perpendicular</strong> to the hyperplane.</li>
+</ul>
+<h2 id="06-intercept-form-of-equation-of-a-plane">06. Intercept form of Equation of a Plane</h2>
+<p><img src="./assets/06.jpg" alt="LA" /></p>
+<p><strong>General form (3D):</strong> $w_1x + w_2y + w_3z + b = 0$, where $\mathbf{w}$ is the normal to the plane and $b$ is the bias.</p>
+<p><strong>Intercept form:</strong> if the plane cuts the axes at $(a,0,0)$, $(0,b,0)$, $(0,0,c)$:</p>
+<p>$$\frac{x}{a} + \frac{y}{b} + \frac{z}{c} = 1$$</p>
+<p><strong>Derivation (filling in the board's algebra):</strong> divide the general form by $-b$:</p>
+<p>$$\underbrace{\left(-\frac{w_1}{b}\right)}<em>{1/a}x + \underbrace{\left(-\frac{w_2}{b}\right)}</em>{1/b}y + \underbrace{\left(-\frac{w_3}{b}\right)}_{1/c}z - 1 = 0$$</p>
+<p>which gives the intercepts:</p>
+<p>$$a = -\frac{b}{w_1}, \qquad b_{int} = -\frac{b}{w_2}, \qquad c = -\frac{b}{w_3}$$</p>
+<p><strong>Pattern:</strong> every intercept is $-\dfrac{\text{bias}}{\text{corresponding weight}}$.</p>
+<p><strong>2D check (your line example):</strong> from $y = mx + c$, rewrite as $\frac{y}{c} + \left(-\frac{m}{c}\right)x - 1 = 0$:</p>
+<ul>
+<li>y-intercept $= c$</li>
+<li>x-intercept $= -\dfrac{c}{m}$ ✓ (matches the board)</li>
+</ul>
+<p><strong>n-D generalization:</strong> for hyperplane $\mathbf{w}^T\mathbf{x} + b = 0$, the intercept along the $i$-th axis is:</p>
+<p>$$x_i^{\text{intercept}} = -\frac{b}{w_i}$$</p>
+<p><strong>Two caveats worth noting</strong> (not stated on the board): intercept form requires $b \neq 0$ (plane can't pass through the origin) and $w_i \neq 0$ (plane can't be parallel to axis $i$) — otherwise that intercept doesn't exist.</p>
+<h2 id="07-distance-of-a-point-from-a-planehyperplane-half-spaces">07. Distance of a Point from a Plane/Hyperplane, Half-Spaces</h2>
+<p><img src="./assets/07.jpg" alt="LA" /></p>
+<h3 id="1-distance-of-a-point-from-a-hyperplane">1. Distance of a Point from a Hyperplane</h3>
+<p>Consider a hyperplane passing through the origin:</p>
+<p>$$
+\mathbf{w}^T \mathbf{x} = 0
+$$</p>
+<p>For a point $\mathbf{p} = (p_1, p_2, \dots, p_n)$, the <strong>signed distance</strong> from the point to the hyperplane is:</p>
+<p>$$
+d = \dfrac{\mathbf{w}^T \mathbf{p}}{|\mathbf{w}|} = \dfrac{\mathbf{w} \cdot \mathbf{p}}{|\mathbf{w}|}
+$$</p>
+<h4 id="special-case-when-mathbfw-is-a-unit-vector">Special Case (when $\mathbf{w}$ is a unit vector)</h4>
+<p>If $|\mathbf{w}| = 1$, then the formula simplifies to:</p>
+<p>$$
+d = \mathbf{w}^T \mathbf{p}
+$$</p>
+<h3 id="2-geometric-interpretation">2. Geometric Interpretation</h3>
+<ul>
+<li>The vector $\mathbf{w}$ is <strong>perpendicular</strong> (normal) to the hyperplane $\pi$.</li>
+<li>The distance $d$ is the length of the perpendicular dropped from the point $\mathbf{p}$ onto the hyperplane.</li>
+</ul>
+<pre><code>              p
+              •
+              | d
+              |
+    ----------+----------  π  (hyperplane)
+              ↑
+              w (normal)
+</code></pre>
+<h3 id="3-signed-distance--half-spaces">3. Signed Distance &amp; Half-Spaces</h3>
+<p>The sign of the distance tells us <strong>which side</strong> of the hyperplane the point lies on:</p>
+<table>
+<thead>
+<tr>
+  <th>Distance</th>
+  <th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>$ d &gt; 0 $</td>
+  <td>Point lies on the same side as the direction of $\mathbf{w}$</td>
+</tr>
+<tr>
+  <td>$ d &lt; 0 $</td>
+  <td>Point lies on the opposite side of $\mathbf{w}$</td>
+</tr>
+<tr>
+  <td>$ d = 0 $</td>
+  <td>Point lies <strong>on</strong> the hyperplane</td>
+</tr>
+</tbody>
+</table>
+<h4 id="example">Example</h4>
+<p>$$
+d = \dfrac{\mathbf{w} \cdot \mathbf{p}}{|\mathbf{w}|} = +ve
+$$</p>
+<p>$$
+d' = \dfrac{\mathbf{w} \cdot \mathbf{p}'}{|\mathbf{w}|} = -ve
+$$</p>
+<ul>
+<li>Points with <strong>positive</strong> signed distance → one half-space</li>
+<li>Points with <strong>negative</strong> signed distance → the other half-space</li>
+</ul>
+<h3 id="4-half-spaces">4. Half-Spaces</h3>
+<p>A hyperplane divides the entire space into <strong>two half-spaces</strong>:</p>
+<ul>
+<li>In <strong>2D</strong> → a line divides the plane into two half-planes</li>
+<li>In <strong>3D</strong> → a plane divides the space into two half-spaces</li>
+<li>In <strong>nD</strong> → a hyperplane divides $\mathbb{R}^n$ into two half-spaces</li>
+</ul>
+<h3 id="summary-2">Summary</h3>
+<ul>
+<li><p><strong>Distance formula</strong>:
+$$
+d = \dfrac{\mathbf{w} \cdot \mathbf{p}}{|\mathbf{w}|}
+$$</p>
+</li>
+<li><p>The <strong>sign</strong> of $d$ indicates which side of the hyperplane the point is on.</p>
+</li>
+<li><p>This idea is extremely important in Machine Learning (e.g., SVM, Logistic Regression, Perceptron) for deciding class labels based on which side of the decision boundary a point lies.</p>
+</li>
+</ul>
+<h2 id="08-equation-of-a-circle-2-d-sphere-3-d-and-hypersphere-n-d">08. Equation of a Circle (2-D), Sphere (3-D) and Hypersphere (n-D)</h2>
+<p><img src="./assets/08.jpg" alt="LA" /></p>
+<h3 id="1-circle-2d">1. Circle (2D)</h3>
+<p><strong>Equation of a circle centered at the origin:</strong></p>
+<p>$$
+x^2 + y^2 = r^2
+$$</p>
+<p>or</p>
+<p>$$
+x_1^2 + x_2^2 = r^2
+$$</p>
+<p><strong>General circle</strong> (center at $(h, k)$):</p>
+<p>$$
+(x - h)^2 + (y - k)^2 = r^2
+$$</p>
+<h4 id="position-of-a-point--px1-x2">Position of a Point $ p(x_1, x_2) $</h4>
+<table>
+<thead>
+<tr>
+  <th>Condition</th>
+  <th>Location of Point</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>$ x_1^2 + x_2^2 &lt; r^2 $</td>
+  <td>Inside the circle</td>
+</tr>
+<tr>
+  <td>$ x_1^2 + x_2^2 &gt; r^2 $</td>
+  <td>Outside the circle</td>
+</tr>
+<tr>
+  <td>$ x_1^2 + x_2^2 = r^2 $</td>
+  <td>On the circle</td>
+</tr>
+</tbody>
+</table>
+<h3 id="2-sphere-3d">2. Sphere (3D)</h3>
+<p><strong>Equation of a sphere centered at the origin:</strong></p>
+<p>$$
+x_1^2 + x_2^2 + x_3^2 = r^2
+$$</p>
+<h3 id="3-hypersphere-n-d">3. Hypersphere (n-D)</h3>
+<p><strong>Equation of a hypersphere centered at the origin:</strong></p>
+<p>$$
+x_1^2 + x_2^2 + \dots + x_n^2 = r^2
+$$</p>
+<p>or in summation form:</p>
+<p>$$
+\sum_{i=1}^{n} x_i^2 = r^2
+$$</p>
+<h4 id="position-of-a-point--p--x1-x2-dots-xn">Position of a Point $ p = (x_1, x_2, \dots, x_n) $</h4>
+<table>
+<thead>
+<tr>
+  <th>Condition</th>
+  <th>Location of Point</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>$ \sum_{i=1}^{n} x_i^2 &lt; r^2 $</td>
+  <td>Inside the hypersphere</td>
+</tr>
+<tr>
+  <td>$ \sum_{i=1}^{n} x_i^2 &gt; r^2 $</td>
+  <td>Outside the hypersphere</td>
+</tr>
+<tr>
+  <td>$ \sum_{i=1}^{n} x_i^2 = r^2 $</td>
+  <td>On the hypersphere</td>
+</tr>
+</tbody>
+</table>
+<h3 id="summary-3">Summary</h3>
+<table>
+<thead>
+<tr>
+  <th>Dimension</th>
+  <th>Object</th>
+  <th>Equation (centered at origin)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>2D</td>
+  <td>Circle</td>
+  <td>$ x_1^2 + x_2^2 = r^2 $</td>
+</tr>
+<tr>
+  <td>3D</td>
+  <td>Sphere</td>
+  <td>$ x_1^2 + x_2^2 + x_3^2 = r^2 $</td>
+</tr>
+<tr>
+  <td>nD</td>
+  <td>Hypersphere</td>
+  <td>$ \sum_{i=1}^{n} x_i^2 = r^2 $</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>The value of $ \sum x_i^2 $ compared to $ r^2 $ tells us whether a point lies <strong>inside</strong>, <strong>outside</strong>, or <strong>on</strong> the hypersphere.</li>
+<li>This idea is useful in Machine Learning (e.g., RBF kernels, anomaly detection, nearest neighbor methods, etc.).</li>
+</ul>
+<h2 id="09-equation-of-an-ellipse-2-d-ellipsoid-3-d-and-hyperellipsoid-n-d">09. Equation of an Ellipse (2-D), Ellipsoid (3-D) and Hyperellipsoid (n-D)</h2>
+<p><img src="./assets/09.jpg" alt="LA" /></p>
+<h3 id="1-ellipse-2d">1. Ellipse (2D)</h3>
+<p><strong>Standard equation</strong> (centered at origin, axes aligned with coordinate axes):</p>
+<p>$$
+\frac{x^2}{a^2} + \frac{y^2}{b^2} = 1
+$$</p>
+<p>or</p>
+<p>$$
+\frac{x_1^2}{a^2} + \frac{x_2^2}{b^2} = 1
+$$</p>
+<ul>
+<li>$ a $ = semi-major / semi-minor axis along $ x_1 $</li>
+<li>$ b $ = semi-major / semi-minor axis along $ x_2 $</li>
+</ul>
+<h4 id="position-of-a-point--px1-x2-2">Position of a Point $ p(x_1, x_2) $</h4>
+<table>
+<thead>
+<tr>
+  <th>Condition</th>
+  <th>Location of Point</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>$ \dfrac{x_1^2}{a^2} + \dfrac{x_2^2}{b^2} &lt; 1 $</td>
+  <td>Inside the ellipse</td>
+</tr>
+<tr>
+  <td>$ \dfrac{x_1^2}{a^2} + \dfrac{x_2^2}{b^2} &gt; 1 $</td>
+  <td>Outside the ellipse</td>
+</tr>
+<tr>
+  <td>$ \dfrac{x_1^2}{a^2} + \dfrac{x_2^2}{b^2} = 1 $</td>
+  <td>On the ellipse</td>
+</tr>
+</tbody>
+</table>
+<h3 id="2-ellipsoid-3d">2. Ellipsoid (3D)</h3>
+<p><strong>Standard equation</strong> (centered at origin):</p>
+<p>$$
+\frac{x_1^2}{a^2} + \frac{x_2^2}{b^2} + \frac{x_3^2}{c^2} = 1
+$$</p>
+<ul>
+<li>$ a, b, c $ are the semi-axes lengths along $ x_1, x_2, x_3 $ respectively.</li>
+</ul>
+<h3 id="3-hyperellipsoid-n-d">3. Hyperellipsoid (n-D)</h3>
+<p><strong>General equation</strong> (centered at origin, axes-aligned):</p>
+<p>$$
+\frac{x_1^2}{a_1^2} + \frac{x_2^2}{a_2^2} + \dots + \frac{x_n^2}{a_n^2} = 1
+$$</p>
+<h4 id="position-of-a-point">Position of a Point</h4>
+<table>
+<thead>
+<tr>
+  <th>Condition</th>
+  <th>Location</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>$ \sum_{i=1}^{n} \dfrac{x_i^2}{a_i^2} &lt; 1 $</td>
+  <td>Inside the hyperellipsoid</td>
+</tr>
+<tr>
+  <td>$ \sum_{i=1}^{n} \dfrac{x_i^2}{a_i^2} &gt; 1 $</td>
+  <td>Outside the hyperellipsoid</td>
+</tr>
+<tr>
+  <td>$ \sum_{i=1}^{n} \dfrac{x_i^2}{a_i^2} = 1 $</td>
+  <td>On the hyperellipsoid</td>
+</tr>
+</tbody>
+</table>
+<h3 id="summary-4">Summary</h3>
+<table>
+<thead>
+<tr>
+  <th>Dimension</th>
+  <th>Object</th>
+  <th>Equation (centered at origin)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>2D</td>
+  <td>Ellipse</td>
+  <td>$ \dfrac{x_1^2}{a^2} + \dfrac{x_2^2}{b^2} = 1 $</td>
+</tr>
+<tr>
+  <td>3D</td>
+  <td>Ellipsoid</td>
+  <td>$ \dfrac{x_1^2}{a^2} + \dfrac{x_2^2}{b^2} + \dfrac{x_3^2}{c^2} = 1 $</td>
+</tr>
+<tr>
+  <td>nD</td>
+  <td>Hyperellipsoid</td>
+  <td>$ \sum_{i=1}^{n} \dfrac{x_i^2}{a_i^2} = 1 $</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>When $ a = b $ (2D) or $ a = b = c $ (3D), the shape becomes a <strong>circle</strong> or <strong>sphere</strong>.</li>
+<li>Hyperellipsoids appear in Machine Learning in contexts such as Mahalanobis distance, Gaussian distributions, and certain kernel methods.</li>
+</ul>
+<h2 id="10-square-rectangle">10. Square, Rectangle</h2>
+<p><img src="./assets/10.jpg" alt="LA" /></p>
+<h3 id="1-axis-parallel-rectangle-in-2d">1. Axis-Parallel Rectangle in 2D</h3>
+<p>An <strong>axis-parallel rectangle</strong> is defined by simple bounds on each coordinate.</p>
+<h4 id="example-2">Example</h4>
+<p>A rectangle defined by:</p>
+<ul>
+<li>$ 2 &lt; x_1 &lt; 5 $</li>
+<li>$ 3 &lt; x_2 &lt; 4 $</li>
+</ul>
+<p><strong>Condition for a point $ p = (p_1, p_2) $ to lie inside the rectangle:</strong></p>
+<p>$$
+\begin{cases}
+p_1 &gt; 2 \quad \text{and} \quad p_1 &lt; 5 \
+p_2 &gt; 3 \quad \text{and} \quad p_2 &lt; 4
+\end{cases}
+$$</p>
+<p>Or written compactly:</p>
+<p>$$
+\text{if } (p_1 &gt; 2 \land p_1 &lt; 5) \land (p_2 &gt; 3 \land p_2 &lt; 4) \quad \Rightarrow \quad p \text{ lies inside the rectangle}
+$$</p>
+<h3 id="2-geometric-view">2. Geometric View</h3>
+<pre><code>x₂
+      ↑
+   4 |     ┌─────────────┐
+       |     │                                        │
+   3 |     └─────────────┘
+       |         
+       +----------------------------------→ x₁
+            2           5
+</code></pre>
+<ul>
+<li>The sides of the rectangle are parallel to the coordinate axes.</li>
+<li>Each side can be represented as a vertical or horizontal line (which is a special case of a linear equation $ w_0 + w_1 x_1 + w_2 x_2 = 0 $).</li>
+</ul>
+<h3 id="3-representation-using-linear-inequalities">3. Representation using Linear Inequalities</h3>
+<p>Each boundary of the rectangle is a linear constraint:</p>
+<table>
+<thead>
+<tr>
+  <th>Boundary</th>
+  <th>Equation</th>
+  <th>Inequality side</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Left side</td>
+  <td>$ x_1 = 2 $</td>
+  <td>$ x_1 &gt; 2 $</td>
+</tr>
+<tr>
+  <td>Right side</td>
+  <td>$ x_1 = 5 $</td>
+  <td>$ x_1 &lt; 5 $</td>
+</tr>
+<tr>
+  <td>Bottom side</td>
+  <td>$ x_2 = 3 $</td>
+  <td>$ x_2 &gt; 3 $</td>
+</tr>
+<tr>
+  <td>Top side</td>
+  <td>$ x_2 = 4 $</td>
+  <td>$ x_2 &lt; 4 $</td>
+</tr>
+</tbody>
+</table>
+<h3 id="summary-5">Summary</h3>
+<ul>
+<li>Axis-parallel rectangles (and squares) are defined by <strong>independent range constraints</strong> on each feature.</li>
+<li>Checking whether a point lies inside such a rectangle is very efficient (just a few comparisons).</li>
+<li>This idea is used in Machine Learning in:<ul>
+<li>Decision Trees / Decision Stumps</li>
+<li>Range queries</li>
+<li>Some forms of rule-based models</li>
+<li>Axis-aligned bounding boxes</li>
+</ul>
+</li>
+</ul>
+<h2 id="11-hyper-cube-hyper-cuboid">11. Hyper Cube, Hyper Cuboid</h2>
+<p><img src="./assets/11.jpg" alt="LA" /></p>
+<h3 id="1-cuboid-3d">1. Cuboid (3D)</h3>
+<p>A <strong>cuboid</strong> (also called a rectangular box) is the 3-dimensional version of a rectangle.</p>
+<p>It is defined by independent range constraints on each of the three coordinates.</p>
+<p><strong>Example:</strong></p>
+<p>$$
+\begin{align*}
+2 &amp;&lt; x_1 &lt; 5 \
+1 &amp;&lt; x_2 &lt; 4 \
+0 &amp;&lt; x_3 &lt; 6
+\end{align*}
+$$</p>
+<p>A point $ p = (p_1, p_2, p_3) $ lies <strong>inside</strong> the cuboid if it satisfies all three inequalities.</p>
+<h3 id="2-hypercuboid-n-dimensional">2. Hypercuboid (n-Dimensional)</h3>
+<p>A <strong>hypercuboid</strong> (also called a hyper-rectangle or axis-aligned bounding box) is the generalization of a rectangle/cuboid to $ n $ dimensions.</p>
+<p>It is defined by a set of independent interval constraints:</p>
+<p>$$
+\begin{align*}
+l_1 &amp;&lt; x_1 &lt; u_1 \
+l_2 &amp;&lt; x_2 &lt; u_2 \
+&amp;\vdots \
+l_n &amp;&lt; x_n &lt; u_n
+\end{align*}
+$$</p>
+<p>where $ l_i $ and $ u_i $ are the lower and upper bounds for the $ i $-th dimension.</p>
+<h4 id="checking-membership">Checking Membership</h4>
+<p>To test whether a point lies inside a hypercuboid, we simply check whether <strong>every</strong> coordinate satisfies its corresponding range constraint (a series of <code>if-else</code> or logical AND conditions).</p>
+<h3 id="summary-6">Summary</h3>
+<table>
+<thead>
+<tr>
+  <th>Dimension</th>
+  <th>Object</th>
+  <th>Defined by</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>2D</td>
+  <td>Rectangle</td>
+  <td>Two interval constraints</td>
+</tr>
+<tr>
+  <td>3D</td>
+  <td>Cuboid</td>
+  <td>Three interval constraints</td>
+</tr>
+<tr>
+  <td>nD</td>
+  <td>Hypercuboid</td>
+  <td>$ n $ independent interval constraints</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>Hypercuboids are extremely common in Machine Learning and Data Science:<ul>
+<li>Decision Trees (axis-aligned splits)</li>
+<li>Range search / filtering</li>
+<li>Bounding boxes in computer vision</li>
+<li>Feature scaling / normalization regions</li>
+</ul>
+</li>
+</ul>
+<h2 id="12-revision-questions">12. Revision Questions</h2>
+<p><strong>Questions</strong></p>
+<p><a href="#1-define-pointvector-2-d-3-d-n-d">1. Define Point/Vector (2-D, 3-D, n-D)?</a><br />
+<a href="#2-how-to-calculate-dot-product-and-angle-between-2-vectors">2. How to calculate Dot product and angle between 2 vectors?</a><br />
+<a href="#3-define-projection-unit-vector">3. Define Projection, unit vector?</a><br />
+<a href="#4-equation-of-a-line-2-d-plane-3-d-and-hyperplane-n-d">4. Equation of a line (2-D), plane (3-D) and hyperplane (n-D)?</a><br />
+<a href="#5-distance-of-a-point-from-a-planehyperplane-half-spaces">5. Distance of a point from a plane/hyperplane, half-spaces?</a><br />
+<a href="#6-equation-of-a-circle-2-d-sphere-3-d-and-hypersphere-n-d">6. Equation of a circle (2-D), sphere (3-D) and hypersphere (n-D)?</a><br />
+<a href="#7-equation-of-an-ellipse-2-d-ellipsoid-3-d-and-hyperellipsoid-n-d">7. Equation of an ellipse (2-D), ellipsoid (3-D) and hyperellipsoid (n-D)?</a><br />
+<a href="#8-square-rectangle-hyper-cube-and-hyper-cuboid">8. Square, Rectangle, Hyper-cube and Hyper-cuboid?</a></p>
+<h3 id="1-define-pointvector-2-d-3-d-n-d">1. Define Point/Vector (2-D, 3-D, n-D)?</h3>
+<p>A <strong>point</strong> represents a location in space.<br />
+A <strong>vector</strong> represents both magnitude and direction (usually from the origin to that point).</p>
+<ul>
+<li><strong>2-D</strong>: $ \mathbf{x} = (x_1, x_2) $ or $ \begin{bmatrix} x_1 \ x_2 \end{bmatrix} $</li>
+<li><strong>3-D</strong>: $ \mathbf{x} = (x_1, x_2, x_3) $</li>
+<li><strong>n-D</strong>: $ \mathbf{x} = (x_1, x_2, \dots, x_n) \in \mathbb{R}^n $</li>
+</ul>
+<p>In machine learning, every data point is treated as a vector in $ \mathbb{R}^d $ where $ d $ is the number of features.</p>
+<h3 id="2-how-to-calculate-dot-product-and-angle-between-2-vectors">2. How to calculate Dot product and angle between 2 vectors?</h3>
+<p><strong>Dot Product</strong> of two vectors $ \mathbf{a} $ and $ \mathbf{b} $:</p>
+<p>$ \mathbf{a} \cdot \mathbf{b} = a_1 b_1 + a_2 b_2 + \dots + a_n b_n = |\mathbf{a}| |\mathbf{b}| \cos\theta $</p>
+<p><strong>Angle</strong> between them:</p>
+<p>$ \cos\theta = \frac{\mathbf{a} \cdot \mathbf{b}}{|\mathbf{a}| |\mathbf{b}|} $</p>
+<p>$ \theta = \cos^{-1}\left( \frac{\mathbf{a} \cdot \mathbf{b}}{|\mathbf{a}| |\mathbf{b}|} \right) $</p>
+<p><strong>Special cases</strong>:</p>
+<ul>
+<li>$ \theta = 0^\circ $ → vectors point in the same direction</li>
+<li>$ \theta = 90^\circ $ → vectors are orthogonal ($ \mathbf{a} \cdot \mathbf{b} = 0 $)</li>
+<li>$ \theta = 180^\circ $ → vectors point in opposite directions</li>
+</ul>
+<h3 id="3-define-projection-unit-vector">3. Define Projection, unit vector?</h3>
+<p><strong>Unit Vector</strong>:
+A vector with length 1.</p>
+<p>$ \hat{\mathbf{u}} = \frac{\mathbf{u}}{|\mathbf{u}|} $</p>
+<p><strong>Projection</strong> of vector $ \mathbf{a} $ onto vector $ \mathbf{b} $:</p>
+<p>$ \text{proj}_{\mathbf{b}} \mathbf{a} = \left( \frac{\mathbf{a} \cdot \mathbf{b}}{|\mathbf{b}|^2} \right) \mathbf{b} $</p>
+<p>The <strong>scalar projection</strong> (signed length) is:</p>
+<p>$ \frac{\mathbf{a} \cdot \mathbf{b}}{|\mathbf{b}|} $</p>
+<p>Projection is heavily used when computing the distance of a point from a hyperplane.</p>
+<h3 id="4-equation-of-a-line-2-d-plane-3-d-and-hyperplane-n-d">4. Equation of a line (2-D), plane (3-D) and hyperplane (n-D)?</h3>
+<p><strong>Line in 2-D</strong>:
+$ w_1 x_1 + w_2 x_2 + b = 0 $<br />
+or $ \mathbf{w}^T \mathbf{x} + b = 0 $</p>
+<p><strong>Plane in 3-D</strong>:
+$ w_1 x_1 + w_2 x_2 + w_3 x_3 + b = 0 $</p>
+<p><strong>Hyperplane in n-D</strong>:
+$ \mathbf{w}^T \mathbf{x} + b = 0 $</p>
+<p>where $ \mathbf{w} $ is the normal vector to the hyperplane.</p>
+<p>This is the fundamental equation used in Logistic Regression and Linear SVM.</p>
+<h3 id="5-distance-of-a-point-from-a-planehyperplane-half-spaces">5. Distance of a point from a plane/hyperplane, half-spaces?</h3>
+<p><strong>Distance</strong> of a point $ \mathbf{x}_0 $ from the hyperplane $ \mathbf{w}^T \mathbf{x} + b = 0 $:</p>
+<p>$ d = \frac{|\mathbf{w}^T \mathbf{x}_0 + b|}{|\mathbf{w}|} $</p>
+<p><strong>Signed distance</strong>:
+$ \frac{\mathbf{w}^T \mathbf{x}_0 + b}{|\mathbf{w}|} $</p>
+<p><strong>Half-spaces</strong>:</p>
+<ul>
+<li>$ \mathbf{w}^T \mathbf{x} + b &gt; 0 $ → one side of the hyperplane</li>
+<li>$ \mathbf{w}^T \mathbf{x} + b &lt; 0 $ → the other side</li>
+</ul>
+<p>These half-spaces are used to define the positive and negative regions in linear classifiers.</p>
+<h3 id="6-equation-of-a-circle-2-d-sphere-3-d-and-hypersphere-n-d">6. Equation of a circle (2-D), sphere (3-D) and hypersphere (n-D)?</h3>
+<p><strong>Circle (2-D)</strong>:
+$ (x_1 - c_1)^2 + (x_2 - c_2)^2 = r^2 $</p>
+<p><strong>Sphere (3-D)</strong>:
+$ (x_1 - c_1)^2 + (x_2 - c_2)^2 + (x_3 - c_3)^2 = r^2 $</p>
+<p><strong>Hypersphere (n-D)</strong>:
+$ |\mathbf{x} - \mathbf{c}|^2 = r^2 $</p>
+<p>or $ (\mathbf{x} - \mathbf{c})^T (\mathbf{x} - \mathbf{c}) = r^2 $</p>
+<p>where $ \mathbf{c} $ is the center and $ r $ is the radius.</p>
+<h3 id="7-equation-of-an-ellipse-2-d-ellipsoid-3-d-and-hyperellipsoid-n-d">7. Equation of an ellipse (2-D), ellipsoid (3-D) and hyperellipsoid (n-D)?</h3>
+<p><strong>Ellipse (2-D)</strong>:
+$ \frac{(x_1 - c_1)^2}{a^2} + \frac{(x_2 - c_2)^2}{b^2} = 1 $</p>
+<p><strong>Ellipsoid (3-D)</strong>:
+$ \frac{(x_1 - c_1)^2}{a^2} + \frac{(x_2 - c_2)^2}{b^2} + \frac{(x_3 - c_3)^2}{c^2} = 1 $</p>
+<p><strong>Hyperellipsoid (n-D)</strong>:
+$ (\mathbf{x} - \mathbf{c})^T A (\mathbf{x} - \mathbf{c}) = 1 $</p>
+<p>where $ A $ is a positive definite matrix that controls the shape and orientation.</p>
+<p>Ellipsoids appear in Mahalanobis distance and Gaussian distributions.</p>
+<h3 id="8-square-rectangle-hyper-cube-and-hyper-cuboid">8. Square, Rectangle, Hyper-cube and Hyper-cuboid?</h3>
+<p><strong>Square (2-D)</strong>:
+All sides equal, all angles $ 90^\circ $.<br />
+Side length $ a $ → volume (area) = $ a^2 $</p>
+<p><strong>Rectangle (2-D)</strong>:
+Opposite sides equal, all angles $ 90^\circ $.<br />
+Sides $ a, b $ → area = $ a \times b $</p>
+<p><strong>Hypercube (n-D)</strong>:
+Generalization of a square/cube.<br />
+All sides equal to length $ a $.<br />
+Volume = $ a^n $</p>
+<p><strong>Hyper-cuboid (n-D)</strong> (also called hyperrectangle):
+Generalization of a rectangle.<br />
+Sides of lengths $ a_1, a_2, \dots, a_n $.<br />
+Volume = $ a_1 \times a_2 \times \dots \times a_n $</p>
+<p>These shapes are useful when thinking about axis-aligned decision boundaries and feature space partitioning.</p>
+</main><aside class="note-toc" aria-label="On this page"><h2>On This Page</h2>
+<ul>
+<li><a href="#01-why-learn-it">01. Why Learn It</a></li>
+<li><a href="#02-introduction-to-vectors-2-d-3-d-n-d-row-vector-and-column-vector">02. Introduction to Vectors (2-D, 3-D, n-D), Row Vector and Column Vector</a></li>
+<li><a href="#03-dot-product-and-angle-between-2-vectors">03. Dot Product and Angle Between 2 Vectors</a></li>
+<li><a href="#vector-operations">Vector Operations</a></li>
+<li><a href="#04-projection-and-unit-vector">04. Projection and Unit Vector</a></li>
+<li><a href="#05-equation-of-a-line-2-d-plane-3-d-and-hyperplane-n-d-plane-passing">05. Equation of a Line (2-D), Plane (3-D) and Hyperplane (n-D), Plane Passing</a></li>
+<li><a href="#06-intercept-form-of-equation-of-a-plane">06. Intercept form of Equation of a Plane</a></li>
+<li><a href="#07-distance-of-a-point-from-a-planehyperplane-half-spaces">07. Distance of a Point from a Plane/Hyperplane, Half-Spaces</a></li>
+<li><a href="#08-equation-of-a-circle-2-d-sphere-3-d-and-hypersphere-n-d">08. Equation of a Circle (2-D), Sphere (3-D) and Hypersphere (n-D)</a></li>
+<li><a href="#09-equation-of-an-ellipse-2-d-ellipsoid-3-d-and-hyperellipsoid-n-d">09. Equation of an Ellipse (2-D), Ellipsoid (3-D) and Hyperellipsoid (n-D)</a></li>
+<li><a href="#10-square-rectangle">10. Square, Rectangle</a></li>
+<li><a href="#11-hyper-cube-hyper-cuboid">11. Hyper Cube, Hyper Cuboid</a></li>
+<li><a href="#12-revision-questions">12. Revision Questions</a></li>
+</ul>
+</aside></div></div><script>
+if(window.hljs)document.querySelectorAll("pre code[class*='language-']").forEach((block)=>window.hljs.highlightElement(block));
+(()=>{const links=[...document.querySelectorAll(".note-toc a")],heads=links.map(l=>document.getElementById(decodeURIComponent(l.hash.slice(1)))).filter(Boolean);if(!links.length||!heads.length||!("IntersectionObserver"in window))return;const set=h=>links.forEach(l=>l.classList.toggle("is-active",l.hash===`#${h.id}`));const ob=new IntersectionObserver(es=>{const v=es.filter(e=>e.isIntersecting).sort((a,b)=>a.boundingClientRect.top-b.boundingClientRect.top);if(v.length)set(v[0].target)},{rootMargin:"-10% 0px -75% 0px",threshold:0});heads.forEach(h=>ob.observe(h))})();
+</script>
+</body>
+</html>

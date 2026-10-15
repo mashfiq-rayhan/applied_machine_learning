@@ -1,0 +1,4873 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Probability and Statistics | Applied Machine Learning</title>
+<link rel="stylesheet" href="../HTMLs/theme.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
+<script>
+window.MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']],
+    displayMath: [['$$', '$$'], ['\\[', '\\]']],
+    processEscapes: true,
+    processEnvironments: true
+  },
+  options: {
+    skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+  }
+};
+</script>
+<script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-svg.js"></script>
+</head>
+<body class="site-page">
+<div class="site-layout"><nav class="curriculum-nav" aria-label="Main curriculum navigation"><iframe src="../HTMLs/table-of-contents.html" title="Machine learning curriculum"></iframe></nav><div class="note-layout"><main class="note-content"><h1>Probability and Statistics</h1><style>
+  @import url("https://fonts.googleapis.com/css2?family=Play:wght@400;700&display=swap");
+  @import url("https://cdnjs.cloudflare.com/ajax/libs/latin-modern/1.1.0/css/latinmodern-math.min.css");
+
+  :root {
+    --la-ink: #3f6386;
+    --la-teal: #3f6386;
+    --la-teal-soft: #e8f6f7;
+    --la-coral: #9333ea;
+    --la-coral-soft: #fff1ed;
+    --la-cdf: #17283a;
+    --la-line: #5b5c5c;
+    --la-surface: #f7faf9;
+    --la-text: #c9c9c9;
+    --la-panel: #00070e;
+    --la-chip: #17283a;
+    --la-amber: #9a6b16;
+    --la-amber-soft: #fff8e6;
+  }
+
+  *,
+  *::before,
+  *::after {
+    font-family: "Play", sans-serif !important;
+  }
+
+  pre,
+  pre code {
+    font-family: Consolas, "Courier New", monospace !important;
+  }
+
+  body,
+  .markdown-body,
+  p,
+  li {
+    color: var(--la-text) !important;
+  }
+
+  h1 {
+    color: var(--la-ink);
+    border-bottom: 4px solid var(--la-teal);
+    padding-bottom: 0.35em;
+  }
+
+  h2 {
+    color: var(--la-teal);
+    border-left: 6px solid var(--la-teal);
+    padding-left: 0.55em;
+    margin-top: 2em;
+  }
+
+  h3,
+  h4 {
+    color: var(--la-coral);
+  }
+
+  a {
+    color: var(--la-coral);
+    text-decoration: none;
+  }
+
+  a:hover {
+    text-decoration: underline;
+  }
+
+  blockquote {
+    background: var(--la-panel);
+    border-left: 5px solid var(--la-cdf) !important;
+    border-radius: 6px;
+    color: var(--la-text);
+    padding: 0.75em 1em;
+  }
+
+  code {
+    background: var(--la-chip);
+    border-radius: 4px;
+    color: var(--la-text);
+    padding: 0.1em 0.3em;
+  }
+
+  pre {
+    background: var(--la-panel);
+    border: 1px solid var(--la-line);
+    border-radius: 8px;
+    overflow-x: auto;
+    padding: 1em;
+  }
+
+  table {
+    border: 1px solid var(--la-line);
+    border-collapse: collapse;
+    border-radius: 8px;
+    overflow: hidden;
+    width: 100%;
+  }
+
+  th {
+    background: var(--la-panel);
+    color: var(--la-text);
+    padding: 0.7em 0.8em;
+    text-align: left;
+  }
+
+  td {
+    color: var(--la-text);
+    padding: 0.7em 0.8em;
+  }
+
+  tr:nth-child(even) {
+    background: var(--la-chip);
+  }
+
+  hr {
+    border: 0;
+    border-top: 2px solid var(--la-line);
+    margin: 2.2em 0;
+  }
+
+  .summary-grid,
+  .ml-grid,
+  .intuition-grid {
+    display: flex;
+    gap: 1em;
+    margin: 1.25em 0;
+  }
+
+  .summary-card,
+  .ml-card,
+  .intuition-card {
+    background: var(--la-panel);
+    border-radius: 7px;
+    color: var(--la-text);
+    flex: 1 1 0;
+    min-width: 0;
+    padding: 1em;
+  }
+
+  .summary-card {
+    border-top: 5px solid var(--la-teal);
+  }
+
+  .summary-card.pdf,
+  .ml-card.diagnostics,
+  .intuition-card.pdf {
+    border-top-color: var(--la-coral);
+  }
+
+  .summary-card.cdf,
+  .intuition-card.cdf {
+    border-top-color: var(--la-cdf);
+  }
+
+  .summary-card h3,
+  .ml-card h3,
+  .intuition-card h3 {
+    margin-top: 0;
+  }
+
+  .summary-tag,
+  .panel-kicker {
+    color: var(--la-teal);
+    font-size: 0.82em;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .relationship-banner,
+  .ml-workflow {
+    align-items: center;
+    background: var(--la-panel);
+    border: 1px solid var(--la-teal);
+    border-radius: 7px;
+    color: var(--la-text);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6em;
+    justify-content: center;
+    margin: 1.25em 0;
+    padding: 0.85em 1em;
+    text-align: center;
+  }
+
+  .relationship-banner strong,
+  .ml-workflow strong,
+  .relationship-item strong,
+  .insight-item strong {
+    color: var(--la-coral);
+  }
+
+  .relationship-banner .arrow {
+    color: var(--la-teal);
+    font-size: 1.2em;
+  }
+
+  .relationship-item,
+  .insight-item {
+    background: var(--la-panel);
+    border-left: 5px solid var(--la-teal);
+    border-radius: 5px;
+    color: var(--la-text);
+    margin: 0.65em 0;
+    padding: 0.55em 0.85em;
+  }
+
+  .insight-item {
+    border-left-color: var(--la-coral);
+  }
+
+  .insight-list,
+  .feature-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.55em;
+    list-style: none;
+    margin: 0.5em 0 1em;
+    padding: 0;
+  }
+
+  .insight-list li,
+  .feature-chips li {
+    background: var(--la-chip);
+    border: 1px solid var(--la-teal);
+    border-radius: 999px;
+    color: var(--la-text);
+    padding: 0.35em 0.75em;
+  }
+
+  .feature-chips li {
+    border-radius: 4px;
+    border-left: 3px solid var(--la-coral);
+    border-right: none;
+    border-top: none;
+    border-bottom: none;
+    flex: 1 1 calc(50% - 0.45em);
+  }
+
+  .concept-flow {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    margin: 1.25em 0;
+  }
+
+  .concept-flow .flow-step {
+    background: var(--la-panel);
+    border: 1px solid var(--la-teal);
+    border-radius: 7px;
+    color: var(--la-text);
+    max-width: 22em;
+    padding: 0.7em 1.2em;
+    text-align: center;
+    width: 100%;
+  }
+
+  .concept-flow .flow-step strong {
+    color: var(--la-coral);
+  }
+
+  .concept-flow .flow-arrow {
+    color: var(--la-teal);
+    font-size: 1.35em;
+    line-height: 1.25;
+  }
+
+  .percentile-callout {
+    background: var(--la-panel);
+    border-left: 5px solid var(--la-cdf);
+    border-radius: 7px;
+    color: var(--la-text);
+    margin: 1.25em 0;
+    padding: 1em;
+  }
+
+  .percentile-callout strong {
+    color: var(--la-cdf);
+  }
+
+  .katex-display,
+  .math,
+  .math-block {
+    background: #00070e;
+    border-left: 6px solid #2f005c;
+    border-radius: 6px;
+    padding: 0.6em 0.8em;
+    overflow-x: auto;
+    color: #c9c9c9 !important;
+    font-family: "Latin Modern Math", "Cambria Math", "STIX Two Math", serif !important;
+  }
+
+  .katex,
+  .katex * {
+    color: #9b9a9a !important;
+    font-family: "Latin Modern Math", "Cambria Math", "STIX Two Math", serif !important;
+  }
+
+  @media (max-width: 700px) {
+    .summary-grid,
+    .ml-grid,
+    .intuition-grid {
+      flex-direction: column;
+    }
+  }
+</style>
+
+<h2 id="01-introduction-to-probability-and-statistics">01. Introduction to Probability and Statistics</h2>
+<p>Probability and Statistics is a <strong>fundamental area</strong> of mathematics that helps us understand uncertainty, variability, and patterns in data.</p>
+<p>Key concepts we will encounter:</p>
+<ul>
+<li>Histogram</li>
+<li>Probability Density Function (PDF)</li>
+<li>Cumulative Distribution Function (CDF)</li>
+<li>Mean</li>
+<li>Variance</li>
+<li>Standard Deviation</li>
+</ul>
+<h3 id="random-variables">Random Variables</h3>
+<p>A <strong>random variable</strong> is a variable whose value is determined by the outcome of a random experiment.</p>
+<p>Examples:</p>
+<ul>
+<li>( x = 2 )</li>
+<li>( x = 3 )</li>
+</ul>
+<h3 id="discrete-random-variable--fair-dice">Discrete Random Variable – Fair Dice</h3>
+<p>A fair six-sided die has outcomes:</p>
+<p>$$
+X = {1, 2, 3, 4, 5, 6}
+$$</p>
+<p>All outcomes are <strong>equally likely</strong>.</p>
+<p>$$
+P(X = 1) = \dfrac{1}{6}, \quad P(X = 2) = \dfrac{1}{6}
+$$</p>
+<p><strong>Probability that the outcome is even:</strong></p>
+<p>$$
+\begin{align*}
+P(X \text{ is even}) &amp;= P(X=2) + P(X=4) + P(X=6) \
+&amp;= \dfrac{1}{6} + \dfrac{1}{6} + \dfrac{1}{6} \
+&amp;= \dfrac{3}{6} = \dfrac{1}{2}
+\end{align*}
+$$</p>
+<p><strong>Probability that the outcome is odd:</strong></p>
+<p>$$
+P(X \text{ is odd}) = \dfrac{1}{2}
+$$</p>
+<p>In general:</p>
+<p>$$
+P(X = x_i) = P(x_i)
+$$</p>
+<h3 id="discrete-random-variable--coin-toss">Discrete Random Variable – Coin Toss</h3>
+<p>When tossing a fair coin:</p>
+<p>$$
+Y = {H, T}
+$$</p>
+<h3 id="continuous-random-variable--height">Continuous Random Variable – Height</h3>
+<p>Height of a randomly selected student typically lies between <strong>120 cm – 190 cm</strong>.</p>
+<p>Examples of possible values:</p>
+<ul>
+<li>$ Y = 162.95 $</li>
+<li>$ Y = 132.62 $</li>
+</ul>
+<p>These are examples of a <strong>continuous random variable</strong>.</p>
+<h3 id="outliers">Outliers</h3>
+<p>Consider the heights of students:</p>
+<p>$$
+Y = {122.2,\ 116.9,\ 132.5,\ \dots,\ 12.6,\ 156.23,\ \dots}
+$$</p>
+<p>Here, <strong>12.6</strong> is an <strong>outlier</strong> (clearly unrealistic height).</p>
+<table>
+<thead>
+<tr>
+  <th>Affected by Outliers</th>
+  <th>Not Affected by Outliers</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Mean</td>
+  <td>Median</td>
+</tr>
+<tr>
+  <td>Variance</td>
+  <td>MAD (Median Absolute Deviation)</td>
+</tr>
+<tr>
+  <td>Standard Deviation</td>
+  <td></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>Key Insight</strong>: Outliers can heavily distort the mean, variance, and standard deviation, but have little or no effect on the median and MAD.</p>
+</blockquote>
+<h2 id="02-population-and-sample">02. Population and Sample</h2>
+<h3 id="population">Population</h3>
+<p>The <strong>population</strong> is the complete set of all individuals or items of interest.<br />
+Example: Set of <strong>all people in the world</strong>.</p>
+<h3 id="sample">Sample</h3>
+<p>A <strong>sample</strong> is a subset of the population.<br />
+Example: A random sample of size <strong>1000</strong>.</p>
+<p>We use the sample to <strong>estimate</strong> population parameters (e.g., average height of humans).</p>
+<h3 id="population-mean-vs-sample-mean">Population Mean vs Sample Mean</h3>
+<p><strong>Population mean</strong> ($\mu$ ):</p>
+<p>$$
+\mu = \dfrac{1}{N} \sum_{i=1}^{N} h_i
+$$</p>
+<p><strong>Sample mean</strong> ($\bar{x}$ ):</p>
+<p>$$
+\bar{x} = \dfrac{1}{1000} \sum_{i=1}^{1000} h_i
+$$</p>
+<h3 id="relationship-between-sample-size-and-accuracy">Relationship Between Sample Size and Accuracy</h3>
+<p>As the <strong>sample size increases</strong>:</p>
+<p>$$
+\bar{x} \approx \mu
+$$</p>
+<p>$$
+\text{Sample Mean} ;\longrightarrow; \text{Population Mean}
+$$</p>
+<h3 id="summary">Summary</h3>
+<div class="summary-grid">
+  <div class="summary-card">
+    <div class="summary-tag">Discrete R.V.</div>
+    <h3 id="finite--countable-outcomes">Finite / Countable Outcomes</h3>
+    <p>Dice, Coin Toss</p>
+
+<p>$ X = {1, 2, 3, 4, 5, 6} $</p>
+  </div>
+
+  <div class="summary-card pdf">
+    <div class="summary-tag">Continuous R.V.</div>
+    <h3 id="infinite-possible-values">Infinite Possible Values</h3>
+    <p>Height, Weight, Temperature<br>
+    Can take any value in an interval</p>
+  </div>
+
+  <div class="summary-card cdf">
+    <div class="summary-tag">Estimation</div>
+    <h3 id="sample--population">Sample → Population</h3>
+    <p>Dice, Coin Toss</p>
+
+<p>$ X = {1,2,3,4,5,6} $</p>
+  </div>
+</div>
+
+<h2 id="03-gaussian-normal-distribution-and-its-pdf">03. Gaussian (Normal) Distribution and its PDF</h2>
+<p>The <strong>Gaussian distribution</strong> (also called the <strong>Normal distribution</strong>) is one of the most important distributions in probability and statistics.</p>
+<h3 id="shape-of-the-pdf">Shape of the PDF</h3>
+<p>The Probability Density Function (PDF) of a Gaussian random variable has a characteristic <strong>bell-shaped curve</strong>.</p>
+<p>$$
+f(x) = \dfrac{1}{\sigma\sqrt{2\pi}}, \exp\left(-\dfrac{(x-\mu)^2}{2\sigma^2}\right)
+$$</p>
+<p>$$
+f(x) = \dfrac{1}{\sigma \sqrt{2\pi}} , e^{-\frac{(x-\mu)^2}{2\sigma^2}}
+$$</p>
+<p>$$
+X \sim \mathcal{N}(\mu, \sigma^2)
+$$</p>
+<ul>
+<li>$ X $ is a <strong>continuous</strong> random variable.</li>
+<li>If the PDF of $ X $ looks like a symmetric bell curve, then $ X $ is said to be <strong>Gaussian / Normally distributed</strong>.</li>
+</ul>
+<p><img src="./assets/01.%20Normal_Distribution_PDF.jpg" alt="Normal Distribution PDF" /></p>
+<p><strong>Observations from the PDF plot:</strong></p>
+<ol>
+<li><p><strong>Effect of Variance ($\sigma^2$)</strong></p>
+<ul>
+<li>Blue curve ($\sigma^2 = 0.2$): Very tall and narrow → data is highly concentrated around the mean.</li>
+<li>Red curve ($\sigma^2 = 1.0$): Medium height and width (standard shape).</li>
+<li>Yellow curve ($\sigma^2 = 5.0$): Short and wide → data is much more spread out.</li>
+</ul>
+</li>
+<li><p><strong>Effect of Mean ($\mu$)</strong></p>
+<ul>
+<li>Green curve ($\mu = -2$, $\sigma^2 = 0.5$): The entire bell curve is shifted to the left.</li>
+<li>Changing $\mu$ only moves the curve left or right — it does <strong>not</strong> change the shape.</li>
+</ul>
+</li>
+<li><p><strong>Key Visual Properties</strong></p>
+<ul>
+<li>All curves are <strong>symmetric</strong> about their mean.</li>
+<li>Higher peak ↔ smaller variance.</li>
+<li>Lower peak ↔ larger variance.</li>
+<li>The total area under every curve is always <strong>1</strong>.</li>
+</ul>
+</li>
+<li><p><strong>Practical Meaning</strong></p>
+<ul>
+<li>Small $\sigma^2$ → values are tightly clustered around $\mu$.</li>
+<li>Large $\sigma^2$ → values are more dispersed.</li>
+<li>$\mu$ tells us the <strong>center</strong>, $\sigma^2$ tells us the <strong>spread</strong>.</li>
+</ul>
+</li>
+</ol>
+<h3 id="why-is-the-normal-distribution-important">Why is the Normal Distribution Important?</h3>
+<ul>
+<li>Extremely common in nature (height, weight, measurement errors, etc.)</li>
+<li>Simple mathematical model that contains a lot of useful information</li>
+<li><strong>Unimodal</strong> (has only one peak)</li>
+<li>Completely characterized by just <strong>two parameters</strong>:<ul>
+<li>$ \mu $ → mean (location of the center)</li>
+<li>$ \sigma^2 $ → variance (controls the spread)</li>
+</ul>
+</li>
+</ul>
+<h3 id="notation">Notation</h3>
+<p>$$
+X \sim \mathcal{N}(\mu, \sigma^2)
+$$</p>
+<table>
+<thead>
+<tr>
+  <th>Distribution</th>
+  <th>Notation</th>
+  <th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Standard Normal</td>
+  <td>$ X \sim \mathcal{N}(0,1) $</td>
+  <td>$ \mu=0 $, $ \sigma=1 $</td>
+</tr>
+<tr>
+  <td>Mean 0, Variance 4</td>
+  <td>$ X \sim \mathcal{N}(0,4) $</td>
+  <td>$ \mu=0 $, $ \sigma=2 $</td>
+</tr>
+<tr>
+  <td>General case</td>
+  <td>$ X \sim \mathcal{N}(\mu,\sigma^2) $</td>
+  <td>Any mean and variance</td>
+</tr>
+</tbody>
+</table>
+<h3 id="understanding-the-pdf-formula">Understanding the PDF Formula</h3>
+<p>For the <strong>standard normal</strong> $ X \sim \mathcal{N}(0,1) $:</p>
+<p>$$
+P(x) = \dfrac{1}{\sqrt{2\pi}}, e^{-x^2/2}
+$$</p>
+<p>The shape is mainly controlled by the exponential term $ e^{-x^2/2} $.</p>
+<table>
+<thead>
+<tr>
+  <th>$ x $</th>
+  <th>Approximate value of $ e^{-x^2} $</th>
+  <th>Observation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>$ x=0 $</td>
+  <td>$ 1 $</td>
+  <td>Maximum (peak)</td>
+</tr>
+<tr>
+  <td>$ x=1 $</td>
+  <td>$ \approx 0.367 $</td>
+  <td>Noticeable drop</td>
+</tr>
+<tr>
+  <td>$ x=2 $</td>
+  <td>$ \approx 0.018 $</td>
+  <td>Very small</td>
+</tr>
+<tr>
+  <td>$ x=3 $</td>
+  <td>$ \approx 0.000123 $</td>
+  <td>Extremely small</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Key Observations:</strong></p>
+<ol>
+<li>The curve is <strong>symmetric</strong> about the mean $ \mu $.</li>
+<li>As $ x $ moves farther from $ \mu $, the PDF value decreases rapidly.</li>
+<li>Most of the probability mass is concentrated near the mean.</li>
+</ol>
+<h2 id="04-cdf-of--x-sim-mathcalnmu-sigma2--and-the-68-95-997-rule">04. CDF of $ X \sim \mathcal{N}(\mu, \sigma^2) $ and the 68-95-99.7 Rule</h2>
+<p>The <strong>Cumulative Distribution Function (CDF)</strong> is:</p>
+<p>$$
+F(x) = P(X \leq x) = \int_{-\infty}^{x} f(t), dt
+$$</p>
+<p><img src="./assets/02.%20Normal_Distribution_CDF.jpg" alt="Normal Distribution CDF" /></p>
+<p><strong>Observations from the CDF plot:</strong></p>
+<ol>
+<li><p><strong>General Shape</strong></p>
+<ul>
+<li>All CDF curves are <strong>S-shaped</strong> (sigmoid).</li>
+<li>They start near 0 on the far left and approach 1 on the far right.</li>
+<li>The total probability always goes from 0 → 1.</li>
+</ul>
+</li>
+<li><p><strong>Effect of Variance ($ \sigma^2 $)</strong></p>
+<ul>
+<li>Blue curve ($ \sigma^2 = 0.2$): Very <strong>steep</strong> rise → probability accumulates quickly around the mean.</li>
+<li>Red curve ($ \sigma^2 = 1.0$): Moderately steep.</li>
+<li>Yellow curve ($ \sigma^2 = 5.0$): Much more <strong>gradual</strong> rise → probability spreads over a wider range.</li>
+</ul>
+</li>
+<li><p><strong>Effect of Mean ($ \mu $)</strong></p>
+<ul>
+<li>Green curve ($ \mu = -2 $, $ \sigma^2 = 0.5 $): The entire S-curve is shifted to the left.</li>
+<li>Changing $ \mu $ moves the steep part of the curve left or right without changing how steep it is.</li>
+</ul>
+</li>
+<li><p><strong>Key Relationships</strong></p>
+<ul>
+<li>Smaller variance → steeper CDF.</li>
+<li>Larger variance → flatter CDF.</li>
+<li>The point where the CDF reaches 0.5 is exactly at the mean $ \mu $ (because the normal distribution is symmetric).</li>
+</ul>
+</li>
+<li><p><strong>Practical Meaning</strong></p>
+<ul>
+<li>A steep CDF means most of the probability mass is concentrated near the mean.</li>
+<li>A flat CDF means the values are more spread out.</li>
+<li>The CDF directly gives $ P(X \leq x) $.</li>
+</ul>
+</li>
+</ol>
+<h3 id="the-empirical-rule-68-95-997-rule">The Empirical Rule (68-95-99.7 Rule)</h3>
+<p>For <strong>any</strong> normal distribution $ X \sim \mathcal{N}(\mu, \sigma^2) $:</p>
+<table>
+<thead>
+<tr>
+  <th>Interval</th>
+  <th>Approximate Probability</th>
+  <th>Percentage</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>$ \mu \pm 1\sigma $</td>
+  <td>$ \approx 0.6827 $</td>
+  <td><strong>68.27%</strong></td>
+</tr>
+<tr>
+  <td>$ \mu \pm 2\sigma $</td>
+  <td>$ \approx 0.9545 $</td>
+  <td><strong>95.45%</strong></td>
+</tr>
+<tr>
+  <td>$ \mu \pm 3\sigma $</td>
+  <td>$ \approx 0.9973 $</td>
+  <td><strong>99.73%</strong></td>
+</tr>
+</tbody>
+</table>
+<p><img src="./assets/03.%20Standard_deviation.jpg" alt="Standard Deviation Percentages" /></p>
+<p><strong>Observations from the Standard Deviation (Bell Curve) plot:</strong></p>
+<ol>
+<li><p><strong>Symmetry</strong></p>
+<ul>
+<li>The curve is perfectly <strong>symmetric</strong> around the mean $\mu$.</li>
+<li>The left side and right side have identical percentages.</li>
+</ul>
+</li>
+<li><p><strong>68-95-99.7 Rule (Detailed Breakdown)</strong></p>
+<p>| Distance from Mean | Percentage on <strong>one side</strong> | Percentage on <strong>both sides</strong> |
+|--------------------|----------------------------|------------------------------|
+| $0$ to $1\sigma$   | 34.1%                      | <strong>68.2%</strong>                    |
+| $1\sigma$ to $2\sigma$ | 13.6%                   | <strong>95.4%</strong> (cumulative)       |
+| $2\sigma$ to $3\sigma$ | 2.1%                    | <strong>99.6%</strong> (cumulative)       |
+| Beyond $3\sigma$   | 0.1%                       | Almost everything (99.8%)    |</p>
+</li>
+<li><p><strong>Key Percentages</strong></p>
+<ul>
+<li><strong>68%</strong> of the data lies within $\mu \pm 1\sigma$</li>
+<li><strong>95%</strong> of the data lies within $\mu \pm 2\sigma$</li>
+<li><strong>99.7%</strong> of the data lies within $\mu \pm 3\sigma$</li>
+</ul>
+</li>
+<li><p><strong>Practical Insights</strong></p>
+<ul>
+<li>Only about <strong>0.3%</strong> of values fall outside $\mu \pm 3\sigma$ (very rare).</li>
+<li>Most of the data (nearly 95%) is concentrated within just 2 standard deviations of the mean.</li>
+<li>The tall central region ($34.1% + 34.1%$) shows that the majority of values are close to the mean.</li>
+</ul>
+</li>
+<li><p><strong>Visual Takeaway</strong></p>
+<ul>
+<li>The darker central area represents the highest concentration of probability.</li>
+<li>The curve gets thinner and lower as we move farther from $\mu$, matching the rapid drop in the PDF.</li>
+</ul>
+</li>
+</ol>
+<p><img src="./assets/04.%2068-95-99.7.jpg" alt="68-95-99.7 Rule" /></p>
+<p><strong>Observations from the 68-95-99.7 Rule plot:</strong></p>
+<ol>
+<li><p><strong>Overall Structure</strong></p>
+<ul>
+<li>This is the standard normal distribution centered at $0$ (mean $\mu = 0$).</li>
+<li>The horizontal axis is marked in units of standard deviation: $-3\sigma$, $-2\sigma$, $-1\sigma$, $0$, $+1\sigma$, $+2\sigma$, $+3\sigma$.</li>
+</ul>
+</li>
+<li><p><strong>Detailed Area Breakdown</strong></p>
+<p>| Region                        | Percentage | Notes                              |
+|-------------------------------|------------|------------------------------------|
+| $0$ to $+1\sigma$             | 34.1%      | Right half of the central peak     |
+| $-1\sigma$ to $0$             | 34.1%      | Left half of the central peak      |
+| $+1\sigma$ to $+2\sigma$      | 13.6%      | Right shoulder                     |
+| $-2\sigma$ to $-1\sigma$      | 13.6%      | Left shoulder                      |
+| $+2\sigma$ to $+3\sigma$      | 2.1%       | Far right tail                     |
+| $-3\sigma$ to $-2\sigma$      | 2.1%       | Far left tail                      |
+| Beyond $\pm 3\sigma$         | 0.1% each  | Extremely rare values              |</p>
+</li>
+<li><p><strong>Cumulative Rule</strong></p>
+<ul>
+<li>Within $\pm 1\sigma$: $34.1% + 34.1% = \mathbf{68.2%}$</li>
+<li>Within $\pm 2\sigma$: $68.2% + 13.6% + 13.6% = \mathbf{95.4%}$</li>
+<li>Within $\pm 3\sigma$: $95.4% + 2.1% + 2.1% = \mathbf{99.6%}$ (≈ 99.7%)</li>
+</ul>
+</li>
+<li><p><strong>Key Insights</strong></p>
+<ul>
+<li>Almost all data (99.7%) lies within 3 standard deviations of the mean.</li>
+<li>Only <strong>0.3%</strong> of observations fall outside $\pm 3\sigma$ (very unusual events).</li>
+<li>The curve is perfectly symmetric — left and right sides are mirror images.</li>
+</ul>
+</li>
+<li><p><strong>Practical Meaning</strong></p>
+<ul>
+<li>If a value is more than $3\sigma$ away from the mean, it is considered an extreme outlier in a normal distribution.</li>
+<li>This rule gives a quick way to understand spread without calculating exact probabilities.</li>
+</ul>
+</li>
+</ol>
+<h3 id="detailed-breakdown-standard-normal">Detailed Breakdown (Standard Normal)</h3>
+<table>
+<thead>
+<tr>
+  <th>Interval</th>
+  <th>Percentage</th>
+  <th>Cumulative from center</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>$ 0 $ to $ 1\sigma $</td>
+  <td>34.1%</td>
+  <td>34.1%</td>
+</tr>
+<tr>
+  <td>$ 1\sigma $ to $ 2\sigma $</td>
+  <td>13.6%</td>
+  <td>47.7%</td>
+</tr>
+<tr>
+  <td>$ 2\sigma $ to $ 3\sigma $</td>
+  <td>2.1%</td>
+  <td>49.8%</td>
+</tr>
+<tr>
+  <td>Beyond $ 3\sigma $</td>
+  <td>0.1%</td>
+  <td>50.0%</td>
+</tr>
+</tbody>
+</table>
+<p>Because the curve is symmetric, the same percentages appear on both sides of the mean.</p>
+<p><strong>Totals:</strong></p>
+<ul>
+<li>$ \pm 1\sigma $: $ 34.1% + 34.1% = 68.2% $</li>
+<li>$ \pm 2\sigma $: $ 68.2% + 13.6% + 13.6% = 95.4% $</li>
+<li>$ \pm 3\sigma $: $ 95.4% + 2.1% + 2.1% \approx 99.7% $</li>
+</ul>
+<h3 id="summary-2">Summary</h3>
+<table>
+<thead>
+<tr>
+  <th>Topic</th>
+  <th>Controlled by</th>
+  <th>Key Point</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><strong>PDF Shape</strong></td>
+  <td>$ \sigma^2 $</td>
+  <td>Small → tall &amp; narrow <br> Large → short &amp; wide</td>
+</tr>
+<tr>
+  <td><strong>Location</strong></td>
+  <td>$ \mu $</td>
+  <td>Shifts the curve left or right</td>
+</tr>
+<tr>
+  <td><strong>68-95-99.7 Rule</strong></td>
+  <td>—</td>
+  <td>$ \mu \pm 1\sigma $ ≈ 68% <br> $ \mu \pm 2\sigma $ ≈ 95% <br> $ \mu \pm 3\sigma $ ≈ 99.7%</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>Practical Takeaway: Once you know $ \mu $ and $ \sigma $, you immediately know where the bulk of the data lies — without calculating complicated integrals.</p>
+</blockquote>
+<p>Here’s a clean set of <strong>Observations</strong> you can append for the three new images:</p>
+<h3 id="05-symmetric-distribution-skewness-kurtosis">05. Symmetric Distribution, Skewness, Kurtosis</h3>
+<blockquote>
+<p>Symmetric Distribution</p>
+</blockquote>
+<p><img src="./assets/05.%20Symmetric_distribution.jpg" alt="Symmetric Distribution" /></p>
+<p><strong>Observations:</strong></p>
+<ul>
+<li>The <strong>Standard Normal Distribution</strong> is perfectly symmetric.</li>
+<li>The red dashed line is the <strong>Line of Symmetry</strong>, which passes through the mean ($\mu = 0$).</li>
+<li>Left side of the curve is a mirror image of the right side.</li>
+<li>Because of this symmetry:<ul>
+<li>Mean = Median = Mode</li>
+<li>$P(X \leq -a) = P(X \geq a)$ for any value $a$</li>
+</ul>
+</li>
+<li>This symmetry is one of the most important properties of the Normal distribution.</li>
+</ul>
+<blockquote>
+<p>Skewness</p>
+</blockquote>
+<p><img src="./assets/06.%20Skewness.jpg" alt="Skewness" /></p>
+<p><strong>Observations:</strong></p>
+<table>
+<thead>
+<tr>
+  <th>Type of Skew</th>
+  <th>Shape Description</th>
+  <th>Tail Direction</th>
+  <th>Mean vs Median</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><strong>Negative Skew</strong> (Left-skewed)</td>
+  <td>Long tail on the left side</td>
+  <td>Left tail longer</td>
+  <td>Mean &lt; Median</td>
+</tr>
+<tr>
+  <td><strong>Symmetric</strong> (Normal)</td>
+  <td>Both sides are mirror images</td>
+  <td>No long tail</td>
+  <td>Mean = Median = Mode</td>
+</tr>
+<tr>
+  <td><strong>Positive Skew</strong> (Right-skewed)</td>
+  <td>Long tail on the right side</td>
+  <td>Right tail longer</td>
+  <td>Mean &gt; Median</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Key Points:</strong></p>
+<ul>
+<li>Skewness measures the <strong>asymmetry</strong> of a distribution.</li>
+<li>In a negatively skewed distribution, extreme low values pull the mean to the left.</li>
+<li>In a positively skewed distribution, extreme high values pull the mean to the right.</li>
+<li>The Normal distribution has <strong>zero skewness</strong> (perfectly symmetric).</li>
+</ul>
+<blockquote>
+<p>Kurtosis</p>
+</blockquote>
+<p><img src="./assets/07.%20Kurtosis.jpg" alt="Kurtosis" /></p>
+<p><strong>Observations:</strong></p>
+<p>Kurtosis measures the <strong>tailedness</strong> and <strong>peakedness</strong> of a distribution (compared to the Normal distribution).</p>
+<table>
+<thead>
+<tr>
+  <th>Label</th>
+  <th>Kurtosis Value</th>
+  <th>Shape Characteristics</th>
+  <th>Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>D</td>
+  <td>3</td>
+  <td>Very sharp peak, heavy tails</td>
+  <td>Leptokurtic</td>
+</tr>
+<tr>
+  <td>S</td>
+  <td>2</td>
+  <td>Sharp peak, moderately heavy tails</td>
+  <td>Leptokurtic</td>
+</tr>
+<tr>
+  <td>L</td>
+  <td>1.2</td>
+  <td>Moderately peaked</td>
+  <td>Slightly Leptokurtic</td>
+</tr>
+<tr>
+  <td>N</td>
+  <td>0</td>
+  <td>Standard Normal (reference)</td>
+  <td>Mesokurtic</td>
+</tr>
+<tr>
+  <td>C</td>
+  <td>-0.59</td>
+  <td>Flatter peak, thinner tails</td>
+  <td>Platykurtic</td>
+</tr>
+<tr>
+  <td>W</td>
+  <td>-1</td>
+  <td>Even flatter peak</td>
+  <td>Platykurtic</td>
+</tr>
+<tr>
+  <td>U</td>
+  <td>-1.2</td>
+  <td>Very flat peak, light tails</td>
+  <td>Platykurtic</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Key Points:</strong></p>
+<ul>
+<li><strong>Leptokurtic</strong> (Kurtosis &gt; 0): Tall peak + heavy tails → more outliers</li>
+<li><strong>Mesokurtic</strong> (Kurtosis ≈ 0): Normal distribution</li>
+<li><strong>Platykurtic</strong> (Kurtosis &lt; 0): Flat peak + thin tails → fewer outliers</li>
+<li>The purple box highlights the central region where the differences in peakedness are most visible.</li>
+</ul>
+<p>Here’s the clean lecture note version for this page:</p>
+<h2 id="06-standard-normal-variate-z-and-standardization">06. Standard Normal Variate ($Z$) and Standardization</h2>
+<p><img src="./assets/08.%20Standardization.jpg" alt="Standardization" /></p>
+<h3 id="what-is-a-standard-normal-variate">What is a Standard Normal Variate?</h3>
+<p>A <strong>Standard Normal Variate</strong> (usually denoted by $Z$) is a random variable that follows the <strong>Standard Normal Distribution</strong>:</p>
+<p>$$
+Z \sim \mathcal{N}(0, 1)
+$$</p>
+<p>This means:</p>
+<ul>
+<li>Mean $\mu = 0$</li>
+<li>Variance $\sigma^2 = 1$</li>
+<li>Standard deviation $\sigma = 1$</li>
+</ul>
+<hr />
+<h3 id="standardization">Standardization</h3>
+<p>Suppose we have any normal random variable:</p>
+<p>$$
+X \sim \mathcal{N}(\mu, \sigma^2)
+$$</p>
+<p>We can convert it into a standard normal variate using the formula:</p>
+<p>$$
+Z = \dfrac{X - \mu}{\sigma}
+$$</p>
+<p>After this transformation:</p>
+<p>$$
+Z \sim \mathcal{N}(0, 1)
+$$</p>
+<p>This process is called <strong>Standardization</strong> (or converting to $z$-scores).</p>
+<h3 id="why-do-we-standardize">Why do we standardize?</h3>
+<ul>
+<li>The 68-95-99.7 rule is defined for the <strong>standard normal distribution</strong>.</li>
+<li>By converting any normal variable $X$ into $Z$, we can directly apply the 68-95-99.7 rule.</li>
+<li>It allows us to compare values from different normal distributions on the same scale.</li>
+</ul>
+<h3 id="example-of-standardization">Example of Standardization</h3>
+<p>If we have data points $x_1, x_2, \dots, x_{50}$ from $X \sim \mathcal{N}(\mu, \sigma^2)$, then each standardized value is:</p>
+<p>$$
+x_i' = \dfrac{x_i - \mu}{\sigma}
+$$</p>
+<p>And</p>
+<p>$$
+x_i' \sim \mathcal{N}(0, 1)
+$$</p>
+<h3 id="visual-summary">Visual Summary</h3>
+<p>After standardization, the distribution always looks like this:</p>
+<ul>
+<li>Centered at $0$</li>
+<li>Spread controlled by $\sigma = 1$</li>
+<li>We can directly use the <code>68-95-99.7</code> rule on the $Z$ values.</li>
+</ul>
+<h2 id="07-kernel-density-estimation-kde">07. Kernel Density Estimation (KDE)</h2>
+<p>Kernel Density Estimation is a <strong>non-parametric</strong> way to estimate the probability density function of a continuous random variable from a sample of data.</p>
+<h3 id="visual-explanation">Visual Explanation</h3>
+<p><img src="./assets/09.%20KDE.jpg" alt="Kernel Density Estimation" /></p>
+<p><strong>Left Plot – Histogram</strong></p>
+<ul>
+<li>Shows the data using bars (bins).</li>
+<li>Simple but depends heavily on bin width and starting point.</li>
+<li>Gives a rough idea of the distribution.</li>
+</ul>
+<p><strong>Right Plot – Kernel Density Estimate</strong></p>
+<ul>
+<li>The <strong>solid blue curve</strong> is the final KDE.</li>
+<li>The <strong>red dashed curves</strong> are individual kernels (usually Gaussian) centered at each data point (shown as white ticks on the x-axis).</li>
+<li>The KDE is formed by <strong>adding up</strong> all the individual kernels.</li>
+</ul>
+<h3 id="how-kde-works">How KDE Works</h3>
+<ol>
+<li>Place a smooth kernel (most commonly a Gaussian curve) on top of every data point.</li>
+<li>Add all these kernels together.</li>
+<li>The resulting smooth curve is the estimated probability density function.</li>
+</ol>
+<p>$$
+\hat{f}(x) = \dfrac{1}{n h} \sum_{i=1}^{n} K\left( \dfrac{x - x_i}{h} \right)
+$$</p>
+<p>Where:</p>
+<ul>
+<li>$n$ = number of data points</li>
+<li>$h$ = bandwidth (controls smoothness)</li>
+<li>$K$ = kernel function (usually standard normal)</li>
+</ul>
+<h3 id="key-observations-from-the-plot">Key Observations from the Plot</h3>
+<ul>
+<li>The histogram is <strong>blocky</strong>, while the KDE is <strong>smooth</strong>.</li>
+<li>Each red dashed curve is a kernel centered at a data point.</li>
+<li>Where data points are dense (around $x = -1$), the KDE becomes higher.</li>
+<li>Where data points are sparse, the KDE becomes lower.</li>
+<li>The final blue curve is the sum of all the individual kernels.</li>
+</ul>
+<h3 id="advantages-of-kde-over-histogram">Advantages of KDE over Histogram</h3>
+<table>
+<thead>
+<tr>
+  <th>Feature</th>
+  <th>Histogram</th>
+  <th>KDE</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Smoothness</td>
+  <td>Jagged / blocky</td>
+  <td>Smooth continuous curve</td>
+</tr>
+<tr>
+  <td>Dependence on bins</td>
+  <td>Strongly depends on bin width &amp; position</td>
+  <td>Depends mainly on bandwidth $h$</td>
+</tr>
+<tr>
+  <td>Shape discovery</td>
+  <td>Can hide true shape</td>
+  <td>Better at revealing underlying distribution</td>
+</tr>
+<tr>
+  <td>Mathematical form</td>
+  <td>Discrete</td>
+  <td>Continuous estimate of PDF</td>
+</tr>
+</tbody>
+</table>
+<h3 id="important-note">Important Note</h3>
+<ul>
+<li>Bandwidth $h$ is critical:<ul>
+<li>Too small $h$ → very spiky (overfitting)</li>
+<li>Too large $h$ → over-smoothed (loses important features)</li>
+</ul>
+</li>
+</ul>
+<p>Would you like me to also add a short comparison between Histogram, PDF, and KDE in a summary card format?</p>
+<h2 id="08-sampling-distribution--central-limit-theorem-clt">08. Sampling Distribution &amp; Central Limit Theorem (CLT)</h2>
+<p><img src="./assets/10.%20CLT.jpg" alt="CLT" /></p>
+<h3 id="sampling-distribution-of-the-sample-mean">Sampling Distribution of the Sample Mean</h3>
+<p>Suppose we have a population with any distribution (not necessarily Gaussian):</p>
+<ul>
+<li>Population: $X$ (distribution of incomes, heights, etc.)</li>
+<li>We take many random samples of size $n$ (for example $n = 30$)</li>
+</ul>
+<table>
+<thead>
+<tr>
+  <th>Sample Number</th>
+  <th>Sample</th>
+  <th>Sample Mean</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>1</td>
+  <td>$S_1$</td>
+  <td>$\bar{x}_1$</td>
+</tr>
+<tr>
+  <td>2</td>
+  <td>$S_2$</td>
+  <td>$\bar{x}_2$</td>
+</tr>
+<tr>
+  <td>3</td>
+  <td>$S_3$</td>
+  <td>$\bar{x}_3$</td>
+</tr>
+<tr>
+  <td>$\vdots$</td>
+  <td>$\vdots$</td>
+  <td>$\vdots$</td>
+</tr>
+<tr>
+  <td>$m$</td>
+  <td>$S_m$</td>
+  <td>$\bar{x}_m$</td>
+</tr>
+</tbody>
+</table>
+<p>We now have a collection of sample means:</p>
+<p>$$
+\bar{x}_1,\ \bar{x}_2,\ \bar{x}_3,\ \dots,\ \bar{x}_m
+$$</p>
+<p>The distribution of these sample means is called the <strong>Sampling Distribution of the Sample Mean</strong>.</p>
+<p>$$
+\text{Distribution of }\bar{x}_i = \text{Sampling Distribution of Sample Means}
+$$</p>
+<h3 id="central-limit-theorem-clt">Central Limit Theorem (CLT)</h3>
+<p><strong>Statement of CLT:</strong></p>
+<p>If we take random samples of size $n$ from <strong>any</strong> population (with finite mean $\mu$ and finite variance $\sigma^2$), then as the sample size $n$ becomes large:</p>
+<p>$$
+\bar{x} ;\sim; \mathcal{N}\left(\mu,\ \dfrac{\sigma^2}{n}\right)
+$$</p>
+<p>In other words:</p>
+<blockquote>
+<p>The sampling distribution of the sample mean approaches a <strong>Normal distribution</strong>, regardless of the shape of the original population distribution.</p>
+</blockquote>
+<h3 id="key-points-of-clt">Key Points of CLT</h3>
+<table>
+<thead>
+<tr>
+  <th>Condition</th>
+  <th>Result</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Population has mean $\mu$ and variance $\sigma^2$</td>
+  <td>Sampling distribution has mean $\mu$ and variance $\dfrac{\sigma^2}{n}$</td>
+</tr>
+<tr>
+  <td>Sample size $n$ is large</td>
+  <td>Sampling distribution becomes approximately Normal</td>
+</tr>
+<tr>
+  <td>Original population can be anything</td>
+  <td>Even if the population is skewed or non-normal, $\bar{x}$ becomes normal</td>
+</tr>
+</tbody>
+</table>
+<h3 id="rule-of-thumb">Rule of Thumb</h3>
+<ul>
+<li>When $n \geq 30$, the sampling distribution of $\bar{x}$ is approximately Normal (even if the population is not Normal).</li>
+<li>If the population itself is Normal, then $\bar{x}$ is Normal for <strong>any</strong> sample size $n$.</li>
+</ul>
+<h3 id="summary-of-clt">Summary of CLT</h3>
+<p>$$
+\text{Any population} \xrightarrow{\text{large } n} \text{Sampling distribution of }\bar{x} \approx \text{Normal}
+$$</p>
+<p>$$
+\bar{x} \sim \mathcal{N}\left(\mu,\ \dfrac{\sigma^2}{n}\right)
+$$</p>
+<ul>
+<li>Mean of sample means $= \mu$</li>
+<li>Variance of sample means $= \dfrac{\sigma^2}{n}$</li>
+<li>Standard error of the mean $= \dfrac{\sigma}{\sqrt{n}}$</li>
+</ul>
+<h2 id="09-q-q-plot-quantile-quantile-plot">09. Q-Q Plot (Quantile-Quantile Plot)</h2>
+<h3 id="purpose">Purpose</h3>
+<p>How can we check whether a random variable $X$ is <strong>Normally distributed</strong> or not?</p>
+<p>Two common techniques:</p>
+<ol>
+<li><strong>Q-Q Plot</strong> (Graphical method)</li>
+<li>Statistical tests (e.g., Kolmogorov-Smirnov, Anderson-Darling)</li>
+</ol>
+<h3 id="what-is-a-q-q-plot">What is a Q-Q Plot?</h3>
+<p>A <strong>Quantile-Quantile (Q-Q) Plot</strong> compares the quantiles (percentiles) of our data with the quantiles of a theoretical distribution (usually the Standard Normal distribution).</p>
+<blockquote>
+<h3 id="steps-to-create-a-q-q-plot">Steps to Create a Q-Q Plot</h3>
+</blockquote>
+<blockquote>
+<p><strong>Step 1: Prepare the data</strong></p>
+</blockquote>
+<p>Suppose we have a sample:
+$$
+X: x_1, x_2, x_3, \dots, x_{500}
+$$</p>
+<ul>
+<li><p>Sort the data in ascending order:
+$$
+x'_1 \leq x'_2 \leq x'<em>3 \leq \dots \leq x'</em>{500}
+$$</p>
+</li>
+<li><p>Compute the percentiles (or quantiles) of the sorted data.</p>
+</li>
+</ul>
+<blockquote>
+<p><strong>Step 2: Generate theoretical quantiles</strong></p>
+</blockquote>
+<ul>
+<li>Create a Standard Normal distribution: $Y \sim \mathcal{N}(0,1)$</li>
+<li>Generate a large number of observations (e.g., 1000) from $Y$</li>
+<li>Sort them and compute the corresponding percentiles:
+$$
+y'_1, y'_2, y'<em>3, \dots, y'</em>{100}
+$$
+(These are the <strong>theoretical quantiles</strong>)</li>
+</ul>
+<blockquote>
+<p><strong>Step 3: Plot the points</strong></p>
+</blockquote>
+<p>Plot the pairs:
+$$
+(y'_i,\ x'_i)
+$$</p>
+<ul>
+<li>Horizontal axis → Theoretical quantiles (from Standard Normal)</li>
+<li>Vertical axis → Sample quantiles (from our data)</li>
+</ul>
+<p><img src="./assets/11.%20QQ.jpg" alt="QQ" /></p>
+<h3 id="how-to-interpret-a-q-q-plot">How to Interpret a Q-Q Plot</h3>
+<table>
+<thead>
+<tr>
+  <th>Pattern in Q-Q Plot</th>
+  <th>Conclusion</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Points lie approximately on a <strong>straight line</strong></td>
+  <td>Data is approximately Normally distributed</td>
+</tr>
+<tr>
+  <td>Points deviate systematically from the line</td>
+  <td>Data is <strong>not</strong> Normal</td>
+</tr>
+<tr>
+  <td>S-shaped curve</td>
+  <td>Data has heavier or lighter tails than Normal</td>
+</tr>
+<tr>
+  <td>Curved pattern</td>
+  <td>Data is skewed</td>
+</tr>
+</tbody>
+</table>
+<h3 id="two-common-uses-of-q-q-plot">Two Common Uses of Q-Q Plot</h3>
+<ol>
+<li><p><strong>Checking Normality</strong><br />
+Is $X \sim \mathcal{N}(\mu, \sigma^2)$?</p>
+</li>
+<li><p><strong>Comparing two distributions</strong><br />
+Do $X$ and $Y$ have the same distribution?</p>
+</li>
+</ol>
+<pre><code class="language-py">#Q-Q plot
+import numpy as np 
+import pylab 
+import scipy.stats as stats
+import matplotlib.pyplot as plt
+
+# N(0,1)
+std_normal = np.random.normal(loc = 0, scale = 1, size=1000)
+
+# 0 to 100th percentiles of std-normal
+for i in range(0,101):
+    print(i, np.percentile(std_normal,i))
+
+# generate 100 sanples from N(20,5)
+measurements = np.random.normal(loc = 0, scale = 1, size=10000) 
+#try size=1000
+
+plt.xlim(-1,1)
+
+stats.probplot(measurements, dist=&quot;norm&quot;, plot=pylab)
+pylab.show()
+
+# generate 100 sanples from N(20,5)
+measurements = np.random.normal(loc = 0, scale = 1, size=10000) 
+#try size=1000
+plt.xlim(-4, 4)
+
+stats.probplot(measurements, dist=&quot;norm&quot;, plot=pylab)
+pylab.show()
+
+# generate 100 sanples from N(20,5)
+measurements = np.random.uniform(low = -1, high = 1, size=10000) 
+#try size=100, 1000, 10000
+
+stats.probplot(measurements, dist=&quot;norm&quot;, plot=pylab)
+pylab.show()
+
+</code></pre>
+<h3 id="summary-3">Summary</h3>
+<blockquote>
+<p>If the points in the Q-Q plot lie roughly on a straight line, we can conclude that the sample comes from a Normal distribution (or from the same distribution as the theoretical one).</p>
+</blockquote>
+<h2 id="10-how--where-to-use-distributions">10. How / Where to Use Distributions?</h2>
+<p>Distributions (especially the Normal distribution) are extremely useful for answering real-world business and data analysis questions.</p>
+<h3 id="example-1-t-shirt-sizes-for-employees">Example 1: T-Shirt Sizes for Employees</h3>
+<p><strong>Company size:</strong> 1000 employees</p>
+<p><strong>Task:</strong> Order T-shirts (S, M, L, XL) for all employees.</p>
+<p><strong>Questions we can answer using distributions:</strong></p>
+<ol>
+<li>How many XL T-shirts should we order?</li>
+<li>Collect data of all 1000 employees’ heights.</li>
+</ol>
+<p><strong>Given information:</strong></p>
+<ul>
+<li>Height range for XL: Height $&gt; 180$ cm</li>
+<li>From domain knowledge / previous data: Heights follow a Normal distribution</li>
+</ul>
+<p>$$
+\text{Heights} \sim \mathcal{N}(\mu, \sigma^2)
+$$</p>
+<p>We can calculate:</p>
+<p>$$
+P(X &gt; 180) = 1%
+$$</p>
+<p>This means only about <strong>1%</strong> of employees need XL size.</p>
+<p>Using the Normal distribution (PDF / CDF), we can estimate the required quantity of each size accurately instead of guessing.</p>
+<h3 id="example-2-employee-salaries">Example 2: Employee Salaries</h3>
+<p>Assume salaries follow a Normal distribution:</p>
+<p>$$
+S \sim \mathcal{N}(\mu, \sigma^2)
+$$</p>
+<p><strong>Questions:</strong></p>
+<ol>
+<li>How many employees make a salary <strong>greater than $100k</strong>?</li>
+<li>How many employees have salary in the range <strong>[$50k, $70k]</strong>?</li>
+</ol>
+<p>From the CDF:</p>
+<ul>
+<li>Suppose $P(50k \leq S \leq 70k) \approx 30%$</li>
+</ul>
+<p>We can directly estimate the number of employees in any salary range using the Normal distribution.</p>
+<h3 id="why-distributions-are-useful">Why Distributions Are Useful</h3>
+<table>
+<thead>
+<tr>
+  <th>Use Case</th>
+  <th>What Distribution Helps With</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Inventory / Sizing decisions</td>
+  <td>Estimate demand for each category (S, M, L, XL)</td>
+</tr>
+<tr>
+  <td>Salary analysis</td>
+  <td>Find percentage of people in different salary bands</td>
+</tr>
+<tr>
+  <td>Quality control</td>
+  <td>Detect unusual values (outliers)</td>
+</tr>
+<tr>
+  <td>Risk estimation</td>
+  <td>Calculate probability of extreme events</td>
+</tr>
+<tr>
+  <td>Forecasting</td>
+  <td>Make data-driven decisions instead of guessing</td>
+</tr>
+</tbody>
+</table>
+<p><img src="./assets/12.%20Dist.jpg" alt="Dist" />
+<img src="./assets/12.%20Dist-PDF-CDF.jpg" alt="Dist-PDF-CDF" /></p>
+<h3 id="key-takeaway">Key Takeaway</h3>
+<blockquote>
+<p>Once we know (or assume) that a variable follows a particular distribution (especially Normal), we can answer many practical questions using PDF, CDF, and the 68-95-99.7 rule — without collecting data for every single individual.</p>
+</blockquote>
+<h2 id="11-chebyshevs-inequality">11. Chebyshev's Inequality</h2>
+<h3 id="why-do-we-need-chebyshevs-inequality">Why do we need Chebyshev’s Inequality?</h3>
+<p>The <strong>68-95-99.7 rule</strong> works only when the data follows a <strong>Normal (Gaussian)</strong> distribution.</p>
+<p>But what if:</p>
+<ul>
+<li>We <strong>don’t know</strong> the distribution of the data?</li>
+<li>We only know the mean $\mu$ and standard deviation $\sigma$?</li>
+</ul>
+<p>In such cases, we use <strong>Chebyshev’s Inequality</strong>.</p>
+<h3 id="statement-of-chebyshevs-inequality">Statement of Chebyshev’s Inequality</h3>
+<p>For <strong>any</strong> random variable $X$ (with finite mean $\mu$ and non-zero finite standard deviation $\sigma$):</p>
+<p>$$
+P\big(|X - \mu| \geq k\sigma\big) \leq \dfrac{1}{k^2}
+$$</p>
+<p>Equivalently:</p>
+<p>$$
+P\big(\mu - k\sigma &lt; X &lt; \mu + k\sigma\big) \geq 1 - \dfrac{1}{k^2}
+$$</p>
+<p>Where $k &gt; 0$.</p>
+<h3 id="interpretation">Interpretation</h3>
+<ul>
+<li>At least $1 - \dfrac{1}{k^2}$ proportion of the data lies within $k$ standard deviations from the mean.</li>
+<li>This result is true for <strong>any distribution</strong> (not just Normal).</li>
+</ul>
+<table>
+<thead>
+<tr>
+  <th>$k$</th>
+  <th>Minimum Proportion of Data within $\mu \pm k\sigma$</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>$k=2$</td>
+  <td>$1 - \dfrac{1}{4} = 75%$</td>
+</tr>
+<tr>
+  <td>$k=3$</td>
+  <td>$1 - \dfrac{1}{9} \approx 89%$</td>
+</tr>
+<tr>
+  <td>$k=4$</td>
+  <td>$1 - \dfrac{1}{16} = 93.75%$</td>
+</tr>
+</tbody>
+</table>
+<h3 id="example-student-heights">Example: Student Heights</h3>
+<p>Suppose heights of students follow a Normal distribution:</p>
+<p>$$
+X \sim \mathcal{N}(150,\ 10^2)
+$$</p>
+<p>Using the 68-95-99.7 rule:</p>
+<p>$$
+P(130 \leq X \leq 170) = 95%
+$$</p>
+<p>(This is stronger because we assumed Normality.)</p>
+<h3 id="example-salaries-distribution-unknown">Example: Salaries (Distribution Unknown)</h3>
+<p>We only know:</p>
+<ul>
+<li>Mean salary $\mu = 40k$</li>
+<li>Standard deviation $\sigma = 10k$</li>
+</ul>
+<p><strong>Question 1:</strong> What percentage of individuals have salary in the range $[20k,\ 60k]$?</p>
+<p>$$
+20k = \mu - 2\sigma, \quad 60k = \mu + 2\sigma
+$$</p>
+<p>Using Chebyshev’s Inequality ($k=2$):</p>
+<p>$$
+P(20k &lt; X &lt; 60k) \geq 1 - \dfrac{1}{2^2} = 1 - \dfrac{1}{4} = 0.75 = 75%
+$$</p>
+<p><strong>Question 2:</strong> What percentage of individuals have salary in the range $[10k,\ 70k]$?</p>
+<p>$$
+10k = \mu - 3\sigma, \quad 70k = \mu + 3\sigma
+$$</p>
+<p>$$
+P(10k &lt; X &lt; 70k) \geq 1 - \dfrac{1}{9} \approx 89%
+$$</p>
+<h3 id="comparison-normal-rule-vs-chebyshev">Comparison: Normal Rule vs Chebyshev</h3>
+<table>
+<thead>
+<tr>
+  <th>Rule</th>
+  <th>Assumption</th>
+  <th>$k=2$ Result</th>
+  <th>$k=3$ Result</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>68-95-99.7 Rule</td>
+  <td>Data is Normal</td>
+  <td>95%</td>
+  <td>99.7%</td>
+</tr>
+<tr>
+  <td>Chebyshev’s Inequality</td>
+  <td>Any distribution</td>
+  <td>At least 75%</td>
+  <td>At least 89%</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>Note</strong>: Chebyshev’s bound is weaker (more conservative) but much more general.</p>
+</blockquote>
+<p><img src="./assets/13.%20Chebyshevs.jpg" alt="Chebyshevs" /></p>
+<h3 id="key-takeaway-2">Key Takeaway</h3>
+<ul>
+<li>Use <strong>68-95-99.7 rule</strong> when data is approximately Normal.</li>
+<li>Use <strong>Chebyshev’s Inequality</strong> when you only know $\mu$ and $\sigma$, and the distribution is unknown.</li>
+</ul>
+<h2 id="12-discrete-and-continuous-uniform-distributions">12. Discrete and Continuous Uniform Distributions</h2>
+<blockquote>
+<p>Discrete Uniform Distributions</p>
+</blockquote>
+<p><img src="./assets/14.%20Uniform_discrete_PMF.jpg" alt="PMF" />
+<img src="./assets/14.%20Uniform_discrete_CDF.jpg" alt="CDF" /></p>
+<table>
+<thead>
+<tr>
+  <th>Property</th>
+  <th>Formula / Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><strong>Notation</strong></td>
+  <td>$\mathcal{U}{a,b}$ or $\mathrm{unif}{a,b}$</td>
+</tr>
+<tr>
+  <td><strong>Parameters</strong></td>
+  <td>$a,b$ integers with $b \ge a$<br><br>$n = b - a + 1$</td>
+</tr>
+<tr>
+  <td><strong>Support</strong></td>
+  <td>$k \in {a, a+1, \dots, b-1, b}$</td>
+</tr>
+<tr>
+  <td><strong>PMF</strong></td>
+  <td>$\frac{1}{n}$</td>
+</tr>
+<tr>
+  <td><strong>CDF</strong></td>
+  <td>$\frac{\lfloor k \rfloor - a + 1}{n}$</td>
+</tr>
+<tr>
+  <td><strong>Mean</strong></td>
+  <td>$\frac{a+b}{2}$</td>
+</tr>
+<tr>
+  <td><strong>Median</strong></td>
+  <td>$\frac{a+b}{2}$</td>
+</tr>
+<tr>
+  <td><strong>Mode</strong></td>
+  <td>N/A</td>
+</tr>
+<tr>
+  <td><strong>Variance</strong></td>
+  <td>$\frac{(b-a+1)^2 - 1}{12}$</td>
+</tr>
+<tr>
+  <td><strong>Skewness</strong></td>
+  <td>$0$</td>
+</tr>
+<tr>
+  <td><strong>Excess kurtosis</strong></td>
+  <td>$-\frac{6(n^2+1)}{5(n^2-1)}$</td>
+</tr>
+<tr>
+  <td><strong>Entropy</strong></td>
+  <td>$\ln(n)$</td>
+</tr>
+<tr>
+  <td><strong>MGF</strong></td>
+  <td>$\frac{e^{at} - e^{(b+1)t}}{n(1 - e^t)}$</td>
+</tr>
+<tr>
+  <td><strong>CF</strong></td>
+  <td>$\frac{e^{iat} - e^{i(b+1)t}}{n(1 - e^{it})}$</td>
+</tr>
+<tr>
+  <td><strong>PGF</strong></td>
+  <td>$\frac{z^a - z^{b+1}}{n(1-z)}$</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Use of Discrete Uniform Distribution in Machine Learning</strong></p>
+<p>The discrete uniform distribution (\mathcal{U}{a, b}) is one of the simplest and most frequently used distributions in ML, mainly because it models <strong>“every option is equally likely”</strong>.</p>
+<h3 id="common-uses">Common Uses</h3>
+<p>| Use Case                        | How Discrete Uniform is Used                              | Example |
+|--------------------------------|-----------------------------------------------------------|--------|
+| <strong>Random Sampling</strong>            | Select data points, features, or indices with equal probability | Randomly pick a mini-batch or a subset of features |
+| <strong>Data Augmentation</strong>          | Randomly choose transformations or samples                | Random crop location, random horizontal flip decision |
+| <strong>Exploration in RL</strong>          | Uniform random action selection (ε-greedy baseline)       | Agent picks any action with probability (1/|\mathcal{A}|) |
+| <strong>Hyperparameter Search</strong>      | Sample discrete hyperparameters uniformly                 | Number of layers, kernel size, number of trees |
+| <strong>Random Initialization</strong>      | Initialize discrete structures randomly                   | Random permutation of features, random class assignment |
+| <strong>Baseline / Dummy Models</strong>    | Random classifier that predicts each class equally        | Sanity-check baseline (accuracy ≈ (1/C)) |
+| <strong>Bootstrapping / Resampling</strong> | Sample with equal probability (with or without replacement) | Creating bootstrap samples for bagging / uncertainty |
+| <strong>Synthetic Data Generation</strong>  | Generate discrete labels or categorical features          | Creating balanced synthetic datasets |
+| <strong>Monte Carlo Methods</strong>        | Generate uniform random integers for simulation           | Estimating expectations, randomized algorithms |</p>
+<h3 id="key-practical-points">Key Practical Points</h3>
+<ul>
+<li>Whenever you write <code>np.random.randint(a, b+1)</code> or <code>random.choice(...)</code>, you are sampling from a discrete uniform distribution.</li>
+<li>It is the <strong>default “no prior knowledge”</strong> distribution for discrete choices.</li>
+<li>Because every value has the same probability (1/n), it is extremely easy to sample from and to reason about.</li>
+<li>In many algorithms it serves as the <strong>null / random baseline</strong> against which smarter methods are compared.</li>
+</ul>
+<h3 id="short-summary">Short Summary</h3>
+<p>In Machine Learning, the discrete uniform distribution is the mathematical model behind almost every “pick something completely at random” operation — from sampling data points and actions to choosing hyperparameters and creating random baselines.</p>
+<blockquote>
+<p>Continuous Uniform Distributions</p>
+</blockquote>
+<p><img src="./assets/14.%20Uniform_continuous_PDF.jpg" alt="PMF" /><br />
+<img src="./assets/14.%20Uniform_continuous_CDF.jpg" alt="CDF" /></p>
+<table>
+<thead>
+<tr>
+  <th>Property</th>
+  <th>Value / Formula</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><strong>Notation</strong></td>
+  <td>$\mathcal{U}_{[a,b]}$</td>
+</tr>
+<tr>
+  <td><strong>Parameters</strong></td>
+  <td>$-\infty &lt; a &lt; b &lt; \infty$</td>
+</tr>
+<tr>
+  <td><strong>Support</strong></td>
+  <td>$[a, b]$</td>
+</tr>
+<tr>
+  <td><strong>PDF</strong></td>
+  <td>$\begin{cases} \frac{1}{b-a} &amp; \text{for } x \in [a, b] \ 0 &amp; \text{otherwise} \end{cases}$</td>
+</tr>
+<tr>
+  <td><strong>CDF</strong></td>
+  <td>$\begin{cases} 0 &amp; \text{for } x &lt; a \ \frac{x-a}{b-a} &amp; \text{for } x \in [a, b] \ 1 &amp; \text{for } x &gt; b \end{cases}$</td>
+</tr>
+<tr>
+  <td><strong>Mean</strong></td>
+  <td>$\frac{1}{2}(a+b)$</td>
+</tr>
+<tr>
+  <td><strong>Median</strong></td>
+  <td>$\frac{1}{2}(a+b)$</td>
+</tr>
+<tr>
+  <td><strong>Mode</strong></td>
+  <td>any value in $(a, b)$</td>
+</tr>
+<tr>
+  <td><strong>Variance</strong></td>
+  <td>$\frac{1}{12}(b-a)^2$</td>
+</tr>
+<tr>
+  <td><strong>MAD</strong></td>
+  <td>$\frac{1}{4}(b-a)$</td>
+</tr>
+<tr>
+  <td><strong>Skewness</strong></td>
+  <td>$0$</td>
+</tr>
+<tr>
+  <td><strong>Excess kurtosis</strong></td>
+  <td>$-\frac{6}{5}$</td>
+</tr>
+<tr>
+  <td><strong>Entropy</strong></td>
+  <td>$\log(b-a)$</td>
+</tr>
+<tr>
+  <td><strong>MGF</strong></td>
+  <td>$\begin{cases} \frac{e^{tb} - e^{ta}}{t(b-a)} &amp; \text{for } t \neq 0 \ 1 &amp; \text{for } t = 0 \end{cases}$</td>
+</tr>
+<tr>
+  <td><strong>CF</strong></td>
+  <td>$\begin{cases} \frac{e^{itb} - e^{ita}}{it(b-a)} &amp; \text{for } t \neq 0 \ 1 &amp; \text{for } t = 0 \end{cases}$</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Use of Continuous Uniform Distribution in Machine Learning</strong></p>
+<p>The continuous uniform distribution (\mathcal{U}_{[a,b]}) models the idea that <strong>every value in an interval is equally likely</strong>. It is extremely common in ML for generating randomness in a bounded continuous range.</p>
+<h3 id="common-uses-2">Common Uses</h3>
+<table>
+<thead>
+<tr>
+  <th>Use Case</th>
+  <th>How Continuous Uniform is Used</th>
+  <th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><strong>Weight / Parameter Initialization</strong></td>
+  <td>Initialize neural network weights uniformly in a range</td>
+  <td>Xavier / Glorot uniform initialization, He uniform</td>
+</tr>
+<tr>
+  <td><strong>Hyperparameter Sampling</strong></td>
+  <td>Sample continuous hyperparameters uniformly</td>
+  <td>Learning rate, dropout rate, weight decay, batch size scaling</td>
+</tr>
+<tr>
+  <td><strong>Data Augmentation</strong></td>
+  <td>Random continuous transformations</td>
+  <td>Random rotation angle, brightness jitter, crop offset, shear</td>
+</tr>
+<tr>
+  <td><strong>Noise Injection</strong></td>
+  <td>Add bounded random noise</td>
+  <td>Input noise, label smoothing noise, adversarial perturbations</td>
+</tr>
+<tr>
+  <td><strong>Random Feature / Projection</strong></td>
+  <td>Generate random continuous features or projection matrices</td>
+  <td>Random Fourier features, random projections</td>
+</tr>
+<tr>
+  <td><strong>Monte Carlo &amp; Simulation</strong></td>
+  <td>Generate continuous random numbers in an interval</td>
+  <td>Estimating integrals, randomized algorithms</td>
+</tr>
+<tr>
+  <td><strong>Bayesian Priors</strong></td>
+  <td>Flat (non-informative) prior over a bounded parameter</td>
+  <td>Uniform prior on a probability or a scale parameter</td>
+</tr>
+<tr>
+  <td><strong>Exploration in Continuous Action Spaces</strong></td>
+  <td>Uniform random actions (baseline exploration)</td>
+  <td>Continuous control RL (before smarter policies)</td>
+</tr>
+<tr>
+  <td><strong>Synthetic Data Generation</strong></td>
+  <td>Generate continuous features uniformly</td>
+  <td>Creating synthetic tabular data or random positions</td>
+</tr>
+<tr>
+  <td><strong>Regularization Techniques</strong></td>
+  <td>Stochastic regularization with uniform noise</td>
+  <td>Dropout variants, dropblock, stochastic depth</td>
+</tr>
+</tbody>
+</table>
+<h3 id="key-practical-points-2">Key Practical Points</h3>
+<ul>
+<li>Whenever you write <code>np.random.uniform(a, b)</code> or <code>torch.rand(...) * (b-a) + a</code>, you are sampling from a continuous uniform distribution.</li>
+<li>It is the default “no preference” distribution for any continuous value that must stay inside a fixed interval ([a, b]).</li>
+<li>Because the PDF is perfectly flat, every point inside ([a, b]) has the same density (\frac{1}{b-a}).</li>
+<li>The CDF is a simple straight line from 0 to 1 between (a) and (b), making probabilities very easy to compute:
+[
+P(X \le x) = \frac{x-a}{b-a} \quad \text{for } x \in [a,b]
+]</li>
+</ul>
+<h3 id="short-summary-2">Short Summary</h3>
+<blockquote>
+<p>In Machine Learning the continuous uniform distribution is the standard way to say “pick any real number between (a) and (b) with equal chance”. It appears in weight initialization, hyperparameter search, data augmentation, noise injection, and as a non-informative prior — essentially any time we need randomness inside a bounded continuous interval.</p>
+</blockquote>
+<h2 id="13-how-to-randomly-sample-data-points-uniform-distribution">13. How to Randomly Sample Data Points (Uniform Distribution)</h2>
+<pre><code class="language-py">import random
+print(random.random())
+
+#load IRIS dataset with 150 points.
+from sklearn import datasets
+iris = datasets.load_iris()
+d = iris.data
+d.shape
+print(d[0])
+
+# Sample 30 points randomly from the 150 point dataset
+n=150
+m=30
+p = m/n
+print(p)
+sampled_data =[];
+
+for i in range(0,n):
+  a = random.random()
+#   print(a)
+  if  a &lt;= p:
+    sampled_data.append(d[i,:])
+    
+print(sampled_data)
+</code></pre>
+<h2 id="14-bernoulli-and-binomial-distribution">14. Bernoulli and Binomial Distribution</h2>
+<h3 id="bernoulli-distribution">Bernoulli Distribution</h3>
+<p>A random variable $X$ follows a <strong>Bernoulli distribution</strong> if it has only <strong>two possible outcomes</strong>:</p>
+<ul>
+<li>Success → $1$ (with probability $p$)</li>
+<li>Failure → $0$ (with probability $1-p$)</li>
+</ul>
+<p>$$
+X \sim \text{Bernoulli}(p) \quad \text{where } 0 &lt; p &lt; 1
+$$</p>
+<p><strong>Example:</strong> Tossing a fair coin once<br />
+$$
+X \sim \text{Bernoulli}(p = 0.5)
+$$</p>
+<ul>
+<li>$P(X = 1) = p$ (Head)</li>
+<li>$P(X = 0) = 1-p$ (Tail)</li>
+</ul>
+<h3 id="binomial-distribution">Binomial Distribution</h3>
+<p>When we repeat a Bernoulli trial <strong>$n$ independent times</strong>, the total number of successes follows a <strong>Binomial distribution</strong>.</p>
+<p>$$
+Y \sim \text{Binomial}(n, p)
+$$</p>
+<p>Where:</p>
+<ul>
+<li>$n$ = number of independent trials</li>
+<li>$p$ = probability of success in each trial</li>
+<li>$Y$ = number of successes</li>
+</ul>
+<p><strong>Example:</strong> Tossing a fair coin 10 times<br />
+$$
+Y = \text{Number of heads} \sim \text{Binomial}(n=10,\ p=0.5)
+$$</p>
+<p>$$
+Y \in {0, 1, 2, \dots, 10}
+$$</p>
+<h3 id="probability-mass-function-pmf">Probability Mass Function (PMF)</h3>
+<p>The probability of getting exactly $k$ successes in $n$ trials is:</p>
+<p>$$
+P(Y = k) = \binom{n}{k} p^k (1-p)^{n-k}
+$$</p>
+<p>Where:</p>
+<p>$$
+\binom{n}{k} = \dfrac{n!}{k!(n-k)!}
+$$</p>
+<h3 id="visual-understanding">Visual Understanding</h3>
+<p><strong>Bernoulli Distribution</strong> (only two possible values: 0 and 1)</p>
+<p><img src="./assets/15.%20Bernoulli_Distribution.jpg" alt="Bernoulli Distribution" /></p>
+<ul>
+<li>Different colors show different values of $p$.</li>
+</ul>
+<p><strong>Binomial Distribution – PDF (Probability Mass Function)</strong></p>
+<p><img src="./assets/15.%20Binomial_distribution_pdf.jpg" alt="Binomial PDF" /></p>
+<ul>
+<li>Blue: $p=0.5$, $n=20$ (symmetric)</li>
+<li>Green: $p=0.7$, $n=20$ (right-skewed)</li>
+<li>Red: $p=0.5$, $n=40$ (more spread out and closer to Normal)</li>
+</ul>
+<p><strong>Binomial Distribution – CDF</strong></p>
+<p><img src="./assets/15.%20Binomial_distribution_cdf.jpg" alt="Binomial CDF" /></p>
+<ul>
+<li>Shows how the cumulative probability increases.</li>
+<li>Larger $n$ makes the CDF rise more gradually.</li>
+</ul>
+<h3 id="key-observations">Key Observations</h3>
+<table>
+<thead>
+<tr>
+  <th>Feature</th>
+  <th>Bernoulli</th>
+  <th>Binomial</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Number of trials</td>
+  <td>1</td>
+  <td>$n$ (multiple)</td>
+</tr>
+<tr>
+  <td>Possible values</td>
+  <td>0 or 1</td>
+  <td>$0, 1, 2, \dots, n$</td>
+</tr>
+<tr>
+  <td>Parameter</td>
+  <td>$p$</td>
+  <td>$n$ and $p$</td>
+</tr>
+<tr>
+  <td>Mean</td>
+  <td>$p$</td>
+  <td>$np$</td>
+</tr>
+<tr>
+  <td>Variance</td>
+  <td>$p(1-p)$</td>
+  <td>$np(1-p)$</td>
+</tr>
+</tbody>
+</table>
+<h3 id="important-notes">Important Notes</h3>
+<ul>
+<li>Binomial distribution is the sum of $n$ independent Bernoulli random variables.</li>
+<li>When $n$ is large and $p$ is not too close to 0 or 1, the Binomial distribution can be approximated by a Normal distribution (this is related to the Central Limit Theorem).</li>
+</ul>
+<h2 id="15-log-normal-distribution">15. Log-Normal Distribution</h2>
+<p><img src="./assets/16.%20Log-normal-pdfs.jpg" alt="Log-Normal PDF" /></p>
+<p><img src="./assets/16.%20Log-normal-cdfs.jpg" alt="Log-Normal CDF" /></p>
+<h3 id="definition">Definition</h3>
+<p>A random variable $X$ follows a <strong>Log-Normal distribution</strong> if its natural logarithm is normally distributed.</p>
+<p>$$
+X \sim \text{Log-Normal}(\mu, \sigma^2)
+\quad \Longleftrightarrow \quad
+\ln(X) \sim \mathcal{N}(\mu, \sigma^2)
+$$</p>
+<p>Equivalently:</p>
+<p>$$
+Y = \ln(X) \quad \Rightarrow \quad Y \sim \mathcal{N}(\mu, \sigma^2)
+$$</p>
+<h3 id="relationship">Relationship</h3>
+<table>
+<thead>
+<tr>
+  <th>Variable</th>
+  <th>Distribution</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>$X$</td>
+  <td>Log-Normal($\mu$, $\sigma^2$)</td>
+</tr>
+<tr>
+  <td>$Y = \ln(X)$</td>
+  <td>Normal($\mu$, $\sigma^2$)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="how-to-check-if-data-is-log-normal">How to Check if Data is Log-Normal</h3>
+<p>Given observations $x_1, x_2, \dots, x_n$:</p>
+<ol>
+<li><p>Compute the natural log of each value:
+$$
+y_i = \ln(x_i)
+$$</p>
+</li>
+<li><p>Test whether the $y_i$ values are normally distributed (using Q-Q plot or normality tests).</p>
+</li>
+<li><p><strong>Conclusion</strong>:</p>
+<ul>
+<li>If $y_i \sim \mathcal{N}(\mu, \sigma^2)$, then $X \sim \text{Log-Normal}(\mu, \sigma^2)$.</li>
+</ul>
+</li>
+</ol>
+<h3 id="key-properties">Key Properties</h3>
+<table>
+<thead>
+<tr>
+  <th>Property</th>
+  <th>Formula / Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><strong>Notation</strong></td>
+  <td>$\text{Lognormal}(\mu, \sigma^2)$</td>
+</tr>
+<tr>
+  <td><strong>Parameters</strong></td>
+  <td>$\mu \in \mathbb{R}$, $\sigma &gt; 0$</td>
+</tr>
+<tr>
+  <td><strong>Support</strong></td>
+  <td>$x &gt; 0$</td>
+</tr>
+<tr>
+  <td><strong>PDF</strong></td>
+  <td>$\dfrac{1}{x \sigma \sqrt{2\pi}} \exp\left( -\dfrac{(\ln x - \mu)^2}{2\sigma^2} \right)$</td>
+</tr>
+<tr>
+  <td><strong>CDF</strong></td>
+  <td>$\Phi\left( \dfrac{\ln x - \mu}{\sigma} \right)$</td>
+</tr>
+<tr>
+  <td><strong>Mean</strong></td>
+  <td>$\exp\left( \mu + \dfrac{\sigma^2}{2} \right)$</td>
+</tr>
+<tr>
+  <td><strong>Median</strong></td>
+  <td>$\exp(\mu)$</td>
+</tr>
+<tr>
+  <td><strong>Mode</strong></td>
+  <td>$\exp(\mu - \sigma^2)$</td>
+</tr>
+<tr>
+  <td><strong>Variance</strong></td>
+  <td>$\left[ \exp(\sigma^2) - 1 \right] \exp(2\mu + \sigma^2)$</td>
+</tr>
+<tr>
+  <td><strong>Skewness</strong></td>
+  <td>$\left[ \exp(\sigma^2) + 2 \right] \sqrt{\exp(\sigma^2) - 1}$</td>
+</tr>
+</tbody>
+</table>
+<h3 id="common-applications">Common Applications</h3>
+<p><a href="https://en.wikipedia.org/wiki/Log-normal_distribution#Occurrence_and_applications">https://en.wikipedia.org/wiki/Log-normal_distribution#Occurrence_and_applications</a></p>
+<p>The Log-Normal distribution commonly appears in data that is:</p>
+<ul>
+<li>Strictly positive</li>
+<li>Right-skewed</li>
+</ul>
+<p><strong>Typical examples:</strong></p>
+<ul>
+<li>Stock prices and financial returns</li>
+<li>Income and wealth distribution</li>
+<li>City population sizes</li>
+<li>File sizes / comment lengths</li>
+<li>Biological measurements</li>
+<li>Time-to-failure / lifetime data</li>
+</ul>
+<h3 id="summary-4">Summary</h3>
+<blockquote>
+<p>If a variable is <strong>positive</strong> and <strong>right-skewed</strong>, take the natural logarithm.<br />
+If the transformed data becomes approximately Normal, the original variable follows a <strong>Log-Normal distribution</strong>.</p>
+</blockquote>
+<h2 id="16-power-law-distribution">16. Power-Law Distribution</h2>
+<h3 id="what-is-a-power-law-distribution">What is a Power-Law Distribution?</h3>
+<p>A distribution follows a <strong>Power Law</strong> (also called <strong>Pareto distribution</strong>) when a small number of observations account for a large proportion of the total effect.</p>
+<p><strong>Classic example – 80/20 Rule (Pareto Principle):</strong></p>
+<ul>
+<li>20% of the items produce 80% of the impact</li>
+<li>80% of the items produce only 20% of the impact</li>
+</ul>
+<p>This pattern appears in wealth distribution, city sizes, word frequencies, website traffic, software bugs, customer revenue, etc.</p>
+<h3 id="visual-understanding-2">Visual Understanding</h3>
+<p><img src="./assets/17.%20Power-Law.jpg" alt="PowerLaw" /></p>
+<p><strong>Observations:</strong></p>
+<ul>
+<li>A small proportion of items (the “vital few”) account for the majority of the impact.</li>
+<li>The remaining large proportion (the “useful many”) contribute only a small share.</li>
+<li>The curve shows the typical rapid decay followed by a long heavy tail.</li>
+</ul>
+<h3 id="probability-density-function-pdf">Probability Density Function (PDF)</h3>
+<p><img src="./assets/17.%20Pareto_PDF.jpg" alt="PDF" /></p>
+<p><strong>Observations from the Pareto Type I PDF:</strong></p>
+<ul>
+<li>Fixed scale parameter $x_m = 1$, different shape parameters $\alpha$.</li>
+<li>Larger $\alpha$ → more peaked near $x_m$ and faster decay in the tail.</li>
+<li>Smaller $\alpha$ → heavier tail (more extreme values).</li>
+<li>As $\alpha \to \infty$, the distribution converges to a Dirac delta at $x_m$.</li>
+</ul>
+<h3 id="cumulative-distribution-function-cdf">Cumulative Distribution Function (CDF)</h3>
+<p><img src="./assets/17.%20Pareto_CDF.jpg" alt="CDF" /></p>
+<p><strong>Observations from the Pareto Type I CDF:</strong></p>
+<ul>
+<li>All curves start at 0 for $x &lt; x_m$ and rise toward 1.</li>
+<li>Larger $\alpha$ produces a steeper rise near $x_m$.</li>
+<li>As $\alpha \to \infty$, the CDF approaches a step function at $x = x_m$.</li>
+</ul>
+<h3 id="mathematical-summary-pareto-type-i">Mathematical Summary (Pareto Type I)</h3>
+<table>
+<thead>
+<tr>
+  <th>Property</th>
+  <th>Expression</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Notation</td>
+  <td>$\text{Pareto}(x_m, \alpha)$</td>
+</tr>
+<tr>
+  <td>Parameters</td>
+  <td>$x_m &gt; 0$ (scale), $\alpha &gt; 0$ (shape)</td>
+</tr>
+<tr>
+  <td>Support</td>
+  <td>$x \in [x_m, \infty)$</td>
+</tr>
+<tr>
+  <td>PDF</td>
+  <td>$\dfrac{\alpha x_m^\alpha}{x^{\alpha+1}}$</td>
+</tr>
+<tr>
+  <td>CDF</td>
+  <td>$1 - \left(\dfrac{x_m}{x}\right)^\alpha$</td>
+</tr>
+<tr>
+  <td>Mean</td>
+  <td>$\dfrac{\alpha x_m}{\alpha-1}$ for $\alpha &gt; 1$ (otherwise $\infty$)</td>
+</tr>
+<tr>
+  <td>Median</td>
+  <td>$x_m \cdot 2^{1/\alpha}$</td>
+</tr>
+<tr>
+  <td>Variance</td>
+  <td>Finite only when $\alpha &gt; 2$</td>
+</tr>
+</tbody>
+</table>
+<h3 id="how-to-check-if-data-follows-a-power-law">How to Check if Data Follows a Power Law</h3>
+<p><strong>Method 1: Log-Log Plot</strong> (most common diagnostic)</p>
+<ol>
+<li>Take data points $x_1, x_2, \dots, x_n$ and their frequencies/probabilities $y_i$.</li>
+<li>Plot $\log(y)$ vs $\log(x)$.</li>
+</ol>
+<p><img src="./assets/17.%20Log-log_plot.jpg" alt="LogLog" /></p>
+<ul>
+<li>If the points form an approximately <strong>straight line</strong> → Power Law is a good candidate.</li>
+<li>If not → data does not follow a Power Law.</li>
+</ul>
+<p><strong>Method 2: Q-Q Plot</strong></p>
+<ul>
+<li>Compare your data against a theoretical Pareto distribution.</li>
+<li>Points lying roughly on a straight line support the Power Law assumption.</li>
+</ul>
+<h3 id="common-applications-in-machine-learning--real-world">Common Applications in Machine Learning &amp; Real World</h3>
+<p><a href="https://en.wikipedia.org/wiki/Pareto_distribution#Occurrence_and_applications">https://en.wikipedia.org/wiki/Pareto_distribution#Occurrence_and_applications</a></p>
+<table>
+<thead>
+<tr>
+  <th>Domain</th>
+  <th>How Power-Law Appears</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Networks / Graphs</td>
+  <td>Degree distribution (scale-free networks)</td>
+</tr>
+<tr>
+  <td>Natural Language Processing</td>
+  <td>Word frequencies (Zipf’s Law)</td>
+</tr>
+<tr>
+  <td>Recommendation Systems</td>
+  <td>Item popularity (long-tail problem)</td>
+</tr>
+<tr>
+  <td>Anomaly Detection</td>
+  <td>Modeling rare but extreme events</td>
+</tr>
+<tr>
+  <td>Wealth / Income</td>
+  <td>Classic Pareto distribution</td>
+</tr>
+<tr>
+  <td>Web &amp; Internet</td>
+  <td>Website traffic, file sizes, link counts</td>
+</tr>
+<tr>
+  <td>Preferential Attachment</td>
+  <td>Explains how power-law networks grow</td>
+</tr>
+</tbody>
+</table>
+<h3 id="key-practical-takeaways">Key Practical Takeaways</h3>
+<ul>
+<li>When data has a <strong>heavy right tail</strong>, a Normal distribution is usually a poor fit.</li>
+<li>The <strong>log-log plot</strong> is the fastest visual check for power-law behavior.</li>
+<li>Recognizing power-law behavior helps us:<ul>
+<li>Choose better models</li>
+<li>Avoid incorrect Normal assumptions</li>
+<li>Handle extreme values properly</li>
+<li>Understand long-tail phenomena in ML systems</li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<p><strong>Key Insight</strong>: Power-law distributions are the natural model for situations where “a few items dominate, while the majority are rare.” This is the mathematical foundation of the famous 80/20 rule.</p>
+</blockquote>
+<h2 id="17-box-cox-transform">17. Box-Cox Transform</h2>
+<h3 id="why-do-we-need-transformations">Why do we need transformations?</h3>
+<p>Many statistical methods (especially those assuming Normality) work best when the data is approximately Gaussian.</p>
+<p>However, real-world data is often:</p>
+<ul>
+<li>Right-skewed (e.g., income, city sizes)</li>
+<li>Follows a Power Law / Pareto distribution</li>
+<li>Log-Normal</li>
+</ul>
+<p>In such cases, we apply a <strong>transformation</strong> to make the data closer to Normal.</p>
+<h3 id="common-transformations">Common Transformations</h3>
+<table>
+<thead>
+<tr>
+  <th>Original Distribution</th>
+  <th>Transformation</th>
+  <th>Resulting Distribution</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Log-Normal</td>
+  <td>$Y = \ln(X)$</td>
+  <td>Normal</td>
+</tr>
+<tr>
+  <td>Power Law / Pareto</td>
+  <td>Power transformation</td>
+  <td>Sometimes closer to Normal</td>
+</tr>
+<tr>
+  <td>Skewed data</td>
+  <td>Box-Cox transformation</td>
+  <td>Approximately Normal</td>
+</tr>
+</tbody>
+</table>
+<h3 id="box-cox-transformation">Box-Cox Transformation</h3>
+<p>The <strong>Box-Cox transformation</strong> is a family of power transformations defined as:</p>
+<p>$$
+y_i =
+\begin{cases}
+\dfrac{x_i^\lambda - 1}{\lambda} &amp; \text{if } \lambda \neq 0 \[10pt]
+\ln(x_i) &amp; \text{if } \lambda = 0
+\end{cases}
+$$</p>
+<p>Where:</p>
+<ul>
+<li>$x_i &gt; 0$ (data must be positive)</li>
+<li>$\lambda$ is the transformation parameter</li>
+</ul>
+<h3 id="special-cases-of-box-cox">Special Cases of Box-Cox</h3>
+<table>
+<thead>
+<tr>
+  <th>Value of $\lambda$</th>
+  <th>Transformation</th>
+  <th>Name</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>$\lambda = 1$</td>
+  <td>$y = x - 1$</td>
+  <td>No transformation</td>
+</tr>
+<tr>
+  <td>$\lambda = 0$</td>
+  <td>$y = \ln(x)$</td>
+  <td>Log transformation</td>
+</tr>
+<tr>
+  <td>$\lambda = 0.5$</td>
+  <td>$y = \sqrt{x} - 1$</td>
+  <td>Square root</td>
+</tr>
+<tr>
+  <td>$\lambda = -1$</td>
+  <td>$y = 1 - \dfrac{1}{x}$</td>
+  <td>Reciprocal</td>
+</tr>
+</tbody>
+</table>
+<h3 id="python-example-using-scipy">Python Example (using SciPy)</h3>
+<p><strong>Reference:</strong> <a href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.boxcox.html">SciPy Box-Cox Documentation</a></p>
+<pre><code class="language-python">from scipy import stats
+import matplotlib.pyplot as plt
+
+# Generate skewed data (log-gamma)
+fig = plt.figure()
+ax1 = fig.add_subplot(211)
+x = stats.loggamma.rvs(5, size=500) + 5
+prob = stats.probplot(x, dist=stats.norm, plot=ax1)
+ax1.set_xlabel('')
+ax1.set_title('Probplot against normal distribution')
+
+# Apply Box-Cox transformation
+ax2 = fig.add_subplot(212)
+xt, _ = stats.boxcox(x)
+prob = stats.probplot(xt, dist=stats.norm, plot=ax2)
+ax2.set_title('Probplot after Box-Cox transformation')
+
+plt.show()
+</code></pre>
+<h3 id="important-note--limitation">Important Note / Limitation</h3>
+<blockquote>
+<p><strong>Box-Cox transformation is not guaranteed to work on all Pareto or Power-Law distributed data.</strong></p>
+</blockquote>
+<p>It works well only on <strong>some</strong> of them.<br />
+After applying the Box-Cox transformation, you <strong>must</strong> check the Q-Q plot of the transformed data to confirm whether it has become approximately Normal.</p>
+<h3 id="how-to-use-box-cox-in-practice">How to Use Box-Cox in Practice</h3>
+<ol>
+<li>Ensure all data points are <strong>positive</strong>.</li>
+<li>Apply <code>stats.boxcox()</code> (it automatically finds a good $\lambda$).</li>
+<li>Plot the Q-Q plot of the transformed data.</li>
+<li>Accept the transformation only if the Q-Q plot looks reasonably linear.</li>
+</ol>
+<h3 id="summary-5">Summary</h3>
+<table>
+<thead>
+<tr>
+  <th>Goal</th>
+  <th>Recommended Tool</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Log-Normal → Normal</td>
+  <td>Natural Log ($\ln$)</td>
+</tr>
+<tr>
+  <td>Mild to moderate skewness</td>
+  <td>Box-Cox Transformation</td>
+</tr>
+<tr>
+  <td>Heavy-tailed Power Law / Pareto</td>
+  <td>Box-Cox (check Q-Q plot carefully)</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>Key Insight</strong>: Box-Cox is a powerful and flexible tool, but it is <strong>not magic</strong>. Always verify the result with a Q-Q plot.</p>
+</blockquote>
+<h2 id="18-applications-of-non-gaussian-distributions">18. Applications of Non-Gaussian Distributions</h2>
+<h3 id="why-do-we-need-other-distributions">Why do we need other distributions?</h3>
+<p>Not all real-world data follows a Gaussian (Normal) distribution.<br />
+There are hundreds of other distributions (Uniform, Bernoulli, Binomial, Log-Normal, Pareto, Weibull, etc.).</p>
+<p><strong>Question:</strong> Why do we study them?</p>
+<p>→ Because a well-chosen distribution gives us a <strong>theoretical model</strong> of how a random variable behaves.<br />
+Once we have the model $X \sim D$, we can answer useful probability questions.</p>
+<h3 id="example-daily-rainfall-weibull-distribution">Example: Daily Rainfall (Weibull Distribution)</h3>
+<p><strong>Problem:</strong><br />
+How large should a water storage dam be?</p>
+<p>We have 30–50 years of daily rainfall data.</p>
+<p>Let:
+$$
+X = \text{maximum one-day rainfall}
+$$</p>
+<p>We want to know:</p>
+<p>$$
+P(X &gt; 20,\text{cm})
+$$</p>
+<p>If this probability is very small (e.g. $\leq 0.1%$), then designing the dam for 20 cm may be sufficient.</p>
+<h3 id="how-to-answer-this-question">How to Answer This Question</h3>
+<ol>
+<li><strong>Collect data</strong>: 30–50 years of daily rainfall.</li>
+<li><strong>Store</strong> hundreds of observations.</li>
+<li><strong>Fit</strong> a suitable distribution to the data.</li>
+<li>Researchers have found that <strong>maximum daily rainfall</strong> often follows a <strong>Weibull distribution</strong>.</li>
+</ol>
+<p>$$
+X \sim \text{Weibull}(\text{parameters})
+$$</p>
+<ol start="5">
+<li>Once we have the fitted Weibull distribution, we can compute:</li>
+</ol>
+<p>$$
+P(X &gt; 20,\text{cm}) = 1 - P(X \leq 20,\text{cm}) = 1 - \text{CDF}(20)
+$$</p>
+<h3 id="general-process-of-fitting-a-distribution">General Process of Fitting a Distribution</h3>
+<table>
+<thead>
+<tr>
+  <th>Step</th>
+  <th>Action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>1</td>
+  <td>Collect data</td>
+</tr>
+<tr>
+  <td>2</td>
+  <td>Visualize (histogram, density plot)</td>
+</tr>
+<tr>
+  <td>3</td>
+  <td>Try candidate distributions (Gaussian, Log-Normal, Weibull, Pareto, etc.)</td>
+</tr>
+<tr>
+  <td>4</td>
+  <td>Check goodness-of-fit using <strong>Q-Q plot</strong> and statistical tests (KS test, Anderson-Darling, etc.)</td>
+</tr>
+<tr>
+  <td>5</td>
+  <td>Select the best-fitting distribution</td>
+</tr>
+<tr>
+  <td>6</td>
+  <td>Use the CDF / PDF of the fitted distribution to answer probability questions</td>
+</tr>
+</tbody>
+</table>
+<h3 id="important-notes-2">Important Notes</h3>
+<ul>
+<li>If the data is <strong>not Gaussian</strong>, we can sometimes apply a transformation (e.g. Box-Cox) to make it closer to Normal, and then use Normal methods.</li>
+<li>However, in many cases (especially extreme value problems like rainfall, floods, wind speeds), it is better to directly use the appropriate non-Gaussian distribution (Weibull, Gumbel, Pareto, etc.).</li>
+</ul>
+<h3 id="common-non-gaussian-distributions-and-their-use-cases">Common Non-Gaussian Distributions and Their Use Cases</h3>
+<table>
+<thead>
+<tr>
+  <th>Distribution</th>
+  <th>Typical Shape</th>
+  <th>Common Real-World Applications</th>
+  <th>Key Characteristic</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><strong>Bernoulli</strong></td>
+  <td>Two outcomes (0 or 1)</td>
+  <td>Coin toss, success/failure, click/no-click</td>
+  <td>Single trial</td>
+</tr>
+<tr>
+  <td><strong>Binomial</strong></td>
+  <td>Discrete, can be skewed</td>
+  <td>Number of successes in $n$ trials, defect counts</td>
+  <td>Multiple independent Bernoulli trials</td>
+</tr>
+<tr>
+  <td><strong>Uniform</strong></td>
+  <td>Flat</td>
+  <td>Random number generation, equal likelihood events</td>
+  <td>All outcomes equally likely</td>
+</tr>
+<tr>
+  <td><strong>Log-Normal</strong></td>
+  <td>Right-skewed</td>
+  <td>Stock prices, income, city sizes, file sizes</td>
+  <td>$\ln(X)$ is Normal</td>
+</tr>
+<tr>
+  <td><strong>Pareto / Power Law</strong></td>
+  <td>Heavy right tail</td>
+  <td>Wealth distribution, website traffic, word frequencies</td>
+  <td>80-20 rule, extreme inequality</td>
+</tr>
+<tr>
+  <td><strong>Weibull</strong></td>
+  <td>Flexible (can be skewed)</td>
+  <td>Lifetime / reliability data, rainfall extremes, wind speeds</td>
+  <td>Excellent for extreme value modeling</td>
+</tr>
+<tr>
+  <td><strong>Exponential</strong></td>
+  <td>Right-skewed</td>
+  <td>Waiting times, time between events</td>
+  <td>Memoryless property</td>
+</tr>
+<tr>
+  <td><strong>Poisson</strong></td>
+  <td>Discrete</td>
+  <td>Number of events in a fixed interval (calls, accidents)</td>
+  <td>Rare events</td>
+</tr>
+</tbody>
+</table>
+<h3 id="general-process-of-fitting-a-distribution-2">General Process of Fitting a Distribution</h3>
+<ol>
+<li>Collect and clean the data</li>
+<li>Visualize (histogram / density plot)</li>
+<li>Candidate distributions based on domain knowledge</li>
+<li>Check fit using <strong>Q-Q plot</strong> and formal tests (KS, Anderson-Darling)</li>
+<li>Select the best distribution</li>
+<li>Use its CDF/PDF to answer probability questions</li>
+</ol>
+<h3 id="key-takeaway-3">Key Takeaway</h3>
+<blockquote>
+<p>Choosing the right distribution is often more powerful than forcing everything into a Normal distribution.<br />
+For extreme events (floods, maximum rainfall, system failures), distributions like <strong>Weibull</strong> or <strong>Pareto</strong> are usually much more appropriate than the Gaussian.</p>
+</blockquote>
+<h3 id="summary-6">Summary</h3>
+<blockquote>
+<p>A good distributional model allows us to answer practical questions such as:</p>
+<ul>
+<li>How large should a dam be?</li>
+<li>What is the probability of an extreme event?</li>
+<li>How much inventory should we keep?</li>
+</ul>
+</blockquote>
+<p>Even if we have limited data, a well-fitted theoretical distribution gives us a powerful way to reason about rare events.</p>
+<h2 id="19-covariance">19. Covariance</h2>
+<p>We have two variables:</p>
+<ul>
+<li>$X$: Heights</li>
+<li>$Y$: Weights</li>
+</ul>
+<p>Sample data:</p>
+<table>
+<thead>
+<tr>
+  <th>Sample</th>
+  <th>Height ($X$)</th>
+  <th>Weight ($Y$)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>$s_1$</td>
+  <td>160</td>
+  <td>62</td>
+</tr>
+<tr>
+  <td>$s_2$</td>
+  <td>150</td>
+  <td>54</td>
+</tr>
+<tr>
+  <td>$\vdots$</td>
+  <td>$\vdots$</td>
+  <td>$\vdots$</td>
+</tr>
+<tr>
+  <td>$s_n$</td>
+  <td>190</td>
+  <td>48</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Question:</strong> What is the relationship between $X$ and $Y$?</p>
+<ul>
+<li>Does $X \uparrow$ imply $Y \uparrow$?</li>
+<li>Does $X \uparrow$ imply $Y \downarrow$?</li>
+<li>Or is there no clear relationship?</li>
+</ul>
+<p>To answer this, we use:</p>
+<ol>
+<li><strong>Covariance</strong></li>
+<li><strong>Pearson Correlation Coefficient</strong></li>
+<li><strong>Spearman Rank Correlation Coefficient</strong></li>
+</ol>
+<h3 id="covariance-formula">Covariance Formula</h3>
+<p>$$
+\text{Cov}(X, Y) = \dfrac{1}{n} \sum_{i=1}^{n} (x_i - \mu_x)(y_i - \mu_y)
+$$</p>
+<p>Where:</p>
+<ul>
+<li>$\mu_x$ = mean of $X$</li>
+<li>$\mu_y$ = mean of $Y$</li>
+</ul>
+<p><strong>Variance</strong> is a special case of covariance:</p>
+<p>$$
+\text{Var}(X) = \dfrac{1}{n} \sum_{i=1}^{n} (x_i - \mu_x)^2 = \text{Cov}(X, X)
+$$</p>
+<h3 id="sign-of-covariance">Sign of Covariance</h3>
+<table>
+<thead>
+<tr>
+  <th>Covariance Value</th>
+  <th>Interpretation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>$\text{Cov}(X,Y) &gt; 0$</td>
+  <td>Positive relationship ($X \uparrow$, $Y \uparrow$)</td>
+</tr>
+<tr>
+  <td>$\text{Cov}(X,Y) &lt; 0$</td>
+  <td>Negative relationship ($X \uparrow$, $Y \downarrow$)</td>
+</tr>
+<tr>
+  <td>$\text{Cov}(X,Y) = 0$</td>
+  <td>No linear relationship</td>
+</tr>
+</tbody>
+</table>
+<h3 id="visual-understanding-scatter-plots">Visual Understanding (Scatter Plots)</h3>
+<p><img src="./assets/19.%20covariance.jpg" alt="COV" /></p>
+<p><strong>1. Negative Covariance</strong> ($\text{Cov}(X,Y) &lt; 0$)</p>
+<ul>
+<li>As $X$ increases, $Y$ tends to decrease.</li>
+<li>Points form a downward trend.</li>
+</ul>
+<p><strong>2. Zero Covariance</strong> ($\text{Cov}(X,Y) = 0$)</p>
+<ul>
+<li>No clear upward or downward trend.</li>
+<li>Points are scattered randomly.</li>
+</ul>
+<p><strong>3. Positive Covariance</strong> ($\text{Cov}(X,Y) &gt; 0$)</p>
+<ul>
+<li>As $X$ increases, $Y$ tends to increase.</li>
+<li>Points form an upward trend.</li>
+</ul>
+<h3 id="understanding-the-sign-using-deviations">Understanding the Sign using Deviations</h3>
+<p>We look at each point relative to the means $(\mu_x, \mu_y)$:</p>
+<table>
+<thead>
+<tr>
+  <th>Point Position relative to means</th>
+  <th>$(x_i - \mu_x)$</th>
+  <th>$(y_i - \mu_y)$</th>
+  <th>Product</th>
+  <th>Contribution to Cov</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Both above mean</td>
+  <td>$+$</td>
+  <td>$+$</td>
+  <td>$+$</td>
+  <td>Positive</td>
+</tr>
+<tr>
+  <td>$X$ above, $Y$ below</td>
+  <td>$+$</td>
+  <td>$-$</td>
+  <td>$-$</td>
+  <td>Negative</td>
+</tr>
+<tr>
+  <td>$X$ below, $Y$ above</td>
+  <td>$-$</td>
+  <td>$+$</td>
+  <td>$-$</td>
+  <td>Negative</td>
+</tr>
+<tr>
+  <td>Both below mean</td>
+  <td>$-$</td>
+  <td>$-$</td>
+  <td>$+$</td>
+  <td>Positive</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>If most products are <strong>positive</strong> → $\text{Cov}(X,Y) &gt; 0$</li>
+<li>If most products are <strong>negative</strong> → $\text{Cov}(X,Y) &lt; 0$</li>
+</ul>
+<h3 id="important-notes-3">Important Notes</h3>
+<ul>
+<li>Covariance tells us the <strong>direction</strong> of the linear relationship (positive / negative / zero).</li>
+<li>Covariance does <strong>not</strong> tell us the <strong>strength</strong> of the relationship (because it depends on the scale of the variables).</li>
+<li>That is why we later use the <strong>Pearson Correlation Coefficient</strong>, which is a normalized version of covariance.</li>
+</ul>
+<p>$$
+\text{Cov}(X,Y) \neq \text{Correlation}(X,Y)
+$$</p>
+<h3 id="summary-7">Summary</h3>
+<table>
+<thead>
+<tr>
+  <th>Concept</th>
+  <th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>$\text{Cov}(X,Y) &gt; 0$</td>
+  <td>$X$ and $Y$ move in the same direction</td>
+</tr>
+<tr>
+  <td>$\text{Cov}(X,Y) &lt; 0$</td>
+  <td>$X$ and $Y$ move in opposite directions</td>
+</tr>
+<tr>
+  <td>$\text{Cov}(X,Y) = 0$</td>
+  <td>No linear relationship</td>
+</tr>
+<tr>
+  <td>$\text{Cov}(X,X)$</td>
+  <td>Equals $\text{Var}(X)$</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>Covariance is the foundation for understanding correlation.</p>
+</blockquote>
+<h2 id="20-pearson-correlation-coefficient">20. Pearson Correlation Coefficient</h2>
+<h3 id="definition-2">Definition</h3>
+<p>The <strong>Pearson Correlation Coefficient</strong> (also called Pearson’s $r$ or PCC) measures both the <strong>strength</strong> and <strong>direction</strong> of the linear relationship between two variables $X$ and $Y$.</p>
+<p>$$</p>
+<p>\rho_{X,Y} = \dfrac{\text{Cov}(X,Y)}{\sigma_X , \sigma_Y}</p>
+<p>$$</p>
+<p>Where:</p>
+<ul>
+<li><p>$\text{Cov}(X,Y)$ = Covariance between $X$ and $Y$</p>
+</li>
+<li><p>$\sigma_X = \sqrt{\text{Var}(X)}$ = Standard deviation of $X$</p>
+</li>
+<li><p>$\sigma_Y = \sqrt{\text{Var}(Y)}$ = Standard deviation of $Y$</p>
+</li>
+</ul>
+<h3 id="range-of-pearson-correlation">Range of Pearson Correlation</h3>
+<p><img src="./assets/20.%20PCC.jpg" alt="PCC" /></p>
+<p>$$
+-1 \leq \rho_{X,Y} \leq +1
+$$</p>
+<table>
+<thead>
+<tr>
+  <th>Value of $\rho$</th>
+  <th>Interpretation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>$\rho = +1$</td>
+  <td>Perfect positive linear relationship</td>
+</tr>
+<tr>
+  <td>$0 &lt; \rho &lt; +1$</td>
+  <td>Positive linear relationship</td>
+</tr>
+<tr>
+  <td>$\rho = 0$</td>
+  <td>No linear relationship</td>
+</tr>
+<tr>
+  <td>$-1 &lt; \rho &lt; 0$</td>
+  <td>Negative linear relationship</td>
+</tr>
+<tr>
+  <td>$\rho = -1$</td>
+  <td>Perfect negative linear relationship</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Observations from the Pearson Correlation Coefficient (PCC)</strong></p>
+<ul>
+<li><p>The five panels show the relationship between two variables for different values of the Pearson correlation coefficient $\rho$.</p>
+</li>
+<li><p><strong>$\rho = -1$</strong><br />
+Perfect negative linear relationship. All points lie exactly on a straight line with negative slope.</p>
+</li>
+<li><p><strong>$-1 &lt; \rho &lt; 0$</strong><br />
+Negative linear relationship (but not perfect). As one variable increases, the other tends to decrease. The points are scattered around a downward-sloping line.</p>
+</li>
+<li><p><strong>$\rho = 0$</strong><br />
+No linear relationship. The points are scattered randomly with no clear upward or downward trend.</p>
+</li>
+<li><p><strong>$0 &lt; \rho &lt; +1$</strong><br />
+Positive linear relationship (but not perfect). As one variable increases, the other tends to increase. The points are scattered around an upward-sloping line.</p>
+</li>
+<li><p><strong>$\rho = +1$</strong><br />
+Perfect positive linear relationship. All points lie exactly on a straight line with positive slope.</p>
+</li>
+</ul>
+<p><strong>Key Takeaways</strong></p>
+<ul>
+<li>$\rho$ only measures <strong>linear</strong> association.</li>
+<li>The closer $|\rho|$ is to 1, the stronger the linear relationship.</li>
+<li>$\rho = 0$ does <strong>not</strong> mean the variables are independent — it only means there is no <em>linear</em> correlation (they could still have a non-linear relationship).</li>
+<li>The sign of $\rho$ tells the direction (positive or negative), while the magnitude tells the strength.</li>
+</ul>
+<h3 id="why-do-we-need-correlation-if-we-already-have-covariance">Why do we need Correlation if we already have Covariance?</h3>
+<ul>
+<li><strong>Covariance</strong> depends on the scale of the variables (e.g., height in cm vs meters changes the value).</li>
+<li><strong>Pearson Correlation</strong> is <strong>scale-invariant</strong> (normalized version of covariance).</li>
+<li>Correlation is easier to interpret because it is always between $-1$ and $+1$.</li>
+</ul>
+<p><img src="./assets/20.%20PCC-obs.jpg" alt="OBS" /></p>
+<p><strong>Observations from the Pearson Correlation Coefficient (PCC) examples</strong></p>
+<ul>
+<li><strong>$\rho = 1$</strong>: Perfect positive linear relationship (all points lie on a straight line with positive slope).</li>
+<li><strong>$\rho = 0.8$</strong>: Strong positive linear relationship (points tightly clustered around an upward line).</li>
+<li><strong>$\rho = 0.4$</strong>: Moderate positive linear relationship (clear upward trend but with more scatter).</li>
+<li><strong>$\rho = 0$</strong>: No linear relationship (cloud of points with no clear trend).</li>
+<li><strong>$\rho = -0.4$</strong>: Moderate negative linear relationship.</li>
+<li><strong>$\rho = -0.8$</strong>: Strong negative linear relationship.</li>
+<li><strong>$\rho = -1$</strong>: Perfect negative linear relationship.</li>
+</ul>
+<ul>
+<li>Even when the slope is very small or the line is almost horizontal, as long as the points lie exactly on a straight line, $|\rho| = 1$.</li>
+<li>Pearson correlation measures the <strong>strength of the linear relationship</strong>, not the steepness of the slope.</li>
+</ul>
+<blockquote>
+<h3 id="3rd-row--important-limitation-of-pearson-correlation">3rd Row – Important limitation of Pearson correlation</h3>
+</blockquote>
+<blockquote>
+<h3 id="2nd-row--effect-of-slope-and-perfect-correlation">2nd Row – Effect of slope and perfect correlation</h3>
+</blockquote>
+<blockquote>
+<h3 id="1st-row--different-strengths-of-linear-correlation">1st Row – Different strengths of linear correlation</h3>
+</blockquote>
+<ul>
+<li>All these plots have <strong>$\rho = 0$</strong> (or very close to zero).</li>
+<li>However, the variables are clearly related through <strong>non-linear</strong> patterns:<ul>
+<li>Wavy / sinusoidal relationship</li>
+<li>Random-looking but structured cloud</li>
+<li>Diamond / square shapes</li>
+<li>U-shaped (quadratic) relationship</li>
+<li>X-shaped relationship</li>
+<li>Circular relationship</li>
+<li>Separate clusters</li>
+</ul>
+</li>
+</ul>
+<p><strong>Key Takeaways</strong></p>
+<ul>
+<li>Pearson correlation only detects <strong>linear</strong> associations.</li>
+<li>$\rho = 0$ does <strong>not</strong> mean the two variables are independent — it only means there is no linear correlation.</li>
+<li>Strong non-linear relationships can easily produce a Pearson correlation of zero.</li>
+<li>Always visualize the data (scatter plots) in addition to looking at the correlation value.</li>
+</ul>
+<h3 id="summary-8">Summary</h3>
+<table>
+<thead>
+<tr>
+  <th>Concept</th>
+  <th>What it tells us</th>
+  <th>Range</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Covariance</td>
+  <td>Direction of linear relationship</td>
+  <td>$(-\infty, +\infty)$</td>
+</tr>
+<tr>
+  <td>Pearson Correlation ($\rho$)</td>
+  <td>Direction <strong>and</strong> strength of linear relationship</td>
+  <td>$[-1, +1]$</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>Pearson Correlation is one of the most widely used measures to quantify the linear association between two continuous variables.</p>
+</blockquote>
+<h2 id="21-spearman-rank-correlation-coefficient">21. Spearman Rank Correlation Coefficient</h2>
+<h3 id="why-do-we-need-spearman-correlation">Why do we need Spearman Correlation?</h3>
+<ul>
+<li><strong>Pearson Correlation ($\rho$)</strong> only measures <strong>linear</strong> relationships.</li>
+<li>If the relationship is strong but <strong>non-linear</strong> (e.g., curved), Pearson correlation may be low.</li>
+<li><strong>Spearman Rank Correlation ($r_s$)</strong> measures the strength of a <strong>monotonic</strong> relationship (whether linear or not).</li>
+</ul>
+<h3 id="how-spearman-correlation-works">How Spearman Correlation Works</h3>
+<p>Instead of using the original values, we convert both variables into <strong>ranks</strong>.</p>
+<p><strong>Example:</strong></p>
+<table>
+<thead>
+<tr>
+  <th>Sample</th>
+  <th>$X$ (Height)</th>
+  <th>$Y$ (Weight)</th>
+  <th>Rank of $X$ ($r_x$)</th>
+  <th>Rank of $Y$ ($r_y$)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>$s_1$</td>
+  <td>160</td>
+  <td>52</td>
+  <td>4</td>
+  <td>3</td>
+</tr>
+<tr>
+  <td>$s_2$</td>
+  <td>150</td>
+  <td>66</td>
+  <td>2</td>
+  <td>4</td>
+</tr>
+<tr>
+  <td>$s_3$</td>
+  <td>170</td>
+  <td>68</td>
+  <td>5</td>
+  <td>5</td>
+</tr>
+<tr>
+  <td>$s_4$</td>
+  <td>140</td>
+  <td>46</td>
+  <td>1</td>
+  <td>1</td>
+</tr>
+<tr>
+  <td>$s_5$</td>
+  <td>158</td>
+  <td>51</td>
+  <td>3</td>
+  <td>2</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>$r_x =$ rank of $X$ (ascending order)</li>
+<li>$r_y =$ rank of $Y$ (ascending order)</li>
+</ul>
+<p>Then we compute the <strong>Pearson correlation on the ranks</strong>:</p>
+<p>$$
+\rho_{X,Y} = \dfrac{\text{Cov}(X,Y)}{\sigma_X , \sigma_Y}
+$$</p>
+<p>$$
+r_s = \rho_{r_x, r_y}
+$$</p>
+<p>$$
+r_s = \dfrac{\text{Cov}(r_x,\ r_y)}{\sigma_{r_x} , \sigma_{r_y}}
+$$</p>
+<blockquote>
+<p>$r_x$ = ranks of $X$ &amp; $r_y$ = ranks of $Y$</p>
+</blockquote>
+<h3 id="interpretation-2">Interpretation</h3>
+<table>
+<thead>
+<tr>
+  <th>Spearman $r_s$</th>
+  <th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>$r_s = +1$</td>
+  <td>Perfect monotonic increasing relationship</td>
+</tr>
+<tr>
+  <td>$r_s = -1$</td>
+  <td>Perfect monotonic decreasing relationship</td>
+</tr>
+<tr>
+  <td>$r_s \approx 0$</td>
+  <td>No monotonic relationship</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Important Difference from Pearson:</strong></p>
+<ul>
+<li>Pearson $\rho = +1$ <strong>only</strong> if the relationship is perfectly linear.</li>
+<li>Spearman $r_s = +1$ if the relationship is perfectly monotonic (can be curved).</li>
+</ul>
+<h3 id="visual-examples">Visual Examples</h3>
+<p><strong>Example 1: Perfect Monotonic (but non-linear)</strong></p>
+<p><img src="./assets/21.%20SRCC-01.jpg" alt="Spearman = 1, Pearson = 0.88" /></p>
+<ul>
+<li>Clear increasing curved relationship.</li>
+<li>Spearman correlation = <strong>1</strong> (perfect monotonic)</li>
+<li>Pearson correlation = <strong>0.88</strong> (not perfect because it is not linear)</li>
+</ul>
+<p><strong>Example 2: Weak Relationship</strong></p>
+<p><img src="./assets/21.%20SRCC-02.jpg" alt="Spearman = 0.35, Pearson = 0.37" /></p>
+<ul>
+<li>Points are widely scattered.</li>
+<li>Both Spearman and Pearson give low values (around 0.35–0.37).</li>
+</ul>
+<p><strong>Example 3: Strong Monotonic with some outliers</strong></p>
+<p><img src="./assets/21.%20SRCC-03.jpg" alt="Spearman = 0.84, Pearson = 0.67" /></p>
+<ul>
+<li>Clear increasing trend but with some outliers on the right.</li>
+<li>Spearman (0.84) is higher than Pearson (0.67) because ranks are less affected by extreme values.</li>
+</ul>
+<h3 id="summary-comparison">Summary Comparison</h3>
+<table>
+<thead>
+<tr>
+  <th>Feature</th>
+  <th>Pearson Correlation ($\rho$)</th>
+  <th>Spearman Rank Correlation ($r_s$)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Measures</td>
+  <td>Linear relationship</td>
+  <td>Monotonic relationship</td>
+</tr>
+<tr>
+  <td>Uses</td>
+  <td>Original values</td>
+  <td>Ranks of the values</td>
+</tr>
+<tr>
+  <td>Sensitive to outliers</td>
+  <td>Yes</td>
+  <td>Less sensitive</td>
+</tr>
+<tr>
+  <td>Perfect score (+1 or -1)</td>
+  <td>Only if perfectly linear</td>
+  <td>If perfectly monotonic (linear or curved)</td>
+</tr>
+<tr>
+  <td>Best used when</td>
+  <td>Relationship is linear</td>
+  <td>Relationship may be non-linear</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>Key Takeaway</strong>:<br />
+Use <strong>Pearson</strong> when you expect a linear relationship.<br />
+Use <strong>Spearman</strong> when the relationship is monotonic but possibly non-linear, or when the data has outliers.</p>
+</blockquote>
+<h2 id="22-correlation-vs-causation">22. Correlation vs Causation</h2>
+<h3 id="key-principle">Key Principle</h3>
+<blockquote>
+<p><strong>Correlation does not mean/imply Causation</strong></p>
+</blockquote>
+<p>Just because two variables are correlated does <strong>not</strong> mean that one causes the other.</p>
+<h3 id="what-correlation-tells-us">What Correlation Tells Us</h3>
+<ul>
+<li>We can calculate the correlation between <strong>any</strong> two random variables $X$ and $Y$.</li>
+<li>A high correlation (positive or negative) only means that the two variables move together (or in opposite directions) in a linear way.</li>
+<li>It does <strong>not</strong> tell us anything about cause-and-effect.</li>
+</ul>
+<h3 id="what-correlation-does-not-tell-us">What Correlation Does <em>Not</em> Tell Us</h3>
+<ul>
+<li>It does <strong>not</strong> mean $X$ causes $Y$</li>
+<li>It does <strong>not</strong> mean $Y$ causes $X$</li>
+<li>It does <strong>not</strong> mean there is a direct causal relationship</li>
+</ul>
+<p>There could be:</p>
+<ul>
+<li>A third variable influencing both (confounding variable)</li>
+<li>Pure coincidence</li>
+<li>Reverse causation</li>
+</ul>
+<h3 id="causal-models">Causal Models</h3>
+<p>To claim that <strong>$X$ causes $Y$</strong>, we need more than just correlation. We need:</p>
+<ul>
+<li>Proper experimental design (e.g., randomized controlled trials)</li>
+<li>Causal inference techniques</li>
+<li>Domain knowledge</li>
+<li>Causal models / graphical models (e.g., Causal Graphs, do-calculus, etc.)</li>
+</ul>
+<h3 id="summary-9">Summary</h3>
+<table>
+<thead>
+<tr>
+  <th>Concept</th>
+  <th>What it means</th>
+  <th>Does it prove cause?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Correlation</td>
+  <td>Variables move together (or oppositely)</td>
+  <td>No</td>
+</tr>
+<tr>
+  <td>Causation</td>
+  <td>One variable directly influences the other</td>
+  <td>Needs stronger evidence</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>Always remember:<br />
+<strong>Correlation ≠ Causation</strong></p>
+</blockquote>
+<h2 id="23-how-to-use-correlations">23. How to Use Correlations</h2>
+<h3 id="applications-of-correlation-reminder-correlation--causation">Applications of Correlation (Reminder: Correlation ≠ Causation)</h3>
+<p>We can calculate the <strong>Pearson Correlation Coefficient (PCC)</strong> between many pairs of variables.<br />
+However, a strong correlation does <strong>not</strong> mean one variable causes the other.</p>
+<hr />
+<h3 id="practical-examples-of-using-correlation">Practical Examples of Using Correlation</h3>
+<h4 id="1-salary-vs-square-footage-of-house">1. Salary vs Square Footage of House</h4>
+<ul>
+<li>Is a person’s salary correlated with the size (sq. ft.) of their home?</li>
+<li>Useful for real estate pricing models, affordability studies, etc.</li>
+</ul>
+<h4 id="2-years-of-education-vs-income">2. Years of Education vs Income</h4>
+<ul>
+<li>Is the number of years of education correlated with income?</li>
+<li>Commonly studied in economics and sociology.</li>
+</ul>
+<h4 id="3-e-commerce-time-spent-on-website-vs-money-spent">3. E-commerce: Time Spent on Website vs Money Spent</h4>
+<table>
+<thead>
+<tr>
+  <th>Time Spent on Site</th>
+  <th>Money Spent</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>29 hrs</td>
+  <td>$20</td>
+</tr>
+<tr>
+  <td>30 min</td>
+  <td>$100</td>
+</tr>
+<tr>
+  <td>60 min</td>
+  <td>…</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>Question: Is time spent on the website correlated with money spent in the next 24 hours?</li>
+<li>Useful for marketing, recommendation systems, and user behavior analysis.</li>
+</ul>
+<h4 id="4-e-commerce-number-of-unique-visitors-vs-sales">4. E-commerce: Number of Unique Visitors vs Sales</h4>
+<table>
+<thead>
+<tr>
+  <th>Unique Visitors (per day)</th>
+  <th>Sales (per day)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>100k</td>
+  <td>$1M</td>
+</tr>
+<tr>
+  <td>120k</td>
+  <td>$1.6M</td>
+</tr>
+<tr>
+  <td>…</td>
+  <td>…</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>Helps in forecasting revenue and understanding traffic-to-sales conversion.</li>
+</ul>
+<h4 id="5-medicine--healthcare">5. Medicine / Healthcare</h4>
+<table>
+<thead>
+<tr>
+  <th>Dose of a Drug (mg)</th>
+  <th>Reduction in Blood Sugar</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>1 mg</td>
+  <td>$x$</td>
+</tr>
+<tr>
+  <td>2 mg</td>
+  <td>$y$</td>
+</tr>
+<tr>
+  <td>3 mg</td>
+  <td>$z$</td>
+</tr>
+<tr>
+  <td>…</td>
+  <td>…</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>Is the dose of a medicine correlated with the reduction in blood sugar (or any health metric)?</li>
+<li>Important for dosage optimization and clinical studies.</li>
+</ul>
+<h3 id="important-reminder">Important Reminder</h3>
+<p>Even if we find a strong correlation in any of the above examples:</p>
+<ul>
+<li>It does <strong>not</strong> automatically mean causation.</li>
+<li>There may be confounding factors.</li>
+<li>Proper causal analysis or controlled experiments are needed to claim cause-and-effect.</li>
+</ul>
+<h3 id="summary-10">Summary</h3>
+<table>
+<thead>
+<tr>
+  <th>Domain</th>
+  <th>Example of Correlation Use</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Real Estate</td>
+  <td>Salary ↔ House size</td>
+</tr>
+<tr>
+  <td>Education</td>
+  <td>Years of education ↔ Income</td>
+</tr>
+<tr>
+  <td>E-commerce</td>
+  <td>Time on site ↔ Money spent</td>
+</tr>
+<tr>
+  <td>E-commerce</td>
+  <td>Unique visitors ↔ Daily sales</td>
+</tr>
+<tr>
+  <td>Healthcare</td>
+  <td>Drug dose ↔ Reduction in blood sugar / symptoms</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>Correlation is a powerful exploratory tool, but it should always be interpreted with caution.</p>
+</blockquote>
+<h2 id="24-confidence-interval-introduction">24. Confidence Interval Introduction</h2>
+<h3 id="what-is-a-confidence-interval">What is a Confidence Interval?</h3>
+<p>A <strong>Confidence Interval</strong> gives a range of values within which we expect the true population parameter to lie, with a certain level of confidence.</p>
+<h3 id="example-estimating-average-height">Example: Estimating Average Height</h3>
+<p>We want to estimate the <strong>population mean height</strong> ($\mu$) of people.</p>
+<p>We take a <strong>random sample</strong> of size $n = 10$:</p>
+<p>$$
+{x_1, x_2, \dots, x_{10}}
+$$</p>
+<p>Example sample (heights in cm):</p>
+<p>$$
+{180,\ 162,\ 158,\ 172,\ 168,\ 150,\ 171,\ 173,\ 165,\ 176}
+$$</p>
+<h3 id="point-estimate">Point Estimate</h3>
+<p>The sample mean is used as a <strong>point estimate</strong> of the population mean:</p>
+<p>$$
+\bar{x} = \dfrac{1}{n} \sum_{i=1}^{n} x_i = 168.5,\text{cm}
+$$</p>
+<p>So,</p>
+<p>$$
+\mu \approx \bar{x} = 168.5,\text{cm}
+$$</p>
+<p>As the sample size $n$ increases, $\bar{x}$ gets closer to $\mu$.</p>
+<h3 id="confidence-interval">Confidence Interval</h3>
+<p>Instead of giving only a single number (point estimate), we give an <strong>interval</strong>:</p>
+<p>$$
+\mu \in [162.1,\ 174.9]
+\quad \text{with } 95% \text{ confidence}
+$$</p>
+<p><strong>Interpretation:</strong></p>
+<blockquote>
+<p>We are 95% confident that the true population mean height $\mu$ lies between 162.1 cm and 174.9 cm.</p>
+</blockquote>
+<h3 id="key-terms">Key Terms</h3>
+<table>
+<thead>
+<tr>
+  <th>Term</th>
+  <th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Point Estimate</td>
+  <td>Single best guess ($\bar{x}$)</td>
+</tr>
+<tr>
+  <td>Confidence Interval</td>
+  <td>Range of plausible values for the parameter</td>
+</tr>
+<tr>
+  <td>Confidence Level</td>
+  <td>Probability that the interval contains the true parameter (e.g., 95%)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="summary-11">Summary</h3>
+<ul>
+<li>A <strong>point estimate</strong> gives one number.</li>
+<li>A <strong>confidence interval</strong> gives a range and tells us how confident we are that the true parameter lies inside that range.</li>
+<li>Larger sample size → usually narrower (more precise) confidence interval.</li>
+</ul>
+<h2 id="25-computing-confidence-interval-given-the-underlying-distribution">25. Computing Confidence Interval Given the Underlying Distribution</h2>
+<h3 id="setup">Setup</h3>
+<p>Assume the population follows a Normal distribution:</p>
+<p>$$
+X \sim \mathcal{N}(\mu, \sigma^2)
+$$</p>
+<p>Given:</p>
+<ul>
+<li>$\mu = 168$ cm (true mean — for illustration)</li>
+<li>$\sigma = 5$ cm</li>
+</ul>
+<h3 id="using-the-68-95-997-rule">Using the 68-95-99.7 Rule</h3>
+<p>For a Normal distribution:</p>
+<table>
+<thead>
+<tr>
+  <th>Interval</th>
+  <th>Probability</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>$\mu \pm 1\sigma$</td>
+  <td>$\approx 68%$</td>
+</tr>
+<tr>
+  <td>$\mu \pm 2\sigma$</td>
+  <td>$\approx 95%$</td>
+</tr>
+<tr>
+  <td>$\mu \pm 3\sigma$</td>
+  <td>$\approx 99.7%$</td>
+</tr>
+</tbody>
+</table>
+<p><img src="./assets/25.%20CI-01.jpg" alt="CI" /></p>
+<p><strong>Example (95% interval):</strong></p>
+<p><img src="./assets/25.%20CI-02.jpg" alt="CI" /></p>
+<p>$$
+\mu \pm 2\sigma = 168 \pm 2 \times 5 = 168 \pm 10
+$$</p>
+<p>$$
+[158,\ 178]
+$$</p>
+<p>We can say:</p>
+<blockquote>
+<p>Approximately 95% of people’s heights lie between 158 cm and 178 cm.</p>
+</blockquote>
+<h3 id="confidence-interval-interpretation">Confidence Interval Interpretation</h3>
+<p>If we want a <strong>95% Confidence Interval</strong> for the population mean (when we know $\sigma$):</p>
+<p>$$
+\left[ \bar{x} - 1.96 \cdot \dfrac{\sigma}{\sqrt{n}},\
+\bar{x} + 1.96 \cdot \dfrac{\sigma}{\sqrt{n}} \right]
+$$</p>
+<p>(Using the more precise $z = 1.96$ instead of 2)</p>
+<h3 id="different-confidence-levels">Different Confidence Levels</h3>
+<table>
+<thead>
+<tr>
+  <th>Confidence Level</th>
+  <th>$z$-value (approx)</th>
+  <th>Interval Width</th>
+  <th>Interpretation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>90%</td>
+  <td>1.645</td>
+  <td>Narrower</td>
+  <td>Less confident, smaller range</td>
+</tr>
+<tr>
+  <td>95%</td>
+  <td>1.96</td>
+  <td>Medium</td>
+  <td>Standard choice</td>
+</tr>
+<tr>
+  <td>99%</td>
+  <td>2.58</td>
+  <td>Wider</td>
+  <td>More confident, larger range</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Trade-off:</strong></p>
+<ul>
+<li>Higher confidence level → wider interval</li>
+<li>Lower confidence level → narrower interval</li>
+</ul>
+<h3 id="key-visual-understanding">Key Visual Understanding</h3>
+<ul>
+<li>The area under the Normal curve between the lower and upper limits equals the confidence level (e.g., 0.95 for 95% CI).</li>
+<li>The remaining probability is split equally in the two tails:<ul>
+<li>For 95% CI → 2.5% in each tail</li>
+<li>For 90% CI → 5% in each tail</li>
+</ul>
+</li>
+</ul>
+<p><img src="./assets/25.%20CI-03.jpg" alt="CI" /></p>
+<h3 id="summary-12">Summary</h3>
+<ul>
+<li>When the population is Normal and $\sigma$ is known, we can construct exact confidence intervals using $z$-values.</li>
+<li>95% is the most commonly used confidence level.</li>
+<li>There is always a trade-off between <strong>confidence</strong> and <strong>precision</strong> (width of the interval).</li>
+</ul>
+<h2 id="26-confidence-interval-for-the-mean-of-a-normal-random-variable">26. Confidence Interval for the Mean of a Normal Random Variable</h2>
+<h3 id="setup-2">Setup</h3>
+<p>We have a random variable $X$ with:</p>
+<ul>
+<li>Population mean $\mu$</li>
+<li>Population standard deviation $\sigma$</li>
+</ul>
+<p>We take a random sample of size $n$:</p>
+<p>$$
+{x_1, x_2, \dots, x_n}
+$$</p>
+<p>Example sample (heights in cm, $n=10$):</p>
+<p>$$
+{180,\ 162,\ 158,\ 172,\ 168,\ 150,\ 171,\ 173,\ 165,\ 176}
+$$</p>
+<p>Sample mean:</p>
+<p>$$
+\bar{x} = 168.5,\text{cm}
+$$</p>
+<p><strong>Goal:</strong> Construct a 95% Confidence Interval for the population mean $\mu$.</p>
+<h3 id="case-1-population-standard-deviation-sigma-is-known">Case 1: Population Standard Deviation $\sigma$ is Known</h3>
+<p><strong>Assumption:</strong> Someone tells us $\sigma = 5$ cm.</p>
+<p>By the <strong>Central Limit Theorem</strong> (or exact Normality if the population is Normal):</p>
+<p>$$
+\bar{x} \sim \mathcal{N}\left(\mu,\ \dfrac{\sigma}{\sqrt{n}}\right)
+$$</p>
+<p><strong>95% Confidence Interval:</strong></p>
+<p>$$
+\mu \in \left[ \bar{x} - 1.96 \cdot \dfrac{\sigma}{\sqrt{n}},\
+\bar{x} + 1.96 \cdot \dfrac{\sigma}{\sqrt{n}} \right]
+$$</p>
+<p>(Using $z_{0.025} \approx 1.96$; sometimes approximated as 2)</p>
+<p><strong>Calculation:</strong></p>
+<p>$$
+\dfrac{\sigma}{\sqrt{n}} = \dfrac{5}{\sqrt{10}} \approx 1.58
+$$</p>
+<p>$$
+\mu \in \left[ 168.5 - 1.96 \times 1.58,\
+168.5 + 1.96 \times 1.58 \right]
+$$</p>
+<p>$$
+\mu \in [165.39,\ 171.61],\text{cm}
+\quad \text{with 95% confidence}
+$$</p>
+<h3 id="case-2-population-standard-deviation-sigma-is-unknown">Case 2: Population Standard Deviation $\sigma$ is Unknown</h3>
+<p>In most real situations, we do <strong>not</strong> know $\sigma$.</p>
+<p>We estimate it using the <strong>sample standard deviation</strong> $s$, and use the <strong>Student’s t-distribution</strong>.</p>
+<p>$$
+\bar{x} \sim t_{(n-1)}
+$$</p>
+<ul>
+<li>Degrees of freedom = $n - 1$</li>
+</ul>
+<p><strong>95% Confidence Interval (σ unknown):</strong></p>
+<p>$$
+\mu \in \left[ \bar{x} - t_{n-1,\ 0.025} \cdot \dfrac{s}{\sqrt{n}},\
+\bar{x} + t_{n-1,\ 0.025} \cdot \dfrac{s}{\sqrt{n}} \right]
+$$</p>
+<p><img src="./assets//26.%20CI-01.jpg" alt="CI" />
+<img src="./assets//26.%20CI-02.jpg" alt="CI" /></p>
+<p><a href="https://en.wikipedia.org/wiki/Student%27s_t-distribution">https://en.wikipedia.org/wiki/Student%27s_t-distribution</a></p>
+<h3 id="summary-of-the-two-cases">Summary of the Two Cases</h3>
+<table>
+<thead>
+<tr>
+  <th>Situation</th>
+  <th>Distribution Used</th>
+  <th>Critical Value</th>
+  <th>Formula</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>$\sigma$ <strong>known</strong></td>
+  <td>Standard Normal ($z$)</td>
+  <td>$z_{0.025} \approx 1.96$</td>
+  <td>$\bar{x} \pm z \cdot \dfrac{\sigma}{\sqrt{n}}$</td>
+</tr>
+<tr>
+  <td>$\sigma$ <strong>unknown</strong></td>
+  <td>Student’s $t$</td>
+  <td>$t_{n-1,\ 0.025}$</td>
+  <td>$\bar{x} \pm t \cdot \dfrac{s}{\sqrt{n}}$</td>
+</tr>
+</tbody>
+</table>
+<h3 id="additional-notes">Additional Notes</h3>
+<ul>
+<li>When $n$ is large (usually $n \geq 30$), the $t$-distribution becomes very close to the Normal distribution.</li>
+<li>We can also construct confidence intervals for other parameters (e.g., median, 90th percentile, variance), but the method changes depending on the parameter.</li>
+</ul>
+<h3 id="key-takeaway-4">Key Takeaway</h3>
+<ul>
+<li>If $\sigma$ is known → use <strong>$z$-interval</strong> (Normal).</li>
+<li>If $\sigma$ is unknown → use <strong>$t$-interval</strong> (Student’s t-distribution with $n-1$ degrees of freedom).</li>
+</ul>
+<h2 id="27-confidence-interval-using-bootstrapping">27. Confidence Interval Using Bootstrapping</h2>
+<h3 id="ci-using-empirical-bootstrap">CI using Empirical Bootstrap</h3>
+<p>The empirical bootstrap allows us to construct confidence intervals for many statistics (median, variance, standard deviation, 90th percentile, etc.) <strong>without making distributional assumptions</strong>.</p>
+<h3 id="setup-3">Setup</h3>
+<p>Let $ X \sim F $.<br />
+<strong>Task:</strong> Estimate a <strong>95% CI</strong> for the median of $ X $.</p>
+<p>We observe a sample of size $ n = 10 $:</p>
+<p>$$
+S = {x_1, x_2, x_3, \dots, x_n}
+$$</p>
+<p><strong>Question:</strong> Using <em>only</em> this sample, how can we obtain a CI for the median of $ X $?</p>
+<h3 id="bootstrap-procedure-sampling-with-replacement">Bootstrap Procedure (Sampling with Replacement)</h3>
+<p>We generate new samples (bootstrap samples) from the original sample by <strong>sampling with replacement</strong>.</p>
+<ul>
+<li>Draw a uniform random index $ U(1,n) $</li>
+<li>Use that index to pick an observation from $ S $</li>
+<li>Repeat until we have a new sample of size $ n $</li>
+</ul>
+<p>This produces bootstrap samples $ S_1, S_2, \dots, S_K $.</p>
+<p><strong>Original Sample</strong><br />
+$ S = {x_1, x_2, \dots, x_n} $</p>
+<p>↓ Sampling with replacement using $ U(1,n) $</p>
+<p><strong>Bootstrap Samples</strong><br />
+$ S_1, S_2, \dots, S_K $</p>
+<p>↓ Compute median of each</p>
+<p><strong>Bootstrap Medians</strong><br />
+$ m_1, m_2, \dots, m_K $</p>
+<h3 id="detailed-steps">Detailed Steps</h3>
+<p>$$
+\begin{align*}
+S_1 &amp;: x_1^{(1)}, x_2^{(1)}, \dots, x_n^{(1)} \quad \rightarrow \quad m_1 \
+S_2 &amp;: x_1^{(2)}, x_2^{(2)}, \dots, x_n^{(2)} \quad \rightarrow \quad m_2 \
+&amp;\vdots \
+S_K &amp;: x_1^{(K)}, x_2^{(K)}, \dots, x_n^{(K)} \quad \rightarrow \quad m_K
+\end{align*}
+$$</p>
+<p>When $ K = 1000 $, we obtain 1000 bootstrap medians:</p>
+<p>$$
+m_1, m_2, m_3, \dots, m_{1000}
+$$</p>
+<h3 id="constructing-the-95-confidence-interval">Constructing the 95% Confidence Interval</h3>
+<ol>
+<li><strong>Sort</strong> the bootstrap medians in increasing order:</li>
+</ol>
+<p>$$
+m_1' \le m_2' \le m_3' \le \dots \le m_{1000}'
+$$</p>
+<ol start="2">
+<li>The <strong>95% CI</strong> is given by the 2.5th and 97.5th percentiles of this ordered list:</li>
+</ol>
+<p>For $K = 1000$:</p>
+<p>$$
+95% \text{ CI for the median of } X = [m'<em>{25},\ m'</em>{975}]
+$$</p>
+<p>(i.e., the 25th and 975th ordered values)</p>
+<h3 id="key-properties-2">Key Properties</h3>
+<div class="insight-item">
+  <strong>Non-parametric technique</strong><br>
+  Does <em>not</em> make any assumption about the distribution of the data.
+</div>
+
+<div class="insight-item">
+  <strong>Versatility</strong><br>
+  The same procedure works for variance, standard deviation, percentiles, or any other statistic — simply replace the median with the desired quantity.
+</div>
+
+<h2 id="code">Code</h2>
+<pre><code class="language-py">import numpy
+from pandas import read_csv
+from sklearn.utils import resample
+from sklearn.metrics import accuracy_score
+from matplotlib import pyplot
+
+# load dataset
+x = numpy.array([180,162,158,172,168,150,171,183,165,176])
+
+# configure bootstrap
+n_iterations = 1000
+n_size = int(len(x))
+
+# run bootstrap
+medians = list()
+for i in range(n_iterations):
+    # prepare train and test sets
+    s = resample(x, n_samples=n_size);
+    m = numpy.median(s);
+    #print(m)
+    medians.append(m)
+
+# plot scores
+pyplot.hist(medians)
+pyplot.show()
+
+# confidence intervals
+alpha = 0.95
+p = ((1.0-alpha)/2.0) * 100
+lower =  numpy.percentile(medians, p)
+
+p = (alpha+((1.0-alpha)/2.0)) * 100
+upper =  numpy.percentile(medians, p)
+print('%.1f confidence interval %.1f and %.1f' % (alpha*100, lower, upper))
+</code></pre>
+<h3 id="summary-of-the-method">Summary of the Method</h3>
+<table>
+<thead>
+<tr>
+  <th>Step</th>
+  <th>Action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>1</td>
+  <td>Start with original sample $ S $ of size $ n $</td>
+</tr>
+<tr>
+  <td>2</td>
+  <td>Generate $ K $ bootstrap samples by sampling <strong>with replacement</strong></td>
+</tr>
+<tr>
+  <td>3</td>
+  <td>Compute the statistic (e.g., median) on each bootstrap sample</td>
+</tr>
+<tr>
+  <td>4</td>
+  <td>Sort the $ K $ bootstrap statistics</td>
+</tr>
+<tr>
+  <td>5</td>
+  <td>Take the appropriate percentiles (e.g., 2.5% and 97.5%) as the CI bounds</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>Note:</strong> This is the <strong>percentile bootstrap</strong> method (empirical bootstrap). It is simple, widely used, and distribution-free .</p>
+</blockquote>
+<h2 id="28-hypothesis-testing-methodology">28. Hypothesis Testing Methodology</h2>
+<h3 id="motivating-question">Motivating Question</h3>
+<p>Is there a difference in the heights of students in Class 1 and Class 2?</p>
+<table>
+<thead>
+<tr>
+  <th>Class 1</th>
+  <th>Class 2</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>150</td>
+  <td>162</td>
+</tr>
+<tr>
+  <td>152</td>
+  <td>156</td>
+</tr>
+<tr>
+  <td>...</td>
+  <td>...</td>
+</tr>
+<tr>
+  <td>193</td>
+  <td>182</td>
+</tr>
+<tr>
+  <td>(50 students)</td>
+  <td>(50 students)</td>
+</tr>
+</tbody>
+</table>
+<p>We want to test whether the population means are different:</p>
+<ul>
+<li>$\mu_1$ = mean height of Class 1</li>
+<li>$\mu_2$ = mean height of Class 2</li>
+</ul>
+<h3 id="steps-in-hypothesis-testing">Steps in Hypothesis Testing</h3>
+<h4 id="1-choose-a-test-statistic">1. Choose a Test Statistic</h4>
+<p>$$
+x = \mu_2 - \mu_1
+$$</p>
+<p>(or more commonly the difference of sample means $\bar{x}_2 - \bar{x}_1$)</p>
+<h4 id="2-state-the-hypotheses">2. State the Hypotheses</h4>
+<ul>
+<li><p><strong>Null Hypothesis ($H_0$)</strong>: There is <strong>no difference</strong> between the two means.<br />
+$$
+H_0: \mu_1 = \mu_2 \quad \text{or} \quad \mu_2 - \mu_1 = 0
+$$</p>
+</li>
+<li><p><strong>Alternative Hypothesis ($H_1$)</strong>: There <strong>is a difference</strong> between the two means.<br />
+$$
+H_1: \mu_1 \neq \mu_2
+$$</p>
+</li>
+</ul>
+<p>This is an example of <strong>proof by contradiction</strong> style reasoning:</p>
+<ul>
+<li>Assume $H_0$ is true</li>
+<li>See how unusual the observed data is under that assumption</li>
+</ul>
+<h4 id="3-compute-the-p-value">3. Compute the p-value</h4>
+<p>The <strong>p-value</strong> is the probability of observing a test statistic as extreme as (or more extreme than) the one we got, <strong>assuming the null hypothesis is true</strong>.</p>
+<p>Example:</p>
+<ul>
+<li>Suppose we observed a difference of 10 cm.</li>
+<li>If p-value = 0.9 → There is a 90% chance of seeing a 10 cm difference (or larger) even if $H_0$ is true → <strong>not surprising</strong> → Accept $H_0$</li>
+<li>If p-value = 0.05 → Only 5% chance of seeing such a difference if $H_0$ is true → <strong>surprising</strong> → Reject $H_0$</li>
+</ul>
+<h3 id="decision-rule">Decision Rule</h3>
+<table>
+<thead>
+<tr>
+  <th>p-value</th>
+  <th>Interpretation</th>
+  <th>Decision</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>High (close to 1)</td>
+  <td>Data is consistent with $H_0$</td>
+  <td>Fail to reject $H_0$</td>
+</tr>
+<tr>
+  <td>Low (close to 0)</td>
+  <td>Data is unlikely under $H_0$</td>
+  <td>Reject $H_0$</td>
+</tr>
+<tr>
+  <td>Common threshold</td>
+  <td>$\alpha = 0.05$ (5%)</td>
+  <td>Reject $H_0$ if p &lt; 0.05</td>
+</tr>
+</tbody>
+</table>
+<h3 id="summary-13">Summary</h3>
+<table>
+<thead>
+<tr>
+  <th>Step</th>
+  <th>Action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>1</td>
+  <td>Choose a suitable test statistic</td>
+</tr>
+<tr>
+  <td>2</td>
+  <td>Define Null Hypothesis ($H_0$) and Alternative Hypothesis ($H_1$)</td>
+</tr>
+<tr>
+  <td>3</td>
+  <td>Calculate the p-value</td>
+</tr>
+<tr>
+  <td>4</td>
+  <td>Compare p-value with significance level ($\alpha$) and make a decision</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>Key Idea</strong>: We assume the null hypothesis is true and ask:<br />
+“How surprising is the data we observed?”<br />
+If it is very surprising (low p-value), we reject the null hypothesis.</p>
+</blockquote>
+<h2 id="29-hypothesis-testing-intuition-with-a-coin-toss">29. Hypothesis Testing Intuition with a Coin Toss</h2>
+<h3 id="problem">Problem</h3>
+<p>We are given a coin and want to determine whether it is <strong>biased</strong> or <strong>fair</strong>.</p>
+<ul>
+<li>Fair coin: $P(H) = 0.5$</li>
+<li>Biased towards Heads: $P(H) &gt; 0.5$</li>
+</ul>
+<h3 id="experiment-design">Experiment Design</h3>
+<p><strong>Experiment:</strong> Flip the coin 5 times and count the number of Heads.</p>
+<ul>
+<li>Let $X$ = Number of Heads</li>
+<li>$X$ is a random variable (Binomial)</li>
+</ul>
+<p>We perform the experiment and observe:</p>
+<p>$$
+X = 5 \quad \text{(all 5 flips are Heads)}
+$$</p>
+<h3 id="hypotheses">Hypotheses</h3>
+<ul>
+<li><p><strong>Null Hypothesis ($H_0$)</strong>: The coin is fair<br />
+$$
+H_0: P(H) = 0.5
+$$</p>
+</li>
+<li><p><strong>Alternative Hypothesis ($H_1$)</strong>: The coin is biased towards Heads<br />
+$$
+H_1: P(H) &gt; 0.5
+$$</p>
+</li>
+</ul>
+<h3 id="calculating-the-p-value">Calculating the p-value</h3>
+<p>Under the assumption that $H_0$ is true (fair coin):</p>
+<p>$$
+P(X = 5 \mid H_0) = \left(\dfrac{1}{2}\right)^5 = \dfrac{1}{32} \approx 0.031 = 3.1%
+$$</p>
+<p>This is the <strong>p-value</strong>.</p>
+<p><strong>Interpretation:</strong></p>
+<blockquote>
+<p>If the coin is fair, there is only a <strong>3.1% chance</strong> of getting 5 Heads in 5 flips.</p>
+</blockquote>
+<h3 id="decision-rule-rule-of-thumb">Decision Rule (Rule of Thumb)</h3>
+<table>
+<thead>
+<tr>
+  <th>p-value</th>
+  <th>Decision</th>
+  <th>Conclusion</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>p-value $&lt; 5%$</td>
+  <td>Reject $H_0$</td>
+  <td>Accept $H_1$ (coin is biased)</td>
+</tr>
+<tr>
+  <td>p-value $&gt; 5%$</td>
+  <td>Fail to reject $H_0$</td>
+  <td>Not enough evidence against fairness</td>
+</tr>
+</tbody>
+</table>
+<p>In this case:</p>
+<ul>
+<li>p-value ≈ 3.1% &lt; 5%</li>
+<li>→ <strong>Reject $H_0$</strong></li>
+<li>→ Conclude that the coin is <strong>biased towards Heads</strong></li>
+</ul>
+<h3 id="important-notes-4">Important Notes</h3>
+<ol>
+<li><p><strong>Sample size matters</strong></p>
+<ul>
+<li>With only 3 flips, even getting 3 Heads gives:
+$$
+P(X=3 \mid H_0) = \dfrac{1}{8} = 12.5% &gt; 5%
+$$
+→ We would <strong>not</strong> reject $H_0$.</li>
+</ul>
+</li>
+<li><p>Hypothesis testing steps:</p>
+<ol>
+<li>Design the experiment</li>
+<li>Define Null Hypothesis ($H_0$) and Alternative Hypothesis ($H_1$)</li>
+<li>Choose a test statistic $X$ such that $P(\text{observation} \mid H_0)$ is easy to calculate</li>
+<li>Compute the p-value</li>
+<li>Make a decision based on a significance level (commonly 5%)</li>
+</ol>
+</li>
+</ol>
+<h3 id="summary-14">Summary</h3>
+<table>
+<thead>
+<tr>
+  <th>Concept</th>
+  <th>Meaning in this example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Null Hypothesis</td>
+  <td>Coin is fair ($P(H)=0.5$)</td>
+</tr>
+<tr>
+  <td>Alternative</td>
+  <td>Coin is biased towards Heads</td>
+</tr>
+<tr>
+  <td>Test Statistic</td>
+  <td>Number of Heads in 5 flips</td>
+</tr>
+<tr>
+  <td>Observed value</td>
+  <td>5 Heads</td>
+</tr>
+<tr>
+  <td>p-value</td>
+  <td>3.1%</td>
+</tr>
+<tr>
+  <td>Decision</td>
+  <td>Reject $H_0$ (coin appears biased)</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>Key Idea</strong>: We assume the null hypothesis is true and ask how surprising the observed data is.<br />
+If it is sufficiently surprising (p-value &lt; 5%), we reject the null hypothesis.</p>
+</blockquote>
+<h2 id="30-resampling-and-permutation-test">30. Resampling and Permutation Test</h2>
+<h3 id="goal">Goal</h3>
+<p>We want to test whether there is a significant difference between the means of two groups (e.g., Class 1 and Class 2 heights).</p>
+<ul>
+<li>Observed difference:<br />
+$$
+\Delta = \bar{x}<em>{\text{Class 1}} - \bar{x}</em>{\text{Class 2}}
+$$</li>
+</ul>
+<h3 id="permutation-test-resampling-approach">Permutation Test (Resampling Approach)</h3>
+<p><strong>Idea:</strong><br />
+Assume the Null Hypothesis $H_0$ is true (no real difference between the two groups).<br />
+Then the group labels are meaningless, and we can randomly reassign the labels many times.</p>
+<h4 id="steps">Steps:</h4>
+<ol>
+<li><strong>Pool</strong> all the data from both classes (total 100 students).</li>
+<li><strong>Randomly split</strong> the 100 observations into two groups of 50 (this is sampling without replacement / permutation).</li>
+<li>Compute the difference in means for this new random split:<br />
+$$
+\delta_i = \bar{x}_A - \bar{x}_B
+$$</li>
+<li>Repeat this process many times (e.g., $K = 10,000$ times) to get:
+$$
+\delta_1, \delta_2, \dots, \delta_{10000}
+$$</li>
+<li>Sort these differences.</li>
+<li>See where the <strong>original observed difference</strong> $\Delta$ falls in this distribution.</li>
+</ol>
+<h3 id="calculating-the-p-value-2">Calculating the p-value</h3>
+<ul>
+<li>Count how many of the random differences $\delta_i$ are <strong>as extreme as or more extreme than</strong> the observed $\Delta$.</li>
+<li>$$
+\text{p-value} = \dfrac{\text{Number of }\delta_i\text{ as extreme as }\Delta}{K}
+$$</li>
+</ul>
+<p><strong>Example interpretations:</strong></p>
+<ul>
+<li>p-value = 0.05 = 5%</li>
+<li>p-value = 0.02 = 2%</li>
+<li>p-value = 0.20 = 20%</li>
+</ul>
+<h3 id="decision-rule-2">Decision Rule</h3>
+<table>
+<thead>
+<tr>
+  <th>p-value</th>
+  <th>Decision</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>p &lt; 0.05</td>
+  <td>Reject $H_0$ (significant difference)</td>
+</tr>
+<tr>
+  <td>p ≥ 0.05</td>
+  <td>Fail to reject $H_0$</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Note:</strong> The significance threshold (commonly 5%) can change depending on the domain. In some fields, 1% (0.01) is preferred.</p>
+<h3 id="connection-to-normal-distribution-pre-computing">Connection to Normal Distribution (Pre-computing)</h3>
+<p>If the differences follow a Normal distribution approximately:</p>
+<p>$$
+\delta_i' \sim \mathcal{N}(0,1)
+$$</p>
+<p>Then we can compute the p-value using the tail probability of the Normal distribution (two-tailed test).</p>
+<p>For example, if the standardized observed difference is 2:</p>
+<p>$$
+P(|Z| \ge 2) = 0.025 + 0.025 = 0.05
+$$</p>
+<h3 id="key-advantages-of-permutation-test">Key Advantages of Permutation Test</h3>
+<ul>
+<li>It is a <strong>non-parametric</strong> method (does not assume the data follows a Normal distribution).</li>
+<li>It directly builds the null distribution by resampling.</li>
+<li>Very useful when sample sizes are small or distributional assumptions are doubtful.</li>
+</ul>
+<h3 id="summary-15">Summary</h3>
+<table>
+<thead>
+<tr>
+  <th>Step</th>
+  <th>Action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>1</td>
+  <td>Compute observed difference $\Delta$</td>
+</tr>
+<tr>
+  <td>2</td>
+  <td>Assume $H_0$ is true and randomly re-label the data many times</td>
+</tr>
+<tr>
+  <td>3</td>
+  <td>Compute difference for each random labeling</td>
+</tr>
+<tr>
+  <td>4</td>
+  <td>See how extreme the original $\Delta$ is among the random differences</td>
+</tr>
+<tr>
+  <td>5</td>
+  <td>Calculate p-value and make a decision</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>Core Idea</strong>: If the observed difference is very unusual even after randomly shuffling the labels thousands of times, then the difference is likely real (not due to chance).</p>
+</blockquote>
+<h2 id="31-hypothesis-testing-qa">31. Hypothesis Testing QA</h2>
+<h3 id="setup-4">Setup</h3>
+<p>We have two classes:</p>
+<ul>
+<li>Class 1: 50 students</li>
+<li>Class 2: 50 students</li>
+</ul>
+<p>We observe a difference in mean heights:</p>
+<p>$$
+\Delta = \bar{x}_2 - \bar{x}_1 = 10,\text{cm}
+$$</p>
+<p><strong>Question:</strong> Is this 10 cm difference real, or could it have happened just by chance?</p>
+<h3 id="step-by-step-reasoning">Step-by-step Reasoning</h3>
+<h4 id="1-what-is-the-p-value-here">1. What is the p-value here?</h4>
+<p>$$
+\text{p-value} = P(X \ge 10,\text{cm} \mid H_0)
+$$</p>
+<p>Where:</p>
+<ul>
+<li>$X$ = difference in means</li>
+<li>$H_0$: There is <strong>no real difference</strong> in the heights of the two classes</li>
+</ul>
+<h4 id="2-interpretation-of-p-value">2. Interpretation of p-value</h4>
+<ul>
+<li><p>If p-value is <strong>small</strong> (e.g. 0.01 = 1% &lt; 5%)<br />
+→ Observing a 10 cm difference is very unlikely if $H_0$ is true<br />
+→ We <strong>reject</strong> $H_0$</p>
+</li>
+<li><p>If p-value is <strong>large</strong> (e.g. 0.20 = 20% &gt; 5%)<br />
+→ Observing a 10 cm difference is quite possible even if $H_0$ is true<br />
+→ We <strong>fail to reject</strong> (accept) $H_0$</p>
+</li>
+</ul>
+<h3 id="how-do-we-compute-this-p-value-permutation-test">How do we compute this p-value? (Permutation Test)</h3>
+<p><strong>Assume $H_0$ is true</strong> (no real difference between classes).</p>
+<ol>
+<li>Put all 100 students into one big pool.</li>
+<li>Randomly split them into two groups of 50 (many times).</li>
+<li>Each time, compute the difference in means:<br />
+$$
+\delta_1, \delta_2, \delta_3, \dots, \delta_{10000}
+$$</li>
+<li>Sort these simulated differences.</li>
+<li>Count how many of them are ≥ 10 cm.</li>
+</ol>
+<p><strong>Example results:</strong></p>
+<ul>
+<li><p>Suppose 2000 out of 10,000 simulations gave difference ≥ 10 cm<br />
+$$
+\text{p-value} = \dfrac{2000}{10000} = 0.20 = 20% &gt; 5%
+$$
+→ <strong>Accept $H_0$</strong> (difference can easily happen by chance)</p>
+</li>
+<li><p>Suppose only 100 out of 10,000 simulations gave difference ≥ 10 cm<br />
+$$
+\text{p-value} = \dfrac{100}{10000} = 0.01 = 1% &lt; 5%
+$$
+→ <strong>Reject $H_0$</strong> (difference is surprising under $H_0$)</p>
+</li>
+</ul>
+<h3 id="key-insights">Key Insights</h3>
+<table>
+<thead>
+<tr>
+  <th>Concept</th>
+  <th>Explanation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Null Hypothesis ($H_0$)</td>
+  <td>No real difference between the two classes</td>
+</tr>
+<tr>
+  <td>Test Statistic</td>
+  <td>Difference in means ($X = \bar{x}_2 - \bar{x}_1$)</td>
+</tr>
+<tr>
+  <td>p-value</td>
+  <td>Probability of seeing a difference as large as 10 cm <strong>if $H_0$ is true</strong></td>
+</tr>
+<tr>
+  <td>Decision rule</td>
+  <td>Reject $H_0$ if p-value &lt; 5%</td>
+</tr>
+<tr>
+  <td>Main challenge</td>
+  <td>Choosing a good $H_0$ that is easy to simulate</td>
+</tr>
+</tbody>
+</table>
+<h3 id="summary-16">Summary</h3>
+<blockquote>
+<p>We assume there is no real difference ($H_0$), randomly reshuffle the students many times, and see how often we get a difference as large as the one we actually observed.<br />
+If it rarely happens → the observed difference is significant → reject $H_0$.</p>
+</blockquote>
+<h2 id="32-k-s-test-for-similarity-of-two-distributions">32. K-S Test for Similarity of Two Distributions</h2>
+<h3 id="goal-2">Goal</h3>
+<p>We have two samples:</p>
+<ul>
+<li>Sample 1: $X_1 = {x_1, x_2, \dots, x_n}$</li>
+<li>Sample 2: $X_2 = {y_1, y_2, \dots, y_m}$</li>
+</ul>
+<p><strong>Question:</strong> Do these two samples come from the <strong>same distribution</strong>?</p>
+<p><img src="./assets/32.%20KS.jpg" alt="KS" /></p>
+<p>$$
+H_0: X_1 \text{ and } X_2 \text{ come from the same distribution}
+$$</p>
+<h3 id="kolmogorov-smirnov-ks-test">Kolmogorov-Smirnov (KS) Test</h3>
+<p>The KS test compares the <strong>Empirical Cumulative Distribution Functions (ECDFs)</strong> of the two samples.</p>
+<p><strong>Test Statistic:</strong></p>
+<p>$$
+D_{n,m} = \sup_x \left| F_{1,n}(x) - F_{2,m}(x) \right|
+$$</p>
+<p>Where:</p>
+<ul>
+<li>$F_{1,n}(x)$ = Empirical CDF of the first sample</li>
+<li>$F_{2,m}(x)$ = Empirical CDF of the second sample</li>
+<li>$D_{n,m}$ = Maximum vertical distance between the two ECDFs</li>
+</ul>
+<h3 id="decision-rule-3">Decision Rule</h3>
+<p>We reject the null hypothesis $H_0$ if:</p>
+<p>$$
+D_{n,m} &gt; c(\alpha) \sqrt{\dfrac{n+m}{n m}}
+$$</p>
+<p>Where $c(\alpha)$ depends on the significance level $\alpha$.</p>
+<p><strong>Common values of $c(\alpha)$ with Significance Level $\alpha$ :</strong></p>
+<table>
+<thead>
+<tr>
+  <th>$\alpha$</th>
+  <th style="text-align:right">0.10</th>
+  <th style="text-align:right">0.05</th>
+  <th style="text-align:right">0.025</th>
+  <th style="text-align:right">0.01</th>
+  <th style="text-align:right">0.005</th>
+  <th style="text-align:right">0.001</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>$c(\alpha)$</td>
+  <td style="text-align:right"><strong>1.22</strong></td>
+  <td style="text-align:right"><strong>1.36</strong></td>
+  <td style="text-align:right"><strong>1.48</strong></td>
+  <td style="text-align:right"><strong>1.63</strong></td>
+  <td style="text-align:right"><strong>1.73</strong></td>
+  <td style="text-align:right">** **</td>
+</tr>
+</tbody>
+</table>
+<p><strong>General formula:</strong></p>
+<p>$$
+c(\alpha) = \sqrt{-\dfrac{1}{2} \ln \alpha}
+$$</p>
+<h3 id="examples">Examples</h3>
+<p><strong>Example 1:</strong><br />
+$n = 1000$, $m = 5000$, $\alpha = 0.05$ → $c(\alpha) = 1.36$</p>
+<p>$$
+D_{n,m} &gt; 1.36 \sqrt{\dfrac{1000+5000}{1000 \times 5000}} \approx 0.047
+$$</p>
+<p>If $D_{n,m} &gt; 0.047$, reject $H_0$ at 5% significance level.</p>
+<p><strong>Example 2:</strong><br />
+$n = 50$, $m = 30$, $\alpha = 0.05$ → $c(\alpha) = 1.36$</p>
+<p>$$
+D_{n,m} &gt; 1.36 \sqrt{\dfrac{50+30}{50 \times 30}} \approx 0.31
+$$</p>
+<p>If $D_{n,m} &gt; 0.31$, reject $H_0$ at 5% significance level.</p>
+<h3 id="key-points">Key Points</h3>
+<ul>
+<li>The KS test is a <strong>non-parametric</strong> test (no assumption about the form of the distributions).</li>
+<li>It is sensitive to differences in both location and shape of the distributions.</li>
+<li>Larger sample sizes make the test more powerful (easier to detect small differences).</li>
+<li>The null hypothesis is rejected when the maximum difference between the two ECDFs is large.</li>
+</ul>
+<h3 id="summary-17">Summary</h3>
+<p>| Concept              | Description                                      |
+|----------------------|--------------------------------------------------|
+| Test                 | Two-sample Kolmogorov-Smirnov Test               |
+| Null Hypothesis      | Both samples come from the same distribution     |
+| Test Statistic       | $D_{n,m} = \sup |F_{1,n}(x) - F_{2,m}(x)|$     |
+| Reject $H_0$ when    | $D_{n,m} &gt; c(\alpha) \sqrt{\frac{n+m}{nm}}$     |
+| Common $\alpha$      | 0.05 → $c(\alpha) = 1.36$                        |</p>
+<blockquote>
+<p>The KS test is one of the most widely used methods to check whether two samples come from the same underlying distribution.</p>
+</blockquote>
+<h2 id="33-k-s-test-p-value">33. K-S Test p-value</h2>
+<h3 id="null-hypothesis">Null Hypothesis</h3>
+<p>$$
+H_0: X \text{ and } Y \text{ come from the same distribution}
+$$</p>
+<p>We reject $H_0$ at significance level $\alpha$ if:</p>
+<p>$$
+D_{n,m} &gt; c(\alpha) \sqrt{\dfrac{n+m}{nm}}
+$$</p>
+<p>where</p>
+<p>$$
+c(\alpha) = \sqrt{-\dfrac{1}{2} \ln \alpha}
+$$</p>
+<h3 id="deriving-the-approximate-p-value">Deriving the Approximate p-value</h3>
+<p>Let $D = D_{n,m}$ (the observed KS statistic).</p>
+<p>We reject $H_0$ when:</p>
+<p>$$
+D &gt; c(\alpha) \sqrt{\dfrac{n+m}{nm}}
+$$</p>
+<p>Substitute $c(\alpha)$:</p>
+<p>$$
+D &gt; \sqrt{-\dfrac{1}{2} \ln \alpha} \cdot \sqrt{\dfrac{n+m}{nm}}
+$$</p>
+<p>Square both sides:</p>
+<p>$$
+D^2 &gt; \left(-\dfrac{1}{2} \ln \alpha\right) \cdot \dfrac{n+m}{nm}
+$$</p>
+<p>$$
+D^2 \cdot \dfrac{nm}{n+m} &gt; -\dfrac{1}{2} \ln \alpha
+$$</p>
+<p>Multiply both sides by $-2$:</p>
+<p>$$
+-2 D^2 \cdot \dfrac{nm}{n+m} &lt; \ln \alpha
+$$</p>
+<p>Exponentiate both sides:</p>
+<p>$$
+\exp\left(-2 D^2 \cdot \dfrac{nm}{n+m}\right) &lt; \alpha
+$$</p>
+<h3 id="approximate-p-value-formula">Approximate p-value Formula</h3>
+<p>Since we reject $H_0$ when p-value $&lt; \alpha$, we obtain the approximation:</p>
+<p>$$
+\text{p-value} \approx \exp\left(-2 D^2 \cdot \dfrac{nm}{n+m}\right)
+$$</p>
+<p>Where:</p>
+<ul>
+<li>$n$ = size of first sample</li>
+<li>$m$ = size of second sample</li>
+<li>$D$ = maximum difference between the two empirical CDFs</li>
+</ul>
+<h3 id="summary-18">Summary</h3>
+<p>| Quantity              | Formula / Meaning                                      |
+|-----------------------|--------------------------------------------------------|
+| Test Statistic        | $D_{n,m} = \sup |F_n(x) - G_m(x)|$                    |
+| Critical value        | $c(\alpha)\sqrt{\frac{n+m}{nm}}$                       |
+| $c(\alpha)$           | $\sqrt{-\frac{1}{2}\ln\alpha}$                         |
+| Approximate p-value   | $\exp\left(-2D^2 \frac{nm}{n+m}\right)$                |</p>
+<blockquote>
+<p>This approximation is very useful in practice: once you compute the KS statistic $D$, you can quickly get an approximate p-value without looking up tables.</p>
+</blockquote>
+<h2 id="34-code-snippet-k-s-test">34. Code Snippet: K-S Test</h2>
+<pre><code class="language-py">import numpy as np
+import seaborn as sns
+from scipy import stats
+import matplotlib.pyplot as plt
+
+#generate a gaussian r.v X
+x = stats.norm.rvs(size=1000);
+print(len(x),type(x))
+sns.set_style('whitegrid')
+sns.kdeplot(x, bw=0.5)
+plt.show()
+
+stats.kstest(x, 'norm')
+
+# Y ~ Continous Uniform Distribution(0,1)
+y = np.random.uniform(0,1,10000);
+sns.kdeplot(np.array(y), bw=0.1)
+plt.show()
+
+# !pip3 install scipy==1.6.3
+import scipy
+np.__version__
+scipy.__version__
+
+stats.kstest(y, x)
+
+</code></pre>
+<h2 id="35-hypothesis-testing-another-example">35. Hypothesis Testing: Another Example</h2>
+<h3 id="background">Background</h3>
+<p>We previously saw the coin-toss example, which was easy to understand because $P(\text{observation} \mid H_0)$ was very simple to compute.</p>
+<p>Now we look at a more practical example.</p>
+<h3 id="task">Task</h3>
+<p>Determine whether the <strong>population mean heights</strong> of people in two cities are the same or different.</p>
+<ul>
+<li>City 1 population mean: $\mu_1$</li>
+<li>City 2 population mean: $\mu_2$</li>
+</ul>
+<p><strong>Question:</strong> Is $\mu_1 \approx \mu_2$ or are they different?</p>
+<h3 id="experiment">Experiment</h3>
+<ul>
+<li>Randomly sample 50 people from City 1 → heights $h_1, h_2, \dots, h_{50}$</li>
+<li>Randomly sample 50 people from City 2 → heights $h_1, h_2, \dots, h_{50}$</li>
+</ul>
+<p><strong>Observed sample means:</strong></p>
+<p>$$
+\bar{x}_1 = 162,\text{cm}, \quad \bar{x}_2 = 167,\text{cm}
+$$</p>
+<p><strong>Test Statistic:</strong></p>
+<p>$$
+X = \bar{x}_2 - \bar{x}_1 = 5,\text{cm}
+$$</p>
+<h3 id="hypotheses-2">Hypotheses</h3>
+<ul>
+<li><p><strong>Null Hypothesis ($H_0$)</strong>: There is <strong>no difference</strong> in the population mean heights.<br />
+$$
+H_0: \mu_1 = \mu_2
+$$</p>
+</li>
+<li><p><strong>Alternative Hypothesis ($H_1$)</strong>: There <strong>is a difference</strong>.</p>
+</li>
+</ul>
+<h3 id="p-value">p-value</h3>
+<p>We need to compute:</p>
+<p>$$
+P(X = 5,\text{cm} \mid H_0)
+$$</p>
+<p>This is the probability of observing a difference of 5 cm (or more extreme) in sample means of size 50, <strong>if there is truly no difference</strong> in the population means.</p>
+<h3 id="two-possible-cases">Two Possible Cases</h3>
+<h4 id="case-1-p-value-is-large">Case 1: p-value is large</h4>
+<p>$$
+P(X = 5 \mid H_0) = 0.20 = 20% &gt; 5%
+$$</p>
+<ul>
+<li>There is a 20% chance of seeing a 5 cm difference even if the population means are equal.</li>
+<li>This is <strong>not surprising</strong>.</li>
+<li><strong>Decision:</strong> Accept $H_0$ (no strong evidence of a real difference).</li>
+</ul>
+<h4 id="case-2-p-value-is-small">Case 2: p-value is small</h4>
+<p>$$
+P(X = 5 \mid H_0) = 0.03 = 3% &lt; 5%
+$$</p>
+<ul>
+<li>There is only a 3% chance of seeing a 5 cm difference if the population means are equal.</li>
+<li>This is <strong>surprising</strong>.</li>
+<li><strong>Decision:</strong> Reject $H_0$ and accept $H_1$ (there is evidence of a real difference).</li>
+</ul>
+<h3 id="summary-19">Summary</h3>
+<table>
+<thead>
+<tr>
+  <th>Step</th>
+  <th>Action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>1</td>
+  <td>Define the question (are the population means equal?)</td>
+</tr>
+<tr>
+  <td>2</td>
+  <td>Collect random samples and compute the observed difference</td>
+</tr>
+<tr>
+  <td>3</td>
+  <td>Set $H_0$: No difference in population means</td>
+</tr>
+<tr>
+  <td>4</td>
+  <td>Calculate $P(\text{observed difference} \mid H_0)$</td>
+</tr>
+<tr>
+  <td>5</td>
+  <td>If p-value &lt; 5% → Reject $H_0$ <br> If p-value &gt; 5% → Accept $H_0$</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>The key difficulty in real problems is computing $P(\text{observation} \mid H_0)$.</p>
+</blockquote>
+<blockquote>
+<p>In the next sections we will see practical ways to calculate or approximate this probability (using CLT, t-distribution, or resampling).</p>
+</blockquote>
+<h2 id="36-resampling-and-permutation-test-another-example">36. Resampling and Permutation Test: Another Example</h2>
+<h3 id="goal-3">Goal</h3>
+<p>We want to compute:</p>
+<p>$$
+P(X = 5,\text{cm} \mid H_0)
+$$</p>
+<p>Where:</p>
+<ul>
+<li>$X = \bar{x}_2 - \bar{x}_1$ (difference in sample means)</li>
+<li>Observed difference = 5 cm</li>
+<li>$H_0$: There is <strong>no difference</strong> in the population mean heights of the two cities</li>
+</ul>
+<h3 id="how-to-compute-the-p-value-using-resampling-permutation-test">How to Compute the p-value using Resampling (Permutation Test)</h3>
+<p><strong>Assumption under $H_0$:</strong><br />
+The two groups come from the same population → the city labels are meaningless.</p>
+<h4 id="steps-2">Steps:</h4>
+<ol>
+<li><p><strong>Pool</strong> all 100 height measurements (50 from City 1 + 50 from City 2).</p>
+</li>
+<li><p><strong>Randomly split</strong> the 100 heights into two new groups of 50 (this simulates $H_0$).</p>
+</li>
+<li><p>Compute the difference in means for this random split:
+$$
+\delta = \bar{x}_A - \bar{x}_B
+$$</p>
+</li>
+<li><p>Repeat this process many times (e.g., 10,000 times) to get:
+$$
+\delta_1,\ \delta_2,\ \delta_3,\ \dots,\ \delta_{10000}
+$$</p>
+</li>
+<li><p>Count how many of these simulated differences are <strong>as large as or larger than</strong> the observed 5 cm.</p>
+</li>
+</ol>
+<h3 id="interpreting-the-results">Interpreting the Results</h3>
+<h4 id="case-1-large-p-value">Case 1: Large p-value</h4>
+<p>Suppose 20% of the simulated differences are ≥ 5 cm:</p>
+<p>$$
+P(X \ge 5 \mid H_0) = 0.20 = 20% &gt; 5%
+$$</p>
+<ul>
+<li>Seeing a 5 cm difference is quite common even when there is no real difference.</li>
+<li><strong>Decision:</strong> Accept $H_0$</li>
+</ul>
+<h4 id="case-2-small-p-value">Case 2: Small p-value</h4>
+<p>Suppose only 3% of the simulated differences are ≥ 5 cm:</p>
+<p>$$
+P(X \ge 5 \mid H_0) = 0.03 = 3% &lt; 5%
+$$</p>
+<ul>
+<li>Seeing a 5 cm difference is rare if $H_0$ is true.</li>
+<li><strong>Decision:</strong> Reject $H_0$ and conclude that the population means are different.</li>
+</ul>
+<h3 id="visual-summary-of-the-process">Visual Summary of the Process</h3>
+<table>
+<thead>
+<tr>
+  <th>Step</th>
+  <th>Action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>1</td>
+  <td>Pool all data (100 heights)</td>
+</tr>
+<tr>
+  <td>2</td>
+  <td>Randomly re-assign into two groups of 50</td>
+</tr>
+<tr>
+  <td>3</td>
+  <td>Compute difference in means</td>
+</tr>
+<tr>
+  <td>4</td>
+  <td>Repeat thousands of times</td>
+</tr>
+<tr>
+  <td>5</td>
+  <td>See what fraction of simulations give difference ≥ observed difference (5 cm)</td>
+</tr>
+<tr>
+  <td>6</td>
+  <td>That fraction is the p-value</td>
+</tr>
+</tbody>
+</table>
+<h3 id="key-takeaway-5">Key Takeaway</h3>
+<blockquote>
+<p>By repeatedly randomly re-labeling the data under the assumption that $H_0$ is true, we build the distribution of the test statistic under the null.<br />
+The p-value is simply the proportion of random shuffles that produce a result as extreme as what we actually observed.</p>
+</blockquote>
+<p>This is a powerful <strong>non-parametric</strong> method that does not require assuming normality.</p>
+<h2 id="37-how-to-use-hypothesis-testing">37. How to Use Hypothesis Testing</h2>
+<h3 id="connection-to-ks-test">Connection to KS Test</h3>
+<p>The <strong>Kolmogorov-Smirnov (KS) test</strong> is itself a form of hypothesis testing.<br />
+It checks whether two random variables come from the <strong>same distribution</strong> or not.</p>
+<h3 id="real-world-example-new-drug-vs-existing-drug">Real-World Example: New Drug vs Existing Drug</h3>
+<p><strong>Situation:</strong></p>
+<ul>
+<li>Drug $D_1$ is already in the market. It reduces fever in <strong>4 hours</strong> on average.</li>
+<li>A new drug $D_2$ claims: “I reduce fever <strong>faster</strong> than $D_1$.”</li>
+</ul>
+<p><strong>Experiment:</strong></p>
+<ul>
+<li>Give $D_1$ to 50 patients → Observed mean time $\bar{x}_1 = 4$ hours</li>
+<li>Give $D_2$ to 50 patients → Observed mean time $\bar{x}_2 = 2$ hours</li>
+</ul>
+<p><strong>Observed difference:</strong>
+$$
+X = \bar{x}_1 - \bar{x}_2 = 2 \text{ hours}
+$$</p>
+<h3 id="hypothesis-testing-setup">Hypothesis Testing Setup</h3>
+<ul>
+<li><strong>Null Hypothesis ($H_0$)</strong>: Both drugs take the same time to reduce fever (no real difference).</li>
+<li><strong>Alternative Hypothesis ($H_1$)</strong>: $D_2$ is faster than $D_1$.</li>
+<li><strong>Test Statistic</strong>: $X = \bar{x}_1 - \bar{x}_2$</li>
+</ul>
+<h3 id="pipeline-resampling--permutation-test">Pipeline: Resampling &amp; Permutation Test</h3>
+<p>To compute the p-value $P(X \ge 2 \mid H_0)$, we use the following pipeline:</p>
+<pre><code class="language-text">┌─────────────────────────────────────────────────────┐
+│  Step 1: Pool all the data                          │
+│  Combine results of all 100 patients                │
+│  (50 from D1 + 50 from D2)                          │
+└──────────────────────┬──────────────────────────────┘
+                       ▼
+┌─────────────────────────────────────────────────────┐
+│  Step 2: Randomly split into two groups of 50       │
+│                                                     │
+│     ┌─────────────┐         ┌─────────────┐         │
+│     │  Group A    │         │  Group B    │         │
+│     │   (50)      │         │   (50)      │         │
+│     └─────────────┘         └─────────────┘         │
+└──────────────────────┬──────────────────────────────┘
+                       ▼
+┌─────────────────────────────────────────────────────┐
+│  Step 3: Compute difference in means                │
+│  δ = mean(Group A) – mean(Group B)                  │
+└──────────────────────┬──────────────────────────────┘
+                       ▼
+┌─────────────────────────────────────────────────────┐
+│  Step 4: Repeat Steps 2–3 many times (e.g. 10,000)  │
+│  Obtain: δ₁, δ₂, δ₃, ..., δ₁₀₀₀₀                    │
+└──────────────────────┬──────────────────────────────┘
+                       ▼
+┌─────────────────────────────────────────────────────┐
+│  Step 5: Calculate p-value                          │
+│  p-value = (Number of δ ≥ 2 hours) / 10,000         │
+└─────────────────────────────────────────────────────┘
+</code></pre>
+<h3 id="decision-rule-4">Decision Rule</h3>
+<table>
+<thead>
+<tr>
+  <th>p-value</th>
+  <th>Decision</th>
+  <th>Conclusion</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>p-value &lt; 0.05</td>
+  <td>Reject $H_0$</td>
+  <td>New drug $D_2$ is significantly faster</td>
+</tr>
+<tr>
+  <td>p-value ≥ 0.05</td>
+  <td>Fail to reject $H_0$</td>
+  <td>Not enough evidence to support the claim</td>
+</tr>
+</tbody>
+</table>
+<h3 id="significance-level-alpha">Significance Level ($\alpha$)</h3>
+<ul>
+<li>Common choice: $\alpha = 0.05$ (5%)</li>
+<li>The more confident you want to be before rejecting $H_0$, the <strong>smaller</strong> you set $\alpha$.</li>
+</ul>
+<h3 id="summary-of-the-process">Summary of the Process</h3>
+<table>
+<thead>
+<tr>
+  <th>Step</th>
+  <th>Action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>1</td>
+  <td>Define the practical question</td>
+</tr>
+<tr>
+  <td>2</td>
+  <td>Design a proper randomized experiment</td>
+</tr>
+<tr>
+  <td>3</td>
+  <td>Set $H_0$ (no difference) and $H_1$</td>
+</tr>
+<tr>
+  <td>4</td>
+  <td>Choose a test statistic</td>
+</tr>
+<tr>
+  <td>5</td>
+  <td>Compute the p-value (using Permutation Test / KS Test, etc.)</td>
+</tr>
+<tr>
+  <td>6</td>
+  <td>Compare p-value with significance level and make a decision</td>
+</tr>
+</tbody>
+</table>
+<h3 id="key-takeaway-6">Key Takeaway</h3>
+<blockquote>
+<p>Hypothesis testing answers the question:<br />
+“If there was actually no difference, how often would we see a result as extreme as the one we observed just by chance?”</p>
+</blockquote>
+<p>If that probability (p-value) is very small, we reject the null hypothesis and conclude that the observed difference is real.</p>
+<p><img src="./assets/37.%20pipeline.jpg" alt="pipeline" /><br />
+<img src="./assets/37.%20pipeline.png" alt="pipeline" /></p>
+<h2 id="38-proportional-sampling">38. Proportional Sampling</h2>
+<h3 id="problem-2">Problem</h3>
+<p>We have $n$ elements with associated weights (or scores):</p>
+<p>$$
+a = [a_1,\ a_2,\ a_3,\ a_4,\ a_5] = [2.0,\ 6.0,\ 1.2,\ 5.8,\ 20.0]
+$$</p>
+<p><strong>Task:</strong><br />
+Pick one element such that the probability of selecting an element is <strong>proportional</strong> to its weight $a_i$.</p>
+<p>(This is <strong>not</strong> uniform random sampling.)</p>
+<h3 id="step-by-step-method">Step-by-Step Method</h3>
+<h4 id="step-1-normalize-the-weights">Step 1: Normalize the weights</h4>
+<ol>
+<li><p>Compute the total sum:
+$$
+S = \sum_{i=1}^{n} a_i = 2.0 + 6.0 + 1.2 + 5.8 + 20.0 = 35
+$$</p>
+</li>
+<li><p>Normalize each weight:
+$$
+a_i' = \dfrac{a_i}{S}
+$$</p>
+</li>
+</ol>
+<p>$$
+\begin{align*}
+a_1' &amp;= 0.0571 \
+a_2' &amp;= 0.1714 \
+a_3' &amp;= 0.0343 \
+a_4' &amp;= 0.1657 \
+a_5' &amp;= 0.5714
+\end{align*}
+$$</p>
+<p>(Note: $\sum a_i' = 1$)</p>
+<h4 id="step-2-compute-cumulative-sums">Step 2: Compute Cumulative Sums</h4>
+<p>$$
+\begin{align*}
+\tilde{a}_1 &amp;= a_1' = 0.0571 \
+\tilde{a}_2 &amp;= \tilde{a}_1 + a_2' = 0.2285 \
+\tilde{a}_3 &amp;= \tilde{a}_2 + a_3' = 0.2628 \
+\tilde{a}_4 &amp;= \tilde{a}_3 + a_4' = 0.4285 \
+\tilde{a}_5 &amp;= \tilde{a}_4 + a_5' = 1.0000
+\end{align*}
+$$</p>
+<h3 id="step-3-sampling">Step 3: Sampling</h3>
+<ol>
+<li><p>Generate a random number $r$ from Uniform(0, 1):
+$$
+r \sim U(0,1)
+$$</p>
+</li>
+<li><p>Find the smallest index $i$ such that:
+$$
+r \le \tilde{a}_i
+$$</p>
+</li>
+<li><p>Return element $i$.</p>
+</li>
+</ol>
+<p><strong>Example:</strong></p>
+<ul>
+<li>If $r = 0.15$ → falls in the second interval → return element 2</li>
+<li>If $r = 0.50$ → falls in the fifth interval → return element 5</li>
+</ul>
+<h3 id="why-this-works">Why This Works</h3>
+<p>The probability of selecting element $i$ is:</p>
+<p>$$
+P(\text{select } i) = \tilde{a}<em>i - \tilde{a}</em>{i-1} = a_i' = \dfrac{a_i}{S}
+$$</p>
+<p>Which is exactly proportional to the original weight $a_i$.</p>
+<h3 id="summary-20">Summary</h3>
+<table>
+<thead>
+<tr>
+  <th>Step</th>
+  <th>Action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>1</td>
+  <td>Compute sum of all weights $S$</td>
+</tr>
+<tr>
+  <td>2</td>
+  <td>Normalize: $a_i' = a_i / S$</td>
+</tr>
+<tr>
+  <td>3</td>
+  <td>Compute cumulative sums $\tilde{a}_i$</td>
+</tr>
+<tr>
+  <td>4</td>
+  <td>Sample $r \sim U(0,1)$</td>
+</tr>
+<tr>
+  <td>5</td>
+  <td>Return the element corresponding to the interval where $r$ falls</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>This method is widely used in <strong>Weighted Random Sampling</strong>, <strong>Roulette Wheel Selection</strong> (Genetic Algorithms), and <strong>Importance Sampling</strong>.</p>
+</blockquote>
+<h2 id="39-revision-questions">39. Revision Questions</h2>
+<p><strong>Revision Questions</strong></p>
+<ol>
+<li><a href="#1-what-is-pdf">What is PDF?</a></li>
+<li><a href="#2-what-is-cdf">What is CDF?</a></li>
+<li><a href="#3-explain-about-1-std-dev-2-std-dev-3-std-dev-range">Explain about 1-std-dev, 2-std-dev, 3-std-dev range</a></li>
+<li><a href="#4-what-is-symmetric-distribution-skewness-and-kurtosis">What is Symmetric distribution, Skewness and Kurtosis?</a></li>
+<li><a href="#5-how-to-do-standard-normal-variate-z-and-standardization">How to do Standard normal variate (Z) and standardization?</a></li>
+<li><a href="#6-what-is-kernel-density-estimation">What is Kernel density estimation?</a></li>
+<li><a href="#7-importance-of-sampling-distribution--central-limit-theorem">Importance of Sampling distribution &amp; Central Limit theorem</a></li>
+<li><a href="#8-importance-of-q-q-plot-is-a-given-random-variable-gaussian-distributed">Importance of Q-Q Plot: Is a given random variable Gaussian distributed?</a></li>
+<li><a href="#9-what-is-uniform-distribution-and-random-number-generators">What is Uniform Distribution and random number generators?</a></li>
+<li><a href="#10-what-are-discrete-and-continuous-uniform-distributions">What are Discrete and Continuous Uniform distributions?</a></li>
+<li><a href="#11-how-to-randomly-sample-data-points">How to randomly sample data points?</a></li>
+<li><a href="#12-explain-about-bernoulli-and-binomial-distribution">Explain about Bernoulli and Binomial distribution</a></li>
+<li><a href="#13-what-is-log-normal-and-power-law-distribution">What is Log-normal and power law distribution?</a></li>
+<li><a href="#14-what-is-power-law--pareto-distributions-pdf-examples">What is Power-law &amp; Pareto distributions: PDF, examples</a></li>
+<li><a href="#15-explain-about-box-cox--power-transform">Explain about Box-Cox / Power transform</a></li>
+<li><a href="#16-what-is-co-variance">What is Co-variance?</a></li>
+<li><a href="#17-importance-of-pearson-correlation-coefficient">Importance of Pearson Correlation Coefficient</a></li>
+<li><a href="#18-importance-of-spearman-rank-correlation-coefficient">Importance of Spearman Rank Correlation Coefficient</a></li>
+<li><a href="#19-correlation-vs-causation">Correlation vs Causation?</a></li>
+<li><a href="#20-what-is-confidence-intervals">What is Confidence Intervals?</a></li>
+<li><a href="#21-confidence-interval-vs-point-estimate">Confidence Interval vs Point estimate?</a></li>
+<li><a href="#22-explain-about-hypothesis-testing">Explain about Hypothesis testing</a></li>
+<li><a href="#23-define-hypothesis-testing-methodology-null-hypothesis-test-statistic-p-value">Define Hypothesis Testing methodology, Null-hypothesis, test-statistic, p-value</a></li>
+<li><a href="#24-how-to-do-k-s-test-for-similarity-of-two-distributions">How to do K-S Test for similarity of two distributions?</a></li>
+</ol>
+<h4 id="1-what-is-pdf">1. What is PDF?</h4>
+<p>PDF stands for <strong>Probability Density Function</strong>.<br />
+For a continuous random variable $X$, the PDF $f(x)$ describes the relative likelihood of $X$ taking a particular value.<br />
+Important properties:</p>
+<ul>
+<li>$f(x) \ge 0$ for all $x$</li>
+<li>$\int_{-\infty}^{\infty} f(x), dx = 1$</li>
+<li>$P(a \le X \le b) = \int_a^b f(x), dx$</li>
+</ul>
+<h4 id="2-what-is-cdf">2. What is CDF?</h4>
+<p>CDF stands for <strong>Cumulative Distribution Function</strong>.<br />
+It is defined as:
+$$
+F(x) = P(X \le x) = \int_{-\infty}^{x} f(t), dt
+$$
+Properties:</p>
+<ul>
+<li>$0 \le F(x) \le 1$</li>
+<li>Non-decreasing</li>
+<li>$\lim_{x \to -\infty} F(x) = 0$, $\lim_{x \to \infty} F(x) = 1$</li>
+</ul>
+<h4 id="3-explain-about-1-std-dev-2-std-dev-3-std-dev-range">3. Explain about 1-std-dev, 2-std-dev, 3-std-dev range</h4>
+<p>This is the <strong>Empirical Rule (68-95-99.7 Rule)</strong> for a Normal distribution $X \sim \mathcal{N}(\mu, \sigma^2)$:</p>
+<table>
+<thead>
+<tr>
+  <th>Interval</th>
+  <th>Approximate Probability</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>$\mu \pm 1\sigma$</td>
+  <td>≈ 68.27%</td>
+</tr>
+<tr>
+  <td>$\mu \pm 2\sigma$</td>
+  <td>≈ 95.45%</td>
+</tr>
+<tr>
+  <td>$\mu \pm 3\sigma$</td>
+  <td>≈ 99.73%</td>
+</tr>
+</tbody>
+</table>
+<h4 id="4-what-is-symmetric-distribution-skewness-and-kurtosis">4. What is Symmetric distribution, Skewness and Kurtosis?</h4>
+<ul>
+<li><strong>Symmetric distribution</strong>: Left and right sides are mirror images (e.g., Normal). Mean = Median = Mode.</li>
+<li><strong>Skewness</strong>: Measures asymmetry.<ul>
+<li>Positive skew → long right tail (Mean &gt; Median)</li>
+<li>Negative skew → long left tail (Mean &lt; Median)</li>
+</ul>
+</li>
+<li><strong>Kurtosis</strong>: Measures tailedness / peakedness relative to Normal.<ul>
+<li>Leptokurtic (Kurtosis &gt; 0): heavy tails, sharp peak</li>
+<li>Mesokurtic (≈ 0): Normal</li>
+<li>Platykurtic (&lt; 0): light tails, flat peak</li>
+</ul>
+</li>
+</ul>
+<h4 id="5-how-to-do-standard-normal-variate-z-and-standardization">5. How to do Standard normal variate (Z) and standardization?</h4>
+<p>If $X \sim \mathcal{N}(\mu, \sigma^2)$, the standardized variable is:
+$$
+Z = \frac{X - \mu}{\sigma} \sim \mathcal{N}(0,1)
+$$
+This process is called <strong>standardization</strong>. It allows us to use the standard normal table / 68-95-99.7 rule for any normal variable.</p>
+<h4 id="6-what-is-kernel-density-estimation">6. What is Kernel density estimation?</h4>
+<p>KDE is a <strong>non-parametric</strong> method to estimate the PDF of a continuous random variable from sample data.<br />
+It places a smooth kernel (usually Gaussian) on each data point and sums them:
+$$
+\hat{f}(x) = \frac{1}{nh} \sum_{i=1}^{n} K\left(\frac{x - x_i}{h}\right)
+$$
+where $h$ is the bandwidth.</p>
+<h4 id="7-importance-of-sampling-distribution--central-limit-theorem">7. Importance of Sampling distribution &amp; Central Limit theorem</h4>
+<ul>
+<li>The <strong>sampling distribution</strong> of the sample mean $\bar{x}$ is the distribution of $\bar{x}$ over many samples.</li>
+<li><strong>Central Limit Theorem (CLT)</strong>: For large $n$,
+$$
+\bar{x} \approx \mathcal{N}\left(\mu, \frac{\sigma^2}{n}\right)
+$$
+even if the original population is not normal.<br />
+This is the foundation of many inferential statistics techniques.</li>
+</ul>
+<h4 id="8-importance-of-q-q-plot-is-a-given-random-variable-gaussian-distributed">8. Importance of Q-Q Plot: Is a given random variable Gaussian distributed?</h4>
+<p>A Q-Q plot compares the quantiles of the data against the quantiles of a theoretical Normal distribution.</p>
+<ul>
+<li>If points lie approximately on a straight line → data is roughly Normal.</li>
+<li>Systematic deviations → data is not Normal (skewed, heavy-tailed, etc.).</li>
+</ul>
+<h4 id="9-what-is-uniform-distribution-and-random-number-generators">9. What is Uniform Distribution and random number generators?</h4>
+<p>The Uniform distribution assigns equal probability to every value in an interval (continuous) or set (discrete).<br />
+Most random number generators produce numbers that are approximately $\mathcal{U}[0,1]$.</p>
+<h4 id="10-what-are-discrete-and-continuous-uniform-distributions">10. What are Discrete and Continuous Uniform distributions?</h4>
+<ul>
+<li><strong>Discrete Uniform</strong> $\mathcal{U}{a,b}$: equal probability $1/n$ on integers $a, a+1, \dots, b$.</li>
+<li><strong>Continuous Uniform</strong> $\mathcal{U}_{[a,b]}$: constant density $1/(b-a)$ on the interval $[a,b]$.</li>
+</ul>
+<h4 id="11-how-to-randomly-sample-data-points">11. How to randomly sample data points?</h4>
+<p>Using the Uniform distribution:</p>
+<ul>
+<li>Discrete: <code>np.random.randint(a, b+1)</code> or <code>random.choice()</code></li>
+<li>Continuous: <code>np.random.uniform(a, b)</code></li>
+</ul>
+<h4 id="12-explain-about-bernoulli-and-binomial-distribution">12. Explain about Bernoulli and Binomial distribution</h4>
+<ul>
+<li><strong>Bernoulli</strong>: Single trial with two outcomes (success/failure). $P(X=1)=p$, $P(X=0)=1-p$.</li>
+<li><strong>Binomial</strong>: Number of successes in $n$ independent Bernoulli trials.
+$$
+P(X=k) = \binom{n}{k} p^k (1-p)^{n-k}
+$$</li>
+</ul>
+<h4 id="13-what-is-log-normal-and-power-law-distribution">13. What is Log-normal and power law distribution?</h4>
+<ul>
+<li><strong>Log-normal</strong>: If $\log X \sim \mathcal{N}(\mu,\sigma^2)$, then $X$ is Log-normal. Right-skewed, used for quantities that are products of many positive factors.</li>
+<li><strong>Power-law (Pareto)</strong>: Heavy-tailed distribution where a few values dominate (80/20 rule).</li>
+</ul>
+<h4 id="14-what-is-power-law--pareto-distributions-pdf-examples">14. What is Power-law &amp; Pareto distributions: PDF, examples</h4>
+<p>PDF of Pareto Type I:
+$$
+f(x) = \frac{\alpha x_m^\alpha}{x^{\alpha+1}}, \quad x \ge x_m
+$$
+Examples: wealth distribution, city sizes, word frequencies, website traffic, degree distribution in networks.</p>
+<h4 id="15-explain-about-box-cox--power-transform">15. Explain about Box-Cox / Power transform</h4>
+<p>Box-Cox is a family of power transformations used to make data more Normal / stabilize variance:
+$$
+y^{(\lambda)} = \begin{cases}
+\dfrac{y^\lambda - 1}{\lambda} &amp; \lambda \neq 0 \
+\log y &amp; \lambda = 0
+\end{cases}
+$$</p>
+<h4 id="16-what-is-co-variance">16. What is Co-variance?</h4>
+<p>Covariance measures the joint variability of two random variables:
+$$
+\text{Cov}(X,Y) = E[(X-\mu_X)(Y-\mu_Y)]
+$$</p>
+<ul>
+<li>Positive → variables tend to increase together</li>
+<li>Negative → one increases while the other decreases</li>
+<li>Zero → no linear relationship</li>
+</ul>
+<h4 id="17-importance-of-pearson-correlation-coefficient">17. Importance of Pearson Correlation Coefficient</h4>
+<p>Pearson’s $\rho$ measures the <strong>strength and direction of the linear relationship</strong> between two variables.<br />
+Range: $[-1, +1]$.<br />
+It is scale-invariant (standardized covariance).</p>
+<h4 id="18-importance-of-spearman-rank-correlation-coefficient">18. Importance of Spearman Rank Correlation Coefficient</h4>
+<p>Spearman’s rank correlation measures the strength of a <strong>monotonic</strong> relationship (not necessarily linear).<br />
+It is based on ranks and is more robust to outliers and non-linear but monotonic associations.</p>
+<h4 id="19-correlation-vs-causation">19. Correlation vs Causation?</h4>
+<ul>
+<li><strong>Correlation</strong>: Two variables move together.</li>
+<li><strong>Causation</strong>: One variable directly causes the other.<br />
+Correlation does <strong>not</strong> imply causation (confounding variables, reverse causality, coincidence possible).</li>
+</ul>
+<h4 id="20-what-is-confidence-intervals">20. What is Confidence Intervals?</h4>
+<p>A confidence interval gives a range of plausible values for a population parameter.<br />
+Example: 95% CI means that if we repeated the experiment many times, 95% of the intervals would contain the true parameter.</p>
+<h4 id="21-confidence-interval-vs-point-estimate">21. Confidence Interval vs Point estimate?</h4>
+<ul>
+<li><strong>Point estimate</strong>: Single best guess (e.g., sample mean $\bar{x}$).</li>
+<li><strong>Confidence Interval</strong>: Range of values that quantifies uncertainty around the point estimate.</li>
+</ul>
+<h4 id="22-explain-about-hypothesis-testing">22. Explain about Hypothesis testing</h4>
+<p>Hypothesis testing is a formal procedure to decide whether there is enough evidence to reject a claim (null hypothesis) about a population.</p>
+<h3 id="23-define-hypothesis-testing-methodology-null-hypothesis-test-statistic-p-value">23. Define Hypothesis Testing methodology, Null-hypothesis, test-statistic, p-value</h3>
+<ul>
+<li><strong>Null hypothesis ($H_0$)</strong>: Default claim (usually “no effect” or “no difference”).</li>
+<li><strong>Test statistic</strong>: A number computed from the sample that measures how far the data is from $H_0$.</li>
+<li><strong>p-value</strong>: Probability of observing a test statistic at least as extreme as the one obtained, assuming $H_0$ is true.</li>
+<li>Small p-value → evidence against $H_0$.</li>
+</ul>
+<h4 id="24-how-to-do-k-s-test-for-similarity-of-two-distributions">24. How to do K-S Test for similarity of two distributions?</h4>
+<p>The Kolmogorov-Smirnov (K-S) test compares the empirical CDFs of two samples (or one sample vs a theoretical distribution).</p>
+<ul>
+<li>Test statistic = maximum absolute difference between the two CDFs.</li>
+<li>Small p-value → the two distributions are significantly different.</li>
+</ul>
+</main><aside class="note-toc" aria-label="On this page"><h2>On This Page</h2>
+<ul>
+<li><a href="#01-introduction-to-probability-and-statistics">01. Introduction to Probability and Statistics</a></li>
+<li><a href="#02-population-and-sample">02. Population and Sample</a></li>
+<li><a href="#03-gaussian-normal-distribution-and-its-pdf">03. Gaussian (Normal) Distribution and its PDF</a></li>
+<li><a href="#04-cdf-of--x-sim-mathcalnmu-sigma2--and-the-68-95-997-rule">04. CDF of $ X \sim \mathcal{N}(\mu, \sigma^2) $ and the 68-95-99.7 Rule</a></li>
+<li><a href="#06-standard-normal-variate-z-and-standardization">06. Standard Normal Variate ($Z$) and Standardization</a></li>
+<li><a href="#07-kernel-density-estimation-kde">07. Kernel Density Estimation (KDE)</a></li>
+<li><a href="#08-sampling-distribution--central-limit-theorem-clt">08. Sampling Distribution &amp; Central Limit Theorem (CLT)</a></li>
+<li><a href="#09-q-q-plot-quantile-quantile-plot">09. Q-Q Plot (Quantile-Quantile Plot)</a></li>
+<li><a href="#10-how--where-to-use-distributions">10. How / Where to Use Distributions?</a></li>
+<li><a href="#11-chebyshevs-inequality">11. Chebyshev&#x27;s Inequality</a></li>
+<li><a href="#12-discrete-and-continuous-uniform-distributions">12. Discrete and Continuous Uniform Distributions</a></li>
+<li><a href="#13-how-to-randomly-sample-data-points-uniform-distribution">13. How to Randomly Sample Data Points (Uniform Distribution)</a></li>
+<li><a href="#14-bernoulli-and-binomial-distribution">14. Bernoulli and Binomial Distribution</a></li>
+<li><a href="#15-log-normal-distribution">15. Log-Normal Distribution</a></li>
+<li><a href="#16-power-law-distribution">16. Power-Law Distribution</a></li>
+<li><a href="#17-box-cox-transform">17. Box-Cox Transform</a></li>
+<li><a href="#18-applications-of-non-gaussian-distributions">18. Applications of Non-Gaussian Distributions</a></li>
+<li><a href="#19-covariance">19. Covariance</a></li>
+<li><a href="#20-pearson-correlation-coefficient">20. Pearson Correlation Coefficient</a></li>
+<li><a href="#21-spearman-rank-correlation-coefficient">21. Spearman Rank Correlation Coefficient</a></li>
+<li><a href="#22-correlation-vs-causation">22. Correlation vs Causation</a></li>
+<li><a href="#23-how-to-use-correlations">23. How to Use Correlations</a></li>
+<li><a href="#24-confidence-interval-introduction">24. Confidence Interval Introduction</a></li>
+<li><a href="#25-computing-confidence-interval-given-the-underlying-distribution">25. Computing Confidence Interval Given the Underlying Distribution</a></li>
+<li><a href="#26-confidence-interval-for-the-mean-of-a-normal-random-variable">26. Confidence Interval for the Mean of a Normal Random Variable</a></li>
+<li><a href="#27-confidence-interval-using-bootstrapping">27. Confidence Interval Using Bootstrapping</a></li>
+<li><a href="#code">Code</a></li>
+<li><a href="#28-hypothesis-testing-methodology">28. Hypothesis Testing Methodology</a></li>
+<li><a href="#29-hypothesis-testing-intuition-with-a-coin-toss">29. Hypothesis Testing Intuition with a Coin Toss</a></li>
+<li><a href="#30-resampling-and-permutation-test">30. Resampling and Permutation Test</a></li>
+<li><a href="#31-hypothesis-testing-qa">31. Hypothesis Testing QA</a></li>
+<li><a href="#32-k-s-test-for-similarity-of-two-distributions">32. K-S Test for Similarity of Two Distributions</a></li>
+<li><a href="#33-k-s-test-p-value">33. K-S Test p-value</a></li>
+<li><a href="#34-code-snippet-k-s-test">34. Code Snippet: K-S Test</a></li>
+<li><a href="#35-hypothesis-testing-another-example">35. Hypothesis Testing: Another Example</a></li>
+<li><a href="#36-resampling-and-permutation-test-another-example">36. Resampling and Permutation Test: Another Example</a></li>
+<li><a href="#37-how-to-use-hypothesis-testing">37. How to Use Hypothesis Testing</a></li>
+<li><a href="#38-proportional-sampling">38. Proportional Sampling</a></li>
+<li><a href="#39-revision-questions">39. Revision Questions</a></li>
+</ul>
+</aside></div></div><script>
+if(window.hljs)document.querySelectorAll("pre code[class*='language-']").forEach((block)=>window.hljs.highlightElement(block));
+(()=>{const links=[...document.querySelectorAll(".note-toc a")],heads=links.map(l=>document.getElementById(decodeURIComponent(l.hash.slice(1)))).filter(Boolean);if(!links.length||!heads.length||!("IntersectionObserver"in window))return;const set=h=>links.forEach(l=>l.classList.toggle("is-active",l.hash===`#${h.id}`));const ob=new IntersectionObserver(es=>{const v=es.filter(e=>e.isIntersecting).sort((a,b)=>a.boundingClientRect.top-b.boundingClientRect.top);if(v.length)set(v[0].target)},{rootMargin:"-10% 0px -75% 0px",threshold:0});heads.forEach(h=>ob.observe(h))})();
+</script>
+</body>
+</html>

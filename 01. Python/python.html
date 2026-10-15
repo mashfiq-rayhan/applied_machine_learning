@@ -1,0 +1,1171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Python Notes</title>
+  <link rel="stylesheet" href="../HTMLs/theme.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/languages/python.min.js"></script>
+<script>
+window.MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']],
+    displayMath: [['$$', '$$'], ['\\[', '\\]']],
+    processEscapes: true,
+    processEnvironments: true
+  },
+  options: {
+    skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+  }
+};
+</script>
+<script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-svg.js"></script>
+</head>
+<body class="site-page">
+<div class="site-layout">
+<nav class="curriculum-nav" aria-label="Main curriculum navigation">
+<iframe src="../HTMLs/table-of-contents.html" title="Machine learning curriculum"></iframe>
+</nav>
+<div class="note-layout">
+<main class="note-content">
+<h1>Python Notes</h1>
+
+<p><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg" alt="Python Logo"></p>
+<h3 id="variable-types">Variable Types</h3>
+<table><thead><tr><th><strong>Variable Type</strong></th><th><strong>Description</strong></th><th><strong>Example</strong></th><th><strong>Type Check</strong></th></tr></thead><tbody>
+<tr><td>Integer (<code>int</code>)</td><td>Whole numbers</td><td><code>age = 25</code></td><td><code>type(age)</code> → <code>&lt;class &#x27;int&#x27;&gt;</code></td></tr>
+<tr><td>Float (<code>float</code>)</td><td>Decimal numbers</td><td><code>price = 99.99</code></td><td><code>&lt;class &#x27;float&#x27;&gt;</code></td></tr>
+<tr><td>Complex (<code>complex</code>)</td><td>Complex numbers</td><td><code>z = 2 + 3j</code></td><td><code>&lt;class &#x27;complex&#x27;&gt;</code></td></tr>
+<tr><td>String (<code>str</code>)</td><td>Text</td><td><code>name = &quot;Mashfiq&quot;</code></td><td><code>&lt;class &#x27;str&#x27;&gt;</code></td></tr>
+<tr><td>Boolean (<code>bool</code>)</td><td>True/False</td><td><code>is_active = True</code></td><td><code>&lt;class &#x27;bool&#x27;&gt;</code></td></tr>
+<tr><td>List (<code>list</code>)</td><td>Ordered, mutable collection</td><td><code>numbers = [1, 2, 3]</code></td><td><code>&lt;class &#x27;list&#x27;&gt;</code></td></tr>
+<tr><td>Tuple (<code>tuple</code>)</td><td>Ordered, immutable collection</td><td><code>coords = (10, 20)</code></td><td><code>&lt;class &#x27;tuple&#x27;&gt;</code></td></tr>
+<tr><td>Range (<code>range</code>)</td><td>Sequence of numbers</td><td><code>nums = range(5)</code></td><td><code>&lt;class &#x27;range&#x27;&gt;</code></td></tr>
+<tr><td>Set (<code>set</code>)</td><td>Unordered, no duplicates</td><td><code>unique = {1, 2, 3}</code></td><td><code>&lt;class &#x27;set&#x27;&gt;</code></td></tr>
+<tr><td>Frozen Set (<code>frozenset</code>)</td><td>Immutable version of set</td><td><code>fs = frozenset([1,2,3])</code></td><td><code>&lt;class &#x27;frozenset&#x27;&gt;</code></td></tr>
+<tr><td>Dictionary (<code>dict</code>)</td><td>Key-value pairs</td><td><code>person = {&quot;name&quot;:&quot;Mashfiq&quot;,&quot;age&quot;:25}</code></td><td><code>&lt;class &#x27;dict&#x27;&gt;</code></td></tr>
+<tr><td>NoneType (<code>None</code>)</td><td>Represents absence of value</td><td><code>result = None</code></td><td><code>&lt;class &#x27;NoneType&#x27;&gt;</code></td></tr>
+<tr><td>Dynamic Variable</td><td>Can change type at runtime</td><td><code>var = 10; var = &quot;Ten&quot;</code></td><td><code>type(var)</code> changes</td></tr>
+<tr><td>Constant (by convention)</td><td>Value meant not to change</td><td><code>PI = 3.14159</code></td><td><code>&lt;class &#x27;float&#x27;&gt;</code></td></tr>
+<tr><td>Bytes (<code>bytes</code>)</td><td>Immutable sequence of bytes</td><td><code>b = b&quot;Hello&quot;</code></td><td><code>&lt;class &#x27;bytes&#x27;&gt;</code></td></tr>
+<tr><td>Bytearray (<code>bytearray</code>)</td><td>Mutable sequence of bytes</td><td><code>ba = bytearray([65,66,67])</code></td><td><code>&lt;class &#x27;bytearray&#x27;&gt;</code></td></tr>
+<tr><td>Memoryview (<code>memoryview</code>)</td><td>View of byte data</td><td><code>mv = memoryview(b&quot;Hello&quot;)</code></td><td><code>&lt;class &#x27;memoryview&#x27;&gt;</code></td></tr>
+</tbody></table>
+<h3 id="variables">Variables</h3>
+<h4 id="numeric">Numeric</h4>
+<div class="code-cell"><pre><code class="language-python">age = 25
+print(age, type(age))</code></pre></div>
+<div class="code-cell"><pre><code class="language-python">price = 99.99
+print(price, type(price))</code></pre></div>
+<div class="code-cell"><pre><code class="language-python">com = 2 + 3j
+print(com, type(com))</code></pre></div>
+<h4 id="string">String</h4>
+<div class="code-cell"><pre><code class="language-python">name = &quot;mashfiq&quot;
+gretting = &quot;Hello Data Science&quot;
+multi = &quot;&quot;&quot;this is a multiline text&quot;&quot;&quot;
+
+print(name, type(name))
+print(gretting, type(gretting))
+print(multi, type(multi))</code></pre></div>
+<h4 id="boolean">Boolean</h4>
+<div class="code-cell"><pre><code class="language-python">is_active = True
+is_admin = False
+print(is_active, type(is_active))
+print(is_admin, type(is_admin))</code></pre></div>
+<h3 id="sequence">Sequence</h3>
+<h4 id="list">List</h4>
+<div class="code-cell"><pre><code class="language-python">numbers = [1, 2, 3, 4, 5]
+print(numbers, type(numbers))
+fruits = [&quot;apple&quot;, &quot;banana&quot;, &quot;mango&quot;]
+print(fruits, type(fruits))</code></pre></div>
+<h4 id="tuple">Tuple</h4>
+<div class="code-cell"><pre><code class="language-python">coordinates = (10.0, 20.0)
+print(coordinates, type(coordinates))
+colors = (&quot;red&quot;, &quot;green&quot;, &quot;blue&quot;)
+print(colors, type(colors))</code></pre></div>
+<h4 id="range">Range</h4>
+<div class="code-cell"><pre><code class="language-python">nums = range(0, 5)
+print(nums, type(nums))
+print(list(nums), type(nums))</code></pre></div>
+<h4 id="sets">Sets</h4>
+<div class="code-cell"><pre><code class="language-python">unique_nums = {1, 2, 3, 4, 5}
+print(unique_nums, type(unique_nums))</code></pre></div>
+<h4 id="dictionary">Dictionary</h4>
+<div class="code-cell"><pre><code class="language-python">person = {&quot;name&quot;: &quot;Mash&quot;, &quot;age&quot;: 31, &quot;city&quot;: &quot;khulna&quot;}
+print(person, type(person))
+print(person[&quot;name&quot;])</code></pre></div>
+<h4 id="nonetype">NoneType</h4>
+<div class="code-cell"><pre><code class="language-python">result = None
+print(result, type(result))</code></pre></div>
+<h4 id="dynamic-variables">Dynamic Variables</h4>
+<div class="code-cell"><pre><code class="language-python">var = 10
+var = &quot;Ten&quot;
+var = [10]
+
+print(var, type(var))</code></pre></div>
+<h4 id="constants">Constants</h4>
+<div class="code-cell"><pre><code class="language-python">PI = 3.14159
+GRAVITY = 9.8
+
+print(PI, type(PI))
+print(GRAVITY, type(GRAVITY))</code></pre></div>
+<h4 id="type-conversion">Type Conversion</h4>
+<div class="code-cell"><pre><code class="language-python">str(20)</code></pre></div>
+<div class="code-cell"><pre><code class="language-python">int(20.6)</code></pre></div>
+<div class="code-cell"><pre><code class="language-python">float(5)</code></pre></div>
+<h4 id="output-formatting">Output Formatting</h4>
+<div class="code-cell"><pre><code class="language-python">a = 10
+b = 20
+
+print(&quot;The value of a is {} and b is {}&quot;.format(a, b))
+print(&quot;The value of b is {1} and a is {0}&quot;.format(a, b))
+print(&quot;Hello {name}, {greeting}&quot;.format(name=&quot;Mash&quot;, greeting=&quot;Good Morning!&quot;))</code></pre></div>
+<h4 id="python-input">Python Input</h4>
+<div class="code-cell"><pre><code class="language-python">num = input(&quot;Enter a number: &quot;)
+print(num)</code></pre></div>
+<div class="code-cell"><pre><code class="language-python">x = 5
+y = 5
+
+print(x is y)
+
+print(x is not y)</code></pre></div>
+<div class="code-cell"><pre><code class="language-python">lst = [1, 2, 3, 4, 5]
+print(1 in lst)
+print(1 not in lst)</code></pre></div>
+<h3 id="ifelse">if...else</h3>
+<div class="code-cell"><pre><code class="language-python">num = 10
+if num == 10:
+    print(&quot;Number is positive&quot;)
+print(&quot;this will always print&quot;)</code></pre></div>
+<div class="code-cell"><pre><code class="language-python">num = 10
+
+if num &gt; 0:
+    print(&quot;Positive Number&quot;)
+else:
+    print(&quot;Negative Number&quot;)</code></pre></div>
+<div class="code-cell"><pre><code class="language-python">num = 0
+
+if num &gt; 0:
+    print(&quot;Positive Number&quot;)
+elif num == 0:
+    print(&quot;ZERO&quot;)
+else:
+    print(&quot;Negative Number&quot;)</code></pre></div>
+<div class="code-cell"><pre><code class="language-python">num = 10.5
+
+if num &gt;= 0:
+    if num == 0:
+        print(&quot;ZERO&quot;)
+    else:
+        print(&quot;Positive Number&quot;)
+else:
+    print(&quot;Negative Number&quot;)</code></pre></div>
+<div class="code-cell"><pre><code class="language-python">num1 = 10
+num2 = 50
+num3 = 15
+
+if (num1 &gt;= num2) and (num1 &gt;= num3):
+    largest = num1
+elif (num2 &gt;= num1) and (num2 &gt;= num3):
+    largest = num2
+else:
+    largest = num3
+
+print(largest)</code></pre></div>
+<h4 id="while-loop">while loop</h4>
+<div class="code-cell"><pre><code class="language-python">lst = [10, 20, 30, 40, 50]
+
+product = 1
+index = 0
+
+while index &lt; len(lst):
+    product *= lst[index]
+    index += 1
+
+print(&quot;Product is : {}&quot;.format(product))</code></pre></div>
+<h4 id="while-loop-with-else">while loop with else</h4>
+<div class="code-cell"><pre><code class="language-python">numbers = [1, 2, 3, 4, 5]
+index = 0 
+
+while index &lt; len(numbers) :
+    print(numbers[index])
+    index += 1
+else:
+    print(&quot;No item left in the list&quot;)</code></pre></div>
+<h4 id="is-prime">Is Prime</h4>
+<div class="code-cell"><pre><code class="language-python">num = int(input(&quot;Enter a number: &quot;))
+
+isDivisible = False
+i = 2
+
+while i &lt; num:
+    if num % i == 0:
+        isDivisible = True
+        print(&quot;{} is divisible by {}&quot;.format(num, i))
+    i += 1
+
+if isDivisible:
+    print(&quot;{} is Not a Prime number.&quot;.format(num))
+else:
+    print(&quot;{} is a Prime number.&quot;.format(num))
+    </code></pre></div>
+<h4 id="for-loop">for loop</h4>
+<div class="code-cell"><pre><code class="language-python">lst = [10, 20, 30, 40, 50]
+product = 1
+
+for ele in lst:
+    product *= ele
+
+print(product)</code></pre></div>
+<h4 id="range-2">range()</h4>
+<div class="code-cell"><pre><code class="language-python">for i in range(10):
+    print(i)</code></pre></div>
+<div class="code-cell"><pre><code class="language-python">for i in range(1, 20, 2):
+    print(i)</code></pre></div>
+<div class="code-cell"><pre><code class="language-python">for i in range(0, 20, 5):
+    print(i)</code></pre></div>
+<div class="code-cell"><pre><code class="language-python">lst = [&quot;Mash&quot;, &quot;Safa&quot;, &quot;Nosh&quot;, &quot;Shad&quot;, &quot;Rak&quot;, &quot;Sham&quot;]
+
+for index in range(len(lst)):
+    print(lst[index])</code></pre></div>
+<h4 id="for-loop-with-else">for loop with else</h4>
+<div class="code-cell"><pre><code class="language-python">numbers = [1, 2, 3]
+
+for item in numbers:
+    print(item)
+else:
+    print(&quot;No more items&quot;)</code></pre></div>
+<h4 id="all-the-prime-number-between-an-interval">All The Prime Number between an interval</h4>
+<div class="code-cell"><pre><code class="language-python">index1 = int(input(&quot;Enter Strating point of numbers: &quot;))
+index2 = int(input(&quot;Enter End point of numbers: &quot;))
+
+print(&quot;Prime numbers between {} and {} are: &quot;.format(index1, index2))
+
+for num in range(index1, index2 + 1):
+    if num &gt; 1:
+        isDivisible = False
+        for index in range(2, num):
+            if num % index == 0:
+                isDivisible = True
+        if not isDivisible:
+            print(num)</code></pre></div>
+<h3 id="list-2">List</h3>
+<table><thead><tr><th><strong>Operation</strong></th><th><strong>Description</strong></th><th><strong>Example</strong></th><th><strong>Output</strong></th></tr></thead><tbody>
+<tr><td>Create a list</td><td>Define with <code>[]</code></td><td><code>fruits = [&quot;apple&quot;, &quot;banana&quot;, &quot;mango&quot;]</code></td><td><code>[&#x27;apple&#x27;, &#x27;banana&#x27;, &#x27;mango&#x27;]</code></td></tr>
+<tr><td>Access element</td><td>Use index (0-based)</td><td><code>fruits[0]</code></td><td><code>&#x27;apple&#x27;</code></td></tr>
+<tr><td>Negative index</td><td>Access from end</td><td><code>fruits[-1]</code></td><td><code>&#x27;mango&#x27;</code></td></tr>
+<tr><td>Slice list</td><td>Get sublist</td><td><code>fruits[0:2]</code></td><td><code>[&#x27;apple&#x27;, &#x27;banana&#x27;]</code></td></tr>
+<tr><td>Append item</td><td>Add at end</td><td><code>fruits.append(&quot;orange&quot;)</code></td><td><code>[&#x27;apple&#x27;,&#x27;banana&#x27;,&#x27;mango&#x27;,&#x27;orange&#x27;]</code></td></tr>
+<tr><td>Insert item</td><td>Add at specific index</td><td><code>fruits.insert(1, &quot;grape&quot;)</code></td><td><code>[&#x27;apple&#x27;,&#x27;grape&#x27;,&#x27;banana&#x27;,&#x27;mango&#x27;]</code></td></tr>
+<tr><td>Extend list</td><td>Add multiple items</td><td><code>fruits.extend([&quot;kiwi&quot;,&quot;melon&quot;])</code></td><td><code>[&#x27;apple&#x27;,&#x27;banana&#x27;,&#x27;mango&#x27;,&#x27;kiwi&#x27;,&#x27;melon&#x27;]</code></td></tr>
+<tr><td>Remove item (by value)</td><td>Remove first matching element</td><td><code>fruits.remove(&quot;banana&quot;)</code></td><td><code>[&#x27;apple&#x27;,&#x27;mango&#x27;]</code></td></tr>
+<tr><td>Pop item (by index)</td><td>Remove and return element</td><td><code>fruits.pop(1)</code></td><td>returns <code>&#x27;banana&#x27;</code></td></tr>
+<tr><td>Delete item</td><td>Remove by index with <code>del</code></td><td><code>del fruits[0]</code></td><td>Removes first element</td></tr>
+<tr><td>Clear list</td><td>Remove all items</td><td><code>fruits.clear()</code></td><td><code>[]</code></td></tr>
+<tr><td>Length of list</td><td>Count items</td><td><code>len(fruits)</code></td><td><code>3</code></td></tr>
+<tr><td>Check existence</td><td>Use <code>in</code> keyword</td><td><code>&quot;apple&quot; in fruits</code></td><td><code>True</code></td></tr>
+<tr><td>Sort list</td><td>Sort ascending</td><td><code>fruits.sort()</code></td><td>Sorted list</td></tr>
+<tr><td>Sort descending</td><td>Sort reverse</td><td><code>fruits.sort(reverse=True)</code></td><td>Reverse sorted</td></tr>
+<tr><td>Reverse list</td><td>Reverse order</td><td><code>fruits.reverse()</code></td><td>Reversed list</td></tr>
+<tr><td>Copy list</td><td>Create shallow copy</td><td><code>copy_fruits = fruits.copy()</code></td><td>Same list copy</td></tr>
+<tr><td>Join lists</td><td>Concatenate lists</td><td><code>list1 + list2</code></td><td>Combined list</td></tr>
+<tr><td>Repeat list</td><td>Duplicate items</td><td><code>fruits * 2</code></td><td>Repeated list</td></tr>
+<tr><td>List comprehension</td><td>Create list with expression</td><td><code>[x*2 for x in [1,2,3]]</code></td><td><code>[2, 4, 6]</code></td></tr>
+</tbody></table>
+<h3 id="lists">Lists</h3>
+<div class="code-cell"><pre><code class="language-python">lst0 = []
+
+lst1 = [&quot;one&quot;, &quot;Two&quot;, &quot;Three&quot;]
+
+lst2 = [1, 2, 3, 4]
+
+lst3 = [[1, 2], [3, 4]]
+
+lst4 = [1, &#x27;str&#x27;, 2, 3]</code></pre></div>
+<div class="code-cell"><pre><code class="language-python">print(len(lst4))</code></pre></div>
+<div class="code-cell"><pre><code class="language-python">lst = [&quot;one&quot;, &quot;Two&quot;, &quot;Three&quot;]
+lst.append(&#x27;Four&#x27;)
+print(lst)</code></pre></div>
+<div class="code-cell"><pre><code class="language-python">lst = [&quot;one&quot;, &quot;Two&quot;, &quot;Three&quot;]
+lst.insert(3, &quot;Four&quot;)
+print(lst)</code></pre></div>
+<div class="code-cell"><pre><code class="language-python">lst = [&quot;one&quot;, &quot;Two&quot;, &quot;Two&quot;, &quot;Three&quot;]
+lst.remove(&quot;Two&quot;)
+print(lst)</code></pre></div>
+<div class="code-cell"><pre><code class="language-python">lst1 = [&quot;one&quot;, &quot;Two&quot;, &quot;Two&quot;, &quot;Three&quot;]
+lst2 = [&quot;Four&quot;, &quot;Five&quot;]
+
+lst1.append(lst2)
+print(lst1)</code></pre></div>
+<div class="code-cell"><pre><code class="language-python">lst1 = [&quot;one&quot;, &quot;Two&quot;, &quot;Two&quot;, &quot;Three&quot;]
+lst2 = [&quot;Four&quot;, &quot;Five&quot;]
+
+lst1.extend(lst2)
+print(lst1)</code></pre></div>
+<div class="code-cell"><pre><code class="language-python">lst = [&quot;one&quot;, &quot;Two&quot;, &quot;Three&quot;, &quot;Four&quot;, &quot;Five&quot;]
+del lst[1]
+print(lst)</code></pre></div>
+<div class="code-cell"><pre><code class="language-python">lst = [&quot;one&quot;, &quot;Two&quot;, &quot;Three&quot;, &quot;Four&quot;, &quot;Five&quot;]
+a = lst.pop(1)
+print(a)
+print(lst)</code></pre></div>
+<div class="code-cell"><pre><code class="language-python">lst = [&quot;one&quot;, &quot;Two&quot;, &quot;Three&quot;, &quot;Four&quot;, &quot;Five&quot;]
+
+if &quot;Two&quot; in lst:
+    print(&quot;AI&quot;)
+
+if &quot;Six&quot; not in lst:
+    print(&quot;ML&quot;)</code></pre></div>
+<div class="code-cell"><pre><code class="language-python">numbers = [3, 1, 6, 2, 8]
+sorted_lst = sorted(numbers)
+reverse_sort_lst = sorted(numbers, reverse=True)
+
+print(numbers)
+numbers.sort()
+
+print(sorted_lst)
+print(reverse_sort_lst)
+print(numbers)</code></pre></div>
+<div class="code-cell"><pre><code class="language-python">lst = [1, 2, 3, 4, 5]
+abc = lst
+abc.append(6)
+
+print(abc)
+print(lst)</code></pre></div>
+<div class="code-cell"><pre><code class="language-python">s = &quot;one,Two,Three,Four,Five&quot;
+slst = s.split(&#x27;,&#x27;)
+print(s)
+print(slst)</code></pre></div>
+<div class="code-cell"><pre><code class="language-python">s = &quot;This is applied AI Course&quot;
+split_lst = s.split()
+print(split_lst)</code></pre></div>
+<div class="code-cell"><pre><code class="language-python">numbers = [10, 20, 30, 40, 50, 60, 70, 80, 90]
+print(numbers[:])
+print(numbers[0:4])
+print(numbers[::2])
+print(numbers[2::2])
+</code></pre></div>
+<div class="code-cell"><pre><code class="language-python">lst1 = [1, 2, 3, 4]
+lst2 = [&quot;Mash&quot;, &quot;Safa&quot;]
+new_lst = lst1 + lst2
+
+print(new_lst)</code></pre></div>
+<div class="code-cell"><pre><code class="language-python">numbers = [1, 2, 3, 1, 3, 4, 2, 5]
+print(numbers.count(1))
+print(numbers.count(3))</code></pre></div>
+<div class="code-cell"><pre><code class="language-python">for ele in new_lst:
+    print(ele)</code></pre></div>
+<h4 id="list-comprehension">List Comprehension</h4>
+<div class="code-cell"><pre><code class="language-python">sqrs = []
+
+for i in range(10):
+    sqrs.append(i**2)
+
+print(sqrs)</code></pre></div>
+<div class="code-cell"><pre><code class="language-python">sqrs = [i**2 for i in range(10)]
+print(sqrs)</code></pre></div>
+<div class="code-cell"><pre><code class="language-python">lst = [-10, -20, 10, 20, 50]
+new_lst = [i * 2 for i in lst]
+print(new_lst)
+
+new_lst = [i * 2 for i in lst if i &gt;= 0]
+print(new_lst)
+
+new_lst = [(i, i**2) for i in range(10)]
+print(new_lst)</code></pre></div>
+<div class="code-cell"><pre><code class="language-python">matrix = [
+    [1, 2, 3, 4],
+    [5, 6, 7, 8],
+    [9, 10, 11, 12]
+]
+
+transposed = []
+
+for i in range(4):
+    lst = []
+    for row in matrix:
+        lst.append(row[i])
+    transposed.append(lst)
+
+print(transposed)
+
+</code></pre></div>
+<div class="code-cell"><pre><code class="language-python">transposed = [[row[i] for row in matrix] for i in range(4)]
+print(transposed)</code></pre></div>
+<h3 id="tuple-2">Tuple</h3>
+<table><thead><tr><th><strong>Operation</strong></th><th><strong>Description</strong></th><th><strong>Example</strong></th><th><strong>Output</strong></th></tr></thead><tbody>
+<tr><td>Create a tuple</td><td>Define with <code>()</code></td><td><code>coords = (10, 20, 30)</code></td><td><code>(10, 20, 30)</code></td></tr>
+<tr><td>Single element tuple</td><td>Add comma after single value</td><td><code>single = (5,)</code></td><td><code>(5,)</code></td></tr>
+<tr><td>Access element</td><td>Use index (0-based)</td><td><code>coords[0]</code></td><td><code>10</code></td></tr>
+<tr><td>Negative index</td><td>Access from end</td><td><code>coords[-1]</code></td><td><code>30</code></td></tr>
+<tr><td>Slice tuple</td><td>Get subtuple</td><td><code>coords[0:2]</code></td><td><code>(10, 20)</code></td></tr>
+<tr><td>Concatenate tuples</td><td>Combine two tuples</td><td><code>(1,2) + (3,4)</code></td><td><code>(1, 2, 3, 4)</code></td></tr>
+<tr><td>Repeat tuple</td><td>Duplicate items</td><td><code>(1,2) * 2</code></td><td><code>(1, 2, 1, 2)</code></td></tr>
+<tr><td>Check existence</td><td>Use <code>in</code> keyword</td><td><code>10 in coords</code></td><td><code>True</code></td></tr>
+<tr><td>Length of tuple</td><td>Count items</td><td><code>len(coords)</code></td><td><code>3</code></td></tr>
+<tr><td>Tuple unpacking</td><td>Assign elements to variables</td><td><code>x, y, z = coords</code></td><td><code>x=10, y=20, z=30</code></td></tr>
+<tr><td>Count value</td><td>Count occurrences of value</td><td><code>coords.count(10)</code></td><td><code>1</code></td></tr>
+<tr><td>Index of value</td><td>Find first index of value</td><td><code>coords.index(20)</code></td><td><code>1</code></td></tr>
+<tr><td>Immutable</td><td>Cannot modify after creation</td><td><code>coords[0] = 5  # Error</code></td><td>TypeError</td></tr>
+<tr><td>Convert list to tuple</td><td>Use <code>tuple()</code></td><td><code>tuple([1,2,3])</code></td><td><code>(1,2,3)</code></td></tr>
+<tr><td>Nested tuple</td><td>Tuples inside tuples</td><td><code>nested = (1,(2,3),4)</code></td><td><code>(1,(2,3),4)</code></td></tr>
+</tbody></table>
+<h4 id="tuple-3">Tuple</h4>
+<div class="code-cell"><pre><code class="language-python">t = ()
+t = (1, 2, 3)
+t = (1, 2, 3, &#x27;Mash&#x27;)
+t = ((1, 2, 3), (&#x27;Mash&#x27;, &#x27;Safa&#x27;))</code></pre></div>
+<div class="code-cell"><pre><code class="language-python">t = (&#x27;Mash&#x27;)
+print(type(t))
+
+t = (&#x27;Mash&#x27;,)
+print(type(t))</code></pre></div>
+<div class="code-cell"><pre><code class="language-python">t = (&#x27;ABC&#x27;, (&#x27;Mash&#x27;, &#x27;Safa&#x27;))
+print(t[1][0])</code></pre></div>
+<div class="code-cell"><pre><code class="language-python">t = (1,2,3,4,5,6, [1,2,3,4])
+print(t)
+print(t[1:4])</code></pre></div>
+<div class="code-cell"><pre><code class="language-python">print(t[6][0])
+
+del t</code></pre></div>
+<div class="code-cell"><pre><code class="language-python">t = (1, 2, 3, 1, 3, 3, 4, 1)
+print(t.count(1))
+print(t.index(1))
+print(1 in t)</code></pre></div>
+<div class="code-cell"><pre><code class="language-python">t = (1, 2, 3, 4, 5, 6)
+print(len(t))</code></pre></div>
+<div class="code-cell"><pre><code class="language-python">t = (4, 5, 3, 2, 1)
+nt = sorted(t)
+print(nt)</code></pre></div>
+<div class="code-cell"><pre><code class="language-python">t = (4, 5, 3, 2, 1)
+print(max(t))
+print(min(t))
+print(sum(t))</code></pre></div>
+<h3 id="set">Set</h3>
+<table><thead><tr><th><strong>Operation</strong></th><th><strong>Description</strong></th><th><strong>Example</strong></th><th><strong>Output</strong></th><th></th></tr></thead><tbody>
+<tr><td>Create a set</td><td>Define with <code>{}</code></td><td><code>fruits = {&quot;apple&quot;, &quot;banana&quot;, &quot;mango&quot;}</code></td><td><code>{&#x27;apple&#x27;, &#x27;banana&#x27;, &#x27;mango&#x27;}</code></td><td></td></tr>
+<tr><td>Add element</td><td>Add single item</td><td><code>fruits.add(&quot;orange&quot;)</code></td><td>Adds 'orange'</td><td></td></tr>
+<tr><td>Update set</td><td>Add multiple items</td><td><code>fruits.update([&quot;kiwi&quot;, &quot;melon&quot;])</code></td><td>Adds multiple elements</td><td></td></tr>
+<tr><td>Remove element</td><td>Remove item; raises error if missing</td><td><code>fruits.remove(&quot;banana&quot;)</code></td><td>Removes 'banana'</td><td></td></tr>
+<tr><td>Discard element</td><td>Remove item; no error if missing</td><td><code>fruits.discard(&quot;banana&quot;)</code></td><td>Safe remove</td><td></td></tr>
+<tr><td>Pop element</td><td>Remove arbitrary element</td><td><code>fruits.pop()</code></td><td>Returns removed item</td><td></td></tr>
+<tr><td>Clear set</td><td>Remove all items</td><td><code>fruits.clear()</code></td><td><code>set()</code></td><td></td></tr>
+<tr><td>Length of set</td><td>Count items</td><td><code>len(fruits)</code></td><td><code>3</code></td><td></td></tr>
+<tr><td>Union</td><td>Combine sets</td><td><code>A.union(B)</code> or \`A</td><td>B\`</td><td>All unique elements</td></tr>
+<tr><td>Intersection</td><td>Common elements</td><td><code>A.intersection(B)</code> or <code>A &amp; B</code></td><td>Elements in both sets</td><td></td></tr>
+<tr><td>Difference</td><td>Elements in A not in B</td><td><code>A.difference(B)</code> or <code>A - B</code></td><td>Unique to A</td><td></td></tr>
+<tr><td>Symmetric Difference</td><td>Elements in either A or B but not both</td><td><code>A.symmetric_difference(B)</code> or <code>A ^ B</code></td><td>Non-overlapping elements</td><td></td></tr>
+<tr><td>Check existence</td><td>Use <code>in</code> keyword</td><td><code>&#x27;apple&#x27; in fruits</code></td><td><code>True</code></td><td></td></tr>
+<tr><td>Immutable Set</td><td><code>frozenset()</code></td><td><code>fs = frozenset([1,2,3])</code></td><td>Immutable set</td><td></td></tr>
+<tr><td>Convert list to set</td><td>Use <code>set()</code></td><td><code>set([1,2,2,3])</code></td><td><code>{1,2,3}</code></td><td></td></tr>
+<tr><td>Iterate</td><td>Loop through items</td><td><code>for f in fruits: print(f)</code></td><td>Prints elements</td><td></td></tr>
+</tbody></table>
+<h3 id="set-2">Set</h3>
+<div class="code-cell"><pre><code class="language-python">s = {1, 2, 3}
+print(type(s))
+print(s)</code></pre></div>
+<div class="code-cell"><pre><code class="language-python">s = set([1, 2, 3, 1])
+print(s)
+
+s.add(4)
+print(s)
+
+s.update([5, 6, 1])
+print(s)
+
+s.update([8, 9], {10, 2, 3})
+print(s)
+
+s.discard(1)
+print(s)
+
+s.remove(2)
+print(s)
+
+s.pop()
+print(s)
+
+s.clear()
+print(s)</code></pre></div>
+<h4 id="set-operations">Set Operations</h4>
+<div class="code-cell"><pre><code class="language-python">set1 = {1, 2, 3, 4, 5}
+set2 = {4, 5, 6, 7, 8}
+
+print(set1 | set2)
+print(set1.union(set2))
+print(set1 &amp; set2)
+print(set1.intersection(set2))
+print(set1 - set2)
+print(set1.difference(set2))
+print(set1 ^ set2)
+print(set1.symmetric_difference(set2))
+print(set1.issubset(set2))
+print(set2.issubset(set1))
+
+set1 = frozenset([1, 2, 3, 4, 5])
+set2 = frozenset([4, 5, 6, 7, 8])</code></pre></div>
+<h3 id="dictionary-2">Dictionary</h3>
+<table><thead><tr><th><strong>Operation</strong></th><th><strong>Description</strong></th><th><strong>Example</strong></th><th><strong>Output</strong></th><th></th></tr></thead><tbody>
+<tr><td>Create dictionary</td><td>Define with <code>{}</code></td><td><code>person = {&quot;name&quot;: &quot;Mashfiq&quot;, &quot;age&quot;: 25}</code></td><td><code>{&#x27;name&#x27;: &#x27;Mashfiq&#x27;, &#x27;age&#x27;: 25}</code></td><td></td></tr>
+<tr><td>Access value</td><td>Get value by key</td><td><code>person[&quot;name&quot;]</code></td><td><code>&#x27;Mashfiq&#x27;</code></td><td></td></tr>
+<tr><td>Get with default</td><td>Avoid KeyError if key not found</td><td><code>person.get(&quot;gender&quot;, &quot;N/A&quot;)</code></td><td><code>&#x27;N/A&#x27;</code></td><td></td></tr>
+<tr><td>Add / Update value</td><td>Assign new or existing key</td><td><code>person[&quot;city&quot;] = &quot;Dhaka&quot;</code></td><td>Adds/updates key</td><td></td></tr>
+<tr><td>Remove key</td><td>Remove specific key</td><td><code>person.pop(&quot;age&quot;)</code></td><td>Returns removed value</td><td></td></tr>
+<tr><td>Remove last item</td><td>Remove last inserted key-value pair</td><td><code>person.popitem()</code></td><td>Returns tuple (key, value)</td><td></td></tr>
+<tr><td>Delete key</td><td>Remove using <code>del</code></td><td><code>del person[&quot;name&quot;]</code></td><td>Deletes 'name'</td><td></td></tr>
+<tr><td>Clear dictionary</td><td>Remove all items</td><td><code>person.clear()</code></td><td><code>{}</code></td><td></td></tr>
+<tr><td>Length</td><td>Count number of keys</td><td><code>len(person)</code></td><td><code>2</code></td><td></td></tr>
+<tr><td>Keys</td><td>Get all keys</td><td><code>person.keys()</code></td><td><code>dict_keys([&#x27;name&#x27;,&#x27;age&#x27;])</code></td><td></td></tr>
+<tr><td>Values</td><td>Get all values</td><td><code>person.values()</code></td><td><code>dict_values([&#x27;Mashfiq&#x27;,25])</code></td><td></td></tr>
+<tr><td>Items</td><td>Get key-value pairs</td><td><code>person.items()</code></td><td><code>dict_items([(&#x27;name&#x27;,&#x27;Mashfiq&#x27;),(&#x27;age&#x27;,25)])</code></td><td></td></tr>
+<tr><td>Check existence</td><td>Test if key exists</td><td><code>&#x27;name&#x27; in person</code></td><td><code>True</code></td><td></td></tr>
+<tr><td>Dictionary comprehension</td><td>Create dict with expression</td><td><code>{x: x**2 for x in (1,2,3)}</code></td><td><code>{1: 1, 2: 4, 3: 9}</code></td><td></td></tr>
+<tr><td>Merge dictionaries</td><td>Combine two dicts (Python 3.9+)</td><td>\`dict1</td><td>dict2\`</td><td>Merged dictionary</td></tr>
+<tr><td>Update dictionary</td><td>Update with another dict</td><td><code>person.update({&quot;age&quot;: 30})</code></td><td>Updates 'age' to 30</td><td></td></tr>
+<tr><td>Copy dictionary</td><td>Shallow copy</td><td><code>new_dict = person.copy()</code></td><td>Same dictionary copy</td><td></td></tr>
+<tr><td>Nested dictionary</td><td>Dictionary inside another dictionary</td><td><code>student = {&quot;info&quot;: {&quot;name&quot;: &quot;Ali&quot;, &quot;age&quot;: 22}}</code></td><td>Nested dict structure</td><td></td></tr>
+</tbody></table>
+<h3 id="dictionary-3">Dictionary</h3>
+<div class="code-cell"><pre><code class="language-python">my_dict = {}
+
+my_dict = {1: &quot;abc&quot;, 2: &quot;xyz&quot;}
+print(my_dict)
+
+my_dict = {&quot;name&quot;: &quot;Mash&quot;, 1: [&quot;abc&quot;, &quot;xyz&quot;]}
+print(my_dict)
+
+my_dict = dict()
+my_dict = dict([(1, &quot;abc&quot;), (2, &quot;xyz&quot;)])
+print(my_dict)</code></pre></div>
+<div class="code-cell"><pre><code class="language-python">my_dict = {&#x27;name&#x27;: &#x27;Mash&#x27;, &#x27;age&#x27;: 31, &#x27;address&#x27;: &#x27;Khulna&#x27;}
+print(my_dict[&#x27;name&#x27;])
+print(my_dict)
+print(my_dict.get(&#x27;address&#x27;))</code></pre></div>
+<div class="code-cell"><pre><code class="language-python">my_dict = {&#x27;name&#x27;: &#x27;Mash&#x27;, &#x27;age&#x27;: 31, &#x27;address&#x27;: &#x27;Khulna&#x27;}
+my_dict[&#x27;name&#x27;] = &#x27;Ray&#x27;
+print(my_dict)
+my_dict[&#x27;degree&#x27;] = &#x27;BSc CSE&#x27;
+print(my_dict)
+print(my_dict.get(&#x27;address&#x27;))
+
+print(my_dict.pop(&#x27;age&#x27;))
+print(my_dict)
+
+my_dict = {&#x27;name&#x27;: &#x27;Mash&#x27;, &#x27;age&#x27;: 31, &#x27;address&#x27;: &#x27;Khulna&#x27;}
+print(my_dict.popitem())
+print(my_dict)
+
+squares = {2: 4, 3:9, 4:16, 5:25}
+del squares[2]
+print(squares)
+
+squares.clear()
+print(squares)
+
+del squares
+# print(squares)</code></pre></div>
+<div class="code-cell"><pre><code class="language-python">squares = {2: 4, 3:9, 4:16, 5:25}
+
+squares_c = squares.copy()
+print(squares_c)
+
+subjects = {}.fromkeys([&#x27;Math&#x27;, &#x27;English&#x27;, &#x27;Bangla&#x27;], 0)
+print(subjects)
+
+squares = {2: 4, 3:9, 4:16, 5:25}
+
+print(squares.items())
+
+print(squares.keys())
+
+print(squares.values())</code></pre></div>
+<div class="code-cell"><pre><code class="language-python">d = {}
+print(dir(d))</code></pre></div>
+<div class="code-cell"><pre><code class="language-python">squares = {2: 4, 3:9, 4:16, 5:25}
+
+for pair in squares.items():
+    print(pair)</code></pre></div>
+<div class="code-cell"><pre><code class="language-python">d = {&quot;a&quot;: 1, &quot;b&quot;: 2, &quot;c&quot;: 3, &quot;d&quot;: 4}
+
+dnew = {k: v for k, v in d.items() if (v &gt; 2)}
+print(dnew)</code></pre></div>
+<div class="code-cell"><pre><code class="language-python">d = {&quot;a&quot;: 1, &quot;b&quot;: 2, &quot;c&quot;: 3, &quot;d&quot;: 4, &quot;e&quot;: 5}
+d = {k+&#x27;c&#x27;:v for k,v in d.items() if v &gt; 2}
+print(d)</code></pre></div>
+<h3 id="string-2">String</h3>
+<table><thead><tr><th><strong>Operation</strong></th><th><strong>Description</strong></th><th><strong>Example</strong></th><th><strong>Output</strong></th></tr></thead><tbody>
+<tr><td>Create string</td><td>Use single, double, or triple quotes</td><td><code>s = &quot;Hello&quot;</code></td><td><code>&#x27;Hello&#x27;</code></td></tr>
+<tr><td>Multi-line string</td><td>Triple quotes</td><td>\`s = '''Hello</td><td></td></tr>
+<tr><td>World'''\`</td><td>Multi-line string</td><td></td><td></td></tr>
+<tr><td>Access character</td><td>Indexing (0-based)</td><td><code>s[0]</code></td><td><code>&#x27;H&#x27;</code></td></tr>
+<tr><td>Negative indexing</td><td>Access from end</td><td><code>s[-1]</code></td><td><code>&#x27;o&#x27;</code></td></tr>
+<tr><td>Slice string</td><td>Substring</td><td><code>s[0:5]</code></td><td><code>&#x27;Hello&#x27;</code></td></tr>
+<tr><td>Length</td><td>Count characters</td><td><code>len(s)</code></td><td><code>5</code></td></tr>
+<tr><td>Concatenate</td><td>Join strings</td><td><code>s1 + s2</code></td><td><code>&#x27;HelloWorld&#x27;</code></td></tr>
+<tr><td>Repeat</td><td>Repeat string multiple times</td><td><code>s * 3</code></td><td><code>&#x27;HelloHelloHello&#x27;</code></td></tr>
+<tr><td>Check substring</td><td><code>in</code> keyword</td><td><code>&#x27;ell&#x27; in s</code></td><td><code>True</code></td></tr>
+<tr><td>Uppercase</td><td>Convert to uppercase</td><td><code>s.upper()</code></td><td><code>&#x27;HELLO&#x27;</code></td></tr>
+<tr><td>Lowercase</td><td>Convert to lowercase</td><td><code>s.lower()</code></td><td><code>&#x27;hello&#x27;</code></td></tr>
+<tr><td>Title Case</td><td>First letter uppercase</td><td><code>s.title()</code></td><td><code>&#x27;Hello&#x27;</code></td></tr>
+<tr><td>Capitalize</td><td>First character uppercase</td><td><code>s.capitalize()</code></td><td><code>&#x27;Hello&#x27;</code></td></tr>
+<tr><td>Strip whitespace</td><td>Remove leading/trailing spaces</td><td><code>s.strip()</code></td><td><code>&#x27;Hello&#x27;</code></td></tr>
+<tr><td>Replace</td><td>Replace substring</td><td><code>s.replace(&#x27;H&#x27;,&#x27;J&#x27;)</code></td><td><code>&#x27;Jello&#x27;</code></td></tr>
+<tr><td>Split</td><td>Split into list</td><td><code>s.split(&#x27;l&#x27;)</code></td><td><code>[&#x27;He&#x27;, &#x27;&#x27;, &#x27;o&#x27;]</code></td></tr>
+<tr><td>Join</td><td>Join iterable into string</td><td><code>&#x27;-&#x27;.join([&#x27;a&#x27;,&#x27;b&#x27;,&#x27;c&#x27;])</code></td><td><code>&#x27;a-b-c&#x27;</code></td></tr>
+<tr><td>Find</td><td>Find index of substring</td><td><code>s.find(&#x27;l&#x27;)</code></td><td><code>2</code></td></tr>
+<tr><td>Count</td><td>Count occurrences of substring</td><td><code>s.count(&#x27;l&#x27;)</code></td><td><code>2</code></td></tr>
+<tr><td>Check start</td><td>Starts with substring</td><td><code>s.startswith(&#x27;He&#x27;)</code></td><td><code>True</code></td></tr>
+<tr><td>Check end</td><td>Ends with substring</td><td><code>s.endswith(&#x27;lo&#x27;)</code></td><td><code>True</code></td></tr>
+<tr><td>Format</td><td>Format strings</td><td><code>f&#x27;Name: {name}&#x27;</code></td><td><code>&#x27;Name: Mashfiq&#x27;</code></td></tr>
+<tr><td>Escape characters</td><td><code>\n</code>, <code>\t</code>, <code>\&#x27;</code>, <code>\&quot;</code>, <code>\\</code></td><td><code>s = &#x27;Hello\nWorld&#x27;</code></td><td>Multi-line string</td></tr>
+<tr><td>Raw string</td><td>Ignore escape characters</td><td><code>r&#x27;C:\path\file&#x27;</code></td><td><code>&#x27;C:\path\file&#x27;</code></td></tr>
+</tbody></table>
+<h3 id="string-3">String</h3>
+<div class="code-cell"><pre><code class="language-python">nstr = &quot;Hello&quot;
+
+print(nstr[0])
+print(nstr[-1])
+print(nstr[2:5])</code></pre></div>
+<div class="code-cell"><pre><code class="language-python">s1 = &quot;Hello&quot;
+s2 = &quot;Mash&quot;
+
+print(s1 + s2)
+print(s1 * 3)
+</code></pre></div>
+<div class="code-cell"><pre><code class="language-python">count = 0
+for l in &#x27;Hello World&#x27;:
+    if l == &#x27;o&#x27;:
+        count+=1
+        
+print(count)
+
+print(&#x27;l&#x27; in &#x27;hello world&#x27;)
+print(&#x27;or&#x27; in &#x27;hello world&#x27;)</code></pre></div>
+<div class="code-cell"><pre><code class="language-python">astr = &quot;This is a String&quot;
+
+print(astr.lower())
+print(astr.upper())
+print(astr.split())
+print(&#x27; &#x27;.join([&#x27;This&#x27;, &#x27;is&#x27;, &#x27;a&#x27;, &#x27;String&#x27;]))
+print(&#x27;-&#x27;.join([&#x27;This&#x27;, &#x27;is&#x27;, &#x27;a&#x27;, &#x27;String&#x27;]))
+print(astr.find(&#x27;Str&#x27;))
+print(astr.replace(&#x27;String&#x27;, &quot;Sentence&quot;))
+</code></pre></div>
+<div class="code-cell"><pre><code class="language-python">myStr = &quot;MadaM&quot;
+
+myStr = myStr.lower()
+
+revStr = reversed(myStr)
+
+if list(myStr) == list(revStr):
+    print(&quot;This is a palindrome!&quot;)
+else:
+    print(&quot;This is not a palindrome!&quot;)</code></pre></div>
+<div class="code-cell"><pre><code class="language-python">myStr = &quot;python Program to Sort words in Alphabetic Order&quot;
+
+words = myStr.split()
+
+swords = sorted(words)
+print(swords)
+
+words.sort()
+print(words)
+
+for word in words:
+    print(word)</code></pre></div>
+<h3 id="functions">Functions</h3>
+<table><thead><tr><th><strong>Function Type / Operation</strong></th><th><strong>Description</strong></th><th><strong>Syntax / Example</strong></th><th><strong>Output / Notes</strong></th></tr></thead><tbody>
+<tr><td>Regular function</td><td>Define with <code>def</code></td><td><code>def greet(): return &#x27;Hello&#x27;</code></td><td>Function object; call with <code>greet()</code> → <code>&#x27;Hello&#x27;</code></td></tr>
+<tr><td>Function with parameters</td><td>Accept input values</td><td><code>def add(a, b): return a+b</code></td><td><code>add(2,3)</code> → <code>5</code></td></tr>
+<tr><td>Default parameters</td><td>Parameter has default value</td><td><code>def add(a, b=10): return a+b</code></td><td><code>add(5)</code> → <code>15</code></td></tr>
+<tr><td>Keyword arguments</td><td>Specify parameter by name</td><td><code>add(b=5,a=3)</code></td><td><code>8</code></td></tr>
+<tr><td>Arbitrary positional arguments</td><td>Accept variable number of arguments</td><td><code>def func(*args): return sum(args)</code></td><td><code>func(1,2,3)</code> → <code>6</code></td></tr>
+<tr><td>Arbitrary keyword arguments</td><td>Accept variable number of named arguments</td><td><code>def func(**kwargs): return kwargs</code></td><td><code>func(a=1,b=2)</code> → <code>{&#x27;a&#x27;:1,&#x27;b&#x27;:2}</code></td></tr>
+<tr><td>Return multiple values</td><td>Return tuple of values</td><td><code>def f(): return 1,2,3</code></td><td><code>(1,2,3)</code></td></tr>
+<tr><td>Lambda (anonymous) function</td><td>Inline single-expression function</td><td><code>f = lambda x: x*2</code></td><td><code>f(5)</code> → <code>10</code></td></tr>
+<tr><td>Function annotations / type hints</td><td>Provide type hints</td><td><code>def add(a:int,b:int)-&gt;int: return a+b</code></td><td>Type hints only</td></tr>
+<tr><td>Nested function</td><td>Define function inside another function</td><td><code>def outer(): def inner(): pass</code></td><td>Inner accessible only within outer</td></tr>
+<tr><td>Recursion</td><td>Function calling itself</td><td><code>def fact(n): return 1 if n==0 else n*fact(n-1)</code></td><td><code>fact(5)</code> → <code>120</code></td></tr>
+<tr><td>Higher-order function</td><td>Function as argument or return value</td><td><code>map(lambda x:x*2,[1,2,3])</code></td><td><code>[2,4,6]</code></td></tr>
+<tr><td>Decorator</td><td>Modify or enhance another function</td><td>\`@decorator</td><td></td></tr>
+<tr><td>def f(): pass\`</td><td>Modified function</td><td></td><td></td></tr>
+<tr><td>Docstring</td><td>Documentation string for function</td><td><code>def f(): &quot;&quot;&quot;Docs&quot;&quot;&quot;</code></td><td>Access via <code>f.__doc__</code></td></tr>
+</tbody></table>
+<h3 id="functions-2">Functions</h3>
+<div class="code-cell"><pre><code class="language-python">def print_name(name):
+    &quot;&quot;&quot;
+    This Function prints a name
+    &quot;&quot;&quot;
+    print(name)
+    
+print_name(&#x27;Mash&#x27;)</code></pre></div>
+<div class="code-cell"><pre><code class="language-python">def add(a, b=10):
+    return a + b
+
+x = add(5, 6)
+print(x)
+
+x = add(5)
+print(x)</code></pre></div>
+<div class="code-cell"><pre><code class="language-python">def sums(*args):
+    return sum(args)
+
+x = sums(1, 2, 3, 4, 5, 6)
+print(x)</code></pre></div>
+<div class="code-cell"><pre><code class="language-python">def computeHCF(a, b):
+    smaller = b if a &gt; b else a
+    hcf = 1
+    
+    for i in range(1, smaller+1):
+        if (a % i == 0) and (b % i == 0):
+            hcf = i
+    
+    return hcf
+
+x = computeHCF(50, 60)
+print(x)</code></pre></div>
+<h3 id="types-of-functions">Types of Functions</h3>
+<p>Python functions can be broadly classified into the following types:</p>
+<table><thead><tr><th><strong>Function Type</strong></th><th><strong>Description</strong></th><th><strong>Example</strong></th></tr></thead><tbody>
+<tr><td>Built-in Functions</td><td>Predefined functions provided by Python</td><td><code>len()</code>, <code>print()</code>, <code>type()</code>, <code>sum()</code></td></tr>
+<tr><td>User-defined Functions</td><td>Functions defined by the user using <code>def</code> keyword</td><td><code>def greet(): return &#x27;Hello&#x27;</code></td></tr>
+<tr><td>Anonymous / Lambda Functions</td><td>Single-expression, unnamed functions</td><td><code>f = lambda x: x*2</code></td></tr>
+<tr><td>Recursive Functions</td><td>Functions that call themselves</td><td><code>def fact(n): return 1 if n==0 else n*fact(n-1)</code></td></tr>
+<tr><td>Higher-order Functions</td><td>Functions that take other functions as arguments or return functions</td><td><code>map(lambda x:x*2,[1,2,3])</code></td></tr>
+<tr><td>Nested / Inner Functions</td><td>Functions defined inside another function</td><td><code>def outer(): def inner(): pass</code></td></tr>
+<tr><td>Generator Functions</td><td>Functions that yield values one at a time using <code>yield</code></td><td><code>def gen(): yield 1</code></td></tr>
+<tr><td>Decorator Functions</td><td>Functions that modify/enhance other functions</td><td>\`@decorator</td></tr>
+<tr><td>def f(): pass\`</td><td></td><td></td></tr>
+<tr><td>Coroutine Functions</td><td>Functions that can pause and resume execution using <code>async</code> and <code>await</code></td><td><code>async def fetch(): await task()</code></td></tr>
+<tr><td>Class / Static / Instance Methods</td><td>Functions defined inside a class</td><td><code>class A: def method(self): pass</code></td></tr>
+</tbody></table>
+<h3 id="built-in-functions">Built-in Functions</h3>
+<table><thead><tr><th><strong>Category</strong></th><th><strong>Function</strong></th><th><strong>Description</strong></th><th><strong>Example</strong></th><th><strong>Output</strong></th></tr></thead><tbody>
+<tr><td>Type Conversion</td><td><code>int()</code>, <code>float()</code>, <code>str()</code>, <code>bool()</code></td><td>Convert values between types</td><td><code>int(&#x27;10&#x27;)</code></td><td><code>10</code></td></tr>
+<tr><td>Numeric</td><td><code>abs()</code>, <code>round()</code>, <code>pow()</code>, <code>divmod()</code></td><td>Absolute, rounding, power, division remainder</td><td><code>abs(-5)</code></td><td><code>5</code></td></tr>
+<tr><td>Sequence</td><td><code>len()</code>, <code>max()</code>, <code>min()</code>, <code>sum()</code>, <code>sorted()</code></td><td>Work on sequences like list, tuple, string</td><td><code>len([1,2,3])</code></td><td><code>3</code></td></tr>
+<tr><td>Iterables</td><td><code>all()</code>, <code>any()</code>, <code>enumerate()</code>, <code>zip()</code></td><td>Check conditions, iterate with index, pair sequences</td><td><code>all([True, False])</code></td><td><code>False</code></td></tr>
+<tr><td>Object/Introspection</td><td><code>type()</code>, <code>id()</code>, <code>isinstance()</code>, <code>dir()</code>, <code>help()</code></td><td>Inspect object type, memory, attributes</td><td><code>type(5)</code></td><td><code>&lt;class &#x27;int&#x27;&gt;</code></td></tr>
+<tr><td>Input/Output</td><td><code>print()</code>, <code>input()</code>, <code>open()</code>, <code>repr()</code>, <code>format()</code></td><td>Output, read input, file operations</td><td><code>print(&#x27;Hello&#x27;)</code></td><td><code>Hello</code></td></tr>
+<tr><td>Functional</td><td><code>map()</code>, <code>filter()</code>, <code>reduce()</code>, <code>sorted()</code></td><td>Apply functions on iterables</td><td><code>list(map(lambda x:x*2,[1,2,3]))</code></td><td><code>[2,4,6]</code></td></tr>
+<tr><td>Others</td><td><code>range()</code>, <code>eval()</code>, <code>exec()</code>, <code>chr()</code>, <code>ord()</code></td><td>Generate sequences, evaluate strings, char code conversion</td><td><code>range(3)</code></td><td><code>0,1,2</code></td></tr>
+</tbody></table>
+<div class="code-cell"><pre><code class="language-python">x = -100
+print(abs(x))
+
+lst = [1, 2, 3, 4]
+print(all(lst))
+
+lst = [0, 1, 2, 3, 4]
+print(all(lst))
+
+lst = []
+print(all(lst))
+
+lst = [False, 1, 2]
+print(all(lst))</code></pre></div>
+<div class="code-cell"><pre><code class="language-python">numbers = [1, 2, 3]
+print(dir(numbers))</code></pre></div>
+<div class="code-cell"><pre><code class="language-python">print(divmod(27,7))</code></pre></div>
+<div class="code-cell"><pre><code class="language-python">numbers = [10, 20, 30, 40, 50]
+for index,num in enumerate(numbers):
+    print(index, &quot;---&quot;, num)
+
+numbers = [10, 20, 30, 40, 50]
+for index,num in enumerate(numbers, 10):
+    print(index, &quot;---&quot;, num)</code></pre></div>
+<div class="code-cell"><pre><code class="language-python">lst = [1, 2, 3, 4, 5]
+print(isinstance(lst, list))
+
+t = (1, 2, 3, 4, 5)
+print(isinstance(t, list))</code></pre></div>
+<h3 id="filter">Filter</h3>
+<div class="code-cell"><pre><code class="language-python">def posnum(x):
+    if x &gt; 0:
+        return x</code></pre></div>
+<div class="code-cell"><pre><code class="language-python">number_list = range(-10, 10)
+print(list(number_list))
+
+pos = list(filter(lambda x: x &gt; 0, number_list))
+print(pos)
+
+pos = list(filter(posnum, number_list))
+print(pos)</code></pre></div>
+<h3 id="map">Map</h3>
+<div class="code-cell"><pre><code class="language-python">numbers = [1, 2, 3, 4, 5]
+
+def power2(num):
+    return num**2
+
+squared = list(map(power2, numbers))
+print(squared)
+
+squared = list(map(lambda x: x ** 2, numbers))
+print(squared)</code></pre></div>
+<h3 id="reduce">Reduce</h3>
+<div class="code-cell"><pre><code class="language-python">from functools import reduce
+
+numbers = [1, 2, 3, 4, 5]
+
+
+def reducedsum(x, y):
+    return x + y
+
+
+squared = reduce(reducedsum, numbers)
+print(squared)
+
+squared = reduce(lambda x, y: x + y, numbers)
+print(squared)</code></pre></div>
+<h3 id="recursion">Recursion</h3>
+<div class="code-cell"><pre><code class="language-python">def factorial(num):
+    return 1 if num == 1 else (num * factorial(num-1))
+
+result = factorial(10)
+print(result)</code></pre></div>
+<h3 id="fibonacci">Fibonacci</h3>
+<div class="code-cell"><pre><code class="language-python">def fibonacci(num):
+    return num if num &lt;= 1 else fibonacci(num - 1) + fibonacci(num - 2)
+
+
+nterms = 10
+print(range(nterms))
+print(list(range(nterms)))
+
+print(&quot;Fibonacci Sequence: &quot;)
+for num in range(nterms):
+    print(fibonacci(num))</code></pre></div>
+<h3 id="lambda">Lambda</h3>
+<div class="code-cell"><pre><code class="language-python">double = lambda x : x * 2
+print(double(10))
+square = lambda x : x ** 2
+print(square(10))
+
+lst = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+
+evn = list(filter(lambda x: (x % 2 == 0), lst))
+print(evn)
+
+sqr = list(map(lambda x: x ** 2, lst))
+print(sqr)
+
+from functools import reduce
+add = reduce(lambda x, y: x + y, lst)
+print(add)
+</code></pre></div>
+<h3 id="modules">Modules</h3>
+<table><thead><tr><th><strong>Module</strong></th><th><strong>Description</strong></th><th><strong>Example Usage</strong></th></tr></thead><tbody>
+<tr><td><code>os</code></td><td>Interact with operating system (files, directories)</td><td><code>import os; os.getcwd()</code></td></tr>
+<tr><td><code>sys</code></td><td>System-specific parameters and functions</td><td><code>import sys; sys.argv</code></td></tr>
+<tr><td><code>math</code></td><td>Mathematical functions</td><td><code>import math; math.sqrt(16)</code></td></tr>
+<tr><td><code>random</code></td><td>Generate random numbers</td><td><code>import random; random.randint(1,10)</code></td></tr>
+<tr><td><code>datetime</code></td><td>Work with dates and times</td><td><code>from datetime import date; date.today()</code></td></tr>
+<tr><td><code>time</code></td><td>Time-related functions</td><td><code>import time; time.sleep(2)</code></td></tr>
+<tr><td><code>re</code></td><td>Regular expressions</td><td><code>import re; re.findall(r&#x27;\d+&#x27;, &#x27;abc123&#x27;)</code></td></tr>
+<tr><td><code>json</code></td><td>Parse and generate JSON data</td><td><code>import json; json.dumps({&#x27;a&#x27;:1})</code></td></tr>
+<tr><td><code>csv</code></td><td>Read/write CSV files</td><td><code>import csv; csv.reader(open(&#x27;file.csv&#x27;))</code></td></tr>
+<tr><td><code>collections</code></td><td>Specialized container datatypes</td><td><code>from collections import Counter</code></td></tr>
+<tr><td><code>itertools</code></td><td>Functions creating iterators</td><td><code>import itertools; itertools.permutations([1,2,3])</code></td></tr>
+<tr><td><code>functools</code></td><td>Higher-order functions and operations</td><td><code>from functools import reduce</code></td></tr>
+<tr><td><code>os.path</code></td><td>Path manipulation</td><td><code>import os.path; os.path.join(&#x27;a&#x27;,&#x27;b&#x27;)</code></td></tr>
+<tr><td><code>subprocess</code></td><td>Run and manage subprocesses</td><td><code>import subprocess; subprocess.run([&#x27;ls&#x27;])</code></td></tr>
+<tr><td><code>urllib</code></td><td>Work with URLs</td><td><code>from urllib import request; request.urlopen(&#x27;http://example.com&#x27;)</code></td></tr>
+<tr><td><code>requests</code></td><td>HTTP requests (3rd-party library)</td><td><code>import requests; requests.get(&#x27;http://example.com&#x27;)</code></td></tr>
+<tr><td><code>tkinter</code></td><td>GUI development</td><td><code>import tkinter; tkinter.Tk()</code></td></tr>
+<tr><td><code>socket</code></td><td>Network programming</td><td><code>import socket; socket.socket()</code></td></tr>
+<tr><td><code>logging</code></td><td>Logging facility</td><td><code>import logging; logging.info(&#x27;message&#x27;)</code></td></tr>
+<tr><td><code>pickle</code></td><td>Object serialization</td><td><code>import pickle; pickle.dump(obj, file)</code></td></tr>
+<tr><td><code>threading</code></td><td>Multithreading</td><td><code>import threading; threading.Thread(target=func)</code></td></tr>
+<tr><td><code>multiprocessing</code></td><td>Multi-process parallelism</td><td><code>import multiprocessing; multiprocessing.Process(target=func)</code></td></tr>
+<tr><td><code>math</code></td><td>Advanced math functions</td><td><code>import math; math.factorial(5)</code></td></tr>
+<tr><td><code>statistics</code></td><td>Statistical functions</td><td><code>import statistics; statistics.mean([1,2,3])</code></td></tr>
+</tbody></table>
+<hr>
+<blockquote><p><strong>Tip:</strong> Use <code>help(module_name)</code> in Python to see all functions and classes available in that module.</p></blockquote>
+<div class="code-cell"><pre><code class="language-python">import math
+help(math)</code></pre></div>
+<div class="code-cell"><pre><code class="language-python">import datetime
+help(datetime)</code></pre></div>
+<div class="code-cell"><pre><code class="language-python">from math import *
+dir(math)
+help(math)</code></pre></div>
+<h3 id="exception-handling">Exception Handling</h3>
+<h4 id="basic-tryexcept">Basic Try/Except</h4>
+<pre><code class="language-python">try:
+    x = 1 / 0
+except ZeroDivisionError:
+    print(&#x27;Cannot divide by zero&#x27;)</code></pre>
+<h4 id="catch-multiple-exceptions">Catch Multiple Exceptions</h4>
+<pre><code class="language-python">try:
+    x = int(&#x27;abc&#x27;)
+except (ValueError, TypeError) as e:
+    print(&#x27;Error:&#x27;, e)</code></pre>
+<h4 id="catch-all-exceptions-not-recommended">Catch All Exceptions (Not Recommended)</h4>
+<pre><code class="language-python">try:
+    risky_operation()
+except Exception as e:
+    print(&#x27;Error:&#x27;, e)</code></pre>
+<h4 id="else-clause">Else Clause</h4>
+<pre><code class="language-python">try:
+    result = 10 / 2
+except ZeroDivisionError:
+    print(&#x27;Error&#x27;)
+else:
+    print(&#x27;Result is&#x27;, result)</code></pre>
+<h4 id="finally-clause">Finally Clause</h4>
+<pre><code class="language-python">try:
+    f = open(&#x27;file.txt&#x27;, &#x27;r&#x27;)
+except FileNotFoundError:
+    print(&#x27;File not found&#x27;)
+finally:
+    print(&#x27;This block always executes&#x27;)</code></pre>
+<h4 id="raising-exceptions">Raising Exceptions</h4>
+<pre><code class="language-python">def validate_age(age):
+    if age &lt; 0:
+        raise ValueError(&#x27;Age cannot be negative&#x27;)
+    return age
+
+validate_age(-5)</code></pre>
+<h4 id="custom-exceptions">Custom Exceptions</h4>
+<pre><code class="language-python">class CustomError(Exception):
+    pass
+
+try:
+    raise CustomError(&#x27;This is a custom error&#x27;)
+except CustomError as e:
+    print(e)</code></pre>
+<h4 id="common-built-in-exceptions">Common Built-in Exceptions</h4>
+<table><thead><tr><th>Exception</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>Exception</code></td><td>Base class for all exceptions</td></tr>
+<tr><td><code>ZeroDivisionError</code></td><td>Division by zero</td></tr>
+<tr><td><code>ValueError</code></td><td>Invalid value</td></tr>
+<tr><td><code>TypeError</code></td><td>Invalid type</td></tr>
+<tr><td><code>IndexError</code></td><td>Sequence index out of range</td></tr>
+<tr><td><code>KeyError</code></td><td>Dictionary key not found</td></tr>
+<tr><td><code>FileNotFoundError</code></td><td>File not found</td></tr>
+<tr><td><code>IOError</code></td><td>Input/output error</td></tr>
+<tr><td><code>ImportError</code></td><td>Module import failed</td></tr>
+<tr><td><code>AttributeError</code></td><td>Attribute not found</td></tr>
+</tbody></table>
+<h4 id="best-practices">Best Practices</h4>
+<ul>
+<li>Catch specific exceptions rather than all.</li>
+<li>Use <code>finally</code> for cleanup (like closing files).</li>
+<li>Use <code>else</code> to run code only if no exception occurred.</li>
+<li>Raise exceptions with meaningful messages.</li>
+</ul>
+<h3 id="file-io">File I/O</h3>
+<h4 id="opening-a-file">Opening a File</h4>
+<pre><code class="language-python">f = open(&#x27;file.txt&#x27;, &#x27;r&#x27;)      # read (default)
+f = open(&#x27;file.txt&#x27;, &#x27;w&#x27;)      # write (overwrite)
+f = open(&#x27;file.txt&#x27;, &#x27;a&#x27;)      # append
+f = open(&#x27;file.txt&#x27;, &#x27;rb&#x27;)     # read binary
+f = open(&#x27;file.txt&#x27;, &#x27;wb&#x27;)     # write binary</code></pre>
+<h4 id="closing-a-file">Closing a File</h4>
+<pre><code class="language-python">f.close()  # always close files when done</code></pre>
+<h4 id="using-with-statement-recommended">Using <code>with</code> Statement (Recommended)</h4>
+<pre><code class="language-python">with open(&#x27;file.txt&#x27;, &#x27;r&#x27;) as f:
+    data = f.read()  # automatically closes the file</code></pre>
+<h4 id="reading-from-a-file">Reading from a File</h4>
+<pre><code class="language-python">f.read(size)          # read &#x27;size&#x27; bytes, all if omitted
+f.readline()          # read one line
+f.readlines()         # read all lines as a list</code></pre>
+<h5 id="example">Example:</h5>
+<pre><code class="language-python">with open(&#x27;file.txt&#x27;, &#x27;r&#x27;) as f:
+    for line in f:
+        print(line, end=&#x27;&#x27;)</code></pre>
+<h4 id="writing-to-a-file">Writing to a File</h4>
+<pre><code class="language-python">f.write(&#x27;Hello&#x27;)       # write string
+f.writelines(list_of_strings)  # write multiple lines</code></pre>
+<h5 id="example-2">Example:</h5>
+<pre><code class="language-python">with open(&#x27;file.txt&#x27;, &#x27;w&#x27;) as f:
+    f.write(&#x27;Hello World\n&#x27;)
+    f.writelines([&#x27;Line1\n&#x27;, &#x27;Line2\n&#x27;])</code></pre>
+<h4 id="file-methods">File Methods</h4>
+<table><thead><tr><th>Method</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>f.read(size)</code></td><td>Read 'size' bytes from file</td></tr>
+<tr><td><code>f.readline()</code></td><td>Read next line from file</td></tr>
+<tr><td><code>f.readlines()</code></td><td>Read all lines into a list</td></tr>
+<tr><td><code>f.write(str)</code></td><td>Write string to file</td></tr>
+<tr><td><code>f.writelines(list)</code></td><td>Write list of strings</td></tr>
+<tr><td><code>f.flush()</code></td><td>Flush internal buffer</td></tr>
+<tr><td><code>f.seek(offset, whence)</code></td><td>Move file cursor</td></tr>
+<tr><td><code>f.tell()</code></td><td>Current file position</td></tr>
+</tbody></table>
+<h4 id="file-objects-are-iterables">File Objects are Iterables</h4>
+<pre><code class="language-python">with open(&#x27;file.txt&#x27;) as f:
+    for line in f:
+        print(line, end=&#x27;&#x27;)</code></pre>
+<h4 id="binary-files">Binary Files</h4>
+<pre><code class="language-python">with open(&#x27;file.bin&#x27;, &#x27;rb&#x27;) as f:
+    data = f.read()
+with open(&#x27;file.bin&#x27;, &#x27;wb&#x27;) as f:
+    f.write(b&#x27;Binary data&#x27;)</code></pre>
+<h4 id="file-buffering">File Buffering</h4>
+<pre><code class="language-python">f = open(&#x27;file.txt&#x27;, &#x27;w&#x27;, buffering=1)  # line buffering</code></pre>
+<h4 id="misc-tips">Misc Tips</h4>
+<ul>
+<li>Always use <code>with</code> to handle files safely.</li>
+<li>Text mode <code>t</code> is default.</li>
+<li>Binary mode <code>b</code> is required for non-text files.</li>
+<li>Use <code>os</code> module for file operations like remove, rename, path checks.</li>
+</ul>
+<div class="code-cell"><pre><code class="language-python">f = open(&#x27;file.txt&#x27;)
+f = open(&#x27;file.txt&#x27;, &#x27;r&#x27;) # read (default)
+f = open(&#x27;file.txt&#x27;, &#x27;w&#x27;) # write (overwrite)
+f = open(&#x27;file.txt&#x27;, &#x27;a&#x27;) # append
+f = open(&#x27;file.txt&#x27;, &#x27;rb&#x27;) # read binary
+f = open(&#x27;file.txt&#x27;, &#x27;wb&#x27;) # write binary
+
+f.read()
+f.read(4)
+f.tell()
+f.seek(4)
+
+f.seek(0)
+for line in f:
+    print(line)
+    
+f.readline()
+f.readlines()</code></pre></div>
+<h4 id="os-file-operations">OS File Operations</h4>
+<p><strong>Rename a File</strong></p>
+<pre><code class="language-python">import os
+os.rename(&#x27;old_name.txt&#x27;, &#x27;new_name.txt&#x27;)</code></pre>
+<p><strong>Remove/Delete a File</strong></p>
+<pre><code class="language-python">import os
+os.remove(&#x27;file.txt&#x27;)  # delete file</code></pre>
+<p><strong>Check if File or Directory Exists</strong></p>
+<pre><code class="language-python">import os
+os.path.exists(&#x27;file.txt&#x27;)        # True if exists
+os.path.isfile(&#x27;file.txt&#x27;)        # True if it&#x27;s a file
+os.path.isdir(&#x27;folder&#x27;)            # True if it&#x27;s a directory</code></pre>
+<p><strong>List Files in a Directory</strong></p>
+<pre><code class="language-python">import os
+os.listdir(&#x27;.&#x27;)  # list files and directories in current directory</code></pre>
+<p><strong>Create a Directory</strong></p>
+<pre><code class="language-python">import os
+os.mkdir(&#x27;new_folder&#x27;)           # create single directory
+os.makedirs(&#x27;folder1/folder2&#x27;)  # create nested directories</code></pre>
+<p><strong>Remove a Directory</strong></p>
+<pre><code class="language-python">import os
+os.rmdir(&#x27;folder&#x27;)               # remove empty directory
+os.removedirs(&#x27;folder1/folder2&#x27;) # remove nested empty directories</code></pre>
+<p><strong>Get Current Working Directory</strong></p>
+<pre><code class="language-python">import os
+cwd = os.getcwd()
+print(cwd)</code></pre>
+<p><strong>Change Directory</strong></p>
+<pre><code class="language-python">import os
+os.chdir(&#x27;new_folder&#x27;)</code></pre>
+<p><strong>Get Absolute Path</strong></p>
+<pre><code class="language-python">import os
+abs_path = os.path.abspath(&#x27;file.txt&#x27;)
+print(abs_path)</code></pre>
+<p><strong>Join Paths Safely</strong></p>
+<pre><code class="language-python">import os
+path = os.path.join(&#x27;folder&#x27;, &#x27;file.txt&#x27;)</code></pre>
+<p><strong>File Size</strong></p>
+<pre><code class="language-python">import os
+size = os.path.getsize(&#x27;file.txt&#x27;)</code></pre>
+<p><strong>Check Read/Write/Execute Permissions</strong></p>
+<pre><code class="language-python">import os
+os.access(&#x27;file.txt&#x27;, os.R_OK)  # read permission
+os.access(&#x27;file.txt&#x27;, os.W_OK)  # write permission
+os.access(&#x27;file.txt&#x27;, os.X_OK)  # execute permission</code></pre>
+<div class="code-cell"><pre><code class="language-python">import os
+
+os.rename(&quot;test.txt&quot;, &quot;file.txt&quot;)
+os.remove(&quot;file.txt&quot;)</code></pre></div>
+<div class="code-cell"><pre><code class="language-python">import os 
+os.getcwd()
+os.chdir(&#x27;the path&#x27;)
+os.listdir(os.getcwd())
+os.mkdir()
+os.rmdir()
+
+import shutil
+
+shutil.rmtree(&quot;test&quot;)</code></pre></div>
+<div class="code-cell"><pre><code class="language-python">import logging
+logging.basicConfig(level=logging.DEBUG)
+logging.debug(&#x27;Debug message&#x27;)
+logging.info(&#x27;Info message&#x27;)
+logging.warning(&#x27;Warning message&#x27;)
+logging.error(&#x27;Error message&#x27;)
+logging.critical(&#x27;Critical message&#x27;)</code></pre></div>
+</main>
+<aside class="note-toc" aria-label="On this page">
+<h2>On This Page</h2>
+<ul>
+<li><a href="#variable-types">Variable Types</a></li>
+<li><a href="#variables">Variables</a></li>
+<li><a href="#sequence">Sequence</a></li>
+<li><a href="#ifelse">if...else</a></li>
+<li><a href="#list-2">List</a></li>
+<li><a href="#lists">Lists</a></li>
+<li><a href="#tuple-2">Tuple</a></li>
+<li><a href="#set">Set</a></li>
+<li><a href="#set-2">Set</a></li>
+<li><a href="#dictionary-2">Dictionary</a></li>
+<li><a href="#dictionary-3">Dictionary</a></li>
+<li><a href="#string-2">String</a></li>
+<li><a href="#string-3">String</a></li>
+<li><a href="#functions">Functions</a></li>
+<li><a href="#functions-2">Functions</a></li>
+<li><a href="#types-of-functions">Types of Functions</a></li>
+<li><a href="#built-in-functions">Built-in Functions</a></li>
+<li><a href="#filter">Filter</a></li>
+<li><a href="#map">Map</a></li>
+<li><a href="#reduce">Reduce</a></li>
+<li><a href="#recursion">Recursion</a></li>
+<li><a href="#fibonacci">Fibonacci</a></li>
+<li><a href="#lambda">Lambda</a></li>
+<li><a href="#modules">Modules</a></li>
+<li><a href="#exception-handling">Exception Handling</a></li>
+<li><a href="#file-io">File I/O</a></li>
+</ul>
+</aside>
+</div>
+</div>
+<script>
+  if (window.hljs) {
+    document.querySelectorAll("pre code[class*='language-']").forEach((block) => {
+      window.hljs.highlightElement(block);
+    });
+  }
+
+  (() => {
+    const links = [...document.querySelectorAll(".note-toc a")];
+    const headings = links
+      .map((link) => document.getElementById(decodeURIComponent(link.hash.slice(1))))
+      .filter(Boolean);
+
+    if (!links.length || !headings.length || !("IntersectionObserver" in window)) {
+      return;
+    }
+
+    const setActive = (heading) => {
+      links.forEach((link) => {
+        link.classList.toggle("is-active", link.hash === `#${heading.id}`);
+      });
+    };
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
+        if (visible.length) {
+          setActive(visible[0].target);
+        }
+      },
+      { rootMargin: "-10% 0px -75% 0px", threshold: 0 }
+    );
+
+    headings.forEach((heading) => observer.observe(heading));
+  })();
+</script>
+</body>
+</html>

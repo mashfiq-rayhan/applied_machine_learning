@@ -1,0 +1,1703 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Ensemble Models | Applied Machine Learning</title>
+    <link rel="stylesheet" href="../HTMLs/theme.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
+    <script>
+      window.MathJax = {
+        tex: {
+          inlineMath: [
+            ["$", "$"],
+            ["\\(", "\\)"],
+          ],
+          displayMath: [
+            ["$$", "$$"],
+            ["\\[", "\\]"],
+          ],
+          processEscapes: true,
+          processEnvironments: true,
+        },
+        options: {
+          skipHtmlTags: ["script", "noscript", "style", "textarea", "pre", "code"],
+        },
+      };
+    </script>
+    <script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-svg.js"></script>
+  </head>
+  <body class="site-page">
+    <div class="site-layout">
+      <nav class="curriculum-nav" aria-label="Main curriculum navigation">
+        <iframe src="../HTMLs/table-of-contents.html" title="Machine learning curriculum"></iframe>
+      </nav>
+      <div class="note-layout">
+        <main class="note-content">
+          <style>
+            @import url("https://fonts.googleapis.com/css2?family=Play:wght@400;700&display=swap");
+            @import url("https://cdnjs.cloudflare.com/ajax/libs/latin-modern/1.1.0/css/latinmodern-math.min.css");
+
+            :root {
+              --la-ink: #3f6386;
+              --la-teal: #3f6386;
+              --la-teal-soft: #e8f6f7;
+              --la-coral: #9333ea;
+              --la-coral-soft: #fff1ed;
+              --la-cdf: #17283a;
+              --la-line: #5b5c5c;
+              --la-surface: #f7faf9;
+              --la-text: #c9c9c9;
+              --la-panel: #00070e;
+              --la-chip: #17283a;
+              --la-amber: #9a6b16;
+              --la-amber-soft: #fff8e6;
+            }
+
+            *,
+            *::before,
+            *::after {
+              font-family: "Play", sans-serif !important;
+            }
+
+            pre,
+            pre code {
+              font-family: Consolas, "Courier New", monospace !important;
+            }
+
+            body,
+            .markdown-body,
+            p,
+            li {
+              color: var(--la-text) !important;
+            }
+
+            h1 {
+              color: var(--la-ink);
+              border-bottom: 4px solid var(--la-teal);
+              padding-bottom: 0.35em;
+            }
+
+            h2 {
+              color: var(--la-teal);
+              border-left: 6px solid var(--la-teal);
+              padding-left: 0.55em;
+              margin-top: 2em;
+            }
+
+            h3,
+            h4 {
+              color: var(--la-coral);
+            }
+
+            a {
+              color: var(--la-coral);
+              text-decoration: none;
+            }
+
+            a:hover {
+              text-decoration: underline;
+            }
+
+            blockquote {
+              background: var(--la-panel);
+              border-left: 5px solid var(--la-cdf) !important;
+              border-radius: 6px;
+              color: var(--la-text);
+              padding: 0.75em 1em;
+            }
+
+            code {
+              background: var(--la-chip);
+              border-radius: 4px;
+              color: var(--la-text);
+              padding: 0.1em 0.3em;
+            }
+
+            pre {
+              background: var(--la-panel);
+              border: 1px solid var(--la-line);
+              border-radius: 8px;
+              overflow-x: auto;
+              padding: 1em;
+            }
+
+            table {
+              border: 1px solid var(--la-line);
+              border-collapse: collapse;
+              border-radius: 8px;
+              overflow: hidden;
+              width: 100%;
+            }
+
+            th {
+              background: var(--la-panel);
+              color: var(--la-text);
+              padding: 0.7em 0.8em;
+              text-align: left;
+            }
+
+            td {
+              color: var(--la-text);
+              padding: 0.7em 0.8em;
+            }
+
+            tr:nth-child(even) {
+              background: var(--la-chip);
+            }
+
+            hr {
+              border: 0;
+              border-top: 2px solid var(--la-line);
+              margin: 2.2em 0;
+            }
+
+            .summary-grid,
+            .ml-grid,
+            .intuition-grid {
+              display: flex;
+              gap: 1em;
+              margin: 1.25em 0;
+            }
+
+            .summary-card,
+            .ml-card,
+            .intuition-card {
+              background: var(--la-panel);
+              border-radius: 7px;
+              color: var(--la-text);
+              flex: 1 1 0;
+              min-width: 0;
+              padding: 1em;
+            }
+
+            .summary-card {
+              border-top: 5px solid var(--la-teal);
+            }
+
+            .summary-card.pdf,
+            .ml-card.diagnostics,
+            .intuition-card.pdf {
+              border-top-color: var(--la-coral);
+            }
+
+            .summary-card.cdf,
+            .intuition-card.cdf {
+              border-top-color: var(--la-cdf);
+            }
+
+            .summary-card h3,
+            .ml-card h3,
+            .intuition-card h3 {
+              margin-top: 0;
+            }
+
+            .summary-tag,
+            .panel-kicker {
+              color: var(--la-teal);
+              font-size: 0.82em;
+              font-weight: 700;
+              letter-spacing: 0.04em;
+              text-transform: uppercase;
+            }
+
+            .relationship-banner,
+            .ml-workflow {
+              align-items: center;
+              background: var(--la-panel);
+              border: 1px solid var(--la-teal);
+              border-radius: 7px;
+              color: var(--la-text);
+              display: flex;
+              flex-wrap: wrap;
+              gap: 0.6em;
+              justify-content: center;
+              margin: 1.25em 0;
+              padding: 0.85em 1em;
+              text-align: center;
+            }
+
+            .relationship-banner strong,
+            .ml-workflow strong,
+            .relationship-item strong,
+            .insight-item strong {
+              color: var(--la-coral);
+            }
+
+            .relationship-banner .arrow {
+              color: var(--la-teal);
+              font-size: 1.2em;
+            }
+
+            .relationship-item,
+            .insight-item {
+              background: var(--la-panel);
+              border-left: 5px solid var(--la-teal);
+              border-radius: 5px;
+              color: var(--la-text);
+              margin: 0.65em 0;
+              padding: 0.55em 0.85em;
+            }
+
+            .insight-item {
+              border-left-color: var(--la-coral);
+            }
+
+            .insight-list,
+            .feature-chips {
+              display: flex;
+              flex-wrap: wrap;
+              gap: 0.55em;
+              list-style: none;
+              margin: 0.5em 0 1em;
+              padding: 0;
+            }
+
+            .insight-list li,
+            .feature-chips li {
+              background: var(--la-chip);
+              border: 1px solid var(--la-teal);
+              border-radius: 999px;
+              color: var(--la-text);
+              padding: 0.35em 0.75em;
+            }
+
+            .feature-chips li {
+              border-radius: 4px;
+              border-left: 3px solid var(--la-coral);
+              border-right: none;
+              border-top: none;
+              border-bottom: none;
+              flex: 1 1 calc(50% - 0.45em);
+            }
+
+            .concept-flow {
+              align-items: center;
+              display: flex;
+              flex-direction: column;
+              margin: 1.25em 0;
+            }
+
+            .concept-flow .flow-step {
+              background: var(--la-panel);
+              border: 1px solid var(--la-teal);
+              border-radius: 7px;
+              color: var(--la-text);
+              max-width: 22em;
+              padding: 0.7em 1.2em;
+              text-align: center;
+              width: 100%;
+            }
+
+            .concept-flow .flow-step strong {
+              color: var(--la-coral);
+            }
+
+            .concept-flow .flow-arrow {
+              color: var(--la-teal);
+              font-size: 1.35em;
+              line-height: 1.25;
+            }
+
+            .percentile-callout {
+              background: var(--la-panel);
+              border-left: 5px solid var(--la-cdf);
+              border-radius: 7px;
+              color: var(--la-text);
+              margin: 1.25em 0;
+              padding: 1em;
+            }
+
+            .percentile-callout strong {
+              color: var(--la-cdf);
+            }
+
+            .katex-display,
+            .math,
+            .math-block {
+              background: #00070e;
+              border-left: 6px solid #2f005c;
+              border-radius: 6px;
+              padding: 0.6em 0.8em;
+              overflow-x: auto;
+              color: #c9c9c9 !important;
+              font-family: "Latin Modern Math", "Cambria Math", "STIX Two Math", serif !important;
+            }
+
+            .katex,
+            .katex * {
+              color: #9b9a9a !important;
+              font-family: "Latin Modern Math", "Cambria Math", "STIX Two Math", serif !important;
+            }
+
+            @media (max-width: 700px) {
+              .summary-grid,
+              .ml-grid,
+              .intuition-grid {
+                flex-direction: column;
+              }
+            }
+          </style>
+
+          <h1 id="ensemble-models">Ensemble Models</h1>
+
+          <h4 id="ensemble-learning">Ensemble Learning</h4>
+
+          <h2 id="01-what-are-ensembles">01. What Are Ensembles</h2>
+          <p><img src="./assets/01.01.jpg" alt="LR" /></p>
+          <p><img src="./assets/01.02.jpg" alt="LR" /></p>
+          <blockquote>
+            <p><strong>Ensembles</strong></p>
+          </blockquote>
+          <p>Analogy: a group of “musicians”.</p>
+          <p>In Machine Learning: <strong>multiple models used together</strong>.</p>
+          <p>$$ {M_1, M_2, M_3, \dots, M_K} \quad \text{base models} $$</p>
+          <p>They are combined to produce a more powerful model $M$.</p>
+          <h3 id="four-main-types">Four Main Types</h3>
+          <ol>
+            <li><strong>Bagging</strong> (Bootstrap Aggregating)</li>
+            <li><strong>Boosting</strong></li>
+            <li><strong>Stacking</strong></li>
+            <li><strong>Cascading</strong></li>
+          </ol>
+          <p>These techniques are:</p>
+          <ul>
+            <li>high-performing</li>
+            <li>very powerful</li>
+            <li>extremely popular on Kaggle</li>
+            <li>very useful in real-world applications</li>
+          </ul>
+          <h3 id="key-aspect">Key Aspect</h3>
+          <p>
+            The more <strong>different</strong> the base models $M_1, M_2, \dots, M_K$ are,<br />
+            the better you can combine them.
+          </p>
+          <p>This is a <strong>generic</strong> principle.</p>
+          <p>
+            <strong>Problem</strong>: each individual model $M_i$ is only an “expert” on part of the
+            problem; the ensemble tries to overcome that limitation.
+          </p>
+          <h2 id="02-bootstrapped-aggregation-bagging-intuition">
+            02. Bootstrapped Aggregation (Bagging) Intuition
+          </h2>
+          <p><img src="./assets/02.01.jpg" alt="LR" /></p>
+          <p><img src="./assets/02.02.jpg" alt="LR" /></p>
+          <blockquote>
+            <p><strong>Bagging (Bootstrap Aggregation)</strong></p>
+          </blockquote>
+          <p>Also known as the foundation of <strong>Random Forest</strong>.</p>
+          <h3 id="intuition">Intuition</h3>
+          <p>Given the original training set $D_n = {(x_i,y_i)}$ of size $n$:</p>
+          <ol>
+            <li>
+              <p>
+                Create $K$ <strong>bootstrap samples</strong> $D_n^1, D_n^2, \dots, D_n^K$<br />
+                (sampling <strong>with replacement</strong>, each of size $m \le n$).
+              </p>
+            </li>
+            <li>
+              <p>
+                Train one base model on each bootstrap sample: $$ M_1 \text{ on } D_n^1,; M_2 \text{
+                on } D_n^2,; \dots,; M_K \text{ on } D_n^K $$
+              </p>
+            </li>
+            <li><p>Aggregate the $K$ models into a final model $M$.</p></li>
+          </ol>
+          <p>Each model $M_i$ has seen a slightly different subset of the data.</p>
+          <h3 id="aggregation">Aggregation</h3>
+          <ul>
+            <li><strong>Classification</strong> → Majority vote</li>
+            <li><strong>Regression</strong> → Mean or Median</li>
+          </ul>
+          <p>For a query point $x_q$:</p>
+          <p>
+            $$ \begin{align*} y_q^1 &amp;= M_1(x_q) \ y_q^2 &amp;= M_2(x_q) \ &amp;\vdots \ y_q^K
+            &amp;= M_K(x_q) \end{align*} $$
+          </p>
+          <p>Final prediction:</p>
+          <ul>
+            <li>Classification: majority of ${y_q^1,\dots,y_q^K}$</li>
+            <li>Regression: $y_q = \text{mean}{y_q^i}$ (or median)</li>
+          </ul>
+          <h3 id="bootstrap-sampling--variance">Bootstrap Sampling &amp; Variance</h3>
+          <p>
+            Because each bootstrap sample is slightly different, each base model changes a
+            little.<br />
+            This is exactly the definition of <strong>variance</strong> of a model.
+          </p>
+          <h3 id="bias-variance-view">Bias-Variance View</h3>
+          <p>Model error = Bias² + Variance + ε</p>
+          <ul>
+            <li>
+              <p>
+                Base models $M_i$ are typically
+                <strong>low-bias, high-variance</strong> models<br />
+                (e.g. deep Decision Trees).
+              </p>
+            </li>
+            <li>
+              <p>Bagging keeps the low bias and <strong>reduces the variance</strong>.</p>
+            </li>
+          </ul>
+          <p>
+            Result of bagging low-bias / high-variance models: → still low bias, but
+            <strong>reduced variance</strong>.
+          </p>
+          <h3 id="connection-to-random-forest">Connection to Random Forest</h3>
+          <ul>
+            <li>A deep Decision Tree = low-bias, high-variance model.</li>
+            <li>
+              Bagging many such trees → <strong>Random Forest</strong> (the most popular and widely
+              used bagging method).
+            </li>
+          </ul>
+          <h2 id="03-random-forest-and-their-construction">
+            03. Random Forest and Their Construction
+          </h2>
+          <p><img src="./assets/03.01.jpg" alt="LR" /></p>
+          <p><img src="./assets/03.02.jpg" alt="LR" /></p>
+          <blockquote>
+            <p><strong>Random Forest (Bagging)</strong></p>
+          </blockquote>
+          <p>Random Forest = Decision Trees + Bagging + Column Sampling</p>
+          <h3 id="core-idea">Core Idea</h3>
+          <ul>
+            <li>
+              Base learners: Decision Trees of <strong>reasonable depth</strong> (low-bias,
+              high-variance models).
+            </li>
+            <li>
+              Two types of randomness:
+              <ol>
+                <li>
+                  <strong>Row sampling</strong> (Bootstrap Sampling) – sampling with replacement
+                </li>
+                <li><strong>Column / Feature sampling</strong> (Feature Bagging)</li>
+              </ol>
+            </li>
+          </ul>
+          <p>$$ \text{RF} = \text{DT} + \text{Bagging} + \text{Col. Sampling} $$</p>
+          <h3 id="how-a-bootstrap--feature-sample-is-created">
+            How a Bootstrap + Feature Sample is Created
+          </h3>
+          <p>Original training matrix $D_n$ has shape $n \times d$.</p>
+          <p>For each base model $M_i$ we create a smaller matrix $D^i$:</p>
+          <ul>
+            <li>$m$ rows sampled with replacement ($m \le n$)</li>
+            <li>$d'$ columns sampled without replacement ($d' &lt; d$)</li>
+          </ul>
+          <p>$$ D^i ;\text{has shape}; m \times d' $$</p>
+          <p>Each tree therefore sees:</p>
+          <ul>
+            <li>a different subset of the points, and</li>
+            <li>a different subset of the features.</li>
+          </ul>
+          <h3 id="aggregation-2">Aggregation</h3>
+          <ul>
+            <li>Classification → Majority vote</li>
+            <li>Regression → Mean or Median</li>
+          </ul>
+          <h3 id="out-of-bag-oob-samples">Out-of-Bag (OOB) Samples</h3>
+          <p>For every tree $M_i$ trained on $D^i$:</p>
+          <p>$$ D_n - D^i = \text{Out-of-Bag (OOB) samples} $$</p>
+          <p>
+            These OOB points can be used as a <strong>built-in cross-validation set</strong> for
+            that tree → <strong>OOB error</strong>.
+          </p>
+          <h3 id="summary-of-random-forest">Summary of Random Forest</h3>
+          <p>
+            $$ \begin{align*} \text{RF} &amp;= \text{Decision Trees of reasonable depth} \
+            &amp;\quad + \text{Row sampling with replacement} \ &amp;\quad + \text{Column sampling}
+            \ &amp;\quad + \text{Aggregation (majority / mean / median)} \end{align*} $$
+          </p>
+          <p>
+            Result: low-bias models whose high variance has been reduced by bagging and feature
+            randomness.
+          </p>
+          <h2 id="04-bias-variance-tradeoff">04. Bias-Variance Tradeoff</h2>
+          <p><img src="./assets/04.01.jpg" alt="LR" /></p>
+          <p><img src="./assets/04.02.jpg" alt="LR" /></p>
+          <blockquote>
+            <p><strong>Bias–Variance Trade-off in Random Forest</strong></p>
+          </blockquote>
+          <h3 id="random-forest-properties">Random Forest Properties</h3>
+          <ul>
+            <li>
+              Base learners $M_i$ are <strong>low-bias</strong> models (deep / reasonably deep
+              Decision Trees).
+            </li>
+            <li>Therefore the final aggregated model $M$ also has <strong>low bias</strong>:</li>
+          </ul>
+          <p>$$ \text{bias}(M) = \text{bias}(M_i) $$</p>
+          <ul>
+            <li>Random Forest’s main job is to <strong>reduce variance</strong>.</li>
+          </ul>
+          <p>$$ M = \text{agg}(M_1, M_2, \dots, M_K) $$</p>
+          <p>Effect of the number of trees $K$:</p>
+          <ul>
+            <li>$K \uparrow$ → Variance $\downarrow$</li>
+            <li>$K \downarrow$ → Variance $\uparrow$</li>
+          </ul>
+          <p>(Typical practical values: a few hundred to a few thousand trees, e.g. 200–2000.)</p>
+          <h3 id="row--column-sampling-ratios">Row &amp; Column Sampling Ratios</h3>
+          <p>
+            From the original data $D_n$ ($n$ rows, $d$ columns) we create each bootstrap matrix
+            $D^i$:
+          </p>
+          <ul>
+            <li>Row sampling ratio (RSR) = $m/n$ (often ≈ 100 % or slightly less)</li>
+            <li>Column sampling ratio (CSR) = $d'/d$ (often $\sqrt{d}$ or 20–50 %)</li>
+          </ul>
+          <p>
+            Lower sampling ratios → more diversity among trees → lower variance of the ensemble.
+          </p>
+          <p>Hyper-parameters that control variance:</p>
+          <ul>
+            <li>$K$ (number of base learners)</li>
+            <li>Column Sampling Ratio (CSR)</li>
+            <li>Row Sampling Ratio (RSR)</li>
+          </ul>
+          <h3 id="model-selection-practice">Model Selection Practice</h3>
+          <ol>
+            <li>Train many Random Forests with different $K$ (and different sampling ratios).</li>
+            <li>Evaluate on a validation / CV set.</li>
+            <li>Performance typically rises quickly and then saturates (e.g. around $K=200$).</li>
+            <li>
+              Finally report the performance of the chosen model on a held-out
+              <strong>test set</strong>.
+            </li>
+          </ol>
+          <p>This is how we control the bias–variance trade-off in practice for Random Forests.</p>
+          <h2 id="05-train-and-run-time-complexity">05. Train and Run Time Complexity</h2>
+          <p><img src="./assets/05.01.jpg" alt="LR" /></p>
+          <p><img src="./assets/05.02.jpg" alt="LR" /></p>
+          <blockquote>
+            <p><strong>Train &amp; Runtime Complexity of Random Forest</strong></p>
+          </blockquote>
+          <h3 id="training-complexity">Training Complexity</h3>
+          <p>Random Forest with $K$ base learners (Decision Trees):</p>
+          <p>$$ \text{Train time} ;\sim; O\bigl(n\log n\cdot d\cdot K\bigr) $$</p>
+          <ul>
+            <li>
+              Extremely <strong>embarrassingly parallel</strong>: each tree can be trained
+              independently on a different core / machine.
+            </li>
+            <li>Easily scales to multi-core machines or large clusters (100 boxes, etc.).</li>
+            <li>
+              Suitable for very large data (even petabyte scale) as long as the number of features
+              $d$ is reasonable.
+            </li>
+            <li>
+              Typical ensemble size: a few hundred to a couple of thousand trees (e.g. 200–2000).
+            </li>
+          </ul>
+          <h3 id="runtime-prediction-complexity">Runtime (Prediction) Complexity</h3>
+          <p>To predict a single point we must evaluate all $K$ trees:</p>
+          <p>$$ \text{Prediction time} = O(\text{depth}\times K) $$</p>
+          <ul>
+            <li>Each tree is a simple nested if-else.</li>
+            <li>
+              For reasonable depths (10–20) and a few hundred trees the latency stays very low.
+            </li>
+            <li>
+              Example: RF with 200 trees of depth 6 → roughly <strong>3 ms</strong> prediction time.
+            </li>
+          </ul>
+          <h3 id="space-complexity">Space Complexity</h3>
+          <p>We need to store all $K$ trees:</p>
+          <p>$$ \text{Space} = O(\text{size of one DT}\times K) $$</p>
+          <h3 id="practical-takeaway">Practical Takeaway</h3>
+          <p>Random Forests offer an excellent trade-off:</p>
+          <ul>
+            <li>Training is parallel and scales well.</li>
+            <li>Prediction remains fast enough for most real-time / low-latency applications.</li>
+          </ul>
+          <h2 id="06-bagging-code-sample">06. Bagging Code Sample</h2>
+          <p>
+            <a
+              href="https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestClassifier.html"
+              >https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestClassifier.html</a
+            >
+          </p>
+          <h2 id="07-extremely-randomized-trees">07. Extremely Randomized Trees</h2>
+          <p><img src="./assets/07.01.jpg" alt="LR" /></p>
+          <p><img src="./assets/07.02.jpg" alt="LR" /></p>
+          <blockquote>
+            <p><strong>Extremely Randomized Trees (Extra Trees)</strong></p>
+          </blockquote>
+          <h3 id="difference-from-ordinary-random-forest">
+            Difference from ordinary Random Forest
+          </h3>
+          <p>In a regular Decision Tree / Random Forest:</p>
+          <ul>
+            <li>
+              For a numerical feature $f_i$ we <strong>sort</strong> all its values and try
+              <strong>all possible thresholds</strong> $\tau$ to find the best split.
+            </li>
+          </ul>
+          <p>In <strong>Extremely Randomized Trees</strong>:</p>
+          <ul>
+            <li>
+              We only try a <strong>random sample</strong> of possible threshold values (e.g. 10
+              random candidate thresholds) instead of exhaustively searching all of them.
+            </li>
+          </ul>
+          <h3 id="how-extra-trees-work">How Extra Trees work</h3>
+          <p>
+            Extra Trees = Column Sampling + Row Sampling + Aggregation<br />
+            <strong>+ randomization when selecting the threshold $\tau$</strong>
+          </p>
+          <p>
+            $$ \begin{align*} \text{RF} &amp;\rightarrow \text{C.S. + R.S.} \ \text{ET}
+            &amp;\rightarrow \text{C.S. + R.S. + random }\tau \end{align*} $$
+          </p>
+          <h3 id="why-extra-randomization">Why extra randomization?</h3>
+          <p>Randomization is used as a way to <strong>further reduce variance</strong>.</p>
+          <ul>
+            <li>
+              Extra Trees introduce even more randomness than Random Forest (by randomizing the
+              split thresholds).
+            </li>
+            <li>
+              Consequently they often achieve <strong>lower variance</strong> than a standard Random
+              Forest (sometimes at a small cost in bias).
+            </li>
+          </ul>
+          <h3 id="summary">Summary</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Method</th>
+                <th>Randomness sources</th>
+                <th>Effect on variance</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Ordinary DT</td>
+                <td>none</td>
+                <td>high</td>
+              </tr>
+              <tr>
+                <td>Random Forest</td>
+                <td>row sampling + column sampling</td>
+                <td>reduced</td>
+              </tr>
+              <tr>
+                <td>Extremely Randomized Trees</td>
+                <td>row sampling + column sampling + random $\tau$</td>
+                <td>reduced even more</td>
+              </tr>
+            </tbody>
+          </table>
+          <h2 id="08-random-tree-cases">08. Random Tree Cases</h2>
+          <p><img src="./assets/08.01.jpg" alt="LR" /></p>
+          <p><img src="./assets/08.02.jpg" alt="LR" /></p>
+          <blockquote>
+            <p><strong>Cases for Random Forest</strong></p>
+          </blockquote>
+          <p>
+            Random Forest inherits most of the cases/advantages of Decision Trees and adds the
+            variance-reduction benefits of bagging + column sampling.
+          </p>
+          <p>
+            $$ \text{RF} = \text{DT} + \text{Row Sampling} + \text{Column Sampling} +
+            \text{Aggregation} $$
+          </p>
+          <h3 id="1-biasvariance-behaviour">1. Bias–Variance Behaviour</h3>
+          <ul>
+            <li>Base learners are deep Decision Trees → <strong>low bias</strong>.</li>
+            <li>The ensemble reduces variance through randomization and aggregation.</li>
+            <li>
+              Main hyper-parameters that control the bias–variance trade-off:
+              <ul>
+                <li>Depth of the individual trees</li>
+                <li>Number of base learners $K$</li>
+              </ul>
+            </li>
+          </ul>
+          <h3 id="large-dimensionality--high-cardinality-categorical-features">
+            Large Dimensionality &amp; High-Cardinality Categorical Features
+          </h3>
+          <ul>
+            <li>Random Forest handles high-dimensional data well because of column sampling.</li>
+            <li>
+              For categorical features with many levels we still prefer <strong>not</strong> to
+              one-hot encode (same reason as for ordinary DTs).<br />
+              Convert them to a numerical probability feature or use native categorical support when
+              available.
+            </li>
+          </ul>
+          <h3 id="2-feature-importance-in-random-forest">2. Feature Importance in Random Forest</h3>
+          <p>
+            In a single Decision Tree the importance of a feature $f_i$ is the total reduction in
+            impurity (Entropy / Information Gain / Gini) that $f_i$ produces across all the nodes
+            where it is used.
+          </p>
+          <p>
+            In a Random Forest we simply <strong>average</strong> this quantity over all $K$ trees:
+          </p>
+          <p>
+            $$ \text{Importance}(f_i) = \text{average over } M_1,\dots,M_K \text{ of the total
+            impurity reduction caused by } f_i $$
+          </p>
+          <p>
+            This gives a more stable and reliable feature-importance ranking than a single tree.
+          </p>
+          <h2 id="09-boosting-intuition">09. Boosting Intuition</h2>
+          <p><img src="./assets/09.01.jpg" alt="LR" /></p>
+          <p><img src="./assets/09.02.jpg" alt="LR" /></p>
+          <blockquote>
+            <p><strong>Boosting – Intuition</strong></p>
+          </blockquote>
+          <h3 id="bagging-vs-boosting">Bagging vs Boosting</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Method</th>
+                <th>Base models</th>
+                <th>What we do</th>
+                <th>Goal</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Bagging</td>
+                <td>high-variance, low-bias</td>
+                <td>randomize + aggregate (RS + CS)</td>
+                <td>reduce variance</td>
+              </tr>
+              <tr>
+                <td>Boosting</td>
+                <td>low-variance, high-bias</td>
+                <td>additively combine the models</td>
+                <td>reduce bias while keeping variance low</td>
+              </tr>
+            </tbody>
+          </table>
+          <p>Error = Bias² + Variance + ε</p>
+          <h3 id="core-idea-of-boosting">Core Idea of Boosting</h3>
+          <p>Start with a simple (high-bias) model and successively correct its residual errors.</p>
+          <ol>
+            <li>
+              <p>
+                Train an initial model $h_0(x)$ on the original data<br />
+                (typically a weak learner – e.g. a shallow Decision Tree).<br />
+                High bias → high training error.
+              </p>
+            </li>
+            <li>
+              <p>
+                Compute the residual / error of this model: $$ \text{error}_i = y_i - h_0(x_i) $$
+                (can be squared error, log-loss, hinge, etc.)
+              </p>
+            </li>
+            <li>
+              <p>
+                Train the next model $h_1(x)$ on the residuals: $$ {x_i,; \text{error}_i} $$ so that
+                $h_1(x) \approx y_i - h_0(x_i)$.
+              </p>
+            </li>
+            <li><p>Form the stage-1 model: $$ F_1(x) = \alpha_0 h_0(x) + \alpha_1 h_1(x) $$</p></li>
+            <li>
+              <p>
+                Repeat: at stage $k$ we fit $h_k$ to the residual error of $F_{k-1}$: $$
+                \text{residual}<em>i = y_i - F</em>{k-1}(x_i) $$ and obtain $$ F_k(x) =
+                \sum_{i=0}^{k} \alpha_i h_i(x) $$
+              </p>
+            </li>
+          </ol>
+          <h3 id="final-model">Final Model</h3>
+          <p>After $K$ stages we have an <strong>additive weighted model</strong>:</p>
+          <p>$$ F_K(x) = \sum_{i=0}^{K} \alpha_i h_i(x) $$</p>
+          <p>
+            Each new base learner is trained to fit the residual error left by the previous ensemble
+            → training error (and therefore bias) steadily decreases while the variance stays under
+            control.
+          </p>
+          <h3 id="popular-instances">Popular Instances</h3>
+          <ul>
+            <li>
+              <strong>Gradient Boosted Decision Trees (GBDT)</strong> – extremely popular on the
+              internet
+            </li>
+            <li>
+              <strong>AdaBoost</strong> – historically important (especially for face detection)
+            </li>
+          </ul>
+          <h2 id="10-residuals-loss-functions-and-gradients">
+            10. Residuals, Loss Functions and Gradients
+          </h2>
+          <p><img src="./assets/10.01.jpg" alt="LR" /></p>
+          <p><img src="./assets/10.02.jpg" alt="LR" /></p>
+          <blockquote>
+            <p><strong>Residuals, Loss Functions &amp; Gradients → Gradient Boosting</strong></p>
+          </blockquote>
+          <h3 id="additive-model">Additive Model</h3>
+          <p>$$ F_K(x) = \sum_{i=0}^{K} \alpha_i h_i(x) $$</p>
+          <p>At the end of stage $k$ the residual (or error) is</p>
+          <p>$$ \text{err}_i = y_i - F_k(x_i) $$</p>
+          <p>
+            The next base learner $M_{k+1}$ (i.e. $h_{k+1}$) is trained on the pairs ${(x_i,
+            \text{err}_i)}$.
+          </p>
+          <h3 id="loss-minimization-view">Loss Minimization View</h3>
+          <p>Different problems use different loss functions:</p>
+          <table>
+            <thead>
+              <tr>
+                <th>Task</th>
+                <th>Typical Loss</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Classification</td>
+                <td>Logistic loss</td>
+              </tr>
+              <tr>
+                <td>Regression</td>
+                <td>Squared loss</td>
+              </tr>
+              <tr>
+                <td>SVM-style</td>
+                <td>Hinge loss</td>
+              </tr>
+            </tbody>
+          </table>
+          <p><strong>Squared loss (regression)</strong> – the easiest case:</p>
+          <p>$$ \mathcal{L}\bigl(y_i, F_k(x_i)\bigr) = \bigl(y_i - F_k(x_i)\bigr)^2 $$</p>
+          <p>Let $z_i = F_k(x_i)$. Then</p>
+          <p>$$ \frac{\partial\mathcal{L}}{\partial z_i} = -2(y_i - z_i) $$</p>
+          <p>Hence the <strong>negative gradient</strong> is</p>
+          <p>$$ -\frac{\partial\mathcal{L}}{\partial F_k(x_i)} = 2(y_i - F_k(x_i)) $$</p>
+          <p>which is exactly proportional to the residual.</p>
+          <h3 id="pseudo-residuals">Pseudo-residuals</h3>
+          <p>
+            In general, for <strong>any differentiable loss</strong>, we define the
+            <strong>pseudo-residual</strong> as the negative gradient of the loss with respect to
+            the current prediction:
+          </p>
+          <p>
+            $$ \text{pseudo-residual}<em>i = -\frac{\partial\mathcal{L}}{\partial F</em>{i-1}(x_i)}
+            $$
+          </p>
+          <p>The next weak learner $h_i$ is fitted to these pseudo-residuals.</p>
+          <h3 id="key-insight">Key Insight</h3>
+          <ul>
+            <li>Random Forest minimises a fixed loss (usually 0-1 / Gini / impurity).</li>
+            <li>
+              Gradient Boosting can minimise <strong>any differentiable loss</strong> by repeatedly
+              fitting the negative gradient (pseudo-residuals).
+            </li>
+          </ul>
+          <p>This is what makes Gradient Boosting extremely flexible and powerful.</p>
+          <h3 id="stage-i-picture">Stage-$i$ Picture</h3>
+          <p>
+            $$ \begin{align*} &amp;\text{Current model: } F_{i-1}(x) \ &amp;\text{Pseudo-residuals:
+            } -\frac{\partial\mathcal{L}}{\partial F_{i-1}(x_i)} \ &amp;\text{Fit } h_i(x) \text{ to
+            the pairs } \bigl(x_i,;\text{pseudo-residual}_i\bigr) \end{align*} $$
+          </p>
+          <h2 id="11-pseudo-residuals-for-log-loss-and-classification">
+            11. Pseudo Residuals for Log-Loss and Classification
+          </h2>
+          <p><img src="./assets/11.01.jpg" alt="LR" /></p>
+          <p><img src="./assets/11.02.jpg" alt="LR" /></p>
+          <blockquote>
+            <p><strong>Pseudo-residuals for Different Loss Functions</strong></p>
+          </blockquote>
+          <h3 id="question">Question</h3>
+          <p>
+            Is the pseudo-residual $\Bigl(-\dfrac{\partial\mathcal{L}}{\partial F_k(x)}\Bigr)$ the
+            same as the ordinary residual for non-squared-loss functions?
+          </p>
+          <h3 id="answer">Answer</h3>
+          <p>
+            Only for <strong>squared loss</strong> is the negative gradient exactly proportional to
+            the residual:
+          </p>
+          <p>$$ -\frac{\partial\mathcal{L}}{\partial F_k(x_i)} = 2\bigl(y_i - F_k(x_i)\bigr) $$</p>
+          <p>
+            For other losses the negative gradient is a
+            <strong>generalised residual</strong> (pseudo-residual).
+          </p>
+          <h3 id="logistic-loss-binary-classification">Logistic Loss (Binary Classification)</h3>
+          <p>$$ F_k(x) = \hat{y}_i \qquad\text{(log-odds)} $$</p>
+          <p>
+            $$ p_i = \frac{1}{1+\exp(-F_k(x_i))} = \text{probability that } x_i\text{ belongs to
+            class 1} $$
+          </p>
+          <p>The negative gradient of the logistic loss is</p>
+          <p>$$ -\frac{\partial\mathcal{L}}{\partial F_k(x_i)} = p_i - y_i $$</p>
+          <p>(Derivation shown in the notes leads to $p_i - y_i$.)</p>
+          <p>Thus the pseudo-residual is simply</p>
+          <p>$$ \text{pseudo-residual}_i = p_i - y_i $$</p>
+          <h3 id="summary-2">Summary</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Loss</th>
+                <th>Pseudo-residual equals ordinary residual?</th>
+                <th>Task</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Squared loss</td>
+                <td>Yes</td>
+                <td>Regression</td>
+              </tr>
+              <tr>
+                <td>Logistic loss</td>
+                <td>Yes (it is $p_i - y_i$)</td>
+                <td>Classification</td>
+              </tr>
+              <tr>
+                <td>Any other differentiable loss</td>
+                <td>No – it is the negative gradient</td>
+                <td>General</td>
+              </tr>
+            </tbody>
+          </table>
+          <h3 id="why-do-we-use-pseudo-residuals">Why do we use pseudo-residuals?</h3>
+          <p>
+            Because Gradient Boosting can optimise <strong>any differentiable loss</strong> by
+            repeatedly fitting the negative gradient of that loss.<br />
+            The ordinary residual only coincides with the negative gradient for squared loss; for
+            every other loss we must use the true gradient (pseudo-residual).
+          </p>
+          <h2 id="12-mathematical-reasoning-for-using-pseudo-residuals">
+            12. Mathematical Reasoning for using Pseudo Residuals
+          </h2>
+          <p><img src="./assets/12.01.jpg" alt="LR" /></p>
+          <p><img src="./assets/12.02.jpg" alt="LR" /></p>
+          <p>
+            <a href="https://en.wikipedia.org/wiki/Gradient_boosting#Algorithm"
+              >https://en.wikipedia.org/wiki/Gradient_boosting#Algorithm</a
+            >
+          </p>
+          <blockquote>
+            <p><strong>Gradient Boosting – Formal Algorithm</strong></p>
+          </blockquote>
+          <h3 id="goal">Goal</h3>
+          <p>Find a function $\hat{F}(x)$ that minimises the expected loss:</p>
+          <p>$$ \hat{F} = \arg\min_F;\mathbb{E}_{x,y}\bigl[L\bigl(y,F(x)\bigr)\bigr] $$</p>
+          <p>We look for an additive expansion of weak learners:</p>
+          <p>$$ \hat{F}(x) = \sum_{m=1}^{M}\gamma_m h_m(x) + \text{const} $$</p>
+          <p>
+            where each $h_m\in\mathcal{H}$ is a base (weak) learner and $\gamma_m$ is its weight.
+          </p>
+          <h3 id="greedy-stage-wise-construction">Greedy Stage-wise Construction</h3>
+          <p>Start with a constant model</p>
+          <p>$$ F_0(x) = \arg\min_{h_0}\sum_{i=1}^n L\bigl(y_i,h_0(x_i)\bigr) $$</p>
+          <p>Then, for $m=1,2,\dots,M$:</p>
+          <p>$$ F_m(x) = F_{m-1}(x) + \gamma_m h_m(x) $$</p>
+          <p>where the new base learner is chosen by</p>
+          <p>
+            $$ h_m = \arg\min_{h\in\mathcal{H}}\sum_{i=1}^n L\bigl(y_i,F_{m-1}(x_i)+h(x_i)\bigr) $$
+          </p>
+          <p>and the step size (weight) is</p>
+          <p>
+            $$ \gamma_m = \arg\min_{\gamma}\sum_{i=1}^n L\bigl(y_i,F_{m-1}(x_i)+\gamma
+            h_m(x_i)\bigr) $$
+          </p>
+          <h3 id="functional-gradient-descent-view">Functional Gradient Descent View</h3>
+          <p>
+            Directly minimising the above is hard for an arbitrary loss.<br />
+            Instead we take a steepest-descent step in function space.<br />
+            The direction of steepest descent is the <strong>negative gradient</strong> of the loss:
+          </p>
+          <p>$$ -\nabla_{F_{m-1}}L\bigl(y_i,F_{m-1}(x_i)\bigr) $$</p>
+          <p>
+            We therefore fit the next weak learner $h_m$ to the <strong>pseudo-residuals</strong>
+          </p>
+          <p>
+            $$ r_{im} = -\frac{\partial L\bigl(y_i,F_{m-1}(x_i)\bigr)}{\partial F_{m-1}(x_i)} $$
+          </p>
+          <p>and then perform a line search for the optimal step size $\gamma_m$.</p>
+          <h3 id="generic-gradient-boosting-pseudocode">Generic Gradient-Boosting Pseudocode</h3>
+          <ol>
+            <li>Initialise $F_0(x)$</li>
+            <li>
+              For $m=1$ to $M$:<br />
+              a. Compute pseudo-residuals<br />
+              $$r_{im}=-\partial L(y_i,F_{m-1}(x_i))/\partial F_{m-1}(x_i)$$<br />
+              b. Fit a base learner $h_m$ to the pairs ${(x_i,r_{im})}$<br />
+              c. Choose step size<br />
+              $$\gamma_m=\arg\min_\gamma\sum_i L\bigl(y_i,F_{m-1}(x_i)+\gamma h_m(x_i)\bigr)$$<br />
+              d. Update<br />
+              $$F_m(x)=F_{m-1}(x)+\gamma_m h_m(x)$$
+            </li>
+            <li>Output the final model $F_M(x)$</li>
+          </ol>
+          <h2 id="13-gradient-boosting">13. Gradient Boosting</h2>
+          <p><img src="./assets/13.01.jpg" alt="LR" /></p>
+          <p><img src="./assets/13.02.jpg" alt="LR" /></p>
+          <p>
+            <a href="https://en.wikipedia.org/wiki/Gradient_boosting#Algorithm"
+              >https://en.wikipedia.org/wiki/Gradient_boosting#Algorithm</a
+            >
+          </p>
+          <blockquote>
+            <p><strong>Gradient Boosting – Algorithm (Pseudocode)</strong></p>
+          </blockquote>
+          <p><strong>Input</strong></p>
+          <ul>
+            <li>Training set ${(x_i,y_i)}_{i=1}^n$</li>
+            <li>Differentiable loss function $L(y,F(x))$</li>
+            <li>Number of iterations $M$</li>
+          </ul>
+          <p><strong>Algorithm</strong></p>
+          <ol>
+            <li><strong>Initialise</strong> the model with a constant value:</li>
+          </ol>
+          <p>$$ F_0(x) = \arg\min_{\gamma}\sum_{i=1}^n L(y_i,\gamma) $$</p>
+          <ol start="2">
+            <li>
+              <p><strong>For</strong> $m = 1$ <strong>to</strong> $M$:</p>
+              <p>a. Compute the <strong>pseudo-residuals</strong></p>
+              <p>
+                $$ r_{im} = -\left[\frac{\partial L(y_i,F(x_i))}{\partial
+                F(x_i)}\right]<em>{F(x)=F</em>{m-1}(x)} \qquad\text{for }i=1,\dots,n $$
+              </p>
+              <p>
+                b. Fit a base learner (weak learner) $h_m(x)$ to the pseudo-residuals,<br />
+                i.e. train it on the set ${(x_i,r_{im})}_{i=1}^n$.
+              </p>
+              <p>
+                c. Compute the multiplier (step size) $\gamma_m$ by solving the one-dimensional
+                optimisation problem
+              </p>
+              <p>
+                $$ \gamma_m = \arg\min_{\gamma}\sum_{i=1}^n
+                L\bigl(y_i,F_{m-1}(x_i)+\gamma,h_m(x_i)\bigr) $$
+              </p>
+              <p>d. <strong>Update</strong> the model</p>
+              <p>$$ F_m(x) = F_{m-1}(x) + \gamma_m h_m(x) $$</p>
+            </li>
+            <li>
+              <p><strong>Output</strong> the final model $F_M(x)$.</p>
+            </li>
+          </ol>
+          <h2 id="14-regularization-by-shrinkage">14. Regularization by Shrinkage</h2>
+          <p><img src="./assets/14.01.jpg" alt="LR" /></p>
+          <p><img src="./assets/14.02.jpg" alt="LR" /></p>
+          <p>
+            <a href="https://en.wikipedia.org/wiki/Gradient_boosting#Regularization"
+              >https://en.wikipedia.org/wiki/Gradient_boosting#Regularization</a
+            >
+          </p>
+          <blockquote>
+            <p><strong>Regularization &amp; Shrinkage in Gradient Boosting</strong></p>
+          </blockquote>
+          <h3 id="additive-model-2">Additive Model</h3>
+          <p>$$ F_M(x) = h_0(x) + \sum_{m=1}^{M} \gamma_m h_m(x) $$</p>
+          <ul>
+            <li>$M$ = number of base models (boosting stages)</li>
+          </ul>
+          <h3 id="biasvariance-behaviour">Bias–Variance Behaviour</h3>
+          <ul>
+            <li>
+              <p>
+                Increasing $M$ (more base learners)<br />
+                → bias decreases<br />
+                → but risk of <strong>overfitting</strong> increases → variance increases
+              </p>
+            </li>
+            <li>
+              <p>
+                Therefore $M$ is an important <strong>hyper-parameter</strong> that must be chosen
+                carefully (usually by cross-validation).
+              </p>
+            </li>
+          </ul>
+          <h3 id="practical-observation">Practical Observation</h3>
+          <p>
+            Gradient Boosting / GBDT can easily overfit when $M$ becomes large<br />
+            (typical dangerous values: $M = 1000$–$2000$ or more).
+          </p>
+          <h3 id="shrinkage-learning-rate">Shrinkage (Learning-rate)</h3>
+          <p>
+            To control overfitting we introduce a <strong>shrinkage</strong> (learning-rate)
+            parameter $v$ (or $\eta$):
+          </p>
+          <p>$$ F_m(x) = F_{m-1}(x) + v\cdot\gamma_m h_m(x) $$</p>
+          <ul>
+            <li>$0 &lt; v \le 1$ (typical values: 0.01 – 0.1)</li>
+            <li>
+              Smaller $v$ → slower learning → need larger $M$, but much better generalisation.
+            </li>
+          </ul>
+          <h3 id="hyper-parameter-tuning">Hyper-parameter Tuning</h3>
+          <p>We perform a <strong>grid search</strong> (or random search) over the pair</p>
+          <p>$$ (M,; v) $$</p>
+          <p>using cross-validation to find the best trade-off between bias and variance.</p>
+          <h2 id="15-train-and-run-time-complexity">15. Train and Run Time Complexity</h2>
+          <p><img src="./assets/15.01.jpg" alt="LR" /></p>
+          <p><img src="./assets/15.02.jpg" alt="LR" /></p>
+          <blockquote>
+            <p><strong>Train &amp; Runtime Complexity of Gradient Boosting (GB / GBDT)</strong></p>
+          </blockquote>
+          <h3 id="training-complexity-2">Training Complexity</h3>
+          <p>$$ \text{Train time} ;\sim; O(n\log n\cdot d\cdot M) $$</p>
+          <p>where $M$ = number of base learners (boosting stages).</p>
+          <p><strong>Important difference from Random Forest</strong></p>
+          <ul>
+            <li>
+              Random Forest trees are independent → <strong>trivially parallelisable</strong>.
+            </li>
+            <li>
+              Gradient Boosting is <strong>sequential</strong>: each stage depends on the residuals
+              of the previous stage.<br />
+              → much harder to parallelise.<br />
+              → GBDT typically takes <strong>more wall-clock time</strong> to train than a Random
+              Forest of similar size.
+            </li>
+          </ul>
+          <h3 id="runtime-prediction-complexity-2">Runtime (Prediction) Complexity</h3>
+          <p>To predict a single point we evaluate all $M$ trees:</p>
+          <p>$$ \text{Prediction time} = O(\text{depth}\times M) $$</p>
+          <ul>
+            <li>Depth of each tree is usually kept <strong>small</strong> in GBDT (often 3–8).</li>
+            <li>
+              Therefore even with a few hundred trees the latency stays acceptable for many internet
+              / low-latency applications.
+            </li>
+          </ul>
+          <h3 id="space-complexity-2">Space Complexity</h3>
+          <p>We need to store every tree together with its weight $\gamma_m$:</p>
+          <p>$$ \text{Space} = O\bigl(\text{size of one tree}\times M\bigr) $$</p>
+          <h3 id="practical-take-away">Practical Take-away</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Aspect</th>
+                <th>Random Forest</th>
+                <th>Gradient Boosting (GBDT)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Training</td>
+                <td>Embarrassingly parallel</td>
+                <td>Sequential (harder to parallelise)</td>
+              </tr>
+              <tr>
+                <td>Training speed</td>
+                <td>Faster</td>
+                <td>Slower</td>
+              </tr>
+              <tr>
+                <td>Prediction</td>
+                <td>$O(\text{depth}\times K)$</td>
+                <td>$O(\text{depth}\times M)$ (depth usually smaller)</td>
+              </tr>
+              <tr>
+                <td>Typical use</td>
+                <td>Fast training, good baseline</td>
+                <td>Highest accuracy when carefully tuned</td>
+              </tr>
+            </tbody>
+          </table>
+          <h2 id="16-xgboost-boosting--randomization">16. XGBoost: Boosting + Randomization</h2>
+          <p><img src="./assets/16.01.jpg" alt="LR" /></p>
+          <p><img src="./assets/16.02.jpg" alt="LR" /></p>
+          <p>
+            <a
+              href="https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.GradientBoostingClassifier.html"
+              >https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.GradientBoostingClassifier.html</a
+            >
+          </p>
+          <p>
+            <a href="https://xgboost.readthedocs.io/en/stable/python/python_api.html"
+              >https://xgboost.readthedocs.io/en/stable/python/python_api.html</a
+            >
+          </p>
+          <p>
+            <a
+              href="https://github.com/dmlc/xgboost/blob/master/demo/guide-python/sklearn_examples.py"
+              >https://github.com/dmlc/xgboost/blob/master/demo/guide-python/sklearn_examples.py</a
+            >
+          </p>
+          <h2 id="17-adaboost-geometric-intuition">17. AdaBoost Geometric Intuition</h2>
+          <p><a href="./Ensemble-Adaboost.pdf">Ensemble-Adaboost.pdf</a></p>
+          <h2 id="18-stacking-models">18. Stacking Models</h2>
+          <p>
+            <a href="https://rasbt.github.io/mlxtend/user_guide/classifier/StackingClassifier/"
+              >https://rasbt.github.io/mlxtend/user_guide/classifier/StackingClassifier/</a
+            >
+          </p>
+          <h2 id="19-cascading-classifiers">19. Cascading Classifiers</h2>
+          <p><img src="./assets/19.01.jpg" alt="LR" /></p>
+          <p><img src="./assets/19.02.jpg" alt="LR" /></p>
+          <blockquote>
+            <p><strong>Cascading Models</strong></p>
+          </blockquote>
+          <p>Cascading is another ensemble technique (alongside Bagging, Boosting and Stacking).</p>
+          <h3 id="typical-use-case">Typical Use-Case</h3>
+          <p>
+            Used when the <strong>cost of making a mistake is very high</strong><br />
+            (e.g. fraud detection, medical diagnosis, security systems).
+          </p>
+          <h3 id="credit-card-fraud-example">Credit-Card Fraud Example</h3>
+          <p>Goal: decide whether a transaction $x_q$ is fraudulent ($y_q=1$) or not ($y_q=0$).</p>
+          <p>A cascade of models is applied:</p>
+          <ol>
+            <li>
+              <p>Model $M_1$ looks at the transaction.</p>
+              <ul>
+                <li>
+                  If $P(y_q=0) &gt; 0.99$ → confidently declare <strong>“not fraud”</strong> and
+                  stop.
+                </li>
+                <li>Otherwise pass the transaction to $M_2$.</li>
+              </ul>
+            </li>
+            <li>
+              <p>Model $M_2$ does the same with a (usually higher) confidence threshold.</p>
+              <ul>
+                <li>If still unsure → pass to $M_3$, and so on.</li>
+              </ul>
+            </li>
+            <li><p>Only the hardest / most suspicious cases reach the final models.</p></li>
+          </ol>
+          <p>Typical cascade depth: 10–20 models.</p>
+          <h3 id="how-the-training-sets-are-built">How the Training Sets Are Built</h3>
+          <ul>
+            <li>$D^1_{\text{train}}$ = full training set → train $M_1$</li>
+            <li>
+              $D^2_{\text{train}} = D^1_{\text{train}} - D'$<br />
+              (where $D'$ are the points that $M_1$ already classifies with high confidence as
+              non-fraud)
+            </li>
+            <li>
+              $D^3_{\text{train}} = D^2_{\text{train}} - D''$<br />
+              and so on.
+            </li>
+          </ul>
+          <p>
+            Each subsequent model is trained only on the harder examples that the previous models
+            could not confidently reject.
+          </p>
+          <h3 id="decision-logic-simplified">Decision Logic (simplified)</h3>
+          <pre><code>if P₀ &gt; 0.99:
+    yq = 0          # not fraud
+else if P₀ &gt; 0.9:
+    use M₂
+else:
+    use M₃
+</code></pre>
+          <h3 id="real-world-impact">Real-World Impact</h3>
+          <ul>
+            <li>
+              Fraud detection systems at Visa / Mastercard often use multi-level cascades (20+
+              levels).
+            </li>
+            <li>
+              Similar cascaded architectures appear in medical diagnosis pipelines where false
+              negatives are extremely costly.
+            </li>
+          </ul>
+          <p>
+            Cascading lets us trade a little extra computation on the hard cases for a dramatic
+            reduction in costly mistakes.
+          </p>
+          <h2 id="20-kaggle-competitions-vs-real-world">20. Kaggle Competitions vs Real World</h2>
+          <p>Watch Lecture Video</p>
+          <h2 id="21-assignment-9-apply-random-forests--gbdt">
+            21. Assignment-9: Apply Random Forests &amp; GBDT
+          </h2>
+          <h2 id="22-revision-questions">22. Revision Questions</h2>
+          <p><strong>Questions</strong></p>
+          <p>
+            <a href="#1-what-are-ensembles">1. What are ensembles?</a><br />
+            <a href="#2-what-is-bootstrapped-aggregation-bagging"
+              >2. What is Bootstrapped Aggregation (Bagging)?</a
+            ><br />
+            <a href="#3-explain-about-random-forest-and-their-construction"
+              >3. Explain about Random Forest and their construction?</a
+            ><br />
+            <a href="#4-explain-about-boosting">4. Explain about Boosting?</a><br />
+            <a href="#5-what-are-residuals-loss-functions-and-gradients"
+              >5. What are Residuals, Loss functions and gradients?</a
+            ><br />
+            <a href="#6-explain-about-gradient-boosting">6. Explain about Gradient Boosting?</a
+            ><br />
+            <a href="#7-what-is-regularization-by-shrinkage"
+              >7. What is Regularization by Shrinkage?</a
+            ><br />
+            <a href="#8-explain-about-xgboost">8. Explain about XGBoost?</a><br />
+            <a href="#9-explain-about-adaboost">9. Explain about AdaBoost?</a><br />
+            <a href="#10-how-do-you-implement-stacking-models"
+              >10. How do you implement Stacking models?</a
+            ><br />
+            <a href="#11-explain-about-cascading-classifiers"
+              >11. Explain about cascading classifiers?</a
+            >
+          </p>
+          <h3 id="1-what-are-ensembles">1. What are ensembles?</h3>
+          <p>
+            <strong>Ensembles</strong> are methods that combine multiple individual models (base
+            learners) to produce a stronger overall model.
+          </p>
+          <p>
+            <strong>Core idea</strong>:<br />
+            Many weak or moderately strong models, when combined properly, can outperform a single
+            model.
+          </p>
+          <p><strong>Main types</strong>:</p>
+          <ul>
+            <li><strong>Bagging</strong> → reduces variance (e.g., Random Forest)</li>
+            <li>
+              <strong>Boosting</strong> → reduces bias (e.g., AdaBoost, Gradient Boosting, XGBoost)
+            </li>
+            <li>
+              <strong>Stacking</strong> → combines different types of models using a meta-learner
+            </li>
+            <li><strong>Cascading</strong> → sequential combination with rejection options</li>
+          </ul>
+          <p>
+            Ensembles generally give better accuracy, robustness, and generalization than single
+            models.
+          </p>
+          <h3 id="2-what-is-bootstrapped-aggregation-bagging">
+            2. What is Bootstrapped Aggregation (Bagging)?
+          </h3>
+          <p><strong>Bagging</strong> = Bootstrap Aggregating.</p>
+          <p><strong>How it works</strong>:</p>
+          <ol>
+            <li>
+              Create multiple bootstrap samples (random sampling with replacement) from the training
+              data.
+            </li>
+            <li>Train one base model on each bootstrap sample.</li>
+            <li>
+              Aggregate the predictions:
+              <ul>
+                <li>Classification → majority vote</li>
+                <li>Regression → average</li>
+              </ul>
+            </li>
+          </ol>
+          <p><strong>Key benefits</strong>:</p>
+          <ul>
+            <li>Reduces variance</li>
+            <li>Helps avoid overfitting</li>
+            <li>Works especially well with high-variance models (e.g., deep decision trees)</li>
+          </ul>
+          <p>Random Forest is the most popular extension of bagging.</p>
+          <h3 id="3-explain-about-random-forest-and-their-construction">
+            3. Explain about Random Forest and their construction?
+          </h3>
+          <p>
+            <strong>Random Forest</strong> is a bagging ensemble of decision trees with an extra
+            source of randomness.
+          </p>
+          <p><strong>Construction steps</strong>:</p>
+          <ol>
+            <li>Create many bootstrap samples of the training data.</li>
+            <li>For each sample, grow a decision tree.</li>
+            <li>
+              At each split, instead of considering all features, randomly select a subset of
+              features (usually $ \sqrt{d} $ or $ \log_2 d $).
+            </li>
+            <li>Grow the trees fully (or with minimal pruning).</li>
+            <li>
+              Aggregate predictions by majority vote (classification) or averaging (regression).
+            </li>
+          </ol>
+          <p><strong>Why it works</strong>:</p>
+          <ul>
+            <li>Bagging reduces variance</li>
+            <li>Random feature selection decorrelates the trees → further reduces variance</li>
+            <li>Very robust and hard to overfit when the number of trees is large</li>
+          </ul>
+          <h3 id="4-explain-about-boosting">4. Explain about Boosting?</h3>
+          <p>
+            <strong>Boosting</strong> is an ensemble technique that builds models
+            <strong>sequentially</strong>.
+          </p>
+          <p><strong>Core idea</strong>:</p>
+          <ul>
+            <li>Each new model focuses on the mistakes made by the previous models.</li>
+            <li>Later models try to correct the errors of earlier ones.</li>
+          </ul>
+          <p><strong>Key characteristics</strong>:</p>
+          <ul>
+            <li>Reduces bias</li>
+            <li>Models are dependent (unlike bagging)</li>
+            <li>Final prediction is a weighted combination of all weak learners</li>
+          </ul>
+          <p>Popular boosting algorithms:</p>
+          <ul>
+            <li>AdaBoost</li>
+            <li>Gradient Boosting</li>
+            <li>XGBoost, LightGBM, CatBoost</li>
+          </ul>
+          <h3 id="5-what-are-residuals-loss-functions-and-gradients">
+            5. What are Residuals, Loss functions and gradients?
+          </h3>
+          <p>
+            <strong>Residuals</strong>:<br />
+            The difference between the actual target and the current prediction:<br />
+            $ r_i = y_i - \hat{y}_i $
+          </p>
+          <p>
+            <strong>Loss function</strong>:<br />
+            A function that measures how good the current predictions are (e.g., Squared Error,
+            Logistic Loss, Huber Loss).
+          </p>
+          <p>
+            <strong>Gradients</strong>:<br />
+            In Gradient Boosting, we use the <strong>negative gradient</strong> of the loss function
+            with respect to the current predictions as the target for the next weak learner.
+          </p>
+          <p>
+            This is why it is called <strong>Gradient</strong> Boosting — each tree is fitted to the
+            gradient (pseudo-residuals) of the loss.
+          </p>
+          <h3 id="6-explain-about-gradient-boosting">6. Explain about Gradient Boosting?</h3>
+          <p>
+            <strong>Gradient Boosting</strong> builds an additive model in a forward stage-wise
+            manner.
+          </p>
+          <p><strong>Algorithm</strong>:</p>
+          <ol>
+            <li>Start with an initial model $ F_0(x) $ (usually the mean for regression).</li>
+            <li>
+              For $ m = 1 $ to $ M $:
+              <ul>
+                <li>Compute the negative gradients (pseudo-residuals) of the loss.</li>
+                <li>Fit a weak learner $ h_m(x) $ (usually a shallow tree) to these residuals.</li>
+                <li>Update the model: $ F_m(x) = F_{m-1}(x) + \nu \cdot h_m(x) $</li>
+              </ul>
+            </li>
+            <li>Final model = sum of all weak learners.</li>
+          </ol>
+          <p><strong>Important hyperparameters</strong>:</p>
+          <ul>
+            <li>Number of trees $ M $</li>
+            <li>Learning rate $ \nu $ (shrinkage)</li>
+            <li>Tree depth / complexity</li>
+            <li>Subsampling</li>
+          </ul>
+          <h3 id="7-what-is-regularization-by-shrinkage">
+            7. What is Regularization by Shrinkage?
+          </h3>
+          <p>
+            <strong>Shrinkage</strong> (also called learning rate) is a regularization technique
+            used in boosting.
+          </p>
+          <p>
+            Instead of adding the full contribution of a new tree, we add only a small fraction:
+          </p>
+          <p>$ F_m(x) = F_{m-1}(x) + \nu \cdot h_m(x) $</p>
+          <p>where $ 0 &lt; \nu \leq 1 $ (typical values: 0.01 to 0.3)</p>
+          <p><strong>Effect</strong>:</p>
+          <ul>
+            <li>Slows down the learning process</li>
+            <li>Reduces overfitting</li>
+            <li>Usually requires more trees to reach the same performance</li>
+            <li>Almost always improves generalization</li>
+          </ul>
+          <p>
+            Shrinkage is one of the most important regularization techniques in Gradient Boosting
+            and XGBoost.
+          </p>
+          <h3 id="8-explain-about-xgboost">8. Explain about XGBoost?</h3>
+          <p>
+            <strong>XGBoost</strong> (Extreme Gradient Boosting) is an optimized and regularized
+            implementation of Gradient Boosting.
+          </p>
+          <p><strong>Key improvements over standard Gradient Boosting</strong>:</p>
+          <ul>
+            <li>Second-order approximation of the loss (uses both gradient and Hessian)</li>
+            <li>Built-in L1 and L2 regularization on leaf weights</li>
+            <li>Column (feature) subsampling</li>
+            <li>Row subsampling</li>
+            <li>Handling of missing values</li>
+            <li>Parallel and distributed computing</li>
+            <li>Tree pruning (max depth + min child weight + gamma)</li>
+            <li>Cache-aware and hardware-optimized implementation</li>
+          </ul>
+          <p>XGBoost is one of the most successful algorithms in machine learning competitions.</p>
+          <h3 id="9-explain-about-adaboost">9. Explain about AdaBoost?</h3>
+          <p>
+            <strong>AdaBoost</strong> (Adaptive Boosting) was one of the first successful boosting
+            algorithms.
+          </p>
+          <p><strong>How it works</strong>:</p>
+          <ol>
+            <li>Start with equal weights on all training points.</li>
+            <li>Train a weak learner (usually a decision stump).</li>
+            <li>Increase the weights of misclassified points.</li>
+            <li>Train the next weak learner on the re-weighted data.</li>
+            <li>Repeat.</li>
+            <li>
+              Final prediction is a weighted majority vote of all weak learners (weights depend on
+              the accuracy of each learner).
+            </li>
+          </ol>
+          <p>
+            <strong>Geometric intuition</strong>:<br />
+            AdaBoost focuses more and more on the hard-to-classify examples by increasing their
+            weights.
+          </p>
+          <p>
+            It is sensitive to outliers and noise because it keeps increasing the weight of
+            difficult points.
+          </p>
+          <h3 id="10-how-do-you-implement-stacking-models">
+            10. How do you implement Stacking models?
+          </h3>
+          <p>
+            <strong>Stacking</strong> (Stacked Generalization) combines multiple different models
+            using a meta-learner.
+          </p>
+          <p><strong>Typical implementation</strong>:</p>
+          <ol>
+            <li>Split the training data into two parts (or use cross-validation).</li>
+            <li>Train several base models (Level-0 models) on the first part.</li>
+            <li>
+              Generate predictions from these base models on the second part (out-of-fold
+              predictions).
+            </li>
+            <li>Train a meta-model (Level-1 model) on these predictions as features.</li>
+            <li>
+              For final prediction:
+              <ul>
+                <li>Base models make predictions on test data</li>
+                <li>Meta-model combines them</li>
+              </ul>
+            </li>
+          </ol>
+          <p><strong>Common choices</strong>:</p>
+          <ul>
+            <li>Base models: Random Forest, XGBoost, LightGBM, Logistic Regression, k-NN, etc.</li>
+            <li>
+              Meta-model: Logistic Regression or a simple neural network (to avoid overfitting)
+            </li>
+          </ul>
+          <p>Stacking often gives the best performance when models are diverse.</p>
+          <h3 id="11-explain-about-cascading-classifiers">
+            11. Explain about cascading classifiers?
+          </h3>
+          <p>
+            <strong>Cascading</strong> is a sequential ensemble technique where models are arranged
+            in stages.
+          </p>
+          <p><strong>How it works</strong>:</p>
+          <ol>
+            <li>The first classifier makes a prediction.</li>
+            <li>If it is very confident, it outputs the prediction and stops.</li>
+            <li>
+              If it is not confident (uncertain region), the example is passed to the next, more
+              complex classifier.
+            </li>
+            <li>This continues through multiple stages.</li>
+          </ol>
+          <p><strong>Advantages</strong>:</p>
+          <ul>
+            <li>
+              Very fast on easy examples (most examples are handled by the early simple models)
+            </li>
+            <li>More accurate on difficult examples (handled by later powerful models)</li>
+            <li>Popular in real-time systems (e.g., face detection – Viola-Jones cascade)</li>
+          </ul>
+          <p>
+            Cascading is different from boosting because models are not combined by
+            voting/averaging; instead, they form a rejection chain.
+          </p>
+        </main>
+        <aside class="note-toc" aria-label="On this page">
+          <h2>On This Page</h2>
+          <ul>
+            <li><a href="#01-what-are-ensembles">01. What Are Ensembles</a></li>
+            <li>
+              <a href="#02-bootstrapped-aggregation-bagging-intuition">
+                02. Bootstrapped Aggregation (Bagging) Intuition
+              </a>
+            </li>
+            <li>
+              <a href="#03-random-forest-and-their-construction">
+                03. Random Forest and Their Construction
+              </a>
+            </li>
+            <li><a href="#04-bias-variance-tradeoff">04. Bias-Variance Tradeoff</a></li>
+            <li>
+              <a href="#05-train-and-run-time-complexity"> 05. Train and Run Time Complexity </a>
+            </li>
+            <li><a href="#06-bagging-code-sample">06. Bagging Code Sample</a></li>
+            <li><a href="#07-extremely-randomized-trees">07. Extremely Randomized Trees</a></li>
+            <li><a href="#08-random-tree-cases">08. Random Tree Cases</a></li>
+            <li><a href="#09-boosting-intuition">09. Boosting Intuition</a></li>
+            <li>
+              <a href="#10-residuals-loss-functions-and-gradients">
+                10. Residuals, Loss Functions, and Gradients
+              </a>
+            </li>
+            <li>
+              <a href="#11-pseudo-residuals-for-log-loss-and-classification">
+                11. Pseudo-Residuals for Log-Loss and Classification
+              </a>
+            </li>
+            <li>
+              <a href="#12-mathematical-reasoning-for-using-pseudo-residuals">
+                12. Mathematical Reasoning for Using Pseudo-Residuals
+              </a>
+            </li>
+            <li><a href="#13-gradient-boosting">13. Gradient Boosting</a></li>
+            <li><a href="#14-regularization-by-shrinkage">14. Regularization by Shrinkage</a></li>
+            <li>
+              <a href="#15-train-and-run-time-complexity"> 15. Train and Run Time Complexity </a>
+            </li>
+            <li>
+              <a href="#16-xgboost-boosting--randomization">
+                16. XGBoost: Boosting + Randomization
+              </a>
+            </li>
+            <li><a href="#17-adaboost-geometric-intuition">17. AdaBoost Geometric Intuition</a></li>
+            <li><a href="#18-stacking-models">18. Stacking Models</a></li>
+            <li><a href="#19-cascading-classifiers">19. Cascading Classifiers</a></li>
+            <li>
+              <a href="#20-kaggle-competitions-vs-real-world">
+                20. Kaggle Competitions vs Real World
+              </a>
+            </li>
+            <li>
+              <a href="#21-assignment-9-apply-random-forests--gbdt">
+                21. Assignment-9: Apply Random Forests &amp; GBDT
+              </a>
+            </li>
+            <li><a href="#22-revision-questions">22. Revision Questions</a></li>
+          </ul>
+        </aside>
+      </div>
+    </div>
+    <script>
+      if (window.hljs)
+        document
+          .querySelectorAll("pre code[class*='language-']")
+          .forEach((block) => window.hljs.highlightElement(block));
+      (() => {
+        const links = [...document.querySelectorAll(".note-toc a")],
+          heads = links
+            .map((l) => document.getElementById(decodeURIComponent(l.hash.slice(1))))
+            .filter(Boolean);
+        if (!links.length || !heads.length || !("IntersectionObserver" in window)) return;
+        const set = (h) =>
+          links.forEach((l) => l.classList.toggle("is-active", l.hash === `#${h.id}`));
+        const ob = new IntersectionObserver(
+          (es) => {
+            const v = es
+              .filter((e) => e.isIntersecting)
+              .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
+            if (v.length) set(v[0].target);
+          },
+          { rootMargin: "-10% 0px -75% 0px", threshold: 0 },
+        );
+        heads.forEach((h) => ob.observe(h));
+      })();
+    </script>
+  </body>
+</html>

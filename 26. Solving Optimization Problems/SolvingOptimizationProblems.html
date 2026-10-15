@@ -1,0 +1,1394 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Solving Optimization Problems | Applied Machine Learning</title>
+    <link rel="stylesheet" href="../HTMLs/theme.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
+    <script>
+      window.MathJax = {
+        tex: {
+          inlineMath: [
+            ["$", "$"],
+            ["\\(", "\\)"],
+          ],
+          displayMath: [
+            ["$$", "$$"],
+            ["\\[", "\\]"],
+          ],
+          processEscapes: true,
+          processEnvironments: true,
+        },
+        options: {
+          skipHtmlTags: ["script", "noscript", "style", "textarea", "pre", "code"],
+        },
+      };
+    </script>
+    <script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-svg.js"></script>
+  </head>
+  <body class="site-page">
+    <div class="site-layout">
+      <nav class="curriculum-nav" aria-label="Main curriculum navigation">
+        <iframe src="../HTMLs/table-of-contents.html" title="Machine learning curriculum"></iframe>
+      </nav>
+      <div class="note-layout">
+        <main class="note-content">
+          <style>
+            @import url("https://fonts.googleapis.com/css2?family=Play:wght@400;700&display=swap");
+            @import url("https://cdnjs.cloudflare.com/ajax/libs/latin-modern/1.1.0/css/latinmodern-math.min.css");
+
+            :root {
+              --la-ink: #3f6386;
+              --la-teal: #3f6386;
+              --la-teal-soft: #e8f6f7;
+              --la-coral: #9333ea;
+              --la-coral-soft: #fff1ed;
+              --la-cdf: #17283a;
+              --la-line: #5b5c5c;
+              --la-surface: #f7faf9;
+              --la-text: #c9c9c9;
+              --la-panel: #00070e;
+              --la-chip: #17283a;
+              --la-amber: #9a6b16;
+              --la-amber-soft: #fff8e6;
+            }
+
+            *,
+            *::before,
+            *::after {
+              font-family: "Play", sans-serif !important;
+            }
+
+            pre,
+            pre code {
+              font-family: Consolas, "Courier New", monospace !important;
+            }
+
+            body,
+            .markdown-body,
+            p,
+            li {
+              color: var(--la-text) !important;
+            }
+
+            h1 {
+              color: var(--la-ink);
+              border-bottom: 4px solid var(--la-teal);
+              padding-bottom: 0.35em;
+            }
+
+            h2 {
+              color: var(--la-teal);
+              border-left: 6px solid var(--la-teal);
+              padding-left: 0.55em;
+              margin-top: 2em;
+            }
+
+            h3,
+            h4 {
+              color: var(--la-coral);
+            }
+
+            a {
+              color: var(--la-coral);
+              text-decoration: none;
+            }
+
+            a:hover {
+              text-decoration: underline;
+            }
+
+            blockquote {
+              background: var(--la-panel);
+              border-left: 5px solid var(--la-cdf) !important;
+              border-radius: 6px;
+              color: var(--la-text);
+              padding: 0.75em 1em;
+            }
+
+            code {
+              background: var(--la-chip);
+              border-radius: 4px;
+              color: var(--la-text);
+              padding: 0.1em 0.3em;
+            }
+
+            pre {
+              background: var(--la-panel);
+              border: 1px solid var(--la-line);
+              border-radius: 8px;
+              overflow-x: auto;
+              padding: 1em;
+            }
+
+            table {
+              border: 1px solid var(--la-line);
+              border-collapse: collapse;
+              border-radius: 8px;
+              overflow: hidden;
+              width: 100%;
+            }
+
+            th {
+              background: var(--la-panel);
+              color: var(--la-text);
+              padding: 0.7em 0.8em;
+              text-align: left;
+            }
+
+            td {
+              color: var(--la-text);
+              padding: 0.7em 0.8em;
+            }
+
+            tr:nth-child(even) {
+              background: var(--la-chip);
+            }
+
+            hr {
+              border: 0;
+              border-top: 2px solid var(--la-line);
+              margin: 2.2em 0;
+            }
+
+            .summary-grid,
+            .ml-grid,
+            .intuition-grid {
+              display: flex;
+              gap: 1em;
+              margin: 1.25em 0;
+            }
+
+            .summary-card,
+            .ml-card,
+            .intuition-card {
+              background: var(--la-panel);
+              border-radius: 7px;
+              color: var(--la-text);
+              flex: 1 1 0;
+              min-width: 0;
+              padding: 1em;
+            }
+
+            .summary-card {
+              border-top: 5px solid var(--la-teal);
+            }
+
+            .summary-card.pdf,
+            .ml-card.diagnostics,
+            .intuition-card.pdf {
+              border-top-color: var(--la-coral);
+            }
+
+            .summary-card.cdf,
+            .intuition-card.cdf {
+              border-top-color: var(--la-cdf);
+            }
+
+            .summary-card h3,
+            .ml-card h3,
+            .intuition-card h3 {
+              margin-top: 0;
+            }
+
+            .summary-tag,
+            .panel-kicker {
+              color: var(--la-teal);
+              font-size: 0.82em;
+              font-weight: 700;
+              letter-spacing: 0.04em;
+              text-transform: uppercase;
+            }
+
+            .relationship-banner,
+            .ml-workflow {
+              align-items: center;
+              background: var(--la-panel);
+              border: 1px solid var(--la-teal);
+              border-radius: 7px;
+              color: var(--la-text);
+              display: flex;
+              flex-wrap: wrap;
+              gap: 0.6em;
+              justify-content: center;
+              margin: 1.25em 0;
+              padding: 0.85em 1em;
+              text-align: center;
+            }
+
+            .relationship-banner strong,
+            .ml-workflow strong,
+            .relationship-item strong,
+            .insight-item strong {
+              color: var(--la-coral);
+            }
+
+            .relationship-banner .arrow {
+              color: var(--la-teal);
+              font-size: 1.2em;
+            }
+
+            .relationship-item,
+            .insight-item {
+              background: var(--la-panel);
+              border-left: 5px solid var(--la-teal);
+              border-radius: 5px;
+              color: var(--la-text);
+              margin: 0.65em 0;
+              padding: 0.55em 0.85em;
+            }
+
+            .insight-item {
+              border-left-color: var(--la-coral);
+            }
+
+            .insight-list,
+            .feature-chips {
+              display: flex;
+              flex-wrap: wrap;
+              gap: 0.55em;
+              list-style: none;
+              margin: 0.5em 0 1em;
+              padding: 0;
+            }
+
+            .insight-list li,
+            .feature-chips li {
+              background: var(--la-chip);
+              border: 1px solid var(--la-teal);
+              border-radius: 999px;
+              color: var(--la-text);
+              padding: 0.35em 0.75em;
+            }
+
+            .feature-chips li {
+              border-radius: 4px;
+              border-left: 3px solid var(--la-coral);
+              border-right: none;
+              border-top: none;
+              border-bottom: none;
+              flex: 1 1 calc(50% - 0.45em);
+            }
+
+            .concept-flow {
+              align-items: center;
+              display: flex;
+              flex-direction: column;
+              margin: 1.25em 0;
+            }
+
+            .concept-flow .flow-step {
+              background: var(--la-panel);
+              border: 1px solid var(--la-teal);
+              border-radius: 7px;
+              color: var(--la-text);
+              max-width: 22em;
+              padding: 0.7em 1.2em;
+              text-align: center;
+              width: 100%;
+            }
+
+            .concept-flow .flow-step strong {
+              color: var(--la-coral);
+            }
+
+            .concept-flow .flow-arrow {
+              color: var(--la-teal);
+              font-size: 1.35em;
+              line-height: 1.25;
+            }
+
+            .percentile-callout {
+              background: var(--la-panel);
+              border-left: 5px solid var(--la-cdf);
+              border-radius: 7px;
+              color: var(--la-text);
+              margin: 1.25em 0;
+              padding: 1em;
+            }
+
+            .percentile-callout strong {
+              color: var(--la-cdf);
+            }
+
+            .katex-display,
+            .math,
+            .math-block {
+              background: #00070e;
+              border-left: 6px solid #2f005c;
+              border-radius: 6px;
+              padding: 0.6em 0.8em;
+              overflow-x: auto;
+              color: #c9c9c9 !important;
+              font-family: "Latin Modern Math", "Cambria Math", "STIX Two Math", serif !important;
+            }
+
+            .katex,
+            .katex * {
+              color: #9b9a9a !important;
+              font-family: "Latin Modern Math", "Cambria Math", "STIX Two Math", serif !important;
+            }
+
+            @media (max-width: 700px) {
+              .summary-grid,
+              .ml-grid,
+              .intuition-grid {
+                flex-direction: column;
+              }
+            }
+          </style>
+
+          <h1 id="solving-optimization-problems">Solving Optimization Problems</h1>
+          <h4 id="optimization--gradient-descent">Optimization &amp; Gradient Descent</h4>
+          <h2 id="01-differentiation">01. Differentiation</h2>
+          <p><img src="./assets/01.01.jpg" alt="LR" /></p>
+          <p><img src="./assets/01.02.jpg" alt="LR" /></p>
+          <blockquote>
+            <p><strong>Solving Optimization Problems: Differentiation</strong></p>
+          </blockquote>
+          <p>Many core ML algorithms are optimization problems:</p>
+          <ul>
+            <li>PCA</li>
+            <li>Logistic Regression</li>
+            <li>Linear Regression</li>
+          </ul>
+          <p>In Machine Learning we mainly use:</p>
+          <ul>
+            <li>Differentiation (single-variable and vector)</li>
+            <li>Finding maxima and minima</li>
+          </ul>
+          <p>(11th &amp; 12th standard + undergraduate calculus covers ~99% of what we need)</p>
+          <p>Integration and differential equations are used much less frequently.</p>
+          <h3 id="single-variable-differentiation">Single-Variable Differentiation</h3>
+          <p>Given $y = f(x)$</p>
+          <p>$$ \frac{dy}{dx} = \frac{df}{dx} = y' = f' $$</p>
+          <p>This is the differentiation of $y$ with respect to $x$.</p>
+          <p><strong>Intuitive meaning:</strong></p>
+          <p>$$ \frac{dy}{dx} = \text{rate of change of } y \text{ as } x \text{ changes} $$</p>
+          <p>(How much does $y$ change when $x$ changes)</p>
+          <h3 id="geometric-interpretation">Geometric Interpretation</h3>
+          <p>$$ \frac{dy}{dx} = \lim_{\Delta x \to 0} \frac{\Delta y}{\Delta x} $$</p>
+          <ul>
+            <li>The tangent is the line we obtain as $\Delta x \to 0$</li>
+            <li>$\tan\theta = \dfrac{dy}{dx}$</li>
+          </ul>
+          <p>As $x_2 \to x_1$, we have $\Delta x \to 0$, and</p>
+          <p>$$ \frac{\Delta y}{\Delta x} \to \frac{dy}{dx} $$</p>
+          <p><strong>Important statements:</strong></p>
+          <ul>
+            <li>$\dfrac{dy}{dx}$ = slope of the tangent to $f(x)$</li>
+            <li>
+              $\left.\dfrac{dy}{dx}\right|_{x_1}$ = slope of the tangent to $f(x)$ at $x = x_1$
+            </li>
+          </ul>
+          <h3 id="historical-note">Historical Note</h3>
+          <p>Differentiation was developed in the late 1600s by:</p>
+          <ul>
+            <li><strong>Newton</strong> → <em>Principia Mathematica</em></li>
+            <li><strong>Leibniz</strong></li>
+          </ul>
+          <p>
+            Originally used for displacement, velocity, acceleration, gravity, orbital motion (rate
+            of change).
+          </p>
+          <h3 id="geometric-meaning-of-slope-tantheta">
+            Geometric Meaning of Slope ($\tan\theta$)
+          </h3>
+          <ul>
+            <li>$0 \leq \theta &lt; 90^\circ$ → positive slope</li>
+            <li>$\theta = 0$ (tangent parallel to x-axis) → $\tan\theta = 0$</li>
+            <li>$\theta = 90^\circ$ → $\tan 90^\circ$ is undefined</li>
+            <li>$90^\circ &lt; \theta &lt; 180^\circ$ → negative slope</li>
+          </ul>
+          <h3 id="basic-differentiation-rules">Basic Differentiation Rules</h3>
+          <p>
+            $$ \begin{align*} \frac{d}{dx}(x^n) &amp;= n x^{n-1} \ \frac{d}{dx}(x^2) &amp;= 2x \
+            \frac{d}{dx}(3x) &amp;= 3 \ \frac{d}{dx}(c) &amp;= 0 \ \frac{d}{dx}(c x^n) &amp;= c, n
+            x^{n-1} \ \frac{d}{dx}\log(x) &amp;= \frac{1}{x} \ \frac{d}{dx}e^x &amp;= e^x \
+            \frac{d}{dx}\big(f(x) + g(x)\big) &amp;= \frac{d}{dx}f(x) + \frac{d}{dx}g(x)
+            \end{align*} $$
+          </p>
+          <h3 id="chain-rule">Chain Rule</h3>
+          <p>$$ \frac{d}{dx}f\big(g(x)\big) = \frac{df}{dg} \cdot \frac{dg}{dx} $$</p>
+          <p><strong>Example:</strong></p>
+          <p>Let $f(g(x)) = (a - bx)^2$</p>
+          <ul>
+            <li>Let $g(x) = a - bx = z$</li>
+            <li>$f(z) = z^2$</li>
+          </ul>
+          <p>Then</p>
+          <p>
+            $$ \frac{d}{dx}f(g(x)) = \frac{df}{dg} \cdot \frac{dg}{dx} = 2(a - bx) \cdot (-b) =
+            -2b(a - bx) $$
+          </p>
+          <h2 id="02-online-differentiation-tools">02. Online Differentiation Tools</h2>
+          <blockquote>
+            <p>
+              <strong><code>Watch Lecture Video</code></strong>
+            </p>
+          </blockquote>
+          <h2 id="03-maxima-and-minima">03. Maxima and Minima</h2>
+          <p><img src="./assets/03.01.jpg" alt="LR" /></p>
+          <p><img src="./assets/03.02.jpg" alt="LR" /></p>
+          <blockquote>
+            <p><strong>Maxima &amp; Minima</strong></p>
+          </blockquote>
+          <p>At both maxima and minima the <strong>slope = 0</strong>.</p>
+          <h3 id="finding-maxima--minima">Finding Maxima / Minima</h3>
+          <p>Set the derivative to zero:</p>
+          <p>$$ \frac{df}{dx} = 0 \quad \Rightarrow \quad \text{slope} = 0 $$</p>
+          <p><strong>Example:</strong></p>
+          <p>$$ f(x) = x^2 - 3x + 2 $$</p>
+          <p>$$ \frac{df}{dx} = 2x - 3 = 0 \quad \Rightarrow \quad x = \frac{3}{2} = 1.5 $$</p>
+          <p>At $x = 1.5$, slope = 0.</p>
+          <p>Check values:</p>
+          <ul>
+            <li>$f(1.5) = -0.25$</li>
+            <li>$f(1) = 0$</li>
+          </ul>
+          <p>Since $f(1.5) &lt; f(1)$, the point $x = 1.5$ is a <strong>minimum</strong>.</p>
+          <h3 id="important-observations">Important Observations</h3>
+          <ul>
+            <li>
+              <p>A function <strong>may or may not</strong> have maxima and minima.</p>
+            </li>
+            <li>
+              <p>Example $y = x^2$:</p>
+              <ul>
+                <li>No maxima</li>
+                <li>Minima at $x = 0$</li>
+              </ul>
+            </li>
+            <li>
+              <p>
+                Some functions have <strong>neither</strong> minima nor maxima (strictly
+                increasing/decreasing curves).
+              </p>
+            </li>
+          </ul>
+          <h3 id="global-vs-local">Global vs Local</h3>
+          <p>A function can have:</p>
+          <ul>
+            <li>Multiple <strong>local minima</strong></li>
+            <li>Multiple <strong>local maxima</strong></li>
+            <li>One <strong>global minimum</strong></li>
+            <li>One <strong>global maximum</strong></li>
+          </ul>
+          <h3 id="connection-to-machine-learning">Connection to Machine Learning</h3>
+          <p>Many loss functions (e.g. logistic loss) look like:</p>
+          <p>$$ f(x) = \log\big(1 + \exp(ax)\big) $$</p>
+          <p>Setting the derivative to zero:</p>
+          <p>$$ \frac{df}{dx} = \frac{a\exp(ax)}{1 + \exp(ax)} = 0 $$</p>
+          <p>Solving this analytically is <strong>not trivial</strong> (very hard).</p>
+          <p>Therefore in practice we use:</p>
+          <p>
+            $$ \frac{df}{dx} = 0 \quad \xrightarrow{\text{solved by}} \quad \textbf{Gradient
+            Descent} $$
+          </p>
+          <h2 id="04-vector-calculus-grad">04. Vector Calculus Grad</h2>
+          <p><img src="./assets/04.01.jpg" alt="LR" /></p>
+          <p><img src="./assets/04.02.jpg" alt="LR" /></p>
+          <blockquote>
+            <p><strong>Vector Differentiation: Gradient</strong></p>
+          </blockquote>
+          <p>So far we treated $x$ as a <strong>scalar</strong>.</p>
+          <p>In high-dimensional space $x$ is a <strong>vector</strong>:</p>
+          <p>$$ \mathbf{x} = \langle x_1, x_2, \dots, x_d \rangle $$</p>
+          <p>Example linear function:</p>
+          <p>$$ f(\mathbf{x}) = y = \mathbf{a}^\top \mathbf{x} = \sum_{i=1}^{d} a_i x_i $$</p>
+          <p>where $\mathbf{a} = \langle a_1, a_2, \dots, a_d \rangle$ are constants.</p>
+          <h3 id="definition-of-gradient">Definition of Gradient</h3>
+          <p>
+            When $\mathbf{x}$ is a vector, the derivative becomes the <strong>gradient</strong>:
+          </p>
+          <p>$$ \frac{df}{d\mathbf{x}} = \nabla_{\mathbf{x}} f $$</p>
+          <p>The gradient is itself a vector in $\mathbb{R}^d$:</p>
+          <p>
+            $$ \nabla_{\mathbf{x}} f = \begin{bmatrix} \dfrac{\partial f}{\partial x_1} \
+            \dfrac{\partial f}{\partial x_2} \ \vdots \ \dfrac{\partial f}{\partial x_d}
+            \end{bmatrix} \in \mathbb{R}^d $$
+          </p>
+          <p>Each component is a <strong>partial derivative</strong>.</p>
+          <h3 id="important-result">Important Result</h3>
+          <p>For the linear function $f(\mathbf{x}) = \mathbf{a}^\top \mathbf{x}$:</p>
+          <p>$$ \nabla_{\mathbf{x}} (\mathbf{a}^\top \mathbf{x}) = \mathbf{a} $$</p>
+          <p>(Compare with the scalar case: $\dfrac{d}{dx}(ax) = a$)</p>
+          <h3 id="application-to-logistic-regression-loss">
+            Application to Logistic Regression Loss
+          </h3>
+          <p>The regularized logistic loss is:</p>
+          <p>
+            $$ \mathcal{L}(\mathbf{w}) = \sum_{i=1}^{n} \log\Big(1 + \exp(-y_i \mathbf{w}^\top
+            \mathbf{x}_i)\Big) + \lambda \mathbf{w}^\top \mathbf{w} $$
+          </p>
+          <p>Here $\langle \mathbf{x}_i, y_i \rangle$ are constants (training data).</p>
+          <p>Taking the gradient with respect to $\mathbf{w}$ and setting it to zero:</p>
+          <p>
+            $$ \nabla_{\mathbf{w}} \mathcal{L} = \frac{(-y_i \mathbf{x}_i)\exp(-y_i \mathbf{w}^\top
+            \mathbf{x}_i)}{1 + \exp(-y_i \mathbf{w}^\top \mathbf{x}_i)}
+          </p>
+          <ul>
+            <li>2\lambda \mathbf{w} = \mathbf{0} $$</li>
+          </ul>
+          <p>
+            Solving $\nabla_{\mathbf{w}} \mathcal{L} = \mathbf{0}$ analytically is hard → we use
+            <strong>Gradient Descent</strong>.
+          </p>
+          <h2 id="05-gradient-descent-geometric-intuition">
+            05. Gradient Descent Geometric Intuition
+          </h2>
+          <p><img src="./assets/05.01.jpg" alt="LR" /></p>
+          <p><img src="./assets/05.02.jpg" alt="LR" /></p>
+          <blockquote>
+            <p><strong>Gradient Descent Algorithm</strong></p>
+          </blockquote>
+          <p>We want to solve:</p>
+          <p>$$ \mathbf{x}^* = \arg\min_{\mathbf{x}} f(\mathbf{x}) $$</p>
+          <p>At maxima and minima we have:</p>
+          <p>$$ \frac{df}{dx} = 0 \qquad \text{or} \qquad \nabla_{\mathbf{x}} f = \mathbf{0} $$</p>
+          <p>Gradient Descent is an <strong>iterative algorithm</strong>:</p>
+          <ul>
+            <li>Start with an initial guess $x_0$</li>
+            <li>Produce $x_1$ (iteration 1)</li>
+            <li>Produce $x_2$ (iteration 2)</li>
+            <li>…</li>
+            <li>After $K$ iterations we get $x_K \approx x^*$</li>
+          </ul>
+          <h3 id="geometric-intuition">Geometric Intuition</h3>
+          <p>At a minimum the slope changes sign (from negative to positive).</p>
+          <ul>
+            <li>One side of the minimum → slope is negative</li>
+            <li>Other side of the minimum → slope is positive</li>
+          </ul>
+          <p>Also note the useful identities:</p>
+          <p>$$ \min f(x) ;=; \max \big(-f(x)\big) $$</p>
+          <p>$$ \max f(x) ;=; \min \big(-f(x)\big) $$</p>
+          <p>As we move closer to $x^*$, the <strong>slope reduces</strong>.</p>
+          <h3 id="gradient-descent-update-rule">Gradient Descent Update Rule</h3>
+          <ol>
+            <li><p>Pick an initial point $x_0$ (usually at random)</p></li>
+            <li><p>Update:</p></li>
+          </ol>
+          <p>$$ x_1 = x_0 - r \left.\frac{df}{dx}\right|_{x_0} $$</p>
+          <p>where $r$ is the <strong>step-size</strong> (learning rate).</p>
+          <p>
+            <strong>Case when slope is positive</strong> (point is to the right of the minimum):
+          </p>
+          <p>$$ x_1 = x_0 - r \cdot (+ve) \quad \Rightarrow \quad x_1 &lt; x_0 $$</p>
+          <p>→ we move left, closer to $x^*$.</p>
+          <p><strong>Case when slope is negative</strong> (point is to the left of the minimum):</p>
+          <p>$$ x_1 = x_0 - r \cdot (-ve) \quad \Rightarrow \quad x_1 &gt; x_0 $$</p>
+          <p>→ we move right, closer to $x^*$.</p>
+          <ol start="3">
+            <li>General iterative update:</li>
+          </ol>
+          <p>$$ x_{i+1} = x_i - r \left.\frac{df}{dx}\right|_{x_i} $$</p>
+          <p>(or in vector form using the gradient $\nabla_{\mathbf{x}} f$)</p>
+          <h3 id="termination">Termination</h3>
+          <p>Keep iterating:</p>
+          <p>$$ x_0,; x_1,; x_2,; \dots,; x_k,; x_{k+1} $$</p>
+          <p>If the change $(x_{k+1} - x_k)$ becomes very small, stop and declare:</p>
+          <p>$$ x^* = x_k $$</p>
+          <h2 id="06-learning-rate">06. Learning Rate</h2>
+          <p><img src="./assets/06.01.jpg" alt="LR" /></p>
+          <p><img src="./assets/06.02.jpg" alt="LR" /></p>
+          <blockquote>
+            <p><strong>Learning Rate (or) Step-size ( $ r $ )</strong></p>
+          </blockquote>
+          <p>In the Gradient Descent update equation:</p>
+          <p>$$ x_i = x_{i-1} - r \left.\frac{df}{dx}\right|<em>{x</em>{i-1}} $$</p>
+          <p>$ r $ is a <strong>constant</strong> called the learning rate (or step-size).</p>
+          <p>In Deep Learning we choose $ r $ more carefully / effectively.</p>
+          <h3 id="problem-of-oscillation-when--r--is-too-large">
+            Problem of Oscillation (when $ r $ is too large)
+          </h3>
+          <p>Take the simple function $f(x) = x^2$.</p>
+          <p>$$ \frac{df}{dx} = 2x $$</p>
+          <p>Let $r = 1$ and start at $x_i = 0.5$:</p>
+          <p>
+            $$ \begin{align*} x_{i+1} &amp;= 0.5 - 1 \cdot (2 \times 0.5) = 0.5 - 1 = -0.5 \ x_{i+2}
+            &amp;= -0.5 - 1 \cdot (2 \times (-0.5)) = -0.5 - 1 \cdot (-1) = 0.5 \end{align*} $$
+          </p>
+          <p>
+            The algorithm keeps oscillating between $x = 0.5$ and $x = -0.5$ and
+            <strong>never converges</strong> to $x^* = 0$.<br />
+            We simply jumped over the minimum.
+          </p>
+          <h3 id="remedy-for-oscillation">Remedy for Oscillation</h3>
+          <p><strong>Change $ r $ with each iteration.</strong></p>
+          <p>One common technique: <strong>reduce $ r $ with each iteration</strong>.</p>
+          <p>$$ r = h(i) $$</p>
+          <p>where $i$ is the iteration number.</p>
+          <p>
+            As the iteration number increases ($i \uparrow$), the learning rate decreases ($r
+            \downarrow$).
+          </p>
+          <h2 id="07-gradient-descent-for-linear-regression">
+            07. Gradient Descent for Linear Regression
+          </h2>
+          <p><img src="./assets/07.01.jpg" alt="LR" /></p>
+          <p><img src="./assets/07.02.jpg" alt="LR" /></p>
+          <blockquote>
+            <p><strong>Gradient Descent for Linear Regression</strong></p>
+          </blockquote>
+          <p>
+            We want to solve (no regularization, and ignoring the intercept $w_0$ for simplicity):
+          </p>
+          <p>
+            $$ \mathbf{w}^* = \arg\min_{\mathbf{w}} \sum_{i=1}^{n} \big(y_i - \mathbf{w}^\top
+            \mathbf{x}_i\big)^2 $$
+          </p>
+          <h3 id="loss-and-gradient">Loss and Gradient</h3>
+          <p>
+            $$ \mathcal{L}(\mathbf{w}) = \sum_{i=1}^{n} \big(y_i - \mathbf{w}^\top
+            \mathbf{x}_i\big)^2 $$
+          </p>
+          <p>
+            $$ \nabla_{\mathbf{w}} \mathcal{L} = \sum_{i=1}^{n} \Big{ 2\big(y_i - \mathbf{w}^\top
+            \mathbf{x}_i\big)(-\mathbf{x}_i) \Big} $$
+          </p>
+          <h3 id="gradient-descent-steps">Gradient Descent Steps</h3>
+          <ol>
+            <li><p>Pick a random vector $\mathbf{w}_0 = \langle \dots \rangle$</p></li>
+            <li><p>Update:</p></li>
+          </ol>
+          <p>
+            $$ \mathbf{w}_1 = \mathbf{w}<em>0 - r \sum</em>{i=1}^{n} (-2\mathbf{x}_i)\big(y_i -
+            \mathbf{w}_0^\top \mathbf{x}_i\big) $$
+          </p>
+          <ol start="3">
+            <li>Next iteration:</li>
+          </ol>
+          <p>
+            $$ \mathbf{w}_2 = \mathbf{w}<em>1 - r \sum</em>{i=1}^{n} (-2\mathbf{x}_i)\big(y_i -
+            \mathbf{w}_1^\top \mathbf{x}_i\big) $$
+          </p>
+          <p>Continue:</p>
+          <p>
+            $$ \mathbf{w}_0,; \mathbf{w}_1,; \mathbf{w}_2,; \dots,; \mathbf{w}<em>k,; \mathbf{w}</em
+            >{k+1} $$
+          </p>
+          <p>
+            When $\mathbf{w}_{k+1} - \mathbf{w}_k$ becomes a vector of very small values, stop and
+            set:
+          </p>
+          <p>$$ \mathbf{w}^* = \mathbf{w}_k $$</p>
+          <h3 id="general-update-rule">General Update Rule</h3>
+          <p>
+            $$ \mathbf{w}<em>j = \mathbf{w}</em>{j-1} - r \sum_{i=1}^{n} (-2\mathbf{x}<em
+              >i)\big(y_i - \mathbf{w}</em
+            >{j-1}^\top \mathbf{x}_i\big) $$
+          </p>
+          <h3 id="problem-with-batch-gradient-descent">Problem with Batch Gradient Descent</h3>
+          <p>
+            When $n$ is large (e.g. $n = 1$ million), computing the full sum $\sum_{i=1}^{n}$ at
+            every iteration is <strong>very expensive</strong>.
+          </p>
+          <p>
+            This is the main motivation for moving to
+            <strong>Stochastic Gradient Descent (SGD)</strong>.
+          </p>
+          <h2 id="08-sgd-algorithm">08. SGD Algorithm</h2>
+          <p><img src="./assets/08.01.jpg" alt="LR" /></p>
+          <p><img src="./assets/08.02.jpg" alt="LR" /></p>
+          <blockquote>
+            <p><strong>Stochastic Gradient Descent (SGD)</strong></p>
+          </blockquote>
+          <p>
+            SGD is the <strong>most important optimization algorithm</strong> in Machine Learning.
+          </p>
+          <h3 id="problem-with-batch-gradient-descent-2">Problem with Batch Gradient Descent</h3>
+          <p>For Linear Regression the full (batch) update is:</p>
+          <p>
+            $$ \mathbf{w}_{j+1} = \mathbf{w}<em>j - r \sum</em>{i=1}^{n} (-2\mathbf{x}_i)\big(y_i -
+            \mathbf{w}_j^\top \mathbf{x}_i\big) $$
+          </p>
+          <p>
+            When $n$ is large (e.g. $n = 1$ million), computing the full sum at every iteration
+            takes a lot of time.
+          </p>
+          <h3 id="stochastic-gradient-descent">Stochastic Gradient Descent</h3>
+          <p>Instead of using all $n$ points, we use only a small random subset of $K$ points:</p>
+          <p>
+            $$ \mathbf{w}_{j+1} = \mathbf{w}<em>j - r \sum</em>{i=1}^{K} (-2\mathbf{x}_i)\big(y_i -
+            \mathbf{w}_j^\top \mathbf{x}_i\big) $$
+          </p>
+          <p>
+            where $1 \leq K \leq n$ and we pick a <strong>random set of $K$ points</strong> at each
+            iteration.
+          </p>
+          <ul>
+            <li>
+              $\mathbf{w}^<em>_{\text{GD}} = \mathbf{w}^</em>_{\text{SGD}}$ (both converge to the
+              same solution)
+            </li>
+          </ul>
+          <h3 id="how-many-iterations-are-needed">How many iterations are needed?</h3>
+          <ul>
+            <li>
+              Batch GD ($n = 1$ million): roughly <strong>100 iterations</strong> to converge to
+              $\mathbf{x}^*$
+            </li>
+            <li>SGD with $K = 1000$: needs more than 100 iterations (≈ 500)</li>
+            <li>SGD with $K = 10$: needs even more iterations (≈ 1000)</li>
+          </ul>
+          <p>$K$ = number of random points that you use at each iteration for updating.</p>
+          <h3 id="batch-size-in-sgd">Batch-size in SGD</h3>
+          <ul>
+            <li>$K$ is called the <strong>batch-size</strong></li>
+            <li>Often $K = 1$ → pure Stochastic Gradient Descent</li>
+            <li>
+              When $1 &lt; K &lt; n$ (e.g. $K = 10$ or $K = 100$) → <strong>Mini-batch SGD</strong>
+            </li>
+          </ul>
+          <p>
+            <strong>SGD is the most important optimization algorithm in Machine Learning.</strong
+            ><br />
+            (In Deep Learning we also use improved versions such as Adam, Adagrad, etc.)
+          </p>
+          <h2 id="09-constrained-optimization--pca">09. Constrained Optimization &amp; PCA</h2>
+          <p><img src="./assets/09.01.jpg" alt="LR" /></p>
+          <p><img src="./assets/09.02.jpg" alt="LR" /></p>
+          <blockquote>
+            <p><strong>Constrained Optimization</strong></p>
+          </blockquote>
+          <p>We often solve problems of the form:</p>
+          <p>
+            $$ \max_{\mathbf{x}} f(\mathbf{x}) \quad\text{or}\quad \min_{\mathbf{x}} f(\mathbf{x})
+            $$
+          </p>
+          <p>subject to constraints.</p>
+          <h3 id="example-pca">Example: PCA</h3>
+          <p>
+            $$ \max_{\mathbf{u}} \frac{1}{n}\sum_{i=1}^{n}(\mathbf{u}^\top\mathbf{x}_i)^2
+            \quad\text{subject to}\quad \mathbf{u}^\top\mathbf{u}=1 $$
+          </p>
+          <ul>
+            <li>Objective function: $\dfrac{1}{n}\sum_{i=1}^{n}(\mathbf{u}^\top\mathbf{x}_i)^2$</li>
+            <li>Constraint: $\mathbf{u}^\top\mathbf{u}=1$</li>
+          </ul>
+          <h3 id="general-constrained-optimization">General Constrained Optimization</h3>
+          <p>
+            $$ \begin{align*} \max_{\mathbf{x}} &amp;\quad f(\mathbf{x}) \ \text{s.t.} &amp;\quad
+            g(\mathbf{x})=c \qquad\text{(equality constraint)} \ &amp;\quad h(\mathbf{x})\ge d
+            \qquad\text{(inequality constraint)} \end{align*} $$
+          </p>
+          <p>
+            Note that any inequality of the form $k(\mathbf{x})\le e$ can be rewritten as
+            $-k(\mathbf{x})\ge -e$.
+          </p>
+          <h3 id="lagrangian-multipliers">Lagrangian Multipliers</h3>
+          <p>The Lagrangian is formed as:</p>
+          <p>$$ \mathcal{L}(\mathbf{x},\lambda,\mu) = f(\mathbf{x})</p>
+          <ul>
+            <li>\lambda\big(g(\mathbf{x})-c\big)</li>
+            <li>\mu\big(d-h(\mathbf{x})\big) $$</li>
+          </ul>
+          <p>
+            where $\lambda$ and $\mu$ are the <strong>Lagrangian multipliers</strong> ($\lambda\ge
+            0$, $\mu\ge 0$).
+          </p>
+          <p>We solve the system:</p>
+          <p>
+            $$ \frac{\partial\mathcal{L}}{\partial\mathbf{x}}=0,\quad
+            \frac{\partial\mathcal{L}}{\partial\lambda}=0,\quad
+            \frac{\partial\mathcal{L}}{\partial\mu}=0 $$
+          </p>
+          <p>This gives the optimal $\tilde{\mathbf{x}}$, $\tilde{\lambda}$, $\tilde{\mu}$.</p>
+          <h3 id="applying-lagrangian-to-pca">Applying Lagrangian to PCA</h3>
+          <p>The PCA problem can be rewritten using the covariance matrix:</p>
+          <p>$$ S = \operatorname{Cov}(X) = \frac{1}{n}X^\top X $$</p>
+          <p>as</p>
+          <p>
+            $$ \max_{\mathbf{u}}\ \mathbf{u}^\top S\mathbf{u} \quad\text{subject to}\quad
+            \mathbf{u}^\top\mathbf{u}=1 $$
+          </p>
+          <p>Lagrangian:</p>
+          <p>$$ \mathcal{L}(\mathbf{u},\lambda) = \mathbf{u}^\top S\mathbf{u}</p>
+          <ul>
+            <li>\lambda(\mathbf{u}^\top\mathbf{u}-1) $$</li>
+          </ul>
+          <p>Take derivative w.r.t. $\mathbf{u}$ and set to zero:</p>
+          <p>
+            $$ \frac{\partial\mathcal{L}}{\partial\mathbf{u}}=0 \quad\Rightarrow\quad
+            S\mathbf{u}-\lambda\mathbf{u}=0 \quad\Rightarrow\quad S\mathbf{u}=\lambda\mathbf{u} $$
+          </p>
+          <h3 id="eigenvalue-interpretation">Eigenvalue Interpretation</h3>
+          <p>$$ S\mathbf{u}=\lambda\mathbf{u} $$</p>
+          <p>is the definition of eigenvalue and eigenvector:</p>
+          <ul>
+            <li>$\mathbf{u}$ is an <strong>eigenvector</strong> of the covariance matrix $S$</li>
+            <li>$\lambda$ is the corresponding <strong>eigenvalue</strong> of $S$</li>
+          </ul>
+          <h3 id="conclusion-for-pca">Conclusion for PCA</h3>
+          <p>
+            The optimization problem of PCA reduces to finding the eigenvalues and eigenvectors of
+            the covariance matrix $S$.
+          </p>
+          <h2 id="10-logistic-regression-formulation-revisited">
+            10. Logistic Regression Formulation Revisited
+          </h2>
+          <p><img src="./assets/10.01.jpg" alt="LR" /></p>
+          <p><img src="./assets/10.02.jpg" alt="LR" /></p>
+          <blockquote>
+            <p><strong>Logistic Regression Revisited (Constrained Optimization View)</strong></p>
+          </blockquote>
+          <p>The usual regularized form is:</p>
+          <p>
+            $$ \mathbf{w}^* = \arg\min_{\mathbf{w}} \big(\text{logistic-loss}\big) +
+            \lambda,\mathbf{w}^\top\mathbf{w} $$
+          </p>
+          <p>The term $\lambda,\mathbf{w}^\top\mathbf{w}$ is regularization.</p>
+          <h3 id="constrained-optimization-formulation">Constrained Optimization Formulation</h3>
+          <p>We can rewrite the same problem as a constrained optimization problem:</p>
+          <p>
+            $$ \begin{align*} \mathbf{w}^* &amp;= \arg\min_{\mathbf{w}}
+            \big(\text{logistic-loss}\big) \ \text{subject to} &amp;\quad \mathbf{w}^\top\mathbf{w}
+            = 1 \end{align*} $$
+          </p>
+          <p>
+            (Here $\mathbf{w}^\top\mathbf{w}=1$ is an equality constraint. The hyperplane is still
+            $\mathbf{w}^\top\mathbf{x}=\pi$.)
+          </p>
+          <h3 id="lagrangian">Lagrangian</h3>
+          <p>Form the Lagrangian:</p>
+          <p>$$ \mathcal{L} = \text{logistic-loss}</p>
+          <ul>
+            <li>\lambda\big(1 - \mathbf{w}^\top\mathbf{w}\big) $$</li>
+          </ul>
+          <p>which is equivalent to</p>
+          <p>$$ \mathcal{L} = \text{logistic-loss}</p>
+          <ul>
+            <li>\lambda,\mathbf{w}^\top\mathbf{w} $$</li>
+          </ul>
+          <p>(up to a constant sign flip that does not change the location of the optimum).</p>
+          <h3 id="key-insight">Key Insight</h3>
+          <p>
+            <strong>Regularization can be thought of as imposing an equality constraint.</strong>
+          </p>
+          <p>This is an alternative (and very useful) interpretation of regularization:</p>
+          <ul>
+            <li>One interpretation → add a penalty term $\lambda|\mathbf{w}|^2$</li>
+            <li>
+              Alternative interpretation → enforce the constraint $\mathbf{w}^\top\mathbf{w}=1$ via
+              Lagrange multipliers
+            </li>
+          </ul>
+          <p>Both views lead to the same optimal solution.</p>
+          <h2 id="11-why-l1-regularization-creates-sparsity">
+            11. Why L1 Regularization Creates Sparsity
+          </h2>
+          <p><img src="./assets/11.01.jpg" alt="LR" /></p>
+          <p><img src="./assets/11.02.jpg" alt="LR" /></p>
+          <blockquote>
+            <p><strong>Why does L1-regularization create Sparsity?</strong></p>
+          </blockquote>
+          <p>
+            In Logistic Regression,
+            <strong>L1-regularization creates sparsity in $\mathbf{w}$</strong> (more of the $w_i$’s
+            become exactly zero) as compared to L2-regularization.
+          </p>
+          <p>$$ \mathbf{w} = \langle w_1, w_2, \dots, w_d \rangle $$</p>
+          <h3 id="comparison-of-objectives">Comparison of Objectives</h3>
+          <p><strong>L2-regularization</strong></p>
+          <p>
+            $$ \min_{\mathbf{w}} \text{loss} + \lambda |\mathbf{w}|<em>2^2 = \min</em
+            >{w_1,\dots,w_d} \big(w_1^2 + w_2^2 + \dots + w_d^2\big) $$
+          </p>
+          <p>For a single weight:</p>
+          <p>$$ \min_{w_1} w_1^2 = L_2(w_1) $$</p>
+          <p><strong>L1-regularization</strong></p>
+          <p>
+            $$ \min_{\mathbf{w}} \text{loss} + \lambda |\mathbf{w}|<em>1 = \min</em>{w_1,\dots,w_d}
+            \big(|w_1| + |w_2| + \dots + |w_d|\big) $$
+          </p>
+          <p>For a single weight:</p>
+          <p>$$ \min_{w_1} |w_1| = L_1(w_1) $$</p>
+          <h3 id="geometry--gradient">Geometry &amp; Gradient</h3>
+          <p><strong>L2</strong> ($L_2(w_1)=w_1^2$)</p>
+          <ul>
+            <li>Smooth parabola</li>
+            <li>Gradient (slope): $\dfrac{\partial L_2}{\partial w_1} = 2w_1$</li>
+            <li>Gradient becomes very small when $w_1$ is already small → updates become tiny</li>
+          </ul>
+          <p><strong>L1</strong> ($L_1(w_1)=|w_1|$)</p>
+          <p>
+            $$ |w_1| = \begin{cases} w_1 &amp; \text{if } w_1 &gt; 0 \ -w_1 &amp; \text{if } w_1 \le
+            0 \end{cases} $$
+          </p>
+          <p>Gradient:</p>
+          <p>
+            $$ \frac{\partial L_1}{\partial w_1} = \begin{cases} +1 &amp; \text{if } w_1 &gt; 0 \ -1
+            &amp; \text{if } w_1 &lt; 0 \end{cases} $$
+          </p>
+          <p>
+            (The gradient is constant in magnitude and does <strong>not</strong> shrink when $w_1$
+            becomes small.)
+          </p>
+          <h3 id="gradient-descent-updates-example">Gradient Descent Updates (example)</h3>
+          <p>Assume learning rate $r = 0.01$ and current weight $w_1 = 0.05$ (small positive).</p>
+          <p><strong>L2 update</strong></p>
+          <p>
+            $$ (w_1)_{j+1} = (w_1)_j - r \cdot (2\cdot w_1) = 0.05 - 0.01\cdot(2\cdot 0.05) = 0.05 -
+            0.001 = 0.049 $$
+          </p>
+          <p>The weight only decreases by a very small amount.</p>
+          <p><strong>L1 update</strong></p>
+          <p>$$ (w_1)_{j+1} = (w_1)_j - r \cdot (+1) = 0.05 - 0.01 = 0.04 $$</p>
+          <p>The weight decreases by a constant step size.</p>
+          <h3 id="why-sparsity-appears">Why Sparsity Appears</h3>
+          <ul>
+            <li>
+              <strong>L2-regularization</strong> does <strong>not</strong> change the value of a
+              small $w_1$ much from one iteration to the next → less chance that $w_1$ reaches
+              exactly zero by the end of training.
+            </li>
+            <li>
+              <strong>L1-regularization</strong> continues to constantly reduce $w_1$ towards zero
+              ($w_1^*\to 0$) → much higher chance that many weights become exactly zero after a
+              finite number of iterations.
+            </li>
+          </ul>
+          <p>
+            This is the geometric and algorithmic reason why L1-regularization produces sparse
+            solutions.
+          </p>
+          <h2 id="12-assignment-6-implement-sgd-for-linear-regression">
+            12. Assignment 6: Implement SGD for Linear Regression
+          </h2>
+          <p><img src="./assets/12.01.jpg" alt="LR" /></p>
+          <p><img src="./assets/12.02.jpg" alt="LR" /></p>
+          <blockquote>
+            <p><strong>Example: Implement SGD for Linear Regression</strong></p>
+          </blockquote>
+          <p>Linear Regression code sample (Boston home price dataset).</p>
+          <ul>
+            <li>In sklearn we have <code>LinearRegression()</code></li>
+            <li>Task: <strong>Implement SGD for Linear Regression</strong> yourself.</li>
+          </ul>
+          <h3 id="objective">Objective</h3>
+          <p>
+            $$ \min_{\mathbf{w},b}\ \sum_{i=1}^{n}\big(y_i - \mathbf{w}^\top\mathbf{x}_i - b\big)^2
+            = \mathcal{L}(\mathbf{w},b) $$
+          </p>
+          <h3 id="gradients">Gradients</h3>
+          <p>Full-batch gradients:</p>
+          <p>
+            $$ \frac{\partial\mathcal{L}}{\partial\mathbf{w}} =
+            \sum_{i=1}^{n}(-2\mathbf{x}_i)\big(y_i - \mathbf{w}^\top\mathbf{x}_i - b\big)
+            \quad\rightarrow\quad\text{GD} $$
+          </p>
+          <p>
+            $$ \frac{\partial\mathcal{L}}{\partial b} = \sum_{i=1}^{n}(-2)\big(y_i -
+            \mathbf{w}^\top\mathbf{x}_i - b\big) \quad\rightarrow\quad\text{GD} $$
+          </p>
+          <p>
+            For <strong>SGD</strong> we replace the full sum by a sum over a random batch of $K$
+            points ($K\ll n$).
+          </p>
+          <h3 id="iterative-algorithm-sgd">Iterative Algorithm (SGD)</h3>
+          <p>
+            $$ \begin{align*} \mathbf{w}<em
+              >{j+1} &amp;= \mathbf{w}<em
+                >j - r \left.\frac{\partial\mathcal{L}}{\partial\mathbf{w}}\right|</em
+              >{\mathbf{w}<em>j} \[6pt] b</em>{j+1} &amp;= b_j - r
+              \left.\frac{\partial\mathcal{L}}{\partial b}\right|</em
+            >{b_j} \end{align*} $$
+          </p>
+          <ul>
+            <li>Run for a fixed number of iterations (e.g. 100 iterations)</li>
+            <li>
+              After $k$ iterations we have $\mathbf{w}<em>k\approx\mathbf{w}</em>{k+1}$ and
+              $b_k\approx b_{k+1}$
+            </li>
+            <li>Declare $\mathbf{w}^<em>\approx\mathbf{w}_k$, $b^</em>\approx b_k$</li>
+          </ul>
+          <h3 id="learning-rate-schedule">Learning-rate schedule</h3>
+          <p>Reduce $ r $ with each iteration:</p>
+          <p>
+            $$ \begin{align*} \text{iter } 0 &amp;\rightarrow r = 1 \ \text{iter } 1
+            &amp;\rightarrow r = r/2 \ \text{iter } 2 &amp;\rightarrow r = r/2 \ &amp;\vdots
+            \end{align*} $$
+          </p>
+          <h2 id="13-revision-questions">13. Revision Questions</h2>
+          <p><strong>Questions</strong></p>
+          <p>
+            <a href="#1-explain-about-logistic-regression">1. Explain about Logistic regression?</a
+            ><br />
+            <a href="#2-what-is-sigmoid-function--squashing"
+              >2. What is Sigmoid function &amp; Squashing?</a
+            ><br />
+            <a href="#3-explain-about-optimization-problem-in-logistic-regression"
+              >3. Explain about Optimization problem in logistic regression.</a
+            ><br />
+            <a href="#4-explain-importance-of-weight-vector-in-logistic-regression"
+              >4. Explain Importance of Weight vector in logistic regression.</a
+            ><br />
+            <a href="#5-l2-regularization-overfitting-and-underfitting"
+              >5. L2 Regularization: Overfitting and Underfitting.</a
+            ><br />
+            <a href="#6-l1-regularization-and-sparsity">6. L1 regularization and sparsity.</a><br />
+            <a href="#7-what-is-probabilistic-interpretation-gaussian-naive-bayes"
+              >7. What is Probabilistic Interpretation: Gaussian Naive Bayes?</a
+            ><br />
+            <a href="#8-explain-about-hyperparameter-search-grid-search-and-random-search"
+              >8. Explain about Hyperparameter search: Grid Search and Random Search?</a
+            ><br />
+            <a href="#9-what-is-column-standardization">9. What is Column Standardization?</a><br />
+            <a href="#10-explain-about-collinearity-of-features"
+              >10. Explain about Collinearity of features?</a
+            ><br />
+            <a href="#11-find-train--run-time-space-and-time-complexity-of-logistic-regression"
+              >11. Find Train &amp; Run time space and time complexity of Logistic regression?</a
+            >
+          </p>
+          <h3 id="1-explain-about-logistic-regression">1. Explain about Logistic regression?</h3>
+          <p>
+            Logistic Regression is a linear classification algorithm that finds a hyperplane to
+            separate classes.
+          </p>
+          <p><strong>Geometric view</strong>:</p>
+          <ul>
+            <li>Decision surface: $ \pi: w^T x + b = 0 $</li>
+            <li>
+              A point $ x_i $ is correctly classified when $ y_i (w^T x_i) &gt; 0 $ (using labels $
+              y_i \in {-1, +1} $)
+            </li>
+            <li>
+              Goal: Find the best $ w $ and $ b $ that maximize the number of correctly classified
+              points.
+            </li>
+          </ul>
+          <p><strong>Key properties</strong>:</p>
+          <ul>
+            <li>Simple and elegant</li>
+            <li>Outputs probabilities (via sigmoid)</li>
+            <li>Works well when classes are almost linearly separable</li>
+            <li>Can be extended with regularization</li>
+          </ul>
+          <p>
+            It is both a geometric method (hyperplane) and a probabilistic method (sigmoid +
+            log-loss).
+          </p>
+          <h3 id="2-what-is-sigmoid-function--squashing">
+            2. What is Sigmoid function &amp; Squashing?
+          </h3>
+          <p>The <strong>Sigmoid function</strong> (also called logistic function) is:</p>
+          <p>$ \sigma(z) = \frac{1}{1 + e^{-z}} $</p>
+          <p><strong>Properties</strong>:</p>
+          <ul>
+            <li>Range is always between 0 and 1</li>
+            <li>S-shaped curve</li>
+            <li>$ \sigma(0) = 0.5 $</li>
+            <li>As $ z \to +\infty $, $ \sigma(z) \to 1 $</li>
+            <li>As $ z \to -\infty $, $ \sigma(z) \to 0 $</li>
+          </ul>
+          <p><strong>Squashing</strong>:</p>
+          <ul>
+            <li>
+              The linear score $ w^T x + b $ can take any real value ($ -\infty $ to $ +\infty $)
+            </li>
+            <li>Sigmoid “squashes” this unbounded value into the range $ (0, 1) $</li>
+            <li>
+              This allows us to interpret the output as a <strong>probability</strong>: $ P(y=1|x) =
+              \sigma(w^T x + b) $
+            </li>
+          </ul>
+          <h3 id="3-explain-about-optimization-problem-in-logistic-regression">
+            3. Explain about Optimization problem in logistic regression.
+          </h3>
+          <p>
+            We want to find the best weight vector $ w $ that correctly classifies as many points as
+            possible.
+          </p>
+          <p>Using labels $ y_i \in {-1, +1} $, a point is correctly classified when:</p>
+          <p>$ y_i (w^T x_i) &gt; 0 $</p>
+          <p><strong>Optimization formulation</strong>:</p>
+          <p>$ w^* = \arg\max_w \sum_{i=1}^{n} y_i (w^T x_i) $</p>
+          <p>
+            In practice we minimize the <strong>logistic loss</strong> (negative log-likelihood):
+          </p>
+          <p>$ L(w) = \sum_{i=1}^{n} \log \big(1 + e^{-y_i (w^T x_i)}\big) $</p>
+          <p>(with optional regularization term)</p>
+          <p>
+            This is a convex optimization problem and can be solved using Gradient Descent, SGD, or
+            second-order methods (Newton, LBFGS).
+          </p>
+          <h3 id="4-explain-importance-of-weight-vector-in-logistic-regression">
+            4. Explain Importance of Weight vector in logistic regression.
+          </h3>
+          <p>The weight vector $ w $ has dual importance:</p>
+          <ol>
+            <li>
+              <p><strong>Geometric meaning</strong>:</p>
+              <ul>
+                <li>$ w $ is the <strong>normal vector</strong> to the decision hyperplane</li>
+                <li>Direction of $ w $ points towards the positive class</li>
+                <li>Magnitude of $ w $ affects the steepness of the sigmoid</li>
+              </ul>
+            </li>
+            <li>
+              <p><strong>Feature importance</strong>:</p>
+              <ul>
+                <li>$ |w_j| $ tells how important feature $ j $ is</li>
+                <li>Sign of $ w_j $ tells the direction of influence (positive or negative)</li>
+                <li>After column standardization, the magnitudes become directly comparable</li>
+              </ul>
+            </li>
+            <li>
+              <p><strong>Decision rule</strong>:</p>
+              <ul>
+                <li>$ w^T x + b &gt; 0 \rightarrow $ predict positive class</li>
+                <li>$ w^T x + b &lt; 0 \rightarrow $ predict negative class</li>
+              </ul>
+            </li>
+          </ol>
+          <h3 id="5-l2-regularization-overfitting-and-underfitting">
+            5. L2 Regularization: Overfitting and Underfitting.
+          </h3>
+          <p>
+            <strong>L2 Regularization</strong> (Ridge) adds the term $ \lambda |w|_2^2 = \lambda
+            \sum w_j^2 $ to the loss:
+          </p>
+          <p>$ L(w) = \sum \log(1 + e^{-y_i w^T x_i}) + \lambda |w|_2^2 $</p>
+          <p><strong>Effect</strong>:</p>
+          <ul>
+            <li>Penalizes large weights</li>
+            <li>Keeps weights small and distributed across features</li>
+            <li>Controls the bias-variance trade-off</li>
+          </ul>
+          <p><strong>Overfitting vs Underfitting</strong>:</p>
+          <ul>
+            <li>
+              <strong>High $ \lambda $</strong> → strong regularization → high bias, low variance →
+              underfitting
+            </li>
+            <li>
+              <strong>Low $ \lambda $</strong> → weak regularization → low bias, high variance →
+              overfitting
+            </li>
+            <li>Optimal $ \lambda $ is chosen via cross-validation</li>
+          </ul>
+          <p>L2 never makes weights exactly zero; it only shrinks them.</p>
+          <h3 id="6-l1-regularization-and-sparsity">6. L1 regularization and sparsity.</h3>
+          <p>
+            <strong>L1 Regularization</strong> (Lasso) adds the term $ \lambda |w|_1 = \lambda \sum
+            |w_j| $:
+          </p>
+          <p>$ L(w) = \sum \log(1 + e^{-y_i w^T x_i}) + \lambda |w|_1 $</p>
+          <p><strong>Key property – Sparsity</strong>:</p>
+          <ul>
+            <li>L1 can drive some weights <strong>exactly to zero</strong></li>
+            <li>This performs automatic feature selection</li>
+            <li>The resulting model is sparse (uses only a subset of features)</li>
+          </ul>
+          <p><strong>Comparison with L2</strong>:</p>
+          <ul>
+            <li>L1 → sparse solutions (feature selection)</li>
+            <li>L2 → small but non-zero weights (weight shrinkage)</li>
+          </ul>
+          <p>L1 is preferred when we believe only a few features are truly important.</p>
+          <h3 id="7-what-is-probabilistic-interpretation-gaussian-naive-bayes">
+            7. What is Probabilistic Interpretation: Gaussian Naive Bayes?
+          </h3>
+          <p>
+            Under certain assumptions, Logistic Regression and Gaussian Naive Bayes are closely
+            related.
+          </p>
+          <p><strong>Assumptions of Gaussian Naive Bayes</strong>:</p>
+          <ul>
+            <li>Features are independent given the class</li>
+            <li>Features follow a Gaussian distribution in each class</li>
+          </ul>
+          <p>
+            When class-conditional densities are Gaussian with the
+            <strong>same covariance matrix</strong>, the posterior probability $ P(y=1|x) $ takes
+            exactly the logistic (sigmoid) form:
+          </p>
+          <p>$ P(y=1|x) = \sigma(w^T x + b) $</p>
+          <p>
+            Thus, Logistic Regression can be viewed as the discriminative counterpart of Gaussian
+            Naive Bayes (with shared covariance).
+          </p>
+          <ul>
+            <li>Generative model → Gaussian NB</li>
+            <li>Discriminative model → Logistic Regression</li>
+          </ul>
+          <h3 id="8-explain-about-hyperparameter-search-grid-search-and-random-search">
+            8. Explain about Hyperparameter search: Grid Search and Random Search?
+          </h3>
+          <p>Hyperparameters in Logistic Regression mainly include:</p>
+          <ul>
+            <li>Regularization strength $ \lambda $ (or $ C = 1/\lambda $)</li>
+            <li>Type of regularization (L1 / L2)</li>
+            <li>Solver, etc.</li>
+          </ul>
+          <p><strong>Grid Search</strong>:</p>
+          <ul>
+            <li>Tries every possible combination from a predefined set of values</li>
+            <li>Exhaustive but computationally expensive</li>
+            <li>Guarantees finding the best combination within the grid</li>
+          </ul>
+          <p><strong>Random Search</strong>:</p>
+          <ul>
+            <li>Randomly samples hyperparameter combinations</li>
+            <li>More efficient when only a few hyperparameters matter</li>
+            <li>Often finds good solutions faster than Grid Search</li>
+            <li>Better for high-dimensional hyperparameter spaces</li>
+          </ul>
+          <p>Both are usually combined with cross-validation.</p>
+          <h3 id="9-what-is-column-standardization">9. What is Column Standardization?</h3>
+          <p>
+            <strong>Column Standardization</strong> (Z-score normalization) transforms each feature:
+          </p>
+          <p>$ x_j' = \frac{x_j - \mu_j}{\sigma_j} $</p>
+          <p>After this:</p>
+          <ul>
+            <li>Every feature has mean = 0 and standard deviation = 1</li>
+          </ul>
+          <p><strong>Why it is important for Logistic Regression</strong>:</p>
+          <ul>
+            <li>Features are brought to the same scale</li>
+            <li>Weight magnitudes become comparable (feature importance)</li>
+            <li>Helps optimization algorithms converge faster</li>
+            <li>Regularization works properly (otherwise features with large scale dominate)</li>
+          </ul>
+          <p>Always fit the mean and std only on the training data.</p>
+          <h3 id="10-explain-about-collinearity-of-features">
+            10. Explain about Collinearity of features?
+          </h3>
+          <p>
+            <strong>Collinearity</strong> (or multicollinearity) occurs when two or more features
+            are highly linearly correlated.
+          </p>
+          <p><strong>Problems it causes in Logistic Regression</strong>:</p>
+          <ul>
+            <li>Weights become unstable and hard to interpret</li>
+            <li>Small changes in data can cause large changes in $ w $</li>
+            <li>Feature importance becomes unreliable</li>
+            <li>Optimization can become numerically unstable</li>
+          </ul>
+          <p><strong>How to detect</strong>:</p>
+          <ul>
+            <li>Correlation matrix</li>
+            <li>Variance Inflation Factor (VIF)</li>
+          </ul>
+          <p><strong>How to handle</strong>:</p>
+          <ul>
+            <li>Remove one of the correlated features</li>
+            <li>Use L1 / L2 regularization</li>
+            <li>Apply PCA or other dimensionality reduction</li>
+            <li>Collect more data if possible</li>
+          </ul>
+          <h3 id="11-find-train--run-time-space-and-time-complexity-of-logistic-regression">
+            11. Find Train &amp; Run time space and time complexity of Logistic regression?
+          </h3>
+          <p><strong>Training Time Complexity</strong>:</p>
+          <ul>
+            <li>
+              Using Gradient Descent / SGD: roughly $ O(n \cdot d \cdot k) $
+              <ul>
+                <li>$ n $ = number of training points</li>
+                <li>$ d $ = number of features</li>
+                <li>$ k $ = number of iterations</li>
+              </ul>
+            </li>
+          </ul>
+          <p><strong>Run-time (Prediction) Time Complexity</strong>:</p>
+          <ul>
+            <li>$ O(d) $ per test point (just compute $ w^T x + b $ and apply sigmoid)</li>
+          </ul>
+          <p><strong>Space Complexity</strong>:</p>
+          <ul>
+            <li>$ O(d) $ to store the weight vector $ w $ and bias $ b $</li>
+            <li>During training, additional space may be needed for gradients and data</li>
+          </ul>
+          <p>
+            Logistic Regression is very efficient at prediction time compared to many other
+            algorithms (e.g., k-NN, kernel methods).
+          </p>
+        </main>
+        <aside class="note-toc" aria-label="On this page">
+          <h2>On This Page</h2>
+          <ul>
+            <li>
+              <a href="#01-differentiation">01. Differentiation</a>
+            </li>
+            <li>
+              <a href="#02-online-differentiation-tools">02. Online Differentiation Tools</a>
+            </li>
+            <li>
+              <a href="#03-maxima-and-minima">03. Maxima and Minima</a>
+            </li>
+            <li>
+              <a href="#04-vector-calculus-grad">04. Vector Calculus Grad</a>
+            </li>
+            <li>
+              <a href="#05-gradient-descent-geometric-intuition">
+                05. Gradient Descent: Geometric Intuition
+              </a>
+            </li>
+            <li>
+              <a href="#06-learning-rate">06. Learning Rate</a>
+            </li>
+            <li>
+              <a href="#07-gradient-descent-for-linear-regression">
+                07. Gradient Descent for Linear Regression
+              </a>
+            </li>
+            <li>
+              <a href="#08-sgd-algorithm">08. SGD Algorithm</a>
+            </li>
+            <li>
+              <a href="#09-constrained-optimization--pca">09. Constrained Optimization &amp; PCA</a>
+            </li>
+            <li>
+              <a href="#10-logistic-regression-formulation-revisited">
+                10. Logistic Regression Formulation Revisited
+              </a>
+            </li>
+            <li>
+              <a href="#11-why-l1-regularization-creates-sparsity">
+                11. Why L1 Regularization Creates Sparsity
+              </a>
+            </li>
+            <li>
+              <a href="#12-assignment-6-implement-sgd-for-linear-regression">
+                12. Assignment 6: Implement SGD for Linear Regression
+              </a>
+            </li>
+            <li>
+              <a href="#13-revision-questions">13. Revision Questions</a>
+            </li>
+          </ul>
+        </aside>
+      </div>
+    </div>
+    <script>
+      if (window.hljs)
+        document
+          .querySelectorAll("pre code[class*='language-']")
+          .forEach((block) => window.hljs.highlightElement(block));
+      (() => {
+        const links = [...document.querySelectorAll(".note-toc a")],
+          heads = links
+            .map((l) => document.getElementById(decodeURIComponent(l.hash.slice(1))))
+            .filter(Boolean);
+        if (!links.length || !heads.length || !("IntersectionObserver" in window)) return;
+        const set = (h) =>
+          links.forEach((l) => l.classList.toggle("is-active", l.hash === `#${h.id}`));
+        const ob = new IntersectionObserver(
+          (es) => {
+            const v = es
+              .filter((e) => e.isIntersecting)
+              .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
+            if (v.length) set(v[0].target);
+          },
+          { rootMargin: "-10% 0px -75% 0px", threshold: 0 },
+        );
+        heads.forEach((h) => ob.observe(h));
+      })();
+    </script>
+  </body>
+</html>

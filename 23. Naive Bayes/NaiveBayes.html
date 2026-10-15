@@ -1,0 +1,2260 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Naive Bayes | Applied Machine Learning</title>
+    <link rel="stylesheet" href="../HTMLs/theme.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
+    <script>
+      window.MathJax = {
+        tex: {
+          inlineMath: [
+            ["$", "$"],
+            ["\\(", "\\)"],
+          ],
+          displayMath: [
+            ["$$", "$$"],
+            ["\\[", "\\]"],
+          ],
+          processEscapes: true,
+          processEnvironments: true,
+        },
+        options: {
+          skipHtmlTags: ["script", "noscript", "style", "textarea", "pre", "code"],
+        },
+      };
+    </script>
+    <script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-svg.js"></script>
+  </head>
+  <body class="site-page">
+    <div class="site-layout">
+      <nav class="curriculum-nav" aria-label="Main curriculum navigation">
+        <iframe src="../HTMLs/table-of-contents.html" title="Machine learning curriculum"></iframe>
+      </nav>
+      <div class="note-layout">
+        <main class="note-content">
+          <style>
+            @import url("https://fonts.googleapis.com/css2?family=Play:wght@400;700&display=swap");
+            @import url("https://cdnjs.cloudflare.com/ajax/libs/latin-modern/1.1.0/css/latinmodern-math.min.css");
+
+            :root {
+              --la-ink: #3f6386;
+              --la-teal: #3f6386;
+              --la-teal-soft: #e8f6f7;
+              --la-coral: #9333ea;
+              --la-coral-soft: #fff1ed;
+              --la-cdf: #17283a;
+              --la-line: #5b5c5c;
+              --la-surface: #f7faf9;
+              --la-text: #c9c9c9;
+              --la-panel: #00070e;
+              --la-chip: #17283a;
+              --la-amber: #9a6b16;
+              --la-amber-soft: #fff8e6;
+            }
+
+            *,
+            *::before,
+            *::after {
+              font-family: "Play", sans-serif !important;
+            }
+
+            pre,
+            pre code {
+              font-family: Consolas, "Courier New", monospace !important;
+            }
+
+            body,
+            .markdown-body,
+            p,
+            li {
+              color: var(--la-text) !important;
+            }
+
+            h1 {
+              color: var(--la-ink);
+              border-bottom: 4px solid var(--la-teal);
+              padding-bottom: 0.35em;
+            }
+
+            h2 {
+              color: var(--la-teal);
+              border-left: 6px solid var(--la-teal);
+              padding-left: 0.55em;
+              margin-top: 2em;
+            }
+
+            h3,
+            h4 {
+              color: var(--la-coral);
+            }
+
+            a {
+              color: var(--la-coral);
+              text-decoration: none;
+            }
+
+            a:hover {
+              text-decoration: underline;
+            }
+
+            blockquote {
+              background: var(--la-panel);
+              border-left: 5px solid var(--la-cdf) !important;
+              border-radius: 6px;
+              color: var(--la-text);
+              padding: 0.75em 1em;
+            }
+
+            code {
+              background: var(--la-chip);
+              border-radius: 4px;
+              color: var(--la-text);
+              padding: 0.1em 0.3em;
+            }
+
+            pre {
+              background: var(--la-panel);
+              border: 1px solid var(--la-line);
+              border-radius: 8px;
+              overflow-x: auto;
+              padding: 1em;
+            }
+
+            table {
+              border: 1px solid var(--la-line);
+              border-collapse: collapse;
+              border-radius: 8px;
+              overflow: hidden;
+              width: 100%;
+            }
+
+            th {
+              background: var(--la-panel);
+              color: var(--la-text);
+              padding: 0.7em 0.8em;
+              text-align: left;
+            }
+
+            td {
+              color: var(--la-text);
+              padding: 0.7em 0.8em;
+            }
+
+            tr:nth-child(even) {
+              background: var(--la-chip);
+            }
+
+            hr {
+              border: 0;
+              border-top: 2px solid var(--la-line);
+              margin: 2.2em 0;
+            }
+
+            .summary-grid,
+            .ml-grid,
+            .intuition-grid {
+              display: flex;
+              gap: 1em;
+              margin: 1.25em 0;
+            }
+
+            .summary-card,
+            .ml-card,
+            .intuition-card {
+              background: var(--la-panel);
+              border-radius: 7px;
+              color: var(--la-text);
+              flex: 1 1 0;
+              min-width: 0;
+              padding: 1em;
+            }
+
+            .summary-card {
+              border-top: 5px solid var(--la-teal);
+            }
+
+            .summary-card.pdf,
+            .ml-card.diagnostics,
+            .intuition-card.pdf {
+              border-top-color: var(--la-coral);
+            }
+
+            .summary-card.cdf,
+            .intuition-card.cdf {
+              border-top-color: var(--la-cdf);
+            }
+
+            .summary-card h3,
+            .ml-card h3,
+            .intuition-card h3 {
+              margin-top: 0;
+            }
+
+            .summary-tag,
+            .panel-kicker {
+              color: var(--la-teal);
+              font-size: 0.82em;
+              font-weight: 700;
+              letter-spacing: 0.04em;
+              text-transform: uppercase;
+            }
+
+            .relationship-banner,
+            .ml-workflow {
+              align-items: center;
+              background: var(--la-panel);
+              border: 1px solid var(--la-teal);
+              border-radius: 7px;
+              color: var(--la-text);
+              display: flex;
+              flex-wrap: wrap;
+              gap: 0.6em;
+              justify-content: center;
+              margin: 1.25em 0;
+              padding: 0.85em 1em;
+              text-align: center;
+            }
+
+            .relationship-banner strong,
+            .ml-workflow strong,
+            .relationship-item strong,
+            .insight-item strong {
+              color: var(--la-coral);
+            }
+
+            .relationship-banner .arrow {
+              color: var(--la-teal);
+              font-size: 1.2em;
+            }
+
+            .relationship-item,
+            .insight-item {
+              background: var(--la-panel);
+              border-left: 5px solid var(--la-teal);
+              border-radius: 5px;
+              color: var(--la-text);
+              margin: 0.65em 0;
+              padding: 0.55em 0.85em;
+            }
+
+            .insight-item {
+              border-left-color: var(--la-coral);
+            }
+
+            .insight-list,
+            .feature-chips {
+              display: flex;
+              flex-wrap: wrap;
+              gap: 0.55em;
+              list-style: none;
+              margin: 0.5em 0 1em;
+              padding: 0;
+            }
+
+            .insight-list li,
+            .feature-chips li {
+              background: var(--la-chip);
+              border: 1px solid var(--la-teal);
+              border-radius: 999px;
+              color: var(--la-text);
+              padding: 0.35em 0.75em;
+            }
+
+            .feature-chips li {
+              border-radius: 4px;
+              border-left: 3px solid var(--la-coral);
+              border-right: none;
+              border-top: none;
+              border-bottom: none;
+              flex: 1 1 calc(50% - 0.45em);
+            }
+
+            .concept-flow {
+              align-items: center;
+              display: flex;
+              flex-direction: column;
+              margin: 1.25em 0;
+            }
+
+            .concept-flow .flow-step {
+              background: var(--la-panel);
+              border: 1px solid var(--la-teal);
+              border-radius: 7px;
+              color: var(--la-text);
+              max-width: 22em;
+              padding: 0.7em 1.2em;
+              text-align: center;
+              width: 100%;
+            }
+
+            .concept-flow .flow-step strong {
+              color: var(--la-coral);
+            }
+
+            .concept-flow .flow-arrow {
+              color: var(--la-teal);
+              font-size: 1.35em;
+              line-height: 1.25;
+            }
+
+            .percentile-callout {
+              background: var(--la-panel);
+              border-left: 5px solid var(--la-cdf);
+              border-radius: 7px;
+              color: var(--la-text);
+              margin: 1.25em 0;
+              padding: 1em;
+            }
+
+            .percentile-callout strong {
+              color: var(--la-cdf);
+            }
+
+            .katex-display,
+            .math,
+            .math-block {
+              background: #00070e;
+              border-left: 6px solid #2f005c;
+              border-radius: 6px;
+              padding: 0.6em 0.8em;
+              overflow-x: auto;
+              color: #c9c9c9 !important;
+              font-family: "Latin Modern Math", "Cambria Math", "STIX Two Math", serif !important;
+            }
+
+            .katex,
+            .katex * {
+              color: #9b9a9a !important;
+              font-family: "Latin Modern Math", "Cambria Math", "STIX Two Math", serif !important;
+            }
+
+            @media (max-width: 700px) {
+              .summary-grid,
+              .ml-grid,
+              .intuition-grid {
+                flex-direction: column;
+              }
+            }
+          </style>
+
+          <h1 id="naive-bayes">Naive Bayes</h1>
+          <h2 id="01-conditional-probability">01. Conditional Probability</h2>
+          <p>
+            <img src="./assets/01.01.jpg" alt="NB" /><br />
+            <img src="./assets/01.02.jpg" alt="NB" />
+          </p>
+          <h3 id="definition">Definition</h3>
+          <p>Conditional probability of event $A$ given event $B$ is written as:</p>
+          <p>$$ P(A \mid B) = P(A = a \mid B = b) $$</p>
+          <p>Here both $A$ and $B$ are random variables.</p>
+          <h3 id="formal-definition">Formal Definition</h3>
+          <p>$$ P(A \mid B) = \dfrac{P(A \cap B)}{P(B)} \quad \text{provided } P(B) \neq 0 $$</p>
+          <ul>
+            <li>$P(A \cap B)$ = Probability that both $A$ and $B$ occur</li>
+            <li>$P(B)$ = Probability that $B$ occurs</li>
+            <li>We cannot condition on an impossible event ($P(B) = 0$)</li>
+          </ul>
+          <h3 id="intuition">Intuition</h3>
+          <p>$P(A \mid B)$ answers the question:</p>
+          <blockquote>
+            <p>
+              “What is the probability of $A$ happening, <strong>given that</strong> we already know
+              $B$ has happened?”
+            </p>
+          </blockquote>
+          <p>
+            Suppose that somebody secretly rolls two fair six-sided dice, and we wish to compute the
+            probability that the face-up value of the first one is 2, given the information that
+            their sum is no greater than 5.
+          </p>
+          <ul>
+            <li>Let $D_1$ be the value rolled on dice 1.</li>
+            <li>Let $D_2$ be the value rolled on dice 2.</li>
+          </ul>
+          <blockquote>
+            <h3 id="probability-that-d1--2">Probability that $D_1 = 2$</h3>
+          </blockquote>
+          <p>
+            Table 1 shows the sample space of 36 combinations of rolled values of the two dice, each
+            of which occurs with probability $\dfrac{1}{36}$, with the numbers displayed in the red
+            and dark gray cells being $D_1 + D_2$.
+          </p>
+          <p>
+            $D_1 = 2$ in exactly 6 of the 36 outcomes; thus $P(D_1 = 2) = \dfrac{6}{36} =
+            \dfrac{1}{6}$:
+          </p>
+          <p><img src="./assets/Lectures/01.02.PNG" alt="Table" /></p>
+          <blockquote>
+            <h3 id="probability-that-d1--d2-leq-5">Probability that $D_1 + D_2 \leq 5$</h3>
+          </blockquote>
+          <p>
+            Table 2 shows that $D_1 + D_2 \leq 5$ for exactly 10 of the 36 outcomes, thus $P(D_1 +
+            D_2 \leq 5) = \dfrac{10}{36}$:
+          </p>
+          <p><img src="./assets/Lectures/01.03.PNG" alt="Table" /></p>
+          <h3 id="probability-that-d1--2-given-that-d1--d2-leq-5">
+            Probability that $D_1 = 2$ given that $D_1 + D_2 \leq 5$
+          </h3>
+          <p>Table 3 shows that for 3 of these 10 outcomes, $D_1 = 2$.</p>
+          <p>
+            Thus, the conditional probability $P(D_1 = 2 \mid D_1 + D_2 \leq 5) = \dfrac{3}{10} =
+            0.3$:
+          </p>
+          <p><img src="./assets/Lectures/01.04.PNG" alt="Table" /></p>
+          <p>
+            Here, in the earlier notation for the definition of conditional probability, the
+            conditioning event $B$ is that $D_1 + D_2 \leq 5$, and the event $A$ is $D_1 = 2$. We
+            have:
+          </p>
+          <p>
+            $$P(A \mid B) = \frac{P(A \cap B)}{P(B)} = \frac{\dfrac{3}{36}}{\dfrac{10}{36}} =
+            \frac{3}{10}$$
+          </p>
+          <h2 id="02-independent-vs-mutually-exclusive-events">
+            02. Independent vs Mutually Exclusive Events
+          </h2>
+          <p>
+            <img src="./assets/02.01.jpg" alt="NB" /><br />
+            <img src="./assets/02.02.jpg" alt="NB" />
+          </p>
+          <h3 id="independent-events">Independent Events</h3>
+          <p>Two events $A$ and $B$ are said to be <strong>independent</strong> if:</p>
+          <p>$$ P(A \mid B) = P(A) $$</p>
+          <p>$$ P(B \mid A) = P(B) $$</p>
+          <p>
+            <strong>Meaning:</strong><br />
+            Knowing that one event has occurred does not change the probability of the other event.
+          </p>
+          <p><strong>Example (Two fair dice):</strong></p>
+          <ul>
+            <li>Event $A$: Getting value 6 on Die 1 ($D_1 = 6$)</li>
+            <li>Event $B$: Getting value 3 on Die 2 ($D_2 = 3$)</li>
+          </ul>
+          <p>Then:</p>
+          <p>$$ P(D_1 = 6 \mid D_2 = 3) = P(D_1 = 6) $$</p>
+          <p>$$ P(D_2 = 3 \mid D_1 = 6) = P(D_2 = 3) $$</p>
+          <p>The outcome of one die does not affect the other → the events are independent.</p>
+          <h3 id="mutually-exclusive-events">Mutually Exclusive Events</h3>
+          <p>
+            Two events $A$ and $B$ are said to be <strong>mutually exclusive</strong> if they cannot
+            occur at the same time.
+          </p>
+          <p>$$ P(A \cap B) = 0 $$</p>
+          <p>This also implies:</p>
+          <p>$$ P(A \mid B) = 0 \quad \text{and} \quad P(B \mid A) = 0 $$</p>
+          <p>(when the conditioning event has non-zero probability)</p>
+          <p><strong>Example (Single die):</strong></p>
+          <ul>
+            <li>Event $A$: $D_1 = 6$</li>
+            <li>Event $B$: $D_1 = 3$</li>
+          </ul>
+          <p>A die cannot show both 6 and 3 at the same time.</p>
+          <p>$$ P(A \cap B) = 0 $$</p>
+          <p>In the Venn diagram, the two sets do not overlap.</p>
+          <h3 id="key-difference">Key Difference</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Concept</th>
+                <th>Condition</th>
+                <th>Meaning</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Independent</td>
+                <td>$P(A \mid B) = P(A)$</td>
+                <td>Occurrence of one does not affect the other</td>
+              </tr>
+              <tr>
+                <td>Mutually Exclusive</td>
+                <td>$P(A \cap B) = 0$</td>
+                <td>Both cannot happen together</td>
+              </tr>
+            </tbody>
+          </table>
+          <p>
+            <strong>Note:</strong><br />
+            If two events are mutually exclusive and both have positive probability, they
+            <strong>cannot</strong> be independent (because knowing one occurred makes the
+            probability of the other zero).
+          </p>
+          <h2 id="03-bayes-theorem-with-examples">03. Bayes Theorem with Examples</h2>
+          <p>
+            <img src="./assets/03.01.jpg" alt="NB" /><br />
+            <img src="./assets/03.02.jpg" alt="NB" />
+          </p>
+          <h2 id="bayes-theorem-1700s">Bayes’ Theorem (1700s)</h2>
+          <p>
+            Bayes’ Theorem is simple, elegant, beautiful, and extremely useful.<br />
+            It is the foundation of <strong>Naive Bayes</strong> classifiers.
+          </p>
+          <h3 id="statement">Statement</h3>
+          <p>$$ P(A \mid B) = \dfrac{P(B \mid A), P(A)}{P(B)} \quad \text{if } P(B) \neq 0 $$</p>
+          <h3 id="terminology">Terminology</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Term</th>
+                <th>Symbol</th>
+                <th>Meaning</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Posterior</td>
+                <td>$P(A \mid B)$</td>
+                <td>Probability of $A$ after observing $B$</td>
+              </tr>
+              <tr>
+                <td>Likelihood</td>
+                <td>$P(B \mid A)$</td>
+                <td>Probability of observing $B$ given $A$</td>
+              </tr>
+              <tr>
+                <td>Prior</td>
+                <td>$P(A)$</td>
+                <td>Probability of $A$ before seeing any evidence</td>
+              </tr>
+              <tr>
+                <td>Evidence</td>
+                <td>$P(B)$</td>
+                <td>Probability of observing $B$</td>
+              </tr>
+            </tbody>
+          </table>
+          <h3 id="proof">Proof</h3>
+          <p>Start from the definition of conditional probability:</p>
+          <p>$$ P(A \mid B) = \dfrac{P(A \cap B)}{P(B)} = \dfrac{P(A, B)}{P(B)} $$</p>
+          <p>By set theory:</p>
+          <p>$$ A \cap B = B \cap A $$</p>
+          <p>So</p>
+          <p>$$ P(A \mid B) = \dfrac{P(B \cap A)}{P(B)} = \dfrac{P(B, A)}{P(B)} $$</p>
+          <p>From the definition of conditional probability again:</p>
+          <p>
+            $$ P(B \mid A) = \dfrac{P(B \cap A)}{P(A)} \implies P(B \cap A) = P(B \mid A), P(A) $$
+          </p>
+          <p>Substitute back:</p>
+          <p>$$ P(A \mid B) = \dfrac{P(B \mid A), P(A)}{P(B)} $$</p>
+          <p>This is <strong>Bayes’ Theorem</strong>.</p>
+          <h3 id="key-insight">Key Insight</h3>
+          <p>Bayes’ Theorem lets us <strong>reverse</strong> conditional probabilities:</p>
+          <blockquote>
+            <p>
+              We can compute $P(A \mid B)$ using $P(B \mid A)$, the prior $P(A)$, and the evidence
+              $P(B)$.
+            </p>
+          </blockquote>
+          <h2 id="04-exercise-problems-on-bayes-theorem">04. Exercise Problems on Bayes Theorem</h2>
+          <blockquote>
+            <h3 id="practice--conditional-probability">
+              <a href="./practice/Conditional-Probability.pdf"
+                ><code>Practice : Conditional Probability</code></a
+              >
+            </h3>
+          </blockquote>
+          <blockquote>
+            <h3 id="practice--naive-bayes">
+              <a href="./practice/Naive%20Bayes.pdf"><code>Practice : Naive Bayes</code></a>
+            </h3>
+          </blockquote>
+          <h2 id="05-naive-bayes-algorithm">05. Naive Bayes Algorithm</h2>
+          <p>
+            <img src="./assets/05.01.jpg" alt="NB" /><br />
+            <img src="./assets/05.02.jpg" alt="NB" />
+          </p>
+          <p>
+            <a href="https://en.wikipedia.org/wiki/Naive_Bayes_classifier"
+              >https://en.wikipedia.org/wiki/Naive_Bayes_classifier</a
+            >
+          </p>
+          <p>
+            <a href="https://en.wikipedia.org/wiki/Naive_Bayes_classifier#Probabilistic_model"
+              >https://en.wikipedia.org/wiki/Naive_Bayes_classifier#Probabilistic_model</a
+            >
+          </p>
+          <p>
+            Abstractly, naive Bayes is a conditional probability model: it assigns probabilities
+            $p(C_k \mid x_1,\ldots,x_n)$ for each of the $K$ possible outcomes or
+            <em>classes</em> $C_k$ given a problem instance to be classified, represented by a
+            vector $\mathbf{x} = (x_1,\ldots,x_n)$ encoding some $n$ features (independent
+            variables).
+          </p>
+          <p>
+            The problem with the above formulation is that if the number of features $n$ is large or
+            if a feature can take on a large number of values, then basing such a model on
+            probability tables is infeasible. The model must therefore be reformulated to make it
+            more tractable. Using Bayes' theorem, the conditional probability can be decomposed as:
+          </p>
+          <p>$$p(C_k \mid \mathbf{x}) = \frac{p(C_k)\ p(\mathbf{x} \mid C_k)}{p(\mathbf{x})}$$</p>
+          <p>
+            In plain English, using Bayesian probability terminology, the above equation can be
+            written as:
+          </p>
+          <p>$$\text{posterior} = \frac{\text{prior}\times \text{likelihood}}{\text{evidence}}$$</p>
+          <p>
+            In practice, there is interest only in the numerator of that fraction, because the
+            denominator does not depend on $C$ and the values of the features $x_i$ are given, so
+            that the denominator is effectively constant.
+          </p>
+          <p>
+            The numerator is equivalent to the joint probability model $p(C_k,x_1,\ldots,x_n)$ which
+            can be rewritten as follows, using the chain rule for repeated applications of the
+            definition of conditional probability:
+          </p>
+          <p>
+            $$ \begin{aligned} p(C_k,x_1,\ldots,x_n) &amp;= p(x_1,\ldots,x_n,C_k) \ &amp;= p(x_1
+            \mid x_2,\ldots,x_n,C_k)\ p(x_2,\ldots,x_n,C_k) \ &amp;= p(x_1 \mid x_2,\ldots,x_n,C_k)\
+            p(x_2 \mid x_3,\ldots,x_n,C_k)\ p(x_3,\ldots,x_n,C_k) \ &amp;= \cdots \ &amp;= p(x_1
+            \mid x_2,\ldots,x_n,C_k)\ p(x_2 \mid x_3,\ldots,x_n,C_k)\cdots p(x_{n-1} \mid x_n,C_k)\
+            p(x_n \mid C_k)\ p(C_k) \end{aligned} $$
+          </p>
+          <p>
+            Now the &quot;naive&quot; conditional independence assumptions come into play: assume
+            that all features in $\mathbf{x}$ are mutually independent, conditional on the category
+            $C_k$. Under this assumption, $p(x_i \mid x_{i+1},\ldots,x_n,C_k) = p(x_i \mid C_k)$.
+          </p>
+          <p>Thus, the joint model can be expressed as:</p>
+          <p>
+            $$ \begin{aligned} p(C_k \mid x_1,\ldots,x_n) &amp;\propto \ p(C_k,x_1,\ldots,x_n) \
+            &amp;= p(C_k)\ p(x_1 \mid C_k)\ p(x_2 \mid C_k)\ p(x_3 \mid C_k)\ \cdots \ &amp;=
+            p(C_k)\prod _{i=1}^{n}p(x_i \mid C_k) \end{aligned} $$
+          </p>
+          <p>
+            where $\propto$ denotes proportionality since the denominator $p(\mathbf{x})$ is
+            omitted.
+          </p>
+          <p>
+            This means that under the above independence assumptions, the conditional distribution
+            over the class variable $C$ is:
+          </p>
+          <p>$$p(C_k \mid x_1,\ldots,x_n) = \frac{1}{Z}\ p(C_k)\prod _{i=1}^{n}p(x_i \mid C_k)$$</p>
+          <p>
+            where the evidence $Z = p(\mathbf{x}) = \sum _k p(C_k)\ p(\mathbf{x} \mid C_k)$ is a
+            scaling factor dependent only on $x_1,\ldots,x_n$, that is, a constant if the values of
+            the feature variables are known.
+          </p>
+          <p>
+            Often, it is only necessary to discriminate between classes. In that case, the scaling
+            factor is irrelevant, and it is sufficient to calculate the log-probability up to a
+            factor:
+          </p>
+          <p>
+            $$\ln p(C_k \mid x_1,\ldots,x_n) = \ln p(C_k)+\sum _{i=1}^{n}\ln p(x_i \mid
+            C_k)\underbrace {-\ln Z} _{\text{irrelevant}}$$
+          </p>
+          <p>The scaling factor is irrelevant, since discrimination subtracts it away:</p>
+          <p>
+            $$\ln \frac{p(C_k \mid x_1,\ldots,x_n)}{p(C_l \mid x_1,\ldots,x_n)}=\left(\ln
+            p(C_k)+\sum _{i=1}^{n}\ln p(x_i \mid C_k)\right)-\left(\ln p(C_l)+\sum _{i=1}^{n}\ln
+            p(x_i \mid C_l)\right)$$
+          </p>
+          <p>
+            There are two benefits of using log-probability. One is that it allows an interpretation
+            in information theory, where log-probabilities are units of information in nats. Another
+            is that it avoids arithmetic underflow.
+          </p>
+          <h2 id="06-toy-example-train-and-test-stages">06. Toy Example: Train and Test Stages</h2>
+          <p>
+            <img src="./assets/06.01.jpg" alt="NB" /><br />
+            <img src="./assets/06.02.jpg" alt="NB" />
+          </p>
+          <blockquote>
+            <h3 id="shatterline-blog">
+              <a href="https://shatterline.com/blog">ShatterLine Blog</a>
+            </h3>
+          </blockquote>
+          <h3 id="introduction-to-naive-bayes-classifiers">
+            Introduction to Naive Bayes Classifiers
+          </h3>
+          <p>
+            The Naive Bayes classifier is based on Bayes’ theorem with the independence assumptions
+            between features.
+          </p>
+          <p><img src="./assets/Lectures/06.01.png" alt="NB" /></p>
+          <p>
+            The Bayes’ rule plays a central role in probabilistic reasoning since it helps us
+            'invert' probabilistic relationships between $P(\text{Class}_j \mid x)$ and $P(x \mid
+            \text{Class}_j)$.
+          </p>
+          <h3 id="so-whats-naive-about-naive-bayes">So what’s naive about Naive Bayes?</h3>
+          <p>
+            It naively assumes that the attributes of any instance of the training-set are
+            conditionally <em>independent</em> of each other (e.g., cool temperatures are completely
+            independent of the sunny outlook). We represent this independence as:
+          </p>
+          <p>
+            $$P(x_1, x_2, \dots, x_k \mid \text{Class}<em>j) = \prod</em>{i} P(x_i \mid
+            \text{Class}_j)$$
+          </p>
+          <p>or</p>
+          <p>
+            $$P(x_1, x_2, \dots, x_k \mid \text{Class}_j) = P(x_1 \mid \text{Class}_j) \times P(x_2
+            \mid \text{Class}_j) \times \dots \times P(x_k \mid \text{Class}_j)$$
+          </p>
+          <p>
+            In plain English, if each feature (predictor) $x$ is independent of every other feature,
+            then the probability a data-point $(x_1, x_2, \dots, x_k)$ is in $\text{Class}_j$ is
+            simply the <em>product</em> of all the individual probabilities of feature $x_i$ in
+            $\text{Class}_j$.
+          </p>
+          <h3 id="example">Example</h3>
+          <p>
+            Let’s build a classifier that predicts whether I should play tennis given the forecast.
+            It takes four attributes to describe the forecast: outlook, temperature, humidity, and
+            the presence or absence of wind.
+          </p>
+          <ul>
+            <li><strong>Outlook</strong> $\in$ [Sunny, Overcast, Rainy]</li>
+            <li><strong>Temperature</strong> $\in$ [Hot, Mild, Cool]</li>
+            <li><strong>Humidity</strong> $\in$ [High, Normal]</li>
+            <li><strong>Windy</strong> $\in$ [Weak, Strong]</li>
+            <li><strong>Play</strong> $\in$ [Yes, No]</li>
+          </ul>
+          <p>The class label is the variable, Play and takes the values yes or no.</p>
+          <p>Play ∈ [Yes, No]</p>
+          <p>We read-in training data below that has been collected over 14 days.</p>
+          <p><img src="./assets/Lectures/06.02.png" alt="NB" /></p>
+          <h3 id="the-learning-phase">The Learning Phase</h3>
+          <p>
+            In the learning phase, we compute the table of likelihoods (probabilities) from the
+            training data. They are:
+          </p>
+          <p>
+            $$P(\text{Outlook}=o \mid \text{Class}_{\text{Play}}=b), \quad \text{where } o \in
+            [\text{Sunny}, \text{Overcast}, \text{Rainy}] \text{ and } b \in [\text{yes},
+            \text{no}]$$
+          </p>
+          <p>
+            $$P(\text{Temperature}=t \mid \text{Class}_{\text{Play}}=b), \quad \text{where } t \in
+            [\text{Hot}, \text{Mild}, \text{Cool}] \text{ and } b \in [\text{yes}, \text{no}]$$
+          </p>
+          <p>
+            $$P(\text{Humidity}=h \mid \text{Class}_{\text{Play}}=b), \quad \text{where } h \in
+            [\text{High}, \text{Normal}] \text{ and } b \in [\text{yes}, \text{no}]$$
+          </p>
+          <p>
+            $$P(\text{Wind}=w \mid \text{Class}_{\text{Play}}=b), \quad \text{where } w \in
+            [\text{Weak}, \text{Strong}] \text{ and } b \in [\text{yes}, \text{no}]$$
+          </p>
+          <p><img src="./assets/Lectures/06.03.png" alt="NB" /></p>
+          <p>
+            We also calculate $P(\text{Class}<em>{\text{Play}}=\text{Yes})$ and $P(\text{Class}</em
+            >{\text{Play}}=\text{No})$
+          </p>
+          <p><img src="./assets/Lectures/06.04.png" alt="NB" /></p>
+          <h3 id="classification-phase">Classification Phase</h3>
+          <p>
+            Let’s say, we get a new instance of the weather condition, $x' =
+            (\text{Outlook}=\text{Sunny}, \text{Temperature}=\text{Cool},
+            \text{Humidity}=\text{High}, \text{Wind}=\text{Strong})$ that will have to be classified
+            (i.e., are we going to play tennis under the conditions specified by $x'$).
+          </p>
+          <p>
+            With the MAP rule, we compute the posterior probabilities. This is easily done by
+            looking up the tables we built in the learning phase.
+          </p>
+          <p>
+            $$\begin{aligned} P(\text{Class}<em
+              >{\text{Play}}=\text{Yes} \mid x') &amp;= \Big[ P(\text{Sunny} \mid \text{Class}</em
+            >{\text{Play}}=\text{Yes}) \times P(\text{Cool} \mid \text{Class}<em
+              >{\text{Play}}=\text{Yes}) \times \ &amp;\quad P(\text{High} \mid \text{Class}</em
+            >{\text{Play}}=\text{Yes}) \times P(\text{Strong} \mid \text{Class}<em
+              >{\text{Play}}=\text{Yes}) \Big] \times \ &amp;\quad P(\text{Class}</em
+            >{\text{Play}}=\text{Yes}) \ &amp;= \frac{2}{9} \times \frac{3}{9} \times \frac{3}{9}
+            \times \frac{3}{9} \times \frac{9}{14} \ &amp; = 0.0053 \end{aligned}$$
+          </p>
+          <p>
+            $$\begin{aligned} P(\text{Class}<em
+              >{\text{Play}}=\text{No} \mid x') &amp;= \Big[ P(\text{Sunny} \mid \text{Class}</em
+            >{\text{Play}}=\text{No}) \times P(\text{Cool} \mid \text{Class}<em
+              >{\text{Play}}=\text{No}) \times \ &amp;\quad P(\text{High} \mid \text{Class}</em
+            >{\text{Play}}=\text{No}) \times P(\text{Strong} \mid \text{Class}<em
+              >{\text{Play}}=\text{No}) \Big] \times \ &amp;\quad P(\text{Class}</em
+            >{\text{Play}}=\text{No}) \ &amp;= \frac{3}{5} \times \frac{1}{5} \times \frac{4}{5}
+            \times \frac{3}{5} \times \frac{5}{14} \ &amp; = 0.0205 \end{aligned}$$
+          </p>
+          <p>
+            $$= \frac{3}{5} \times \frac{1}{5} \times \frac{4}{5} \times \frac{3}{5} \times
+            \frac{5}{14} = 0.0205$$
+          </p>
+          <p>
+            Since $P(\text{Class}<em
+              >{\text{Play}}=\text{Yes} \mid x')$ is less than $P(\text{Class}</em
+            >{\text{Play}}=\text{No} \mid x')$, we classify the new instance $x'$ to be
+            &quot;No&quot;.
+          </p>
+          <h2 id="07-naive-bayes-on-text-data">07. Naive Bayes on Text Data</h2>
+          <p>
+            <img src="./assets/07.01.jpg" alt="NB" /><br />
+            <img src="./assets/07.02.jpg" alt="NB" />
+          </p>
+          <p>
+            Naive Bayes is a simple and widely used method for <strong>text classification</strong>.
+          </p>
+          <h3 id="common-applications">Common Applications</h3>
+          <ul>
+            <li><strong>Spam Filter</strong>: Classify an email as Spam or Not-Spam</li>
+            <li>
+              <strong>Sentiment Analysis</strong>: Classify a review as Positive (+) or Negative (−)
+            </li>
+          </ul>
+          <h3 id="task">Task</h3>
+          <p>Given a text query, we want:</p>
+          <p>
+            $$ P(y = 1 \mid \text{text}_q) \quad \text{and} \quad P(y = 0 \mid \text{text}_q) $$
+          </p>
+          <h3 id="preprocessing">Preprocessing</h3>
+          <p>Text is converted into a set of words (features):</p>
+          <p>$$ \text{text} ;\xrightarrow{\text{preprocessing}}; {w_1, w_2, \dots, w_d} $$</p>
+          <p>Common preprocessing steps:</p>
+          <ul>
+            <li>Remove stopwords</li>
+            <li>Stemming</li>
+            <li>n-grams</li>
+          </ul>
+          <p>
+            Often we use <strong>Binary Bag-of-Words</strong> (presence or absence of a word, not
+            the count).
+          </p>
+          <h3 id="naive-bayes-formulation">Naive Bayes Formulation</h3>
+          <p>$$ P(y = 1 \mid \text{text}) = P(y = 1 \mid w_1, w_2, \dots, w_d) $$</p>
+          <p>
+            Using Bayes’ theorem and the Naive assumption (features are independent given the
+            class):
+          </p>
+          <p>
+            $$ P(y = 1 \mid \text{text}) \propto P(y = 1) \times \prod_{i=1}^{d} P(w_i \mid y = 1)
+            $$
+          </p>
+          <p>Similarly:</p>
+          <p>
+            $$ P(y = 0 \mid \text{text}) \propto P(y = 0) \times \prod_{i=1}^{d} P(w_i \mid y = 0)
+            $$
+          </p>
+          <ul>
+            <li>$P(y = 1)$ and $P(y = 0)$ → <strong>Class priors</strong></li>
+            <li>$P(w_i \mid y)$ → <strong>Likelihoods</strong></li>
+          </ul>
+          <h3 id="estimating-the-probabilities-from-training-data">
+            Estimating the Probabilities from Training Data
+          </h3>
+          <p><strong>Class Priors:</strong></p>
+          <p>
+            $$ P(y = 1) = \dfrac{\text{# training points with } y = 1}{\text{Total # training
+            points}} $$
+          </p>
+          <p>
+            $$ P(y = 0) = \dfrac{\text{# training points with } y = 0}{\text{Total # training
+            points}} $$
+          </p>
+          <p><strong>Likelihoods:</strong></p>
+          <p>
+            $$ P(w_i \mid y = 1) = \dfrac{\text{# training points that contain } w_i \text{ and have
+            } y = 1}{\text{# training points with } y = 1} $$
+          </p>
+          <p>
+            $$ P(w_i \mid y = 0) = \dfrac{\text{# training points that contain } w_i \text{ and have
+            } y = 0}{\text{# training points with } y = 0} $$
+          </p>
+          <h3 id="why-naive-bayes-is-popular-for-text">Why Naive Bayes is Popular for Text</h3>
+          <ul>
+            <li>Extremely simple and fast</li>
+            <li>Works surprisingly well as a strong <strong>baseline</strong></li>
+            <li>
+              Especially effective for:
+              <ul>
+                <li>Spam detection</li>
+                <li>Sentiment / polarity of reviews</li>
+              </ul>
+            </li>
+          </ul>
+          <h3 id="typical-benchmark-results-text-classification">
+            Typical Benchmark Results (Text Classification)
+          </h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Model</th>
+                <th>Accuracy</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Naive Bayes</td>
+                <td>~98%</td>
+              </tr>
+              <tr>
+                <td>Logistic Regression</td>
+                <td>—</td>
+              </tr>
+              <tr>
+                <td>GBDT</td>
+                <td>—</td>
+              </tr>
+              <tr>
+                <td>Deep Learning</td>
+                <td>98.5%</td>
+              </tr>
+            </tbody>
+          </table>
+          <p>
+            Naive Bayes often comes very close to much more complex models, making it an excellent
+            baseline.
+          </p>
+          <h2 id="08-laplaceadditive-smoothing">08. Laplace/Additive Smoothing</h2>
+          <p>
+            <img src="./assets/08.01.jpg" alt="NB" /><br />
+            <img src="./assets/08.02.jpg" alt="NB" />
+          </p>
+          <h3 id="the-problem-zero-probability">The Problem: Zero Probability</h3>
+          <p>During training we estimate:</p>
+          <ul>
+            <li>Class priors: $P(y=1)$, $P(y=0)$</li>
+            <li>
+              Likelihoods: $P(w_i \mid y=1)$, $P(w_i \mid y=0)$ for every word $w_i$ in the training
+              vocabulary
+            </li>
+          </ul>
+          <p>
+            At test time, a query text may contain a word $w'$ that
+            <strong>never appeared</strong> in the training data.
+          </p>
+          <p>$$ \text{text}_q = {w_1, w_2, w_3, w'} $$</p>
+          <p>Then:</p>
+          <p>
+            $$ P(w' \mid y=1) = \dfrac{\text{# training points containing } w' \text{ and }
+            y=1}{\text{# training points with } y=1} = \dfrac{0}{n_1} = 0 $$
+          </p>
+          <p>Because of the product in Naive Bayes:</p>
+          <p>$$ P(y=1 \mid \text{text}_q) \propto P(y=1) \prod P(w_i \mid y=1) = 0 $$</p>
+          <p>
+            The same happens for $y=0$.<br />
+            Both posterior probabilities become zero → the model breaks (multiplication-by-zero
+            problem).
+          </p>
+          <p>Simply ignoring / dropping the unknown word is also not ideal.</p>
+          <h3 id="solution-laplace--additive-smoothing">Solution: Laplace / Additive Smoothing</h3>
+          <p>We add a small positive value $\alpha$ (usually $\alpha = 1$) to the counts.</p>
+          <p><strong>General formula:</strong></p>
+          <p>$$ P(w' \mid y=1) = \dfrac{0 + \alpha}{n_1 + \alpha K} $$</p>
+          <p>Where:</p>
+          <ul>
+            <li>$n_1$ = number of training points with $y=1$</li>
+            <li>
+              $K$ = number of distinct values the feature can take<br />
+              (for binary presence/absence, $K=2$)
+            </li>
+          </ul>
+          <p>For a general feature $f_i$ that can take value $a$:</p>
+          <p>
+            $$ P(f_i = a \mid y=1) = \dfrac{\text{count}(f_i=a, y=1) + \alpha}{n_1 + \alpha K} $$
+          </p>
+          <h3 id="effect-of-alpha">Effect of $\alpha$</h3>
+          <p><strong>Example</strong> (assume $n_1 = 100$, $K=2$):</p>
+          <table>
+            <thead>
+              <tr>
+                <th>$\alpha$</th>
+                <th>$P(w' \mid y=1)$</th>
+                <th>Interpretation</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>1</td>
+                <td>$\dfrac{1}{102} \approx 0.01$</td>
+                <td>Mild smoothing (Add-one smoothing)</td>
+              </tr>
+              <tr>
+                <td>10</td>
+                <td>$\dfrac{10}{120} \approx 0.083$</td>
+                <td>Stronger smoothing</td>
+              </tr>
+              <tr>
+                <td>100</td>
+                <td>$\dfrac{100}{300} \approx 0.33$</td>
+                <td>Even stronger</td>
+              </tr>
+              <tr>
+                <td>10000</td>
+                <td>$\dfrac{10000}{20100} \approx 0.5$</td>
+                <td>Almost uniform (maximum smoothing)</td>
+              </tr>
+            </tbody>
+          </table>
+          <p>
+            When $\alpha$ becomes very large, the likelihood is pushed toward the
+            <strong>uniform distribution</strong> ($1/K$).
+          </p>
+          <h3 id="applying-smoothing-to-all-words">Applying Smoothing to All Words</h3>
+          <p>For every word $w_i$ (even those that appear in training):</p>
+          <h1 id="pwi-mid-y1">$$ P(w_i \mid y=1)</h1>
+          <p>
+            \dfrac{ \text{# data points containing } w_i \text{ and } y=1 + \alpha }{ \text{# data
+            points with } y=1 + \alpha K } $$
+          </p>
+          <p>Most common choice: <strong>$\alpha = 1$</strong> (Add-one / Laplace smoothing).</p>
+          <h3 id="bias-variance-interpretation-of-alpha">
+            Bias-Variance Interpretation of $\alpha$
+          </h3>
+          <ul>
+            <li>Small $\alpha$ → trusts the training counts more (low bias, higher variance)</li>
+            <li>
+              Large $\alpha$ → moves probabilities toward uniform (higher bias, lower variance)
+            </li>
+            <li>
+              When the number of training examples for a class ($n_1$) is small, we have less
+              confidence in the raw ratio, so a larger $\alpha$ is safer.
+            </li>
+          </ul>
+          <p>
+            <strong>Key Insight:</strong><br />
+            Laplace smoothing prevents zero probabilities for unseen words and makes Naive Bayes
+            robust on real text data where the vocabulary is huge and many words appear only at test
+            time.
+          </p>
+          <h2 id="09-log-probabilities-for-numerical-stability">
+            09. Log-Probabilities for Numerical Stability
+          </h2>
+          <p>
+            <img src="./assets/09.01.jpg" alt="NB" /><br />
+            <img src="./assets/09.02.jpg" alt="NB" />
+          </p>
+          <h3 id="the-problem">The Problem</h3>
+          <p>In Naive Bayes we compute:</p>
+          <p>
+            $$ P(y=1 \mid w_1, w_2, \dots, w_d) \propto P(y=1) \times \prod_{i=1}^{d} P(w_i \mid
+            y=1) $$
+          </p>
+          <p>
+            When the number of features $d$ is large (e.g. $d = 100$), we multiply many numbers that
+            lie between 0 and 1.
+          </p>
+          <p><strong>Example:</strong></p>
+          <p>$$ 0.2 \times 0.1 \times 0.2 \times 0.1 = 0.0004 $$</p>
+          <p>
+            With 100 such multiplications the product becomes extremely small →
+            <strong>numerical underflow</strong>.
+          </p>
+          <p>
+            Even with double-precision floating point (about 16 significant digits), the value can
+            become 0 due to rounding.
+          </p>
+          <h3 id="solution-work-in-log-space">Solution: Work in Log-Space</h3>
+          <p>Instead of multiplying probabilities, we take the <strong>logarithm</strong>:</p>
+          <p>
+            $$ \log\Big(P(y=1 \mid w_1,\dots,w_d)\Big) = \log\big(P(y=1)\big) + \sum_{i=1}^{d}
+            \log\big(P(w_i \mid y=1)\big) $$
+          </p>
+          <p>
+            $$ \log\Big(P(y=0 \mid w_1,\dots,w_d)\Big) = \log\big(P(y=0)\big) + \sum_{i=1}^{d}
+            \log\big(P(w_i \mid y=0)\big) $$
+          </p>
+          <h3 id="why-this-works">Why This Works</h3>
+          <ul>
+            <li>
+              $\log$ is a <strong>monotonic</strong> function: if $x_1 &gt; x_2$ then $\log x_1 &gt;
+              \log x_2$
+            </li>
+            <li>
+              Therefore the class that has the larger log-probability is still the class with the
+              larger probability
+            </li>
+            <li>Multiplication turns into addition:</li>
+          </ul>
+          <p>$$ \log(a \times b) = \log a + \log b $$</p>
+          <ul>
+            <li>Addition of log-values is numerically stable</li>
+          </ul>
+          <h3 id="historical-note">Historical Note</h3>
+          <p>
+            Before electronic calculators, people used <strong>log-tables</strong> exactly for this
+            reason:<br />
+            to convert difficult multiplications into easier additions.
+          </p>
+          <h3 id="practical-rule">Practical Rule</h3>
+          <p>In code, always compute:</p>
+          <pre><code class="language-text">score_class_1 = log(P(y=1)) + sum( log(P(w_i | y=1)) )
+score_class_0 = log(P(y=0)) + sum( log(P(w_i | y=0)) )
+</code></pre>
+          <p>Then predict the class with the higher score.</p>
+          <p>
+            <strong>Key Insight:</strong><br />
+            Using log-probabilities converts a product of many small numbers into a sum, completely
+            avoiding numerical underflow while preserving the correct ranking of the classes.
+          </p>
+          <h2 id="10-bias-and-variance-tradeoff">10. Bias and Variance Tradeoff</h2>
+          <p>
+            <img src="./assets/10.01.jpg" alt="NB" /><br />
+            <img src="./assets/10.02.jpg" alt="NB" />
+          </p>
+          <p>
+            In Naive Bayes, the Laplace smoothing parameter $\alpha$ controls the
+            <strong>bias-variance tradeoff</strong>.
+          </p>
+          <ul>
+            <li>High Bias → Underfitting</li>
+            <li>High Variance → Overfitting</li>
+          </ul>
+          <p>
+            <strong>Definition of high variance:</strong><br />
+            Small changes in the training data result in dramatic changes in the model.
+          </p>
+          <h3 id="case-1-alpha--0-no-smoothing">Case 1: $\alpha = 0$ (No Smoothing)</h3>
+          <p>
+            $$ P(w_i \mid y=1) = \dfrac{\text{# training points containing } w_i \text{ and }
+            y=1}{\text{# training points with } y=1} $$
+          </p>
+          <p>
+            <strong>Example:</strong><br />
+            Training set has 2000 points (1000 positive, 1000 negative).<br />
+            A rare word $w_i$ appears only <strong>2 times</strong> in the positive class.
+          </p>
+          <p>$$ P(w_i \mid y=1) = \dfrac{2}{1000} $$</p>
+          <p>
+            If we remove those 2 points from the training data, the probability suddenly becomes:
+          </p>
+          <p>$$ P(w_i \mid y=1) = \dfrac{0}{1000} = 0 $$</p>
+          <p>
+            → A very small change in training data causes a large change in the model.<br />
+            → <strong>High variance → Overfitting</strong> (especially on rare words).
+          </p>
+          <h3 id="case-2-alpha-is-very-large-eg-alpha--10000">
+            Case 2: $\alpha$ is Very Large (e.g. $\alpha = 10000$)
+          </h3>
+          <p>
+            $$ P(w_i \mid y=1) = \dfrac{2 + 10000}{1000 + 2\times 10000} \approx \dfrac{1}{2} $$
+          </p>
+          <p>
+            For <strong>every</strong> word we get approximately the same probability ($\approx
+            1/2$).
+          </p>
+          <p>Therefore:</p>
+          <p>$$ P(y=1 \mid x_q) \approx P(y=0 \mid x_q) \approx \dfrac{1}{2} $$</p>
+          <p>
+            The model almost always predicts according to the class prior only (or becomes almost
+            random).
+          </p>
+          <p>→ <strong>High bias → Underfitting</strong></p>
+          <p>
+            (This is similar to K-NN with $K = n$, where the model always predicts the majority
+            class.)
+          </p>
+          <h3 id="summary-of-the-two-extremes">Summary of the Two Extremes</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Value of $\alpha$</th>
+                <th>Effect on Model</th>
+                <th>Bias / Variance</th>
+                <th>Result</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>$\alpha = 0$</td>
+                <td>Trusts rare words a lot</td>
+                <td>High Variance</td>
+                <td>Overfitting</td>
+              </tr>
+              <tr>
+                <td>$\alpha$ very large</td>
+                <td>All words look similar</td>
+                <td>High Bias</td>
+                <td>Underfitting</td>
+              </tr>
+            </tbody>
+          </table>
+          <h3 id="how-to-choose-the-right-alpha">How to Choose the Right $\alpha$</h3>
+          <p>$\alpha$ is a <strong>hyperparameter</strong> (just like $K$ in K-NN).</p>
+          <p>We find the best value using:</p>
+          <ul>
+            <li>Simple Cross Validation</li>
+            <li>10-Fold Cross Validation</li>
+          </ul>
+          <p><strong>Key Insight:</strong></p>
+          <ul>
+            <li>Small $\alpha$ → model is sensitive to rare words (overfits)</li>
+            <li>Large $\alpha$ → model ignores the actual word frequencies (underfits)</li>
+            <li>Cross-validation helps us pick the sweet spot that balances bias and variance.</li>
+          </ul>
+          <h2 id="11-feature-importance-and-interpretability">
+            11. Feature Importance and Interpretability
+          </h2>
+          <p>
+            <img src="./assets/11.01.jpg" alt="NB" /><br />
+            <img src="./assets/11.02.jpg" alt="NB" />
+          </p>
+          <h3 id="feature-importance-in-naive-bayes">Feature Importance in Naive Bayes</h3>
+          <p>Naive Bayes stores the likelihoods for every word:</p>
+          <ul>
+            <li>$P(w_i \mid y=1)$ for all words $w_i$</li>
+            <li>$P(w_i \mid y=0)$ for all words $w_i$</li>
+          </ul>
+          <p><strong>How to find important features:</strong></p>
+          <ol>
+            <li>Sort all words in <strong>decreasing order</strong> of $P(w_i \mid y=1)$</li>
+            <li>
+              The top words are the most important features for the <strong>positive class</strong>
+            </li>
+          </ol>
+          <p>Similarly:</p>
+          <ul>
+            <li>
+              Words with high $P(w_i \mid y=0)$ are important for the
+              <strong>negative class</strong>
+            </li>
+          </ul>
+          <table>
+            <thead>
+              <tr>
+                <th>Class</th>
+                <th>How to find important words</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Positive (+)</td>
+                <td>Words with highest $P(w_i \mid y=1)$</td>
+              </tr>
+              <tr>
+                <td>Negative (−)</td>
+                <td>Words with highest $P(w_i \mid y=0)$</td>
+              </tr>
+            </tbody>
+          </table>
+          <p>
+            These values are obtained <strong>directly from the trained model</strong> (no extra
+            computation needed).
+          </p>
+          <p>
+            <strong>Contrast with K-NN:</strong><br />
+            In K-NN we usually need techniques like Forward Feature Selection to determine feature
+            importance.
+          </p>
+          <h3 id="interpretability">Interpretability</h3>
+          <p>Naive Bayes is highly interpretable.</p>
+          <p><strong>Example (Amazon reviews):</strong></p>
+          <p>A review $x_q$ is predicted as positive ($y_q = 1$).</p>
+          <p>We can explain the decision:</p>
+          <blockquote>
+            <p>
+              “I am concluding $y_q = 1$ because the review contains the words<br />
+              $w_3$, $w_6$, $w_{10}$<br />
+              which have high values of<br />
+              $P(w_3 \mid y=1)$, $P(w_6 \mid y=1)$, $P(w_{10} \mid y=1)$.”
+            </p>
+          </blockquote>
+          <p>
+            Typical positive words: <em>terrific</em>, <em>phenomenal</em>, <em>great</em><br />
+            Typical negative words: <em>not good</em>, <em>terrible</em>
+          </p>
+          <p>
+            If a word has a very small probability under the opposite class (e.g. $P(w_8 \mid y=0)$
+            is very small), it further strengthens the evidence for the predicted class.
+          </p>
+          <h3 id="key-insight-2">Key Insight</h3>
+          <ul>
+            <li>Feature importance in Naive Bayes comes for free from the likelihood tables.</li>
+            <li>
+              We can directly point to the words that pushed the model toward a particular class.
+            </li>
+            <li>
+              This makes Naive Bayes one of the most interpretable classification algorithms,
+              especially for text data.
+            </li>
+          </ul>
+          <h2 id="12-imbalanced-data">12. Imbalanced Data</h2>
+          <p>
+            <img src="./assets/12.01.jpg" alt="NB" /><br />
+            <img src="./assets/12.02.jpg" alt="NB" />
+          </p>
+          <h3 id="the-problem-2">The Problem</h3>
+          <p>Suppose we have an imbalanced training set:</p>
+          <p>$$ n = n_1 + n_2 $$</p>
+          <ul>
+            <li>$n_1$ = number of positive points</li>
+            <li>$n_2$ = number of negative points</li>
+          </ul>
+          <p>Example:</p>
+          <p>
+            $$ \frac{n_1}{n} = 0.9 \quad (90% \text{ positive}) $$ $$ \frac{n_2}{n} = 0.1 \quad (10%
+            \text{ negative}) $$
+          </p>
+          <p>In Naive Bayes the posterior is:</p>
+          <p>$$ P(y=1 \mid w_1,\dots,w_d) \propto P(y=1) \prod_{i=1}^{d} P(w_i \mid y=1) $$</p>
+          <p>$$ P(y=0 \mid w_1,\dots,w_d) \propto P(y=0) \prod_{i=1}^{d} P(w_i \mid y=0) $$</p>
+          <p>
+            Because the <strong>class prior</strong> $P(y=1) = 0.9$ is much larger than $P(y=0) =
+            0.1$, the majority class has a strong advantage.
+          </p>
+          <h3 id="solutions">Solutions</h3>
+          <p><strong>1. Upsampling or Downsampling (Most Common)</strong></p>
+          <p>Make the two classes roughly equal in size:</p>
+          <p>$$ n_1 \approx n_2 \quad \Rightarrow \quad P(y=1) = P(y=0) = \dfrac{1}{2} $$</p>
+          <p><strong>2. Drop the Class Priors</strong></p>
+          <p>
+            Ignore $P(y=1)$ and $P(y=0)$ completely and set them both to 1.<br />
+            (Only the likelihood terms remain.)
+          </p>
+          <p><strong>3. Modified Naive Bayes</strong></p>
+          <p>
+            Design a special version of NB that explicitly accounts for class imbalance.<br />
+            (This is rarely used in practice.)
+          </p>
+          <h3 id="effect-of-laplace-smoothing-on-imbalanced-data">
+            Effect of Laplace Smoothing on Imbalanced Data
+          </h3>
+          <p>
+            When we apply the same $\alpha$ to both classes, the minority class is affected more.
+          </p>
+          <p><strong>Example:</strong></p>
+          <ul>
+            <li>Majority (positive): $n_1 = 900$</li>
+            <li>Minority (negative): $n_2 = 100$</li>
+            <li>$\alpha = 10$</li>
+          </ul>
+          <p>For a word that appears 2 times in the minority class:</p>
+          <p>$$ P(w_i \mid y=0) = \dfrac{2+10}{100+20} = \dfrac{12}{120} = 10% $$</p>
+          <p>For the same word appearing 18 times in the majority class:</p>
+          <p>$$ P(w_i \mid y=1) = \dfrac{18+10}{900+20} = \dfrac{28}{920} \approx 3.04% $$</p>
+          <p>→ The relative impact of $\alpha$ is much larger on the minority class.</p>
+          <h3 id="practical-recommendations">Practical Recommendations</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Technique</th>
+                <th>Recommendation</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Upsampling / Downsampling</td>
+                <td>Preferred</td>
+              </tr>
+              <tr>
+                <td>Different $\alpha$ per class</td>
+                <td>Possible hack</td>
+              </tr>
+              <tr>
+                <td>Modified NB for imbalance</td>
+                <td>Rarely used</td>
+              </tr>
+            </tbody>
+          </table>
+          <p>
+            <strong>Key Insight:</strong><br />
+            In imbalanced data the class prior gives a big advantage to the majority class. The
+            simplest and most effective fix is to balance the training set (upsample the minority
+            class or downsample the majority class) so that the priors become equal.
+          </p>
+          <h2 id="13-outliers">13. Outliers</h2>
+          <p>
+            <img src="./assets/13.01.jpg" alt="NB" /><br />
+            <img src="./assets/13.02.jpg" alt="NB" />
+          </p>
+          <h3 id="1-outliers-at-test-time">1. Outliers at Test Time</h3>
+          <p>
+            In text classification, a test document may contain a word $w'$ that
+            <strong>never appeared</strong> in the training data:
+          </p>
+          <p>$$ x_q = {w_1, w_2, w_3, w'} $$</p>
+          <p>where</p>
+          <p>$$ w' \notin {w_1, w_2, \dots, w_m} $$</p>
+          <p>(the vocabulary seen during training).</p>
+          <p>
+            Without any protection this would make the probability zero.<br />
+            <strong>Laplace Smoothing</strong> solves the problem:
+          </p>
+          <p>$$ P(w' \mid y=1) = \dfrac{0 + \alpha}{n_1 + 2\alpha} $$</p>
+          <p>So unseen words at test time are handled gracefully by Laplace smoothing.</p>
+          <h3 id="2-outliers-in-training-data">2. Outliers in Training Data</h3>
+          <p>
+            A word $w_8$ that occurs only a <strong>very few times</strong> (in either the positive
+            or the negative class) can be considered an outlier / rare word.
+          </p>
+          <p>
+            These rare words can make the model unstable (high variance), especially when $\alpha =
+            0$.
+          </p>
+          <h3 id="practical-hacks--solutions">Practical Hacks / Solutions</h3>
+          <p><strong>Hack 1 – Frequency Thresholding</strong></p>
+          <p>
+            If a word $w_j$ occurs fewer than a threshold $c$ times (e.g. $c = 10$) in the whole
+            training set, simply <strong>ignore</strong> that word (remove it from the vocabulary).
+          </p>
+          <p>$$ \text{if count}(w_j) &lt; c \quad \Rightarrow \quad \text{drop } w_j $$</p>
+          <p><strong>Hack 2 – Laplace Smoothing</strong></p>
+          <p>
+            Even if the word is kept, Laplace smoothing reduces the impact of extremely rare words:
+          </p>
+          <p>$$ P(w_j \mid y=1) = \dfrac{\text{count}(w_j, y=1) + \alpha}{n_1 + \alpha K} $$</p>
+          <h3 id="summary">Summary</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Type of Outlier</th>
+                <th>Solution</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Unseen word at test time</td>
+                <td>Laplace Smoothing</td>
+              </tr>
+              <tr>
+                <td>Very rare word in training</td>
+                <td>Frequency threshold (ignore it) + Laplace Smoothing</td>
+              </tr>
+            </tbody>
+          </table>
+          <p>
+            <strong>Key Insight:</strong><br />
+            Laplace smoothing protects Naive Bayes from both unseen words at test time and very rare
+            words in the training data, making the model more robust to outliers.
+          </p>
+          <h2 id="14-missing-values">14. Missing Values</h2>
+          <p>
+            <img src="./assets/14.01.jpg" alt="NB" /><br />
+            <img src="./assets/14.02.jpg" alt="NB" />
+          </p>
+          <h3 id="1-text-data">1. Text Data</h3>
+          <p>In pure text data (Bag-of-Words / Binary BoW):</p>
+          <p>$$ \text{text} = {w_1, w_2, \dots, w_d} $$</p>
+          <p>
+            There is <strong>no notion of missing values</strong>.<br />
+            A word is either present or absent.
+          </p>
+          <h3 id="2-categorical-features">2. Categorical Features</h3>
+          <p>When we have categorical features:</p>
+          <p>$$ f_i \in {a_1, a_2, a_3} $$</p>
+          <p>A missing entry appears as <code>NaN</code> in the data matrix.</p>
+          <p><strong>Simple &amp; effective solution:</strong></p>
+          <p>Treat <code>NaN</code> as just another category:</p>
+          <p>$$ f_i \in {a_1, a_2, a_3, \text{NaN}} $$</p>
+          <p>
+            Naive Bayes can handle this naturally because it only needs the probability of each
+            category given the class.
+          </p>
+          <h3 id="3-numerical-features">3. Numerical Features</h3>
+          <p>For numerical features we usually use <strong>Gaussian Naive Bayes</strong>.</p>
+          <p>In the presence of missing values we have two common options:</p>
+          <ul>
+            <li>Perform <strong>imputation</strong> first (mean / median / model-based, etc.)</li>
+            <li>
+              Or use a variant of Gaussian NB that can handle missing values directly (less common)
+            </li>
+          </ul>
+          <h3 id="summary-2">Summary</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Data Type</th>
+                <th>How Missing Values are Handled</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Text (BoW)</td>
+                <td>No missing values</td>
+              </tr>
+              <tr>
+                <td>Categorical</td>
+                <td>Treat <code>NaN</code> as an extra category</td>
+              </tr>
+              <tr>
+                <td>Numerical</td>
+                <td>Imputation (then Gaussian NB)</td>
+              </tr>
+            </tbody>
+          </table>
+          <p>
+            <strong>Key Insight:</strong><br />
+            For categorical features, the cleanest approach in Naive Bayes is to treat the missing
+            value itself as a valid category. This requires no imputation and works very well in
+            practice.
+          </p>
+          <h2 id="15-handling-numerical-features-gaussian-nb">
+            15. Handling Numerical Features (Gaussian NB)
+          </h2>
+          <p>
+            <img src="./assets/15.01.jpg" alt="NB" /><br />
+            <img src="./assets/15.02.jpg" alt="NB" />
+          </p>
+          <h3 id="types-of-naive-bayes">Types of Naive Bayes</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Type of Features</th>
+                <th>Name of NB</th>
+                <th>Likelihood Assumption</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Binary (0/1)</td>
+                <td>Bernoulli NB</td>
+                <td>Bernoulli</td>
+              </tr>
+              <tr>
+                <td>Categorical / Counts</td>
+                <td>Multinomial NB</td>
+                <td>Multinomial</td>
+              </tr>
+              <tr>
+                <td>Numerical / Real-valued</td>
+                <td><strong>Gaussian NB</strong></td>
+                <td>Gaussian (Normal)</td>
+              </tr>
+            </tbody>
+          </table>
+          <h3 id="gaussian-naive-bayes--setup">Gaussian Naive Bayes – Setup</h3>
+          <p>We have a dataset with real-valued features $f_1, f_2, \dots, f_d$.</p>
+          <p>For a point $x_i = (x_{i1}, x_{i2}, \dots, x_{id})$ the posterior is still:</p>
+          <p>
+            $$ P(y_i=1 \mid x_{i1},\dots,x_{id}) \propto P(y_i=1) \prod_{j=1}^{d} P(x_{ij} \mid
+            y_i=1) $$
+          </p>
+          <p>
+            $$ P(y_i=0 \mid x_{i1},\dots,x_{id}) \propto P(y_i=0) \prod_{j=1}^{d} P(x_{ij} \mid
+            y_i=0) $$
+          </p>
+          <p>Class prior:</p>
+          <p>$$ P(y=1) = \dfrac{n_1}{n_1 + n_2} $$</p>
+          <h3 id="modelling-the-likelihoods">Modelling the Likelihoods</h3>
+          <p>
+            We assume that each feature, <strong>conditioned on the class</strong>, follows a
+            Gaussian distribution.
+          </p>
+          <ul>
+            <li>For the positive class ($D'$ = all training points with $y=1$):</li>
+          </ul>
+          <p>$$ f_j ;\big|; y=1 ;\sim; \mathcal{N}(\mu_j^1, \sigma_j^1) $$</p>
+          <ul>
+            <li>For the negative class ($D''$ = all training points with $y=0$):</li>
+          </ul>
+          <p>$$ f_j ;\big|; y=0 ;\sim; \mathcal{N}(\mu_j^0, \sigma_j^0) $$</p>
+          <p>So the likelihood is simply the value of the Gaussian PDF:</p>
+          <p>
+            $$ P(x_{ij} \mid y=1) = \text{PDF of }\mathcal{N}(\mu_j^1, \sigma_j^1)\text{ evaluated
+            at }x_{ij} $$
+          </p>
+          <h3 id="geometric-intuition">Geometric Intuition</h3>
+          <p>
+            For a feature $f_j$ in the positive class we fit a Normal curve $\mathcal{N}(\mu_j^1,
+            \sigma_j^1)$.<br />
+            When a test point has value $x_{ij} = 2.62$, we read the height of the PDF at that point
+            — that height is the likelihood $P(x_{ij} \mid y=1)$.
+          </p>
+          <h3 id="summary-3">Summary</h3>
+          <ul>
+            <li>Bernoulli NB → binary features</li>
+            <li>Multinomial NB → count / categorical features</li>
+            <li>
+              <strong>Gaussian NB</strong> → real-valued features (assumes each feature is Gaussian
+              given the class)
+            </li>
+          </ul>
+          <p>
+            <strong>Key Insight:</strong><br />
+            Gaussian Naive Bayes is just the same Naive Bayes idea, but the likelihood $P(x_j \mid
+            y)$ is obtained from a Normal distribution fitted to the feature values of each class.
+          </p>
+          <h2 id="16-multiclass-classification">16. Multiclass Classification</h2>
+          <p>
+            <img src="./assets/16.01.jpg" alt="NB" /><br />
+            <img src="./assets/16.02.jpg" alt="NB" />
+          </p>
+          <p>
+            Naive Bayes can naturally handle <strong>multi-class classification</strong> (more than
+            two classes).
+          </p>
+          <p>Suppose we have $C$ classes:</p>
+          <p>$$ y \in {0, 1, 2, \dots, C-1} $$</p>
+          <p>
+            For a given text (or feature vector) ${w_1, w_2, \dots, w_d}$ we compute the posterior
+            probability for <strong>every</strong> class:
+          </p>
+          <p>
+            $$ \begin{align*} P(y=0 \mid w_1,w_2,\dots,w_d) \ P(y=1 \mid w_1,w_2,\dots,w_d) \ P(y=2
+            \mid w_1,w_2,\dots,w_d) \ \vdots \ P(y=C-1 \mid w_1,w_2,\dots,w_d) \end{align*} $$
+          </p>
+          <h3 id="decision-rule">Decision Rule</h3>
+          <p>
+            We simply choose the class that has the <strong>largest</strong> posterior probability:
+          </p>
+          <p>$$ \hat{y} = \arg\max_{c} ; P(y=c \mid w_1,w_2,\dots,w_d) $$</p>
+          <p>
+            <strong>Example:</strong><br />
+            If $P(y=6 \mid w_1,\dots,w_d)$ is the largest among all classes, then we predict $y=6$.
+          </p>
+          <h3 id="key-point">Key Point</h3>
+          <ul>
+            <li>No special modification is required.</li>
+            <li>
+              The same Naive Bayes formula (class prior × product of likelihoods) is used for every
+              class.
+            </li>
+            <li>The class with the highest score wins.</li>
+          </ul>
+          <p>
+            <strong>Key Insight:</strong><br />
+            Naive Bayes extends to multi-class problems in the most straightforward way — just
+            compute the posterior for each of the $C$ classes and pick the maximum.
+          </p>
+          <h2 id="17-similarity-or-distance-matrix">17. Similarity or Distance Matrix</h2>
+          <p><img src="./assets/17.jpg" alt="NB" /></p>
+          <h3 id="naive-bayes-vs-distance-based-methods">Naive Bayes vs Distance-based Methods</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Method</th>
+                <th>Type of Method</th>
+                <th>Uses Distance / Similarity Matrix?</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>K-NN</strong></td>
+                <td>Distance-based</td>
+                <td>Yes</td>
+              </tr>
+              <tr>
+                <td><strong>Naive Bayes</strong></td>
+                <td>Probability-based</td>
+                <td><strong>No</strong></td>
+              </tr>
+            </tbody>
+          </table>
+          <h3 id="why-naive-bayes-cannot-use-distancesimilarity-matrices">
+            Why Naive Bayes Cannot Use Distance/Similarity Matrices
+          </h3>
+          <p>Naive Bayes computes the posterior as:</p>
+          <p>
+            $$ P(y_i=1 \mid f_1, f_2, \dots, f_d) = P(y_i=1) \prod_{i=1}^{d} P(f_i \mid y_i=1) $$
+          </p>
+          <p>It only needs:</p>
+          <ul>
+            <li>Class priors</li>
+            <li>Likelihood of each feature given the class</li>
+          </ul>
+          <p>It does <strong>not</strong> look at distances or similarities between data points.</p>
+          <p>Therefore:</p>
+          <blockquote>
+            <p>
+              Naive Bayes <strong>cannot</strong> use a precomputed Distance matrix or Similarity
+              matrix.
+            </p>
+          </blockquote>
+          <h3 id="contrast-with-k-nn">Contrast with K-NN</h3>
+          <p>
+            K-NN is fundamentally a distance-based method.<br />
+            It needs the distance (or similarity) between the query point and all training points,
+            so a Distance / Similarity matrix is naturally useful for K-NN.
+          </p>
+          <p><strong>Key Insight:</strong></p>
+          <ul>
+            <li>K-NN → Distance / Similarity based</li>
+            <li>
+              Naive Bayes → Purely probability based (priors × likelihoods)<br />
+              → Distance or Similarity matrices are irrelevant for Naive Bayes.
+            </li>
+          </ul>
+          <h2 id="18-large-dimensionality">18. Large Dimensionality</h2>
+          <p><img src="./assets/18.jpg" alt="NB" /></p>
+          <h3 id="naive-bayes-and-high-dimensional-data">Naive Bayes and High-Dimensional Data</h3>
+          <p>
+            Naive Bayes is very commonly used for <strong>text classification</strong>, which is a
+            classic high-dimensional problem (the vocabulary size $d$ can be tens of thousands).
+          </p>
+          <p>$$ P(y=1 \mid w_1, w_2, \dots, w_d) = P(y=1) \prod_{i=1}^{d} P(w_i \mid y=1) $$</p>
+          <p>
+            When $d$ is large we multiply many numbers that lie between 0 and 1.<br />
+            This quickly leads to <strong>numerical underflow</strong>.
+          </p>
+          <h3 id="solution-log-probabilities">Solution: Log-Probabilities</h3>
+          <p>We switch to log-space for numerical stability:</p>
+          <p>
+            $$ \log P(y=1 \mid w_1,\dots,w_d) = \log P(y=1) + \sum_{i=1}^{d} \log P(w_i \mid y=1) $$
+          </p>
+          <ul>
+            <li>Multiplication of small numbers → Addition of log-values</li>
+            <li>Avoids underflow</li>
+            <li>Preserves the correct ranking of classes (because $\log$ is monotonic)</li>
+          </ul>
+          <h3 id="summary-4">Summary</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Issue</th>
+                <th>Solution in Naive Bayes</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>High dimensionality (large $d$)</td>
+                <td>Use <strong>log-probabilities</strong></td>
+              </tr>
+              <tr>
+                <td>Product of many small numbers</td>
+                <td>Convert product → sum of logs</td>
+              </tr>
+              <tr>
+                <td>Numerical underflow</td>
+                <td>Solved by working in log-space</td>
+              </tr>
+            </tbody>
+          </table>
+          <p>
+            <strong>Key Insight:</strong><br />
+            Naive Bayes handles high-dimensional text data well, provided we compute everything in
+            log-space to maintain numerical stability.
+          </p>
+          <h2 id="19-best-and-worst-cases">19. Best and Worst Cases</h2>
+          <p><img src="./assets/19.jpg" alt="NB" /></p>
+          <h3 id="1-conditional-independence-assumption">1. Conditional Independence Assumption</h3>
+          <p>
+            Naive Bayes assumes that features are <strong>conditionally independent</strong> given
+            the class.
+          </p>
+          <ul>
+            <li>
+              <strong>When the assumption is true</strong> → NB performs very well (theoretically
+              optimal under this assumption).
+            </li>
+            <li>
+              <strong>When the assumption is false</strong> (features are dependent) → performance
+              deteriorates / degrades.
+            </li>
+            <li>
+              In practice, even when some features are dependent, NB often still works
+              <strong>reasonably well</strong>.
+            </li>
+          </ul>
+          <p>
+            <strong>Example of dependent features (text):</strong><br />
+            Words such as <em>good</em>, <em>great</em>, <em>phenomenal</em> are clearly dependent,
+            yet NB remains a strong baseline.
+          </p>
+          <h3 id="2-text-classification-best-domain">2. Text Classification (Best Domain)</h3>
+          <p>Naive Bayes is especially strong for:</p>
+          <ul>
+            <li>Email spam detection</li>
+            <li>Review polarity / sentiment analysis</li>
+          </ul>
+          <p>
+            These are high-dimensional problems.<br />
+            NB is widely used as a <strong>strong baseline / benchmark</strong>.
+          </p>
+          <h3 id="3-feature-types">3. Feature Types</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Feature Type</th>
+                <th>Suitable NB Variant</th>
+                <th>Notes</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Categorical / Binary</td>
+                <td>Bernoulli / Multinomial</td>
+                <td>Very natural fit</td>
+              </tr>
+              <tr>
+                <td>Real-valued</td>
+                <td>Gaussian NB</td>
+                <td>Assumes Gaussian distribution</td>
+              </tr>
+              <tr>
+                <td>Power-law / skewed</td>
+                <td>Seldom used</td>
+                <td>Gaussian assumption fails</td>
+              </tr>
+            </tbody>
+          </table>
+          <h3 id="4-strengths-of-naive-bayes">4. Strengths of Naive Bayes</h3>
+          <ul>
+            <li>Highly <strong>interpretable</strong></li>
+            <li>Easy to obtain <strong>feature importance</strong> (from likelihoods)</li>
+            <li>Very useful in medical / high-stakes domains where explanations matter</li>
+            <li>Low run-time complexity</li>
+            <li>Low training-time complexity</li>
+            <li>Low run-time space</li>
+            <li>Extremely simple to implement (mostly just counting)</li>
+          </ul>
+          <p>Training = estimating priors + likelihoods (simple counting).</p>
+          <h3 id="5-weakness--overfitting">5. Weakness – Overfitting</h3>
+          <p>
+            Naive Bayes can <strong>easily overfit</strong> if we do <strong>not</strong> apply
+            Laplace / Additive smoothing.
+          </p>
+          <ul>
+            <li>Solution: use Laplace smoothing with hyper-parameter $\alpha$</li>
+            <li>Choose the best $\alpha$ using Cross-Validation</li>
+          </ul>
+          <h3 id="summary-table">Summary Table</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Aspect</th>
+                <th>Best Case</th>
+                <th>Worst Case</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Feature Independence</td>
+                <td>Features truly independent</td>
+                <td>Strong dependencies</td>
+              </tr>
+              <tr>
+                <td>Domain</td>
+                <td>Text (spam, sentiment)</td>
+                <td>Highly correlated real-valued data</td>
+              </tr>
+              <tr>
+                <td>Smoothing</td>
+                <td>Proper Laplace smoothing + CV</td>
+                <td>No smoothing ($\alpha=0$)</td>
+              </tr>
+              <tr>
+                <td>Interpretability</td>
+                <td>Excellent</td>
+                <td>—</td>
+              </tr>
+              <tr>
+                <td>Speed &amp; Simplicity</td>
+                <td>Excellent</td>
+                <td>—</td>
+              </tr>
+            </tbody>
+          </table>
+          <p>
+            <strong>Key Insight:</strong><br />
+            Naive Bayes shines on high-dimensional text data, is extremely fast and interpretable,
+            but relies on the conditional independence assumption and needs proper smoothing to
+            avoid overfitting.
+          </p>
+          <h2 id="20-code-example">20. Code Example</h2>
+          <p>
+            <a href="https://scikit-learn.org/stable/api/sklearn.naive_bayes.htm"
+              >https://scikit-learn.org/stable/api/sklearn.naive_bayes.htm</a
+            >
+          </p>
+          <h2 id="21-assignment-4-apply-naive-bayes">21. Assignment-4: Apply Naive Bayes</h2>
+          <blockquote>
+            <h3 id="amazon-assignment">Amazon Assignment</h3>
+          </blockquote>
+          <h2 id="22-revision-questions">22. Revision Questions</h2>
+          <p><strong>Questions</strong></p>
+          <p>
+            <a href="#1-what-is-conditional-probability">1. What is Conditional probability?</a
+            ><br />
+            <a href="#2-define-independent-vs-mutually-exclusive-events"
+              >2. Define Independent vs Mutually exclusive events?</a
+            ><br />
+            <a href="#3-explain-bayes-theorem-with-example"
+              >3. Explain Bayes Theorem with example?</a
+            ><br />
+            <a href="#4-how-to-apply-naive-bayes-on-text-data"
+              >4. How to apply Naive Bayes on Text data?</a
+            ><br />
+            <a href="#5-what-is-laplaceadditive-smoothing">5. What is Laplace/Additive Smoothing?</a
+            ><br />
+            <a href="#6-explain-log-probabilities-for-numerical-stability"
+              >6. Explain Log-probabilities for numerical stability?</a
+            ><br />
+            <a href="#7-in-naive-bayes-how-to-handle-bias-and-variance-tradeoff"
+              >7. In Naive Bayes how to handle Bias and Variance tradeoff?</a
+            ><br />
+            <a href="#8-what-is-imbalanced-data">8. What is Imbalanced data?</a><br />
+            <a href="#9-what-is-outliers-and-how-to-handle-outliers"
+              >9. What is Outliers and how to handle outliers?</a
+            ><br />
+            <a href="#10-how-to-handle-missing-values">10. How to handle Missing values?</a><br />
+            <a href="#11-how-to-handling-numerical-features-gaussiannb"
+              >11. How to Handling Numerical features (GaussianNB)?</a
+            ><br />
+            <a href="#12-define-multiclass-classification">12. Define Multiclass classification?</a>
+          </p>
+          <h3 id="1-what-is-conditional-probability">1. What is Conditional probability?</h3>
+          <p>
+            <strong>Conditional probability</strong> is the probability of an event occurring given
+            that another event has already occurred.
+          </p>
+          <p>It is written as $ P(A|B) $ and defined as:</p>
+          <p>$ P(A|B) = \frac{P(A \cap B)}{P(B)} $</p>
+          <p>where $ P(B) &gt; 0 $.</p>
+          <p>
+            <strong>Intuition</strong>: It answers “What is the probability of A happening, given
+            that we already know B has happened?”
+          </p>
+          <p>
+            <strong>Example</strong>: Probability that a person has a disease given that they tested
+            positive.
+          </p>
+          <h3 id="2-define-independent-vs-mutually-exclusive-events">
+            2. Define Independent vs Mutually exclusive events?
+          </h3>
+          <p><strong>Independent Events</strong>:</p>
+          <ul>
+            <li>
+              Two events A and B are independent if the occurrence of one does not affect the
+              probability of the other.
+            </li>
+            <li>Mathematically: $ P(A \cap B) = P(A) \cdot P(B) $</li>
+            <li>Also: $ P(A|B) = P(A) $ and $ P(B|A) = P(B) $</li>
+          </ul>
+          <p><strong>Mutually Exclusive Events</strong>:</p>
+          <ul>
+            <li>Two events cannot occur at the same time.</li>
+            <li>$ P(A \cap B) = 0 $</li>
+            <li>If one happens, the other cannot happen.</li>
+          </ul>
+          <p><strong>Key Difference</strong>:</p>
+          <ul>
+            <li>Independent events can happen together; mutually exclusive events cannot.</li>
+            <li>
+              Independent ≠ Mutually exclusive (except in trivial cases where probabilities are 0).
+            </li>
+          </ul>
+          <h3 id="3-explain-bayes-theorem-with-example">3. Explain Bayes Theorem with example?</h3>
+          <p>
+            <strong>Bayes’ Theorem</strong> describes how to update the probability of a hypothesis
+            based on new evidence.
+          </p>
+          <p>$ P(A|B) = \frac{P(B|A) \cdot P(A)}{P(B)} $</p>
+          <p>Where:</p>
+          <ul>
+            <li>$ P(A|B) $ = Posterior probability</li>
+            <li>$ P(B|A) $ = Likelihood</li>
+            <li>$ P(A) $ = Prior probability</li>
+            <li>$ P(B) $ = Marginal probability (evidence)</li>
+          </ul>
+          <p><strong>Example (Medical Test)</strong>:</p>
+          <ul>
+            <li>Disease prevalence $ P(D) = 0.01 $ (1%)</li>
+            <li>Test sensitivity $ P(+|D) = 0.99 $</li>
+            <li>False positive rate $ P(+|\neg D) = 0.05 $</li>
+          </ul>
+          <p>
+            What is the probability that a person actually has the disease given a positive test?
+          </p>
+          <p>
+            $ P(D|+) = \frac{0.99 \times 0.01}{0.99 \times 0.01 + 0.05 \times 0.99} \approx 0.167 $
+            (only about 16.7%)
+          </p>
+          <p>This shows why false positives matter a lot when the disease is rare.</p>
+          <h3 id="4-how-to-apply-naive-bayes-on-text-data">
+            4. How to apply Naive Bayes on Text data?
+          </h3>
+          <p>
+            Naive Bayes is widely used for text classification (spam detection, sentiment analysis,
+            document categorization).
+          </p>
+          <p><strong>Steps</strong>:</p>
+          <ol>
+            <li>
+              <strong>Convert text to features</strong> using Bag-of-Words or TF-IDF (each word
+              becomes a feature).
+            </li>
+            <li>
+              <strong>Assume conditional independence</strong> of words given the class (the “Naive”
+              assumption).
+            </li>
+            <li>
+              <strong>Estimate probabilities</strong>:
+              <ul>
+                <li>
+                  Prior: $ P(c) = \frac{\text{number of documents of class } c}{\text{total
+                  documents}} $
+                </li>
+                <li>
+                  Likelihood: $ P(w_i|c) = \frac{\text{count of word } w_i \text{ in class }
+                  c}{\text{total words in class } c} $
+                </li>
+              </ul>
+            </li>
+            <li>
+              <strong>For a new document</strong> $ d = {w_1, w_2, \dots, w_n} $: $ P(c|d) \propto
+              P(c) \prod_{i=1}^{n} P(w_i|c) $
+            </li>
+            <li>Choose the class with highest posterior probability.</li>
+          </ol>
+          <p>
+            <strong>Multinomial Naive Bayes</strong> is the most common variant for text data (works
+            with word counts or TF-IDF).
+          </p>
+          <h3 id="5-what-is-laplaceadditive-smoothing">5. What is Laplace/Additive Smoothing?</h3>
+          <p>
+            <strong>Laplace Smoothing</strong> (also called Additive Smoothing) is a technique to
+            handle the <strong>zero-probability problem</strong> in Naive Bayes.
+          </p>
+          <p>
+            If a word never appeared in a particular class during training, its likelihood becomes
+            zero, making the entire product zero.
+          </p>
+          <p><strong>Formula</strong> (for Multinomial NB):</p>
+          <p>
+            $ P(w_i|c) = \frac{\text{count}(w_i, c) + \alpha}{\sum_w \text{count}(w, c) + \alpha
+            \cdot V} $
+          </p>
+          <p>where:</p>
+          <ul>
+            <li>$ \alpha $ is the smoothing parameter (usually $ \alpha = 1 $ for Laplace)</li>
+            <li>$ V $ is the vocabulary size</li>
+          </ul>
+          <p>This ensures no probability is exactly zero and makes the model more robust.</p>
+          <h3 id="6-explain-log-probabilities-for-numerical-stability">
+            6. Explain Log-probabilities for numerical stability?
+          </h3>
+          <p>
+            When multiplying many small probabilities (common in text classification with long
+            documents), the product can become extremely small and cause
+            <strong>underflow</strong> (become zero in floating-point arithmetic).
+          </p>
+          <p><strong>Solution</strong>: Work in log-space.</p>
+          <p>Instead of: $ P(c|d) \propto P(c) \prod P(w_i|c) $</p>
+          <p>We compute: $ \log P(c|d) \propto \log P(c) + \sum \log P(w_i|c) $</p>
+          <p><strong>Advantages</strong>:</p>
+          <ul>
+            <li>Avoids numerical underflow</li>
+            <li>Addition is more stable than multiplication of tiny numbers</li>
+            <li>Still allows correct comparison between classes (since log is monotonic)</li>
+          </ul>
+          <p>This is standard practice in almost all practical Naive Bayes implementations.</p>
+          <h3 id="7-in-naive-bayes-how-to-handle-bias-and-variance-tradeoff">
+            7. In Naive Bayes how to handle Bias and Variance tradeoff?
+          </h3>
+          <p>
+            Naive Bayes has a strong <strong>independence assumption</strong>, which usually leads
+            to:
+          </p>
+          <ul>
+            <li>
+              <strong>High Bias</strong>: The model is constrained and may underfit complex
+              relationships.
+            </li>
+            <li>
+              <strong>Low Variance</strong>: Because of the strong assumptions, it is relatively
+              stable and less prone to overfitting, especially with small datasets.
+            </li>
+          </ul>
+          <p><strong>Ways to control the tradeoff</strong>:</p>
+          <ul>
+            <li>
+              <strong>Laplace smoothing strength ($ \alpha $)</strong>: Larger $ \alpha $ → more
+              smoothing → higher bias, lower variance.
+            </li>
+            <li>
+              <strong>Feature selection / vocabulary size</strong>: Reducing features can lower
+              variance.
+            </li>
+            <li>
+              <strong>Using different variants</strong>: Gaussian NB, Multinomial NB, Bernoulli NB
+              have different bias-variance characteristics.
+            </li>
+            <li>
+              <strong>Ensemble methods</strong> or switching to more flexible models (Logistic
+              Regression, SVM, etc.) when data is abundant.
+            </li>
+          </ul>
+          <p>
+            Naive Bayes often performs surprisingly well despite high bias because of its low
+            variance.
+          </p>
+          <h3 id="8-what-is-imbalanced-data">8. What is Imbalanced data?</h3>
+          <p>
+            <strong>Imbalanced data</strong> refers to a classification dataset where the number of
+            examples in one class (or classes) is significantly higher than in the other class(es).
+          </p>
+          <p>
+            Example: Fraud detection (0.1% fraud cases), disease diagnosis, rare event prediction.
+          </p>
+          <p><strong>Problems caused</strong>:</p>
+          <ul>
+            <li>Models become biased toward the majority class</li>
+            <li>High accuracy but poor recall on the minority class</li>
+            <li>Standard metrics like accuracy become misleading</li>
+          </ul>
+          <p><strong>Common solutions</strong>:</p>
+          <ul>
+            <li>Resampling (oversampling minority / undersampling majority)</li>
+            <li>SMOTE and its variants</li>
+            <li>Class weights</li>
+            <li>Anomaly detection approaches</li>
+            <li>Different evaluation metrics (Precision, Recall, F1, AUC-PR)</li>
+          </ul>
+          <h3 id="9-what-is-outliers-and-how-to-handle-outliers">
+            9. What is Outliers and how to handle outliers?
+          </h3>
+          <p>
+            <strong>Outliers</strong> are data points that differ significantly from other
+            observations.
+          </p>
+          <p><strong>Impact on Naive Bayes</strong>:</p>
+          <ul>
+            <li>
+              In Gaussian Naive Bayes, outliers can heavily distort the estimated mean and variance
+              of a feature.
+            </li>
+            <li>Can lead to poor probability estimates.</li>
+          </ul>
+          <p><strong>How to handle</strong>:</p>
+          <ul>
+            <li>Detection: Z-score, IQR method, Isolation Forest, Local Outlier Factor (LOF)</li>
+            <li>Removal (if they are errors)</li>
+            <li>Capping / Winsorizing</li>
+            <li>Transformation (log, Box-Cox)</li>
+            <li>Use robust estimators of location and scale</li>
+            <li>
+              For text data, rare words can sometimes act like outliers — handled partly by
+              smoothing
+            </li>
+          </ul>
+          <h3 id="10-how-to-handle-missing-values">10. How to handle Missing values?</h3>
+          <p><strong>Strategies for missing values</strong>:</p>
+          <ol>
+            <li>
+              <strong>Deletion</strong>: Remove rows or columns with missing values (only if
+              missingness is small).
+            </li>
+            <li>
+              <strong>Imputation</strong>:
+              <ul>
+                <li>Mean / Median / Mode imputation</li>
+                <li>KNN imputation</li>
+                <li>Model-based imputation (MICE)</li>
+              </ul>
+            </li>
+            <li>
+              <strong>Indicator variable</strong>: Create a binary feature that indicates whether
+              the value was missing (useful when missingness is informative).
+            </li>
+            <li>
+              <strong>For Naive Bayes specifically</strong>:
+              <ul>
+                <li>
+                  Some implementations can ignore missing features during probability calculation.
+                </li>
+                <li>
+                  Impute before training, or treat “missing” as a separate category for categorical
+                  features.
+                </li>
+              </ul>
+            </li>
+          </ol>
+          <p>Always fit imputation parameters only on the training set.</p>
+          <h3 id="11-how-to-handling-numerical-features-gaussiannb">
+            11. How to Handling Numerical features (GaussianNB)?
+          </h3>
+          <p>When features are continuous, we use <strong>Gaussian Naive Bayes</strong>.</p>
+          <p>
+            <strong>Assumption</strong>: Each numerical feature follows a normal (Gaussian)
+            distribution within each class.
+          </p>
+          <p>For a feature $ x $ and class $ c $:</p>
+          <p>
+            $ P(x|c) = \frac{1}{\sqrt{2\pi\sigma_c^2}} \exp\left( -\frac{(x - \mu_c)^2}{2\sigma_c^2}
+            \right) $
+          </p>
+          <p>
+            where $ \mu_c $ and $ \sigma_c $ are the mean and standard deviation of the feature in
+            class $ c $ (estimated from training data).
+          </p>
+          <p><strong>Practical tips</strong>:</p>
+          <ul>
+            <li>
+              Outliers strongly affect $ \mu $ and $ \sigma $ → consider robust estimates or outlier
+              removal.
+            </li>
+            <li>
+              If the feature is clearly non-Gaussian, consider transformation (log, Box-Cox) or
+              discretization, or switch to a different model.
+            </li>
+            <li>Scikit-learn’s <code>GaussianNB</code> implements this directly.</li>
+          </ul>
+          <h3 id="12-define-multiclass-classification">12. Define Multiclass classification?</h3>
+          <p>
+            <strong>Multiclass classification</strong> is the problem of classifying instances into
+            one of three or more classes.
+          </p>
+          <p>Examples:</p>
+          <ul>
+            <li>Digit recognition (0–9)</li>
+            <li>News categorization (politics, sports, technology, entertainment…)</li>
+            <li>Image classification with many categories</li>
+          </ul>
+          <p><strong>How Naive Bayes handles it</strong>:</p>
+          <ul>
+            <li>Naturally supports multiclass.</li>
+            <li>
+              Computes the posterior for every class and picks the class with the highest
+              probability: $ \hat{c} = \arg\max_c P(c) \prod_i P(x_i|c) $
+            </li>
+          </ul>
+          <p>
+            No special one-vs-rest or one-vs-one strategy is required (unlike some other
+            algorithms).
+          </p>
+        </main>
+        <aside class="note-toc" aria-label="On this page">
+          <h2>On This Page</h2>
+          <ul>
+            <li><a href="#01-conditional-probability">01. Conditional Probability</a></li>
+            <li><a href="#02-independent-vs-mutually-exclusive-events">02. Independent vs Mutually Exclusive Events</a></li>
+            <li><a href="#03-bayes-theorem-with-examples">03. Bayes Theorem with Examples</a></li>
+            <li><a href="#04-exercise-problems-on-bayes-theorem">04. Exercise Problems on Bayes Theorem</a></li>
+            <li><a href="#05-naive-bayes-algorithm">05. Naive Bayes Algorithm</a></li>
+            <li><a href="#06-toy-example-train-and-test-stages">06. Toy Example: Train and Test Stages</a></li>
+            <li><a href="#07-naive-bayes-on-text-data">07. Naive Bayes on Text Data</a></li>
+            <li><a href="#08-laplaceadditive-smoothing">08. Laplace/Additive Smoothing</a></li>
+            <li><a href="#09-log-probabilities-for-numerical-stability">09. Log-Probabilities for Numerical Stability</a></li>
+            <li><a href="#10-bias-and-variance-tradeoff">10. Bias and Variance Tradeoff</a></li>
+            <li><a href="#11-feature-importance-and-interpretability">11. Feature Importance and Interpretability</a></li>
+            <li><a href="#12-imbalanced-data">12. Imbalanced Data</a></li>
+            <li><a href="#13-outliers">13. Outliers</a></li>
+            <li><a href="#14-missing-values">14. Missing Values</a></li>
+            <li><a href="#15-handling-numerical-features-gaussian-nb">15. Handling Numerical Features (Gaussian NB)</a></li>
+            <li><a href="#16-multiclass-classification">16. Multiclass Classification</a></li>
+            <li><a href="#17-similarity-or-distance-matrix">17. Similarity or Distance Matrix</a></li>
+            <li><a href="#18-large-dimensionality">18. Large Dimensionality</a></li>
+            <li><a href="#19-best-and-worst-cases">19. Best and Worst Cases</a></li>
+            <li><a href="#20-code-example">20. Code Example</a></li>
+            <li><a href="#21-assignment-4-apply-naive-bayes">21. Assignment-4: Apply Naive Bayes</a></li>
+            <li><a href="#22-revision-questions">22. Revision Questions</a></li>
+          </ul>
+        </aside>
+      </div>
+    </div>
+    <script>
+      if (window.hljs)
+        document
+          .querySelectorAll("pre code[class*='language-']")
+          .forEach((block) => window.hljs.highlightElement(block));
+      (() => {
+        const links = [...document.querySelectorAll(".note-toc a")],
+          heads = links
+            .map((l) => document.getElementById(decodeURIComponent(l.hash.slice(1))))
+            .filter(Boolean);
+        if (!links.length || !heads.length || !("IntersectionObserver" in window)) return;
+        const set = (h) =>
+          links.forEach((l) => l.classList.toggle("is-active", l.hash === `#${h.id}`));
+        const ob = new IntersectionObserver(
+          (es) => {
+            const v = es
+              .filter((e) => e.isIntersecting)
+              .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
+            if (v.length) set(v[0].target);
+          },
+          { rootMargin: "-10% 0px -75% 0px", threshold: 0 },
+        );
+        heads.forEach((h) => ob.observe(h));
+      })();
+    </script>
+  </body>
+</html>

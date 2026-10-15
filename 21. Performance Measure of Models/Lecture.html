@@ -1,0 +1,1885 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Performance Measure of Models | Applied Machine Learning</title>
+    <link rel="stylesheet" href="../HTMLs/theme.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
+    <script>
+      window.MathJax = {
+        tex: {
+          inlineMath: [
+            ["$", "$"],
+            ["\\(", "\\)"],
+          ],
+          displayMath: [
+            ["$$", "$$"],
+            ["\\[", "\\]"],
+          ],
+          processEscapes: true,
+          processEnvironments: true,
+        },
+        options: {
+          skipHtmlTags: ["script", "noscript", "style", "textarea", "pre", "code"],
+        },
+      };
+    </script>
+    <script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-svg.js"></script>
+  </head>
+  <body class="site-page">
+    <div class="site-layout">
+      <nav class="curriculum-nav" aria-label="Main curriculum navigation">
+        <iframe src="../HTMLs/table-of-contents.html" title="Machine learning curriculum"></iframe>
+      </nav>
+      <div class="note-layout">
+        <main class="note-content">
+          <style>
+            @import url("https://fonts.googleapis.com/css2?family=Play:wght@400;700&display=swap");
+            @import url("https://cdnjs.cloudflare.com/ajax/libs/latin-modern/1.1.0/css/latinmodern-math.min.css");
+
+            :root {
+              --la-ink: #3f6386;
+              --la-teal: #3f6386;
+              --la-teal-soft: #e8f6f7;
+              --la-coral: #9333ea;
+              --la-coral-soft: #fff1ed;
+              --la-cdf: #17283a;
+              --la-line: #5b5c5c;
+              --la-surface: #f7faf9;
+              --la-text: #c9c9c9;
+              --la-panel: #00070e;
+              --la-chip: #17283a;
+              --la-amber: #9a6b16;
+              --la-amber-soft: #fff8e6;
+            }
+
+            *,
+            *::before,
+            *::after {
+              font-family: "Play", sans-serif !important;
+            }
+
+            pre,
+            pre code {
+              font-family: Consolas, "Courier New", monospace !important;
+            }
+
+            body,
+            .markdown-body,
+            p,
+            li {
+              color: var(--la-text) !important;
+            }
+
+            h1 {
+              color: var(--la-ink);
+              border-bottom: 4px solid var(--la-teal);
+              padding-bottom: 0.35em;
+            }
+
+            h2 {
+              color: var(--la-teal);
+              border-left: 6px solid var(--la-teal);
+              padding-left: 0.55em;
+              margin-top: 2em;
+            }
+
+            h3,
+            h4 {
+              color: var(--la-coral);
+            }
+
+            a {
+              color: var(--la-coral);
+              text-decoration: none;
+            }
+
+            a:hover {
+              text-decoration: underline;
+            }
+
+            blockquote {
+              background: var(--la-panel);
+              border-left: 5px solid var(--la-cdf) !important;
+              border-radius: 6px;
+              color: var(--la-text);
+              padding: 0.75em 1em;
+            }
+
+            code {
+              background: var(--la-chip);
+              border-radius: 4px;
+              color: var(--la-text);
+              padding: 0.1em 0.3em;
+            }
+
+            pre {
+              background: var(--la-panel);
+              border: 1px solid var(--la-line);
+              border-radius: 8px;
+              overflow-x: auto;
+              padding: 1em;
+            }
+
+            table {
+              border: 1px solid var(--la-line);
+              border-collapse: collapse;
+              border-radius: 8px;
+              overflow: hidden;
+              width: 100%;
+            }
+
+            th {
+              background: var(--la-panel);
+              color: var(--la-text);
+              padding: 0.7em 0.8em;
+              text-align: left;
+            }
+
+            td {
+              color: var(--la-text);
+              padding: 0.7em 0.8em;
+            }
+
+            tr:nth-child(even) {
+              background: var(--la-chip);
+            }
+
+            hr {
+              border: 0;
+              border-top: 2px solid var(--la-line);
+              margin: 2.2em 0;
+            }
+
+            .summary-grid,
+            .ml-grid,
+            .intuition-grid {
+              display: flex;
+              gap: 1em;
+              margin: 1.25em 0;
+            }
+
+            .summary-card,
+            .ml-card,
+            .intuition-card {
+              background: var(--la-panel);
+              border-radius: 7px;
+              color: var(--la-text);
+              flex: 1 1 0;
+              min-width: 0;
+              padding: 1em;
+            }
+
+            .summary-card {
+              border-top: 5px solid var(--la-teal);
+            }
+
+            .summary-card.pdf,
+            .ml-card.diagnostics,
+            .intuition-card.pdf {
+              border-top-color: var(--la-coral);
+            }
+
+            .summary-card.cdf,
+            .intuition-card.cdf {
+              border-top-color: var(--la-cdf);
+            }
+
+            .summary-card h3,
+            .ml-card h3,
+            .intuition-card h3 {
+              margin-top: 0;
+            }
+
+            .summary-tag,
+            .panel-kicker {
+              color: var(--la-teal);
+              font-size: 0.82em;
+              font-weight: 700;
+              letter-spacing: 0.04em;
+              text-transform: uppercase;
+            }
+
+            .relationship-banner,
+            .ml-workflow {
+              align-items: center;
+              background: var(--la-panel);
+              border: 1px solid var(--la-teal);
+              border-radius: 7px;
+              color: var(--la-text);
+              display: flex;
+              flex-wrap: wrap;
+              gap: 0.6em;
+              justify-content: center;
+              margin: 1.25em 0;
+              padding: 0.85em 1em;
+              text-align: center;
+            }
+
+            .relationship-banner strong,
+            .ml-workflow strong,
+            .relationship-item strong,
+            .insight-item strong {
+              color: var(--la-coral);
+            }
+
+            .relationship-banner .arrow {
+              color: var(--la-teal);
+              font-size: 1.2em;
+            }
+
+            .relationship-item,
+            .insight-item {
+              background: var(--la-panel);
+              border-left: 5px solid var(--la-teal);
+              border-radius: 5px;
+              color: var(--la-text);
+              margin: 0.65em 0;
+              padding: 0.55em 0.85em;
+            }
+
+            .insight-item {
+              border-left-color: var(--la-coral);
+            }
+
+            .insight-list,
+            .feature-chips {
+              display: flex;
+              flex-wrap: wrap;
+              gap: 0.55em;
+              list-style: none;
+              margin: 0.5em 0 1em;
+              padding: 0;
+            }
+
+            .insight-list li,
+            .feature-chips li {
+              background: var(--la-chip);
+              border: 1px solid var(--la-teal);
+              border-radius: 999px;
+              color: var(--la-text);
+              padding: 0.35em 0.75em;
+            }
+
+            .feature-chips li {
+              border-radius: 4px;
+              border-left: 3px solid var(--la-coral);
+              border-right: none;
+              border-top: none;
+              border-bottom: none;
+              flex: 1 1 calc(50% - 0.45em);
+            }
+
+            .concept-flow {
+              align-items: center;
+              display: flex;
+              flex-direction: column;
+              margin: 1.25em 0;
+            }
+
+            .concept-flow .flow-step {
+              background: var(--la-panel);
+              border: 1px solid var(--la-teal);
+              border-radius: 7px;
+              color: var(--la-text);
+              max-width: 22em;
+              padding: 0.7em 1.2em;
+              text-align: center;
+              width: 100%;
+            }
+
+            .concept-flow .flow-step strong {
+              color: var(--la-coral);
+            }
+
+            .concept-flow .flow-arrow {
+              color: var(--la-teal);
+              font-size: 1.35em;
+              line-height: 1.25;
+            }
+
+            .percentile-callout {
+              background: var(--la-panel);
+              border-left: 5px solid var(--la-cdf);
+              border-radius: 7px;
+              color: var(--la-text);
+              margin: 1.25em 0;
+              padding: 1em;
+            }
+
+            .percentile-callout strong {
+              color: var(--la-cdf);
+            }
+
+            .katex-display,
+            .math,
+            .math-block {
+              background: #00070e;
+              border-left: 6px solid #2f005c;
+              border-radius: 6px;
+              padding: 0.6em 0.8em;
+              overflow-x: auto;
+              color: #c9c9c9 !important;
+              font-family: "Latin Modern Math", "Cambria Math", "STIX Two Math", serif !important;
+            }
+
+            .katex,
+            .katex * {
+              color: #9b9a9a !important;
+              font-family: "Latin Modern Math", "Cambria Math", "STIX Two Math", serif !important;
+            }
+
+            @media (max-width: 700px) {
+              .summary-grid,
+              .ml-grid,
+              .intuition-grid {
+                flex-direction: column;
+              }
+            }
+          </style>
+
+          <h1 id="performance-measure-of-models">Performance Measure of Models</h1>
+          <h2 id="01-accuracy">01. Accuracy</h2>
+          <p>
+            <img src="./assets/01.01.jpg" alt="Performance" /><br />
+            <img src="./assets/01.02.jpg" alt="Performance" />
+          </p>
+          <blockquote>
+            <h3 id="performance-prediction-of-models-accuracy">
+              Performance Prediction of Models: Accuracy
+            </h3>
+          </blockquote>
+          <h3 id="what-is-accuracy">What is Accuracy?</h3>
+          <p>
+            <strong>Accuracy</strong> is the most common and easiest-to-understand performance
+            metric for classification (and sometimes used in regression contexts).
+          </p>
+          <p>
+            $$ \text{Accuracy} = \dfrac{\text{Number of correctly classified points}}{\text{Total
+            number of points in } D_{\text{Test}}} $$
+          </p>
+          <ul>
+            <li>Range: 0 to 1 (or 0% to 100%)</li>
+            <li>Higher is better</li>
+          </ul>
+          <p><strong>Example:</strong></p>
+          <p>Test set has 100 points:</p>
+          <ul>
+            <li>60 actual +ve → Model predicts 53 +ve and 7 –ve</li>
+            <li>40 actual –ve → Model predicts 35 –ve and 5 +ve</li>
+          </ul>
+          <p>
+            Errors = 12<br />
+            Correct = 88<br />
+            <strong>Accuracy = 88%</strong>
+          </p>
+          <h3 id="problem-1-imbalanced-data">Problem 1: Imbalanced Data</h3>
+          <p><strong>Never use Accuracy on imbalanced datasets.</strong></p>
+          <p>Example:</p>
+          <ul>
+            <li>Test data: 90% –ve class, 10% +ve class</li>
+            <li>
+              A “dumb” model that <strong>always predicts –ve</strong> gets
+              <strong>90% accuracy</strong>
+            </li>
+          </ul>
+          <p>This high accuracy is misleading — the model has learned nothing useful.</p>
+          <h3 id="problem-2-accuracy-ignores-probability-scores">
+            Problem 2: Accuracy Ignores Probability Scores
+          </h3>
+          <p>
+            Many models (including K-NN) can return a <strong>probability score</strong> instead of
+            just a hard class label.
+          </p>
+          <p>Example:</p>
+          <table>
+            <thead>
+              <tr>
+                <th>Point</th>
+                <th>True y</th>
+                <th>M1 Prob</th>
+                <th>M2 Prob</th>
+                <th>M1 Pred</th>
+                <th>M2 Pred</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>$x_1$</td>
+                <td>1</td>
+                <td>0.9</td>
+                <td>0.6</td>
+                <td>1</td>
+                <td>1</td>
+              </tr>
+              <tr>
+                <td>$x_2$</td>
+                <td>1</td>
+                <td>0.8</td>
+                <td>0.65</td>
+                <td>1</td>
+                <td>1</td>
+              </tr>
+              <tr>
+                <td>$x_3$</td>
+                <td>0</td>
+                <td>0.1</td>
+                <td>0.45</td>
+                <td>0</td>
+                <td>0</td>
+              </tr>
+              <tr>
+                <td>$x_4$</td>
+                <td>0</td>
+                <td>0.15</td>
+                <td>0.48</td>
+                <td>0</td>
+                <td>0</td>
+              </tr>
+            </tbody>
+          </table>
+          <ul>
+            <li>Both models give <strong>exactly the same predicted class labels</strong></li>
+            <li>Therefore both have the <strong>same Accuracy</strong></li>
+            <li>But M1 gives much more confident and better probability scores than M2</li>
+          </ul>
+          <p>
+            <strong>Conclusion:</strong><br />
+            Accuracy cannot distinguish between M1 and M2, even though M1 is clearly better.
+          </p>
+          <h3 id="key-takeaways">Key Takeaways</h3>
+          <ul>
+            <li>Accuracy is simple and intuitive.</li>
+            <li>It fails badly on imbalanced data.</li>
+            <li>It cannot use the rich information present in probability scores.</li>
+            <li>
+              In many real-world problems we need better metrics (Precision, Recall, F1, Log-loss,
+              AUC, etc.).
+            </li>
+          </ul>
+          <h2 id="02-confusion-matrix-tpr-fpr-fnr-tnr">02. Confusion Matrix, TPR, FPR, FNR, TNR</h2>
+          <p>
+            <img src="./assets/02.01.jpg" alt="Performance" /><br />
+            <img src="./assets/02.02.jpg" alt="Performance" />
+          </p>
+          <blockquote>
+            <h3 id="confusion-matrix">Confusion Matrix</h3>
+          </blockquote>
+          <p>
+            The <strong>Confusion Matrix</strong> is a fundamental tool for evaluating
+            classification models.<br />
+            It works with <strong>hard class labels</strong> only — it
+            <strong>cannot process probability scores</strong>.
+          </p>
+          <h3 id="binary-classification-2-classes">Binary Classification (2 classes)</h3>
+          <p>For a binary classification task ($y_i \in {0,1}$):</p>
+          <table>
+            <thead>
+              <tr>
+                <th></th>
+                <th>Actual<br /><span style="color: blue; font-size: 2em">0</span></th>
+                <th>Actual<br /><span style="color: blue; font-size: 2em">1</span></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  Predicted <span style="color: purple; font-size: 2em"><strong>0</strong></span>
+                </td>
+                <td><span style="color: #8a2be2; font-size: 2em">a</span></td>
+                <td><span style="color: #8a2be2; font-size: 2em">b</span></td>
+              </tr>
+              <tr>
+                <td>
+                  Predicted <span style="color: purple; font-size: 2em"><strong>1</strong></span>
+                </td>
+                <td><span style="color: #8a2be2; font-size: 2em">c</span></td>
+                <td><span style="color: #8a2be2; font-size: 2em">d</span></td>
+              </tr>
+            </tbody>
+          </table>
+          <ul>
+            <li>$a$ = number of points where actual $y_i = 0$ and predicted $\hat{y}_i = 0$</li>
+            <li>$b$ = number of points where actual $y_i = 1$ and predicted $\hat{y}_i = 0$</li>
+            <li>$c$ = number of points where actual $y_i = 0$ and predicted $\hat{y}_i = 1$</li>
+            <li>$d$ = number of points where actual $y_i = 1$ and predicted $\hat{y}_i = 1$</li>
+          </ul>
+          <blockquote>
+            <h3 id="multi-class-confusion-matrix-c-classes--c--c">
+              Multi-class Confusion Matrix (C classes) — C × C
+            </h3>
+          </blockquote>
+          <table>
+            <thead>
+              <tr>
+                <th></th>
+                <th>Actual<br /><span style="color: blue; font-size: 1.6em">0</span></th>
+                <th>Actual<br /><span style="color: blue; font-size: 1.6em">1</span></th>
+                <th>…</th>
+                <th>Actual<br /><span style="color: blue; font-size: 1.6em">C-1</span></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  Predicted <span style="color: purple; font-size: 1.6em"><strong>0</strong></span>
+                </td>
+                <td><span style="color: #8a2be2; font-size: 1.6em">large</span></td>
+                <td><span style="color: #8a2be2; font-size: 1.6em">small</span></td>
+                <td>…</td>
+                <td><span style="color: #8a2be2; font-size: 1.6em">small</span></td>
+              </tr>
+              <tr>
+                <td>
+                  Predicted <span style="color: purple; font-size: 1.6em"><strong>1</strong></span>
+                </td>
+                <td><span style="color: #8a2be2; font-size: 1.6em">small</span></td>
+                <td><span style="color: #8a2be2; font-size: 1.6em">large</span></td>
+                <td>…</td>
+                <td><span style="color: #8a2be2; font-size: 1.6em">small</span></td>
+              </tr>
+              <tr>
+                <td>⋮</td>
+                <td>⋮</td>
+                <td>⋮</td>
+                <td>⋱</td>
+                <td>⋮</td>
+              </tr>
+              <tr>
+                <td>
+                  Predicted
+                  <span style="color: purple; font-size: 1.6em"><strong>C-1</strong></span>
+                </td>
+                <td><span style="color: #8a2be2; font-size: 1.6em">small</span></td>
+                <td><span style="color: #8a2be2; font-size: 1.6em">small</span></td>
+                <td>…</td>
+                <td><span style="color: #8a2be2; font-size: 1.6em">large</span></td>
+              </tr>
+            </tbody>
+          </table>
+          <h3 id="binary-special-case-2--2">Binary special case (2 × 2)</h3>
+          <table>
+            <thead>
+              <tr>
+                <th></th>
+                <th>Actual<br /><span style="color: blue; font-size: 2em">0</span></th>
+                <th>Actual<br /><span style="color: blue; font-size: 2em">1</span></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  Predicted <span style="color: purple; font-size: 2em"><strong>0</strong></span>
+                </td>
+                <td><span style="color: #8a2be2; font-size: 2em">large</span></td>
+                <td><span style="color: #8a2be2; font-size: 2em">small</span></td>
+              </tr>
+              <tr>
+                <td>
+                  Predicted <span style="color: purple; font-size: 2em"><strong>1</strong></span>
+                </td>
+                <td><span style="color: #8a2be2; font-size: 2em">small</span></td>
+                <td><span style="color: #8a2be2; font-size: 2em">large</span></td>
+              </tr>
+            </tbody>
+          </table>
+          <p><strong>Key idea from the notes</strong></p>
+          <ul>
+            <li><strong>Principal diagonal</strong> (correct predictions) → large values</li>
+            <li>
+              <strong>Off-diagonal</strong> (errors) → small values<br />
+              → <strong>Model is sensible</strong>
+            </li>
+          </ul>
+          <h3 id="standard-terminology-tp-fp-fn-tn">Standard Terminology (TP, FP, FN, TN)</h3>
+          <table>
+            <thead>
+              <tr>
+                <th></th>
+                <th>Actual<br /><span style="color: blue; font-size: 2em">0</span></th>
+                <th>Actual<br /><span style="color: blue; font-size: 2em">1</span></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  Predicted <span style="color: purple; font-size: 2em"><strong>0</strong></span>
+                </td>
+                <td><span style="color: #8a2be2; font-size: 2em">TN</span></td>
+                <td><span style="color: #8a2be2; font-size: 2em">FN</span></td>
+              </tr>
+              <tr>
+                <td>
+                  Predicted <span style="color: purple; font-size: 2em"><strong>1</strong></span>
+                </td>
+                <td><span style="color: #8a2be2; font-size: 2em">FP</span></td>
+                <td><span style="color: #8a2be2; font-size: 2em">TP</span></td>
+              </tr>
+            </tbody>
+          </table>
+          <table>
+            <thead>
+              <tr>
+                <th>Term</th>
+                <th>Full Form</th>
+                <th>Meaning</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>TP</td>
+                <td>True Positive</td>
+                <td>Actual = 1, Predicted = 1</td>
+              </tr>
+              <tr>
+                <td>TN</td>
+                <td>True Negative</td>
+                <td>Actual = 0, Predicted = 0</td>
+              </tr>
+              <tr>
+                <td>FP</td>
+                <td>False Positive</td>
+                <td>Actual = 0, Predicted = 1</td>
+              </tr>
+              <tr>
+                <td>FN</td>
+                <td>False Negative</td>
+                <td>Actual = 1, Predicted = 0</td>
+              </tr>
+            </tbody>
+          </table>
+          <ul>
+            <li>$N$ = Total number of actual negatives = TN + FP</li>
+            <li>$P$ = Total number of actual positives = TP + FN</li>
+            <li>$n = N + P$ (total points)</li>
+          </ul>
+          <h3 id="rates-derived-from-confusion-matrix">Rates Derived from Confusion Matrix</h3>
+          <p>
+            $$ \text{TPR} = \dfrac{\text{TP}}{P} \quad \text{(True Positive Rate / Recall /
+            Sensitivity)} $$
+          </p>
+          <p>
+            $$ \text{TNR} = \dfrac{\text{TN}}{N} \quad \text{(True Negative Rate / Specificity)} $$
+          </p>
+          <p>$$ \text{FPR} = \dfrac{\text{FP}}{N} \quad \text{(False Positive Rate)} $$</p>
+          <p>$$ \text{FNR} = \dfrac{\text{FN}}{P} \quad \text{(False Negative Rate)} $$</p>
+          <h3 id="example-imbalanced-data">Example (Imbalanced Data)</h3>
+          <p>Test set: 900 negatives + 100 positives</p>
+          <p><strong>Confusion Matrix</strong></p>
+          <table>
+            <thead>
+              <tr>
+                <th></th>
+                <th>Actual<br /><span style="color: blue; font-size: 2em">0</span></th>
+                <th>Actual<br /><span style="color: blue; font-size: 2em">1</span></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  Predicted <span style="color: purple; font-size: 2em"><strong>0</strong></span>
+                </td>
+                <td>
+                  <span style="color: #8a2be2; font-size: 2em">850</span><br /><span
+                    style="color: #5900ff; font-size: 1em"
+                    ><strong>TN</strong></span
+                  >
+                </td>
+                <td>
+                  <span style="color: #8a2be2; font-size: 2em">6</span><br /><span
+                    style="color: #5900ff; font-size: 1em"
+                    ><strong>FN</strong></span
+                  >
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  Predicted <span style="color: purple; font-size: 2em"><strong>1</strong></span>
+                </td>
+                <td>
+                  <span style="color: #8a2be2; font-size: 2em">50</span><br /><span
+                    style="color: #5900ff; font-size: 1em"
+                    ><strong>FP</strong></span
+                  >
+                </td>
+                <td>
+                  <span style="color: #8a2be2; font-size: 2em">94</span><br /><span
+                    style="color: #5900ff; font-size: 1em"
+                    ><strong>TP</strong></span
+                  >
+                </td>
+              </tr>
+              <tr>
+                <td></td>
+                <td>
+                  <span style="color: #5900ff; font-size: 1em"><strong>N</strong></span
+                  ><br /><span style="color: #8a2be2; font-size: 1.5em">900</span>
+                </td>
+                <td>
+                  <span style="color: #5900ff; font-size: 1em"><strong>P</strong></span
+                  ><br /><span style="color: #8a2be2; font-size: 1.5em">100</span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <p><strong>Rates</strong></p>
+          <table>
+            <thead>
+              <tr>
+                <th>Metric</th>
+                <th>Formula</th>
+                <th>Math</th>
+                <th>Value</th>
+                <th>Direction</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  <span style="color: green; font-size: 1.5em"><strong>TPR</strong></span>
+                </td>
+                <td>$\dfrac{TP}{P}$</td>
+                <td>$ \dfrac{94}{100} \times 100% $</td>
+                <td>${\mathbf{94%}}$</td>
+                <td><span style="color: green; font-size: 1.5em">⬆ Good</span></td>
+              </tr>
+              <tr>
+                <td>
+                  <span style="color: green; font-size: 1.5em"><strong>TNR</strong></span>
+                </td>
+                <td>$\dfrac{TN}{N}$</td>
+                <td>$ \dfrac{850}{900} \times 100% $</td>
+                <td>$\approx {\mathbf{94%}}$</td>
+                <td><span style="color: green; font-size: 1.5em">⬆ Good</span></td>
+              </tr>
+              <tr>
+                <td>
+                  <span style="color: red; font-size: 1.5em"><strong>FPR</strong></span>
+                </td>
+                <td>$\dfrac{FP}{N}$</td>
+                <td>$ \dfrac{50}{900} \times 100% $</td>
+                <td>$\approx {\mathbf{6%}}$</td>
+                <td><span style="color: red; font-size: 1.5em">⬇ Good</span></td>
+              </tr>
+              <tr>
+                <td>
+                  <span style="color: red; font-size: 1.5em"><strong>FNR</strong></span>
+                </td>
+                <td>$\dfrac{FN}{P}$</td>
+                <td>$ \dfrac{6}{100} \times 100% $</td>
+                <td>$ {\mathbf{6%}}$</td>
+                <td><span style="color: red; font-size: 1.5em">⬇ Good</span></td>
+              </tr>
+            </tbody>
+          </table>
+          <h3 id="dumb-model-example-always-predicts-negative">
+            Dumb Model Example (Always Predicts Negative)
+          </h3>
+          <table>
+            <thead>
+              <tr>
+                <th></th>
+                <th>Actual<br /><span style="color: blue; font-size: 2em">0</span></th>
+                <th>Actual<br /><span style="color: blue; font-size: 2em">1</span></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  Predicted <span style="color: purple; font-size: 2em"><strong>0</strong></span>
+                </td>
+                <td>
+                  <span style="color: #8a2be2; font-size: 2em">900</span><br /><span
+                    style="color: #5900ff; font-size: 1em"
+                    ><strong>TN</strong></span
+                  >
+                </td>
+                <td>
+                  <span style="color: #8a2be2; font-size: 2em">100</span><br /><span
+                    style="color: #5900ff; font-size: 1em"
+                    ><strong>FN</strong></span
+                  >
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  Predicted <span style="color: purple; font-size: 2em"><strong>1</strong></span>
+                </td>
+                <td>
+                  <span style="color: #8a2be2; font-size: 2em">0</span><br /><span
+                    style="color: #5900ff; font-size: 1em"
+                    ><strong>FP</strong></span
+                  >
+                </td>
+                <td>
+                  <span style="color: #8a2be2; font-size: 2em">0</span><br /><span
+                    style="color: #5900ff; font-size: 1em"
+                    ><strong>TP</strong></span
+                  >
+                </td>
+              </tr>
+              <tr>
+                <td></td>
+                <td>
+                  <span style="color: #5900ff; font-size: 1em"><strong>N</strong></span
+                  ><br /><span style="color: #8a2be2; font-size: 1.5em">900</span>
+                </td>
+                <td>
+                  <span style="color: #5900ff; font-size: 1em"><strong>P</strong></span
+                  ><br /><span style="color: #8a2be2; font-size: 1.5em">100</span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <p><strong>Rates</strong></p>
+          <table>
+            <thead>
+              <tr>
+                <th>Metric</th>
+                <th>Formula</th>
+                <th>Math</th>
+                <th>Value</th>
+                <th>Direction</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  <span style="color: green; font-size: 1.5em"><strong>TPR</strong></span>
+                </td>
+                <td>$\dfrac{TP}{P}$</td>
+                <td>$ \dfrac{0}{100} \times 100% $</td>
+                <td>${\mathbf{0%}}$</td>
+                <td><span style="color: red; font-size: 1.5em">⬇ Bad</span></td>
+              </tr>
+              <tr>
+                <td>
+                  <span style="color: green; font-size: 1.5em"><strong>TNR</strong></span>
+                </td>
+                <td>$\dfrac{TN}{N}$</td>
+                <td>$ \dfrac{900}{900} \times 100% $</td>
+                <td>$ {\mathbf{100%}} $</td>
+                <td><span style="color: green; font-size: 1.5em">⬆ Good</span></td>
+              </tr>
+              <tr>
+                <td>
+                  <span style="color: red; font-size: 1.5em"><strong>FPR</strong></span>
+                </td>
+                <td>$\dfrac{FP}{N}$</td>
+                <td>$ \dfrac{0}{900} \times 100% $</td>
+                <td>$ {\mathbf{0%}} $</td>
+                <td><span style="color: green; font-size: 1.5em">⬇ Good</span></td>
+              </tr>
+              <tr>
+                <td>
+                  <span style="color: red; font-size: 1.5em"><strong>FNR</strong></span>
+                </td>
+                <td>$\dfrac{FN}{P}$</td>
+                <td>$ \dfrac{100}{100} \times 100% $</td>
+                <td>$ {\mathbf{100%}}$</td>
+                <td><span style="color: red; font-size: 1.5em">⬆ Bad</span></td>
+              </tr>
+            </tbody>
+          </table>
+          <p>Even though Accuracy looks high (100%), the model is useless (TPR = 0).</p>
+          <h3 id="multi-class-classification-c-classes">
+            Multi-class Classification ($C$ classes)
+          </h3>
+          <p>Confusion Matrix becomes a $C \times C$ matrix.</p>
+          <ul>
+            <li><strong>Large values on the principal diagonal</strong> → Model is sensible</li>
+            <li><strong>Small off-diagonal values</strong> → Few mistakes</li>
+            <li>Ideal case: almost all mass concentrated on the diagonal</li>
+          </ul>
+          <h3 id="domain-specific-importance-medical-example">
+            Domain-Specific Importance (Medical Example)
+          </h3>
+          <p><strong>Task:</strong> Diagnose Cancer / Not Cancer</p>
+          <p>
+            <strong>Critical requirement:</strong><br />
+            Do <strong>not</strong> miss a cancerous patient.
+          </p>
+          <p>→ We want:</p>
+          <ul>
+            <li>Very high TPR</li>
+            <li>Very low FNR (close to zero)</li>
+          </ul>
+          <p>
+            If FPR is high → more patients will be sent for further (expensive/powerful) tests,
+            which is usually acceptable.
+          </p>
+          <h3 id="key-insight">Key Insight:</h3>
+          <p>
+            In medical diagnosis, False Negatives are far more dangerous than False Positives.<br />
+            Always look at TPR and FNR carefully in such domains.
+          </p>
+          <h2 id="03-precision-and-recall-f1-score">03. Precision and Recall, F1-Score</h2>
+          <p>
+            <img src="./assets/03.01.jpg" alt="Performance" /><br />
+            <img src="./assets/03.02.jpg" alt="Performance" />
+          </p>
+          <blockquote>
+            <h3 id="precision-recall--f1-score">Precision, Recall &amp; F1-Score</h3>
+          </blockquote>
+          <p>These metrics are defined with respect to the <strong>positive class</strong>.</p>
+          <p>They originally come from <strong>Information Retrieval</strong>.</p>
+          <h3 id="precision-pr">Precision (Pr)</h3>
+          <p>$$ \text{Precision} = \dfrac{\text{TP}}{\text{TP} + \text{FP}} $$</p>
+          <p>
+            <strong>English meaning:</strong><br />
+            Of all the points the model <strong>declared / predicted</strong> to be positive, what
+            percentage of them are <strong>actually</strong> positive?
+          </p>
+          <h3 id="recall-re">Recall (Re)</h3>
+          <p>
+            $$ \text{Recall} = \text{TPR} = \dfrac{\text{TP}}{P} = \dfrac{\text{TP}}{\text{TP} +
+            \text{FN}} $$
+          </p>
+          <p>
+            <strong>English meaning:</strong><br />
+            Of all the actual positive points, what percentage did the model correctly find?
+          </p>
+          <h3 id="f1-score">F1-Score</h3>
+          <p>
+            We often want <strong>one single interpretable number</strong> that combines both
+            Precision and Recall.
+          </p>
+          <p>
+            $$ \text{F1-Score} = 2 \times \dfrac{\text{Precision} \times
+            \text{Recall}}{\text{Precision} + \text{Recall}} $$
+          </p>
+          <ul>
+            <li>Range: 0 to 1</li>
+            <li>Higher is better</li>
+            <li>Both Precision ↑ and Recall ↑ → F1 ↑</li>
+          </ul>
+          <h3 id="why-harmonic-mean">Why Harmonic Mean?</h3>
+          <p>F1-Score is the <strong>harmonic mean</strong> of Precision and Recall.</p>
+          <p>
+            $$ \text{F1} = \dfrac{2}{\dfrac{1}{\text{Recall}} + \dfrac{1}{\text{Precision}}} =
+            \left[ \text{average of } \left( \dfrac{1}{\text{Recall}}, \dfrac{1}{\text{Precision}}
+            \right) \right]^{-1} $$
+          </p>
+          <p>Or equivalently:</p>
+          <p>
+            $$ \text{F1} = \left( \dfrac{1}{2} \left( \dfrac{1}{\text{Recall}} +
+            \dfrac{1}{\text{Precision}} \right) \right)^{-1} $$
+          </p>
+          <p>
+            <strong>Why harmonic mean instead of arithmetic mean?</strong><br />
+            Harmonic mean punishes extreme values more strongly.<br />
+            If either Precision or Recall is very low, F1-Score will also be low.
+          </p>
+          <h3 id="quick-summary">Quick Summary</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Metric</th>
+                <th>Formula</th>
+                <th>Focus</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Precision</td>
+                <td>TP / (TP + FP)</td>
+                <td>Correctness of positive predictions</td>
+              </tr>
+              <tr>
+                <td>Recall</td>
+                <td>TP / (TP + FN)</td>
+                <td>Coverage of actual positives</td>
+              </tr>
+              <tr>
+                <td>F1-Score</td>
+                <td>$2 \times \frac{\text{Pr} \times \text{Re}}{\text{Pr} + \text{Re}}$</td>
+                <td>Balance between Precision &amp; Recall</td>
+              </tr>
+            </tbody>
+          </table>
+          <p>
+            <strong>Key Insight:</strong><br />
+            When you care about both “not making false alarms” (Precision) and “not missing real
+            cases” (Recall), use <strong>F1-Score</strong>.
+          </p>
+          <h2 id="04-receiver-operating-characteristic-roc-curve-and-auc">
+            04. Receiver Operating Characteristic (ROC) Curve and AUC
+          </h2>
+          <p>
+            <img src="./assets/04.01.jpg" alt="Performance" /><br />
+            <img src="./assets/04.02.jpg" alt="Performance" />
+          </p>
+          <p>ROC and AUC are used for <strong>binary classification</strong>.</p>
+          <p>Originally developed by electronics &amp; radio engineers.</p>
+          <h3 id="how-roc-is-constructed">How ROC is Constructed</h3>
+          <p>
+            A model outputs a <strong>score</strong> (probability or decision score) for each point.
+          </p>
+          <p>
+            We sort the points in
+            <strong>decreasing order of the predicted score</strong> $\hat{y}$.
+          </p>
+          <p>Example:</p>
+          <table>
+            <thead>
+              <tr>
+                <th>Point</th>
+                <th>Actual y</th>
+                <th>Score $\hat{y}$</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>$x_1$</td>
+                <td>1</td>
+                <td>0.95</td>
+              </tr>
+              <tr>
+                <td>$x_2$</td>
+                <td>1</td>
+                <td>0.92</td>
+              </tr>
+              <tr>
+                <td>$x_3$</td>
+                <td>0</td>
+                <td>0.80</td>
+              </tr>
+              <tr>
+                <td>$x_4$</td>
+                <td>1</td>
+                <td>0.76</td>
+              </tr>
+              <tr>
+                <td>$x_5$</td>
+                <td>1</td>
+                <td>0.71</td>
+              </tr>
+            </tbody>
+          </table>
+          <p>We now choose different <strong>thresholds</strong> $\tau$.</p>
+          <p><strong>Thresholding rule:</strong></p>
+          <ul>
+            <li>If $\hat{y} \ge \tau$ → predict 1</li>
+            <li>Else → predict 0</li>
+          </ul>
+          <p>For every threshold we get a pair <strong>(FPR, TPR)</strong>.</p>
+          <p>Example thresholds:</p>
+          <ul>
+            <li>$\tau_1 = 0.95$</li>
+            <li>$\tau_2 = 0.92$</li>
+            <li>…</li>
+            <li>$\tau_n$</li>
+          </ul>
+          <p>
+            This gives us a sequence of points: $$ (\text{FPR}_1, \text{TPR}_1),\ (\text{FPR}_2,
+            \text{TPR}_2),\ \dots,\ (\text{FPR}_n, \text{TPR}_n) $$
+          </p>
+          <h3 id="roc-curve">ROC Curve</h3>
+          <p>Plot <strong>TPR</strong> (y-axis) vs <strong>FPR</strong> (x-axis).</p>
+          <ul>
+            <li>The curve starts near (0,0) and ends at (1,1)</li>
+            <li>A good model’s curve stays close to the top-left corner</li>
+            <li>The diagonal line (random model) has Area = 0.5</li>
+          </ul>
+          <h3 id="auc--area-under-the-roc-curve">AUC – Area Under the ROC Curve</h3>
+          <p>$$ \text{AUC} \in [0, 1] $$</p>
+          <table>
+            <thead>
+              <tr>
+                <th>AUC Value</th>
+                <th>Meaning</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>close to 1</td>
+                <td>Very good model</td>
+              </tr>
+              <tr>
+                <td>= 0.5</td>
+                <td>Random model</td>
+              </tr>
+              <tr>
+                <td>&lt; 0.5</td>
+                <td>Worse than random</td>
+              </tr>
+              <tr>
+                <td>close to 0</td>
+                <td>Terrible (predictions are inverted)</td>
+              </tr>
+            </tbody>
+          </table>
+          <h3 id="important-properties-of-auc">Important Properties of AUC</h3>
+          <p>
+            <strong>1. Works reasonably well even on imbalanced data</strong><br />
+            (AUC can still be high for a simple/dumb model if the ranking is decent)
+          </p>
+          <p>
+            <strong>2. AUC depends only on the ranking / ordering of the scores</strong><br />
+            It does <strong>not</strong> depend on the absolute values of the scores.
+          </p>
+          <p>
+            Example:<br />
+            If two models produce scores that give the <strong>same ordering</strong> of points,
+            then<br />
+            $$ \text{AUC}(M_1) = \text{AUC}(M_2) $$
+          </p>
+          <p>even if the actual score values are very different.</p>
+          <p>
+            <strong>3. Random model</strong><br />
+            A model that randomly predicts 0 or 1 has<br />
+            $$ \text{AUC} = 0.5 $$
+          </p>
+          <p>
+            <strong>4. AUC &lt; 0.5</strong><br />
+            If a model has AUC = 0.2, it is worse than random.<br />
+            Simply <strong>swap the class labels</strong> (predict the opposite) and the new AUC
+            becomes<br />
+            $$ 1 - 0.2 = 0.8 $$
+          </p>
+          <h3 id="visual-summary">Visual Summary</h3>
+          <ul>
+            <li>X-axis → FPR (0 to 1)</li>
+            <li>Y-axis → TPR (0 to 1)</li>
+            <li>Diagonal line → Random classifier (AUC = 0.5)</li>
+            <li>Curve above diagonal → Better than random</li>
+            <li>Curve below diagonal → Worse than random (can be fixed by swapping labels)</li>
+          </ul>
+          <p>
+            <strong>Key Insight:</strong><br />
+            AUC measures how well the model <strong>ranks</strong> positive points higher than
+            negative points, independent of any particular threshold.
+          </p>
+          <h2 id="why-use-auc"><font color="red">Why Use AUC?</font></h2>
+          <blockquote>
+            <h4 id="1-threshold-independent">1. Threshold Independent</h4>
+            <p>
+              Most metrics (Accuracy, Precision, Recall, F1) depend on a
+              <strong>specific threshold</strong>.<br />
+              AUC evaluates the model across <strong>all possible thresholds</strong>.<br />
+              → Gives a complete picture of model performance.
+            </p>
+          </blockquote>
+          <blockquote>
+            <h4 id="2-works-well-with-imbalanced-data">2. Works Well with Imbalanced Data</h4>
+            <p>
+              Accuracy fails badly on imbalanced datasets.<br />
+              AUC is much more robust and still gives meaningful scores even when classes are highly
+              imbalanced.
+            </p>
+          </blockquote>
+          <blockquote>
+            <h4 id="3-focuses-on-ranking-quality">3. Focuses on Ranking Quality</h4>
+            <p>
+              AUC only cares about the <strong>ordering</strong> of the predicted scores.<br />
+              It measures:
+            </p>
+            <h4 id="how-well-does-the-model-rank-positive-points-higher-than-negative-points">
+              <code>How well does the model rank positive points higher than negative points?</code>
+            </h4>
+          </blockquote>
+          <p>
+            This is extremely useful in ranking-oriented applications (search, recommendation, risk
+            scoring, etc.).
+          </p>
+          <blockquote>
+            <h4 id="4-scale-invariant">4. Scale Invariant</h4>
+            <p>
+              AUC does not depend on the absolute values of the scores.<br />
+              Two models that produce different score ranges but the
+              <strong>same ranking</strong> will have the same AUC.
+            </p>
+          </blockquote>
+          <ul>
+            <li>AUC = 0.5 → Random model</li>
+            <li>AUC &gt; 0.5 → Better than random</li>
+            <li>AUC close to 1 → Excellent model</li>
+            <li>AUC &lt; 0.5 → Worse than random (just invert the predictions)</li>
+          </ul>
+          <blockquote>
+            <h4 id="6-widely-used--comparable">6. Widely Used &amp; Comparable</h4>
+            <p>
+              AUC is one of the most standard metrics in binary classification.<br />
+              It allows easy comparison between different models.
+            </p>
+          </blockquote>
+          <blockquote>
+            <h4 id="5-easy-interpretation">5. Easy Interpretation</h4>
+          </blockquote>
+          <blockquote>
+            <h4 id="when-auc-is-especially-useful">When AUC is Especially Useful</h4>
+          </blockquote>
+          <ul>
+            <li>Imbalanced datasets</li>
+            <li>When you care about ranking more than a single operating point</li>
+            <li>When you have not yet decided the final threshold</li>
+            <li>Probabilistic models (Logistic Regression, K-NN with probability scores, etc.)</li>
+          </ul>
+          <p>
+            <strong>Key Takeaway:</strong><br />
+            Use AUC when you want a single, threshold-independent, ranking-based measure of how well
+            your model separates the two classes.
+          </p>
+          <h2 id="05-log-loss">05. Log-Loss</h2>
+          <p>
+            <img src="./assets/05.01.jpg" alt="Performance" /><br />
+            <img src="./assets/05.02.jpg" alt="Performance" />
+          </p>
+          <p>Log-Loss is a metric that works with <strong>probability scores</strong>.</p>
+          <ul>
+            <li>Range: $0$ to $\infty$</li>
+            <li><strong>Smaller is better</strong></li>
+            <li>Heavily penalizes confident but wrong predictions</li>
+          </ul>
+          <h3 id="binary-classification">Binary Classification</h3>
+          <p>Let the model output a probability $p_i = \hat{y}_i$ for the positive class.</p>
+          <p><strong>Formula:</strong></p>
+          <p>
+            $$ \text{Log-Loss} = -\dfrac{1}{n} \sum_{i=1}^{n} \Big[ y_i \log(p_i) + (1 - y_i) \log(1
+            - p_i) \Big] $$
+          </p>
+          <p><strong>Example:</strong></p>
+          <table>
+            <thead>
+              <tr>
+                <th>Point</th>
+                <th>Actual $y$</th>
+                <th>Predicted $p$</th>
+                <th>Contribution</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>$x_1$</td>
+                <td>1</td>
+                <td>0.9</td>
+                <td>$-\log(0.9) \approx 0.0457$</td>
+              </tr>
+              <tr>
+                <td>$x_2$</td>
+                <td>1</td>
+                <td>0.6</td>
+                <td>$-\log(0.6) \approx 0.22$</td>
+              </tr>
+              <tr>
+                <td>$x_3$</td>
+                <td>0</td>
+                <td>0.1</td>
+                <td>$-\log(0.9) \approx 0.0457$</td>
+              </tr>
+              <tr>
+                <td>$x_4$</td>
+                <td>0</td>
+                <td>0.4</td>
+                <td>$-\log(0.6) \approx 0.22$</td>
+              </tr>
+            </tbody>
+          </table>
+          <p>Average of these values = Log-Loss of the model.</p>
+          <h3 id="intuition">Intuition</h3>
+          <p>
+            Log-Loss = Average of
+            <strong>negative log of the probability of the correct class</strong>.
+          </p>
+          <ul>
+            <li>If the model is very confident and correct ($p \approx 1$), loss $\approx 0$</li>
+            <li>
+              If the model is very confident and wrong ($p \approx 0$ for the true class), loss $\to
+              \infty$
+            </li>
+          </ul>
+          <p>Graph of $-\log(x)$:</p>
+          <ul>
+            <li>As $x \to 0$, $-\log(x) \to \infty$</li>
+            <li>As $x \to 1$, $-\log(x) \to 0$</li>
+          </ul>
+          <h3 id="multi-class-log-loss">Multi-class Log-Loss</h3>
+          <p>
+            For $C$ classes, the model outputs a probability distribution $(p_1, p_2, \dots, p_C)$.
+          </p>
+          <p>
+            $$ \text{Log-Loss} = -\dfrac{1}{n} \sum_{i=1}^{n} \sum_{j=1}^{C} y_{ij} \log(p_{ij}) $$
+          </p>
+          <p>Where:</p>
+          <ul>
+            <li>$y_{ij} = 1$ if point $x_i$ belongs to class $j$, else 0</li>
+            <li>$p_{ij}$ = predicted probability that $x_i$ belongs to class $j$</li>
+          </ul>
+          <p>
+            <strong>Best case:</strong> Log-Loss = 0 (model always predicts probability 1 for the
+            correct class)
+          </p>
+          <p><strong>Worst case:</strong> Log-Loss $\to \infty$</p>
+          <h3 id="key-properties">Key Properties</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Property</th>
+                <th>Value / Behavior</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Range</td>
+                <td>$[0, \infty)$</td>
+              </tr>
+              <tr>
+                <td>Best possible value</td>
+                <td>0</td>
+              </tr>
+              <tr>
+                <td>Sensitive to confidence</td>
+                <td>Yes (strongly penalizes overconfidence)</td>
+              </tr>
+              <tr>
+                <td>Works with</td>
+                <td>Probability scores</td>
+              </tr>
+              <tr>
+                <td>Suitable for</td>
+                <td>Binary &amp; Multi-class</td>
+              </tr>
+            </tbody>
+          </table>
+          <p>
+            <strong>Key Insight:</strong><br />
+            Log-Loss not only checks whether the prediction is correct, but also
+            <strong>how confident</strong> the model is. A model that is correct but unsure is
+            preferred over a model that is confident and wrong.
+          </p>
+          <h2 id="06-r--coefficient-of-determination">06. R² : Coefficient of Determination</h2>
+          <p>
+            <img src="./assets/06.01.jpg" alt="Performance" /><br />
+            <img src="./assets/06.02.jpg" alt="Performance" />
+          </p>
+          <p>
+            R² is a performance metric used for <strong>Regression</strong> problems (where $y_i \in
+            \mathbb{R}$).
+          </p>
+          <h3 id="error--residual">Error / Residual</h3>
+          <p>For each point:</p>
+          <p>$$ e_i = y_i - \hat{y}_i $$</p>
+          <ul>
+            <li>$y_i$ = actual value</li>
+            <li>$\hat{y}_i$ = model prediction</li>
+            <li>$e_i$ = residual (error)</li>
+          </ul>
+          <h3 id="total-sum-of-squares-sstotal">Total Sum of Squares (SS_total)</h3>
+          <p>$$ \text{SS}<em>{\text{total}} = \sum</em>{i=1}^{n} (y_i - \bar{y})^2 $$</p>
+          <p>Where</p>
+          <p>$$ \bar{y} = \dfrac{1}{n} \sum_{i=1}^{n} y_i $$</p>
+          <p>
+            <strong>Interpretation:</strong><br />
+            SS_total is the sum of squared errors of the <strong>simplest possible model</strong> —
+            the model that always predicts the mean $\bar{y}$.
+          </p>
+          <p>
+            Example:<br />
+            If average height in training data is 152 cm, the simple mean model always predicts 152
+            cm for any query point.
+          </p>
+          <h3 id="residual-sum-of-squares-ssres">Residual Sum of Squares (SS_res)</h3>
+          <p>
+            $$ \text{SS}<em>{\text{res}} = \sum</em>{i=1}^{n} (y_i - \hat{y}<em>i)^2 = \sum</em
+            >{i=1}^{n} e_i^2 $$
+          </p>
+          <p>This is the sum of squared errors of <strong>our actual model</strong>.</p>
+          <h3 id="definition-of-r">Definition of R²</h3>
+          <p>$$ R^2 = 1 - \dfrac{\text{SS}<em>{\text{res}}}{\text{SS}</em>{\text{total}}} $$</p>
+          <h3 id="different-cases-of-r">Different Cases of R²</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Case</th>
+                <th>Condition</th>
+                <th>R² Value</th>
+                <th>Meaning</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>1</td>
+                <td>SS_res = 0</td>
+                <td>$R^2 = 1$</td>
+                <td>Perfect model (all residuals zero)</td>
+              </tr>
+              <tr>
+                <td>2</td>
+                <td>SS_res &lt; SS_total</td>
+                <td>$0 &lt; R^2 &lt; 1$</td>
+                <td>Model is better than the simple mean model</td>
+              </tr>
+              <tr>
+                <td>3</td>
+                <td>SS_res = SS_total</td>
+                <td>$R^2 = 0$</td>
+                <td>Model is exactly as good as the mean model</td>
+              </tr>
+              <tr>
+                <td>4</td>
+                <td>SS_res &gt; SS_total</td>
+                <td>$R^2 &lt; 0$</td>
+                <td>Model is <strong>worse</strong> than the simple mean model</td>
+              </tr>
+            </tbody>
+          </table>
+          <ul>
+            <li>Best possible value: $R^2 = 1$</li>
+            <li>$R^2$ can be negative (unlike many classification metrics)</li>
+          </ul>
+          <h3 id="key-insights">Key Insights</h3>
+          <ul>
+            <li>
+              R² tells us <strong>how much better</strong> our model is compared to simply
+              predicting the average.
+            </li>
+            <li>$R^2 = 0.9$ means the model explains 90% of the variance in the target.</li>
+            <li>$R^2 = 0.1$ means the model is only slightly better than predicting the mean.</li>
+            <li>Negative R² is a strong warning that the model is performing poorly.</li>
+          </ul>
+          <h2 id="07-median-absolute-deviation-mad">07. Median Absolute Deviation (MAD)</h2>
+          <p>
+            <img src="./assets/07.01.jpg" alt="Performance" /><br />
+            <img src="./assets/07.02.jpg" alt="Performance" />
+          </p>
+          <blockquote>
+            <h3 id="median-absolute-deviation-mad-of-errors">
+              Median Absolute Deviation (MAD) of Errors
+            </h3>
+          </blockquote>
+          <h3 id="why-do-we-need-mad">Why Do We Need MAD?</h3>
+          <p>We know:</p>
+          <p>$$ \text{SS}<em>{\text{res}} = \sum</em>{i=1}^{n} e_i^2 $$</p>
+          <p>
+            If even <strong>one</strong> residual $e_i$ is very large (outlier), it heavily
+            influences SS_res (because of squaring).
+          </p>
+          <p>→ <strong>R² is not very robust to outliers</strong>.</p>
+          <h3 id="residuals-as-a-random-variable">Residuals as a Random Variable</h3>
+          <p>For each point:</p>
+          <p>$$ x_i ;\to; y_i,; \hat{y}_i ;\to; e_i = y_i - \hat{y}_i $$</p>
+          <ul>
+            <li>$e_i$ is treated as a random variable</li>
+            <li>Ideal case: all $|e_i| \to 0$ (great model)</li>
+            <li>If $|e_i|$ are large → model is not good</li>
+          </ul>
+          <h3 id="median-and-mad">Median and MAD</h3>
+          <p>
+            Instead of using mean and standard deviation (which are sensitive to outliers), we use:
+          </p>
+          <ul>
+            <li><strong>Median</strong> of the errors → central value of errors</li>
+            <li><strong>MAD</strong> (Median Absolute Deviation)</li>
+          </ul>
+          <p>$$ \text{MAD}(e_i) = \text{Median}\big( |e_i - \text{Median}(e_i)| \big) $$</p>
+          <h3 id="comparison">Comparison</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Measure</th>
+                <th>Sensitive to Outliers?</th>
+                <th>Robust Alternative</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Mean</td>
+                <td>Yes</td>
+                <td>Median</td>
+              </tr>
+              <tr>
+                <td>Standard Deviation</td>
+                <td>Yes</td>
+                <td>MAD</td>
+              </tr>
+            </tbody>
+          </table>
+          <h3 id="key-insight-2">Key Insight</h3>
+          <ul>
+            <li>Mean &amp; Standard Deviation → affected by extreme residuals</li>
+            <li>Median &amp; MAD → <strong>robust to outliers</strong></li>
+          </ul>
+          <p>
+            When the dataset contains outliers in the target variable (or large prediction errors),
+            prefer looking at <strong>Median of errors</strong> and <strong>MAD</strong> instead of
+            relying only on R² or SS_res.
+          </p>
+          <h2 id="08-distribution-of-errors">08. Distribution of Errors</h2>
+          <p>
+            <img src="./assets/08.01.jpg" alt="Performance" /><br />
+            <img src="./assets/08.02.jpg" alt="Performance" />
+          </p>
+          <h2 id="09-assignment-3-apply-k-nearest-neighbor">
+            09. Assignment-3: Apply k-Nearest Neighbor
+          </h2>
+          <blockquote>
+            <h3 id="assignmentipynb">
+              <a href="./Assignment.ipynb"><code>Assignment.ipynb</code></a>
+            </h3>
+          </blockquote>
+          <h2 id="10-revision-questions">10. Revision Questions</h2>
+          <p><strong>Questions (clickable to respective answers)</strong></p>
+          <ol>
+            <li><a href="#1-what-is-accuracy">What is Accuracy?</a></li>
+            <li>
+              <a href="#2-explain-about-confusion-matrix-tpr-fpr-fnr-tnr"
+                >Explain about Confusion matrix, TPR, FPR, FNR, TNR?</a
+              >
+            </li>
+            <li>
+              <a
+                href="#3-what-do-you-understand-about-precision--recall-f1-score-how-would-you-use-it"
+                >What do you understand about Precision &amp; recall, F1-score? How would you use
+                it?</a
+              >
+            </li>
+            <li>
+              <a href="#4-what-is-the-roc-curve-and-what-is-auc-aka-auroc"
+                >What is the ROC Curve and what is AUC (a.k.a. AUROC)?</a
+              >
+            </li>
+            <li>
+              <a href="#5-what-is-log-loss-and-how-it-helps-to-improve-performance"
+                >What is Log-loss and how it helps to improve performance?</a
+              >
+            </li>
+            <li>
+              <a href="#6-explain-about-r-squared--coefficient-of-determination"
+                >Explain about R-Squared / Coefficient of determination.</a
+              >
+            </li>
+            <li>
+              <a href="#7-explain-about-median-absolute-deviation-mad-importance-of-mad"
+                >Explain about Median absolute deviation (MAD)? Importance of MAD?</a
+              >
+            </li>
+            <li><a href="#8-define-distribution-of-errors">Define Distribution of errors?</a></li>
+          </ol>
+          <h3 id="1-what-is-accuracy">1. What is Accuracy?</h3>
+          <p>
+            <strong>Accuracy</strong> is the simplest classification metric. It measures the
+            proportion of correctly predicted instances out of the total number of instances.
+          </p>
+          <p>
+            $ \text{Accuracy} = \frac{\text{Number of correct predictions}}{\text{Total number of
+            predictions}} = \frac{TP + TN}{TP + TN + FP + FN} $
+          </p>
+          <p><strong>When it is useful</strong>:</p>
+          <ul>
+            <li>Classes are roughly balanced.</li>
+            <li>All classes are equally important.</li>
+          </ul>
+          <p><strong>Limitation</strong>:</p>
+          <ul>
+            <li>
+              On imbalanced datasets, accuracy can be misleading. A model that always predicts the
+              majority class can achieve high accuracy while completely failing on the minority
+              class.
+            </li>
+          </ul>
+          <h3 id="2-explain-about-confusion-matrix-tpr-fpr-fnr-tnr">
+            2. Explain about Confusion matrix, TPR, FPR, FNR, TNR?
+          </h3>
+          <p>
+            <strong>Confusion Matrix</strong> is a table that summarizes the performance of a
+            classification model by showing the counts of:
+          </p>
+          <table>
+            <thead>
+              <tr>
+                <th></th>
+                <th>Predicted Positive</th>
+                <th>Predicted Negative</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Actual Positive</strong></td>
+                <td>True Positive (TP)</td>
+                <td>False Negative (FN)</td>
+              </tr>
+              <tr>
+                <td><strong>Actual Negative</strong></td>
+                <td>False Positive (FP)</td>
+                <td>True Negative (TN)</td>
+              </tr>
+            </tbody>
+          </table>
+          <p><strong>Derived rates</strong>:</p>
+          <ul>
+            <li>
+              <p>
+                <strong>TPR (True Positive Rate)</strong> / <strong>Recall</strong> /
+                <strong>Sensitivity</strong><br />
+                $ TPR = \frac{TP}{TP + FN} $<br />
+                Proportion of actual positives correctly identified.
+              </p>
+            </li>
+            <li>
+              <p>
+                <strong>FPR (False Positive Rate)</strong><br />
+                $ FPR = \frac{FP}{FP + TN} $<br />
+                Proportion of actual negatives incorrectly classified as positive.
+              </p>
+            </li>
+            <li>
+              <p>
+                <strong>FNR (False Negative Rate)</strong><br />
+                $ FNR = \frac{FN}{TP + FN} = 1 - TPR $<br />
+                Proportion of actual positives missed by the model.
+              </p>
+            </li>
+            <li>
+              <p>
+                <strong>TNR (True Negative Rate)</strong> / <strong>Specificity</strong><br />
+                $ TNR = \frac{TN}{TN + FP} = 1 - FPR $<br />
+                Proportion of actual negatives correctly identified.
+              </p>
+            </li>
+          </ul>
+          <p>These four rates fully describe the model’s behavior at a given threshold.</p>
+          <h3 id="3-what-do-you-understand-about-precision--recall-f1-score-how-would-you-use-it">
+            3. What do you understand about Precision &amp; recall, F1-score? How would you use it?
+          </h3>
+          <p>
+            <strong>Precision</strong> (Positive Predictive Value): $ \text{Precision} =
+            \frac{TP}{TP + FP} $<br />
+            Of all the instances the model predicted as positive, how many were actually positive?
+          </p>
+          <p>
+            <strong>Recall</strong> (TPR / Sensitivity): $ \text{Recall} = \frac{TP}{TP + FN} $<br />
+            Of all the actual positive instances, how many did the model correctly find?
+          </p>
+          <p>
+            <strong>F1-Score</strong> is the harmonic mean of Precision and Recall: $ F1 = 2 \times
+            \frac{\text{Precision} \times \text{Recall}}{\text{Precision} + \text{Recall}} $
+          </p>
+          <p><strong>How to use them</strong>:</p>
+          <ul>
+            <li>
+              <strong>High Precision</strong> needed when False Positives are costly (e.g., spam
+              detection, recommending expensive medical tests).
+            </li>
+            <li>
+              <strong>High Recall</strong> needed when False Negatives are costly (e.g., cancer
+              detection, fraud detection, safety-critical systems).
+            </li>
+            <li>
+              <strong>F1-Score</strong> is useful when you want a single number that balances both,
+              especially on imbalanced datasets.
+            </li>
+            <li>
+              You can also look at <strong>Precision-Recall curves</strong> and
+              <strong>Average Precision</strong> when classes are highly imbalanced (often better
+              than ROC in such cases).
+            </li>
+          </ul>
+          <h3 id="4-what-is-the-roc-curve-and-what-is-auc-aka-auroc">
+            4. What is the ROC Curve and what is AUC (a.k.a. AUROC)?
+          </h3>
+          <p><strong>ROC Curve</strong> (Receiver Operating Characteristic Curve) plots:</p>
+          <ul>
+            <li><strong>X-axis</strong>: False Positive Rate (FPR)</li>
+            <li><strong>Y-axis</strong>: True Positive Rate (TPR)</li>
+          </ul>
+          <p>
+            It is generated by varying the classification threshold from 0 to 1 and recording the
+            (FPR, TPR) pairs.
+          </p>
+          <p><strong>AUC (Area Under the ROC Curve)</strong> / <strong>AUROC</strong>:</p>
+          <ul>
+            <li>
+              Measures the overall ability of the model to discriminate between positive and
+              negative classes, independent of any particular threshold.
+            </li>
+            <li>AUC = 1.0 → Perfect classifier</li>
+            <li>AUC = 0.5 → Random classifier (no discriminative power)</li>
+            <li>AUC &lt; 0.5 → Worse than random (can be inverted)</li>
+          </ul>
+          <p><strong>Advantages</strong>:</p>
+          <ul>
+            <li>Threshold-independent.</li>
+            <li>Works reasonably well even with moderate class imbalance.</li>
+            <li>Easy to compare multiple models.</li>
+          </ul>
+          <p>
+            <strong>Note</strong>: On extremely imbalanced datasets, the Precision-Recall curve is
+            often more informative than ROC.
+          </p>
+          <h3 id="5-what-is-log-loss-and-how-it-helps-to-improve-performance">
+            5. What is Log-loss and how it helps to improve performance?
+          </h3>
+          <p>
+            <strong>Log-loss</strong> (also called Binary Cross-Entropy or Logistic Loss) measures
+            the performance of a classification model whose output is a probability value between 0
+            and 1.
+          </p>
+          <p>
+            For binary classification: $ \text{Log-loss} = -\frac{1}{N} \sum_{i=1}^{N} \left[ y_i
+            \log(p_i) + (1 - y_i) \log(1 - p_i) \right] $
+          </p>
+          <p>
+            where $ y_i $ is the true label (0 or 1) and $ p_i $ is the predicted probability of
+            class 1.
+          </p>
+          <p><strong>Key properties</strong>:</p>
+          <ul>
+            <li>
+              Heavily penalizes confident but wrong predictions (e.g., predicting 0.99 when the true
+              label is 0).
+            </li>
+            <li>Rewards well-calibrated probability estimates.</li>
+          </ul>
+          <p><strong>How it helps improve performance</strong>:</p>
+          <ul>
+            <li>
+              Forces the model to output meaningful probabilities rather than just hard labels.
+            </li>
+            <li>Encourages the model to be less overconfident on wrong predictions.</li>
+            <li>
+              Commonly used as the loss function for Logistic Regression, Neural Networks, Gradient
+              Boosting (with logistic objective), etc.
+            </li>
+            <li>
+              Optimizing log-loss usually leads to better-calibrated models and improved ranking
+              metrics (AUC, etc.).
+            </li>
+          </ul>
+          <h3 id="6-explain-about-r-squared--coefficient-of-determination">
+            6. Explain about R-Squared / Coefficient of determination.
+          </h3>
+          <p>
+            <strong>R-Squared ($ R^2 $)</strong> measures the proportion of variance in the
+            dependent variable that is predictable from the independent variables.
+          </p>
+          <p>
+            $ R^2 = 1 - \frac{SS_{\text{res}}}{SS_{\text{tot}}} = 1 - \frac{\sum (y_i -
+            \hat{y}_i)^2}{\sum (y_i - \bar{y})^2} $
+          </p>
+          <ul>
+            <li>$ SS_{\text{res}} $ = Residual Sum of Squares (error of the model)</li>
+            <li>$ SS_{\text{tot}} $ = Total Sum of Squares (variance of the target)</li>
+          </ul>
+          <p><strong>Interpretation</strong>:</p>
+          <ul>
+            <li>$ R^2 = 1 $ → Perfect fit</li>
+            <li>$ R^2 = 0 $ → Model is no better than predicting the mean</li>
+            <li>$ R^2 &lt; 0 $ → Model is worse than predicting the mean</li>
+          </ul>
+          <p><strong>Limitations</strong>:</p>
+          <ul>
+            <li>
+              Always increases when you add more features (even useless ones) → use
+              <strong>Adjusted $ R^2 $</strong> instead.
+            </li>
+            <li>
+              Does not tell you whether the model is biased or whether residuals are well-behaved.
+            </li>
+            <li>Sensitive to outliers.</li>
+          </ul>
+          <h3 id="7-explain-about-median-absolute-deviation-mad-importance-of-mad">
+            7. Explain about Median absolute deviation (MAD)? Importance of MAD?
+          </h3>
+          <p>
+            <strong>Median Absolute Deviation (MAD)</strong> is a robust measure of statistical
+            dispersion:
+          </p>
+          <p>$ \text{MAD} = \text{median} \left( |x_i - \text{median}(X)| \right) $</p>
+          <p><strong>Importance</strong>:</p>
+          <ul>
+            <li>
+              Extremely robust to outliers (unlike standard deviation, which is heavily influenced
+              by extreme values).
+            </li>
+            <li>
+              Used for robust outlier detection (e.g., modified Z-score = $ 0.6745 \times \frac{x_i
+              - \text{median}}{\text{MAD}} $).
+            </li>
+            <li>Preferred when data is skewed or contains outliers.</li>
+            <li>
+              Commonly used in robust statistics and as a scale estimator in robust regression and
+              anomaly detection algorithms.
+            </li>
+          </ul>
+          <p>
+            A common rule of thumb: points with modified Z-score &gt; 3.5 are considered potential
+            outliers.
+          </p>
+          <h3 id="8-define-distribution-of-errors">8. Define Distribution of errors?</h3>
+          <p>
+            <strong>Distribution of errors</strong> (or residual distribution) refers to the
+            statistical distribution of the prediction errors $ e_i = y_i - \hat{y}_i $.
+          </p>
+          <p>In a well-behaved regression model, we typically expect:</p>
+          <ul>
+            <li>
+              Errors to be approximately <strong>normally distributed</strong> (for many classical
+              statistical tests and confidence intervals).
+            </li>
+            <li>Errors to have <strong>mean ≈ 0</strong> (no systematic bias).</li>
+            <li>
+              Errors to be <strong>homoscedastic</strong> (constant variance across the range of
+              predictions).
+            </li>
+            <li>No strong patterns or autocorrelation in the residuals.</li>
+          </ul>
+          <p><strong>Why it matters</strong>:</p>
+          <ul>
+            <li>
+              Helps diagnose model misspecification (non-linearity, missing features,
+              heteroscedasticity).
+            </li>
+            <li>Guides choice of evaluation metrics (MAE vs MSE vs Huber loss).</li>
+            <li>Important for uncertainty quantification and prediction intervals.</li>
+            <li>Visual tools: residual histograms, Q-Q plots, residual vs fitted plots.</li>
+          </ul>
+          <p>
+            If errors are heavily skewed or have heavy tails, robust metrics (MAE, MAD, quantile
+            loss) or transformations may be more appropriate than MSE / $ R^2 $.
+          </p>
+        </main>
+        <aside class="note-toc" aria-label="On this page">
+          <h2>On This Page</h2>
+          <ul>
+            <li><a href="#01-accuracy">01. Accuracy</a></li>
+            <li><a href="#02-confusion-matrix-tpr-fpr-fnr-tnr">02. Confusion Matrix, TPR, FPR, FNR, TNR</a></li>
+            <li><a href="#03-precision-and-recall-f1-score">03. Precision and Recall, F1-Score</a></li>
+            <li><a href="#04-receiver-operating-characteristic-roc-curve-and-auc">04. Receiver Operating Characteristic (ROC) Curve and AUC</a></li>
+            <li><a href="#05-log-loss">05. Log-Loss</a></li>
+            <li><a href="#06-r--coefficient-of-determination">06. R²: Coefficient of Determination</a></li>
+            <li><a href="#07-median-absolute-deviation-mad">07. Median Absolute Deviation (MAD)</a></li>
+            <li><a href="#08-distribution-of-errors">08. Distribution of Errors</a></li>
+            <li><a href="#09-assignment-3-apply-k-nearest-neighbor">09. Assignment-3: Apply k-Nearest Neighbor</a></li>
+            <li><a href="#10-revision-questions">10. Revision Questions</a></li>
+          </ul>
+        </aside>
+      </div>
+    </div>
+    <script>
+      if (window.hljs)
+        document
+          .querySelectorAll("pre code[class*='language-']")
+          .forEach((block) => window.hljs.highlightElement(block));
+      (() => {
+        const links = [...document.querySelectorAll(".note-toc a")],
+          heads = links
+            .map((l) => document.getElementById(decodeURIComponent(l.hash.slice(1))))
+            .filter(Boolean);
+        if (!links.length || !heads.length || !("IntersectionObserver" in window)) return;
+        const set = (h) =>
+          links.forEach((l) => l.classList.toggle("is-active", l.hash === `#${h.id}`));
+        const ob = new IntersectionObserver(
+          (es) => {
+            const v = es
+              .filter((e) => e.isIntersecting)
+              .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
+            if (v.length) set(v[0].target);
+          },
+          { rootMargin: "-10% 0px -75% 0px", threshold: 0 },
+        );
+        heads.forEach((h) => ob.observe(h));
+      })();
+    </script>
+  </body>
+</html>

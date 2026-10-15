@@ -1,0 +1,1600 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Logistic Regression | Applied Machine Learning</title>
+<link rel="stylesheet" href="../HTMLs/theme.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
+<script>
+window.MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']],
+    displayMath: [['$$', '$$'], ['\\[', '\\]']],
+    processEscapes: true,
+    processEnvironments: true
+  },
+  options: {
+    skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+  }
+};
+</script>
+<script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-svg.js"></script>
+</head>
+<body class="site-page">
+<div class="site-layout">
+<nav class="curriculum-nav" aria-label="Main curriculum navigation"><iframe src="../HTMLs/table-of-contents.html" title="Machine learning curriculum"></iframe></nav>
+<div class="note-layout">
+<main class="note-content">
+<style>
+  @import url("https://fonts.googleapis.com/css2?family=Play:wght@400;700&display=swap");
+  @import url("https://cdnjs.cloudflare.com/ajax/libs/latin-modern/1.1.0/css/latinmodern-math.min.css");
+
+  :root {
+    --la-ink: #3f6386;
+    --la-teal: #3f6386;
+    --la-teal-soft: #e8f6f7;
+    --la-coral: #9333ea;
+    --la-coral-soft: #fff1ed;
+    --la-cdf: #17283a;
+    --la-line: #5b5c5c;
+    --la-surface: #f7faf9;
+    --la-text: #c9c9c9;
+    --la-panel: #00070e;
+    --la-chip: #17283a;
+    --la-amber: #9a6b16;
+    --la-amber-soft: #fff8e6;
+  }
+
+  *,
+  *::before,
+  *::after {
+    font-family: "Play", sans-serif !important;
+  }
+
+  pre,
+  pre code {
+    font-family: Consolas, "Courier New", monospace !important;
+  }
+
+  body,
+  .markdown-body,
+  p,
+  li {
+    color: var(--la-text) !important;
+  }
+
+  h1 {
+    color: var(--la-ink);
+    border-bottom: 4px solid var(--la-teal);
+    padding-bottom: 0.35em;
+  }
+
+  h2 {
+    color: var(--la-teal);
+    border-left: 6px solid var(--la-teal);
+    padding-left: 0.55em;
+    margin-top: 2em;
+  }
+
+  h3,
+  h4 {
+    color: var(--la-coral);
+  }
+
+  a {
+    color: var(--la-coral);
+    text-decoration: none;
+  }
+
+  a:hover {
+    text-decoration: underline;
+  }
+
+  blockquote {
+    background: var(--la-panel);
+    border-left: 5px solid var(--la-cdf) !important;
+    border-radius: 6px;
+    color: var(--la-text);
+    padding: 0.75em 1em;
+  }
+
+  code {
+    background: var(--la-chip);
+    border-radius: 4px;
+    color: var(--la-text);
+    padding: 0.1em 0.3em;
+  }
+
+  pre {
+    background: var(--la-panel);
+    border: 1px solid var(--la-line);
+    border-radius: 8px;
+    overflow-x: auto;
+    padding: 1em;
+  }
+
+  table {
+    border: 1px solid var(--la-line);
+    border-collapse: collapse;
+    border-radius: 8px;
+    overflow: hidden;
+    width: 100%;
+  }
+
+  th {
+    background: var(--la-panel);
+    color: var(--la-text);
+    padding: 0.7em 0.8em;
+    text-align: left;
+  }
+
+  td {
+    color: var(--la-text);
+    padding: 0.7em 0.8em;
+  }
+
+  tr:nth-child(even) {
+    background: var(--la-chip);
+  }
+
+  hr {
+    border: 0;
+    border-top: 2px solid var(--la-line);
+    margin: 2.2em 0;
+  }
+
+  .summary-grid,
+  .ml-grid,
+  .intuition-grid {
+    display: flex;
+    gap: 1em;
+    margin: 1.25em 0;
+  }
+
+  .summary-card,
+  .ml-card,
+  .intuition-card {
+    background: var(--la-panel);
+    border-radius: 7px;
+    color: var(--la-text);
+    flex: 1 1 0;
+    min-width: 0;
+    padding: 1em;
+  }
+
+  .summary-card {
+    border-top: 5px solid var(--la-teal);
+  }
+
+  .summary-card.pdf,
+  .ml-card.diagnostics,
+  .intuition-card.pdf {
+    border-top-color: var(--la-coral);
+  }
+
+  .summary-card.cdf,
+  .intuition-card.cdf {
+    border-top-color: var(--la-cdf);
+  }
+
+  .summary-card h3,
+  .ml-card h3,
+  .intuition-card h3 {
+    margin-top: 0;
+  }
+
+  .summary-tag,
+  .panel-kicker {
+    color: var(--la-teal);
+    font-size: 0.82em;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .relationship-banner,
+  .ml-workflow {
+    align-items: center;
+    background: var(--la-panel);
+    border: 1px solid var(--la-teal);
+    border-radius: 7px;
+    color: var(--la-text);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6em;
+    justify-content: center;
+    margin: 1.25em 0;
+    padding: 0.85em 1em;
+    text-align: center;
+  }
+
+  .relationship-banner strong,
+  .ml-workflow strong,
+  .relationship-item strong,
+  .insight-item strong {
+    color: var(--la-coral);
+  }
+
+  .relationship-banner .arrow {
+    color: var(--la-teal);
+    font-size: 1.2em;
+  }
+
+  .relationship-item,
+  .insight-item {
+    background: var(--la-panel);
+    border-left: 5px solid var(--la-teal);
+    border-radius: 5px;
+    color: var(--la-text);
+    margin: 0.65em 0;
+    padding: 0.55em 0.85em;
+  }
+
+  .insight-item {
+    border-left-color: var(--la-coral);
+  }
+
+  .insight-list,
+  .feature-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.55em;
+    list-style: none;
+    margin: 0.5em 0 1em;
+    padding: 0;
+  }
+
+  .insight-list li,
+  .feature-chips li {
+    background: var(--la-chip);
+    border: 1px solid var(--la-teal);
+    border-radius: 999px;
+    color: var(--la-text);
+    padding: 0.35em 0.75em;
+  }
+
+  .feature-chips li {
+    border-radius: 4px;
+    border-left: 3px solid var(--la-coral);
+    border-right: none;
+    border-top: none;
+    border-bottom: none;
+    flex: 1 1 calc(50% - 0.45em);
+  }
+
+  .concept-flow {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    margin: 1.25em 0;
+  }
+
+  .concept-flow .flow-step {
+    background: var(--la-panel);
+    border: 1px solid var(--la-teal);
+    border-radius: 7px;
+    color: var(--la-text);
+    max-width: 22em;
+    padding: 0.7em 1.2em;
+    text-align: center;
+    width: 100%;
+  }
+
+  .concept-flow .flow-step strong {
+    color: var(--la-coral);
+  }
+
+  .concept-flow .flow-arrow {
+    color: var(--la-teal);
+    font-size: 1.35em;
+    line-height: 1.25;
+  }
+
+  .percentile-callout {
+    background: var(--la-panel);
+    border-left: 5px solid var(--la-cdf);
+    border-radius: 7px;
+    color: var(--la-text);
+    margin: 1.25em 0;
+    padding: 1em;
+  }
+
+  .percentile-callout strong {
+    color: var(--la-cdf);
+  }
+
+  .katex-display,
+  .math,
+  .math-block {
+    background: #00070e;
+    border-left: 6px solid #2f005c;
+    border-radius: 6px;
+    padding: 0.6em 0.8em;
+    overflow-x: auto;
+    color: #c9c9c9 !important;
+    font-family: "Latin Modern Math", "Cambria Math", "STIX Two Math", serif !important;
+  }
+
+  .katex,
+  .katex * {
+    color: #9b9a9a !important;
+    font-family: "Latin Modern Math", "Cambria Math", "STIX Two Math", serif !important;
+  }
+
+  @media (max-width: 700px) {
+    .summary-grid,
+    .ml-grid,
+    .intuition-grid {
+      flex-direction: column;
+    }
+  }
+</style>
+<h1 id="logistic-regression">Logistic Regression</h1>
+<h2 id="01-geometric-intuition-of-logistic-regression">01. Geometric Intuition of Logistic Regression</h2>
+<p><img src="./assets/01.01.jpg" alt="LR" /><br />
+<img src="./assets/01.02.jpg" alt="LR" /></p>
+<blockquote>
+<p><strong>Logistic Regression (Geometric Intuition)</strong></p>
+</blockquote>
+<p>Logistic Regression is a simple and elegant <strong>classification</strong> algorithm.</p>
+<ul>
+<li>Naive Bayes → Probabilistic technique</li>
+<li>Logistic Regression → Geometric intuition</li>
+</ul>
+<p>LR can be understood from three angles:</p>
+<ul>
+<li>Geometry</li>
+<li>Probability</li>
+<li>Loss function</li>
+</ul>
+<h3 id="the-decision-surface-hyperplane">The Decision Surface (Hyperplane)</h3>
+<p>The decision surface is a hyperplane:</p>
+<p>$$
+\pi: \quad \mathbf{w}^\top \mathbf{x} + b = 0
+$$</p>
+<ul>
+<li>$\mathbf{w}$ = normal vector to the plane</li>
+<li>$b$ = intercept</li>
+</ul>
+<p><strong>Geometry:</strong></p>
+<ul>
+<li>In 2D → a line</li>
+<li>In $n$-D → a hyperplane</li>
+</ul>
+<p>These are <strong>linear surfaces</strong>.<br />
+(Circle, parabola, etc. are quadratic surfaces.)</p>
+<p>If the hyperplane passes through the origin:</p>
+<p>$$
+b = 0 \quad \Rightarrow \quad \mathbf{w}^\top \mathbf{x} = 0
+$$</p>
+<p>Where:</p>
+<ul>
+<li>$\mathbf{x} \in \mathbb{R}^d$ (data point)</li>
+<li>$\mathbf{w} \in \mathbb{R}^d$ (weight vector)</li>
+<li>$b \in \mathbb{R}$ (scalar)</li>
+</ul>
+<h3 id="assumption-of-logistic-regression">Assumption of Logistic Regression</h3>
+<p><strong>Core assumption:</strong><br />
+The two classes are <strong>almost / perfectly linearly separable</strong>.</p>
+<p><strong>Given:</strong><br />
+Training data $D_n = {+\text{ve points}, -\text{ve points}}$</p>
+<p><strong>Task:</strong><br />
+Find the best $\mathbf{w}$ and $b$ such that the hyperplane $\pi$ separates the positive points from the negative points as well as possible.</p>
+<p><strong>Comparison of assumptions:</strong></p>
+<ul>
+<li>Naive Bayes → Conditional independence of features</li>
+<li>k-NN → Neighborhood</li>
+<li>Logistic Regression → Linear separability</li>
+</ul>
+<h3 id="signed-distance-and-classifier-rule">Signed Distance &amp; Classifier Rule</h3>
+<p>Let the labels be coded as:</p>
+<p>$$
+y_i =
+\begin{cases}
++1 &amp; \text{positive point} \
+-1 &amp; \text{negative point}
+\end{cases}
+$$</p>
+<p>The signed distance of a point $\mathbf{x}_i$ from the plane (when $|\mathbf{w}|=1$) is:</p>
+<p>$$
+d_i = \mathbf{w}^\top \mathbf{x}_i
+$$</p>
+<p><strong>Classifier rule:</strong></p>
+<p>$$
+\begin{align*}
+\text{if } \mathbf{w}^\top \mathbf{x}_i &gt; 0 &amp;\quad \Rightarrow \quad \hat{y}_i = +1 \
+\text{if } \mathbf{w}^\top \mathbf{x}_i &lt; 0 &amp;\quad \Rightarrow \quad \hat{y}_i = -1
+\end{align*}
+$$</p>
+<p>The decision surface in Logistic Regression is a <strong>line / plane</strong> (linear).</p>
+<h3 id="correct-classification-condition">Correct Classification Condition</h3>
+<p><img src="./assets/01.03.jpg" alt="LR" /></p>
+<p>A point is <strong>correctly classified</strong> if and only if:</p>
+<p>$$
+y_i , (\mathbf{w}^\top \mathbf{x}_i) &gt; 0
+$$</p>
+<p><strong>Cases:</strong></p>
+<table>
+<thead>
+<tr>
+  <th>Case</th>
+  <th>True label $y_i$</th>
+  <th>$\mathbf{w}^\top \mathbf{x}_i$</th>
+  <th>$y_i (\mathbf{w}^\top \mathbf{x}_i)$</th>
+  <th>Result</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>1</td>
+  <td>$+1$</td>
+  <td>$&gt; 0$</td>
+  <td>$&gt; 0$</td>
+  <td>Correct</td>
+</tr>
+<tr>
+  <td>2</td>
+  <td>$-1$</td>
+  <td>$&lt; 0$</td>
+  <td>$&gt; 0$</td>
+  <td>Correct</td>
+</tr>
+<tr>
+  <td>3</td>
+  <td>$+1$</td>
+  <td>$&lt; 0$</td>
+  <td>$&lt; 0$</td>
+  <td>Misclassified</td>
+</tr>
+<tr>
+  <td>4</td>
+  <td>$-1$</td>
+  <td>$&gt; 0$</td>
+  <td>$&lt; 0$</td>
+  <td>Misclassified</td>
+</tr>
+</tbody>
+</table>
+<h3 id="optimization-goal">Optimization Goal</h3>
+<p>To make the classifier as good as possible we want:</p>
+<ul>
+<li>Minimize the number of misclassifications</li>
+<li><strong>or</strong> Maximize the number of correctly classified points</li>
+</ul>
+<p>This is equivalent to maximizing:</p>
+<p>$$
+\sum_{i=1}^{n} y_i , (\mathbf{w}^\top \mathbf{x}_i)
+$$</p>
+<p><strong>Mathematical formulation (optimization problem):</strong></p>
+<p>$$
+\mathbf{w}^* = \arg\max_{\mathbf{w}} \sum_{i=1}^{n} y_i , (\mathbf{w}^\top \mathbf{x}_i)
+$$</p>
+<ul>
+<li>$(x_i, y_i)$ are fixed (training data)</li>
+<li>$\mathbf{w}$ is the variable we optimize</li>
+</ul>
+<p><strong>Key Insight:</strong><br />
+Logistic Regression finds a hyperplane that best separates the two classes in a linear sense. The simple geometric condition $y_i (\mathbf{w}^\top \mathbf{x}_i) &gt; 0$ tells us whether a point is correctly classified, and maximizing the sum of these terms gives the optimal weight vector.</p>
+<h2 id="02-sigmoid-function-squashing">02. Sigmoid Function: Squashing</h2>
+<p><img src="./assets/02.01.jpg" alt="LR" /><br />
+<img src="./assets/02.03.jpg" alt="LR" /><br />
+<img src="./assets/02.02.jpg" alt="LR" /></p>
+<blockquote>
+<p><strong>Squashing &amp; Sigmoid Function</strong></p>
+</blockquote>
+<h3 id="recap-the-optimization-problem">Recap: The Optimization Problem</h3>
+<p>We want the best hyperplane defined by $\mathbf{w}$:</p>
+<p>$$
+\mathbf{w}^* = \arg\max_{\mathbf{w}} \sum_{i=1}^{n} y_i , (\mathbf{w}^\top \mathbf{x}_i)
+$$</p>
+<ul>
+<li>$y_i (\mathbf{w}^\top \mathbf{x}_i)$ is the <strong>signed distance</strong> of point $\mathbf{x}_i$ from the plane (when $|\mathbf{w}| = 1$).</li>
+<li>Positive value $\rightarrow$ correctly classified</li>
+<li>Negative value $\rightarrow$ misclassified</li>
+</ul>
+<h3 id="problem-with-maximizing-sum-of-signed-distances">Problem with Maximizing Sum of Signed Distances</h3>
+<p>Maximizing the raw sum of signed distances is <strong>very sensitive to outliers</strong>.</p>
+<p><strong>Example illustration:</strong></p>
+<ul>
+<li>Most points are well separated by a good plane $\pi_1$.</li>
+<li>One extreme outlier (signed distance $= +100$ or $-100$) can pull the hyperplane dramatically.</li>
+<li>A worse-looking plane $\pi_2$ can end up with a higher total sum just because of that single outlier.</li>
+</ul>
+<p><strong>Conclusion:</strong><br />
+One single extreme/outlier point can completely change the model (hyperplane).<br />
+Maximizing the sum of signed distances is <strong>not outlier-robust</strong>.</p>
+<h3 id="solution-squashing">Solution: Squashing</h3>
+<p><strong>Idea of Squashing:</strong></p>
+<ul>
+<li>If the signed distance is <strong>small</strong> → keep it almost as is.</li>
+<li>If the signed distance is <strong>large</strong> → compress it to a smaller value (taper it off).</li>
+</ul>
+<p>We replace the raw signed distance with a <strong>squashing function</strong> $f(\cdot)$:</p>
+<p>$$
+\mathbf{w}^* = \arg\max_{\mathbf{w}} \sum_{i=1}^{n} f\big(y_i , (\mathbf{w}^\top \mathbf{x}_i)\big)
+$$</p>
+<p>The function $f$ should:</p>
+<ul>
+<li>Be monotonically increasing</li>
+<li>Saturate (taper off) for large positive/negative values</li>
+</ul>
+<h3 id="the-sigmoid-function">The Sigmoid Function</h3>
+<p>The classic choice for squashing is the <strong>Sigmoid</strong> (Logistic) function:</p>
+<p>$$
+\sigma(z) = \dfrac{1}{1 + e^{-z}}
+$$</p>
+<p>Properties:</p>
+<ul>
+<li>Range: $(0, 1)$</li>
+<li>$\sigma(0) = 0.5$</li>
+<li>As $z \to +\infty$, $\sigma(z) \to 1$</li>
+<li>As $z \to -\infty$, $\sigma(z) \to 0$</li>
+<li>Smooth and differentiable</li>
+<li>Gives a natural <strong>probabilistic interpretation</strong></li>
+</ul>
+<p>Now the optimization becomes:</p>
+<p>$$
+\mathbf{w}^* = \arg\max_{\mathbf{w}} \sum_{i=1}^{n} \sigma\big(y_i , (\mathbf{w}^\top \mathbf{x}_i)\big)
+$$</p>
+<p>or explicitly:</p>
+<p>$$
+\mathbf{w}^* = \arg\max_{\mathbf{w}} \sum_{i=1}^{n} \dfrac{1}{1 + \exp\big(-y_i , (\mathbf{w}^\top \mathbf{x}_i)\big)}
+$$</p>
+<h3 id="benefits-of-using-sigmoid">Benefits of Using Sigmoid</h3>
+<table>
+<thead>
+<tr>
+  <th>Aspect</th>
+  <th>Benefit</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Outlier sensitivity</td>
+  <td>Greatly reduced (large distances are squashed)</td>
+</tr>
+<tr>
+  <td>Differentiability</td>
+  <td>Easy to optimize with gradient-based methods</td>
+</tr>
+<tr>
+  <td>Probabilistic interpretation</td>
+  <td>$\sigma(y_i \mathbf{w}^\top \mathbf{x}_i)$ can be read as $P(y_i = 1)$</td>
+</tr>
+<tr>
+  <td>Geometric meaning retained</td>
+  <td>Still based on signed distance to the plane</td>
+</tr>
+</tbody>
+</table>
+<h3 id="summary-of-the-geometric-path-to-logistic-regression">Summary of the Geometric Path to Logistic Regression</h3>
+<ol>
+<li>Start with maximizing sum of signed distances (geometric).</li>
+<li>Observe that it is outlier-prone.</li>
+<li>Apply a squashing function (Sigmoid).</li>
+<li>Obtain a robust, differentiable, probabilistically interpretable objective.</li>
+</ol>
+<p>This is the <strong>geometric derivation</strong> of Logistic Regression.<br />
+(We can also derive it from a probabilistic view or from a loss-function view — those will be covered next.)</p>
+<p><strong>Key Insight:</strong><br />
+Raw maximization of signed distances is unstable because of outliers.<br />
+Squashing the signed distances with the Sigmoid function makes the objective robust, smooth, and probabilistically meaningful — this is the heart of Logistic Regression.</p>
+<h2 id="03-mathematical-formulation-of-objective-function">03. Mathematical Formulation of Objective Function</h2>
+<p><img src="./assets/03.01.jpg" alt="LR" /><br />
+<img src="./assets/03.02.jpg" alt="LR" /></p>
+<blockquote>
+<p><strong>Optimization Problem &amp; Monotonic Transformations</strong></p>
+</blockquote>
+<h3 id="current-optimization-problem">Current Optimization Problem</h3>
+<p>After introducing the sigmoid, we have:</p>
+<p>$$
+\mathbf{w}^* = \arg\max_{\mathbf{w}} \sum_{i=1}^{n} \dfrac{1}{1 + \exp(-y_i \mathbf{w}^\top \mathbf{x}_i)}
+$$</p>
+<p>This is still a valid optimization problem.</p>
+<h3 id="monotonic-functions">Monotonic Functions</h3>
+<p>A function $g(x)$ is <strong>monotonically increasing</strong> if:</p>
+<p>$$
+x_1 &gt; x_2 \quad \Rightarrow \quad g(x_1) &gt; g(x_2)
+$$</p>
+<p>(or non-decreasing: $g(x_1) \ge g(x_2)$).</p>
+<p><strong>Important property:</strong></p>
+<p>If $g$ is a monotonically increasing function, then:</p>
+<p>$$
+\arg\min_x f(x) = \arg\min_x g\big(f(x)\big)
+$$</p>
+<p>$$
+\arg\max_x f(x) = \arg\max_x g\big(f(x)\big)
+$$</p>
+<p>The location of the optimum does <strong>not</strong> change.</p>
+<h3 id="applying-log-a-monotonic-function">Applying Log (a Monotonic Function)</h3>
+<p>The logarithm $g(x) = \log(x)$ (for $x &gt; 0$) is monotonically increasing.</p>
+<p>Therefore we can safely take log inside the sum:</p>
+<p>$$
+\mathbf{w}^* = \arg\max_{\mathbf{w}} \sum_{i=1}^{n} \dfrac{1}{1 + \exp(-y_i \mathbf{w}^\top \mathbf{x}_i)}
+$$</p>
+<p>$$
+\mathbf{w}^* = \arg\max_{\mathbf{w}} \sum_{i=1}^{n} \log\left( \sigma(y_i \mathbf{w}^\top \mathbf{x}_i) \right)
+$$</p>
+<p>Since</p>
+<p>$$
+\sigma(z) = \dfrac{1}{1 + e^{-z}}
+$$</p>
+<p>we get:</p>
+<p>$$
+\mathbf{w}^* = \arg\max_{\mathbf{w}} \sum_{i=1}^{n} \log\left( \dfrac{1}{1 + \exp(-y_i \mathbf{w}^\top \mathbf{x}_i)} \right)
+$$</p>
+<h3 id="turning-max-into-min">Turning Max into Min</h3>
+<p>We currently have:</p>
+<p>$$
+\mathbf{w}^* = \arg\max_{\mathbf{w}} \sum_{i=1}^{n} \log\left( \dfrac{1}{1 + \exp(-y_i \mathbf{w}^\top \mathbf{x}_i)} \right)
+$$</p>
+<p>Using the property:</p>
+<p>$$
+\log\left(\dfrac{1}{x}\right) = \log(x^{-1}) = -\log(x)
+$$</p>
+<p>we can rewrite it as:</p>
+<p>$$
+\mathbf{w}^* = \arg\max_{\mathbf{w}} \sum_{i=1}^{n} -\log\big(1 + \exp(-y_i \mathbf{w}^\top \mathbf{x}_i)\big)
+$$</p>
+<p>Now apply the general rule:</p>
+<p>$$
+\arg\max_{x} f(x) = \arg\min_{x} \big(-f(x)\big)
+$$</p>
+<p>This immediately gives the standard optimization problem of Logistic Regression:</p>
+<p>$$
+\mathbf{w}^* = \arg\min_{\mathbf{w}} \sum_{i=1}^{n} \log\big(1 + \exp(-y_i \mathbf{w}^\top \mathbf{x}_i)\big)
+$$</p>
+<p>This is the final form obtained from the geometric view.</p>
+<p>This is the <strong>optimization problem of Logistic Regression</strong> (geometric view).</p>
+<h3 id="comparison-of-objectives">Comparison of Objectives</h3>
+<table>
+<thead>
+<tr>
+  <th>Objective</th>
+  <th>Form</th>
+  <th>Outlier Behavior</th>
+  <th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Sum of signed distances</td>
+  <td>$\arg\max \sum y_i \mathbf{w}^\top \mathbf{x}_i$</td>
+  <td>Very sensitive</td>
+  <td>Original geometric idea</td>
+</tr>
+<tr>
+  <td>Sum of sigmoid</td>
+  <td>$\arg\max \sum \sigma(y_i \mathbf{w}^\top \mathbf{x}_i)$</td>
+  <td>Better</td>
+  <td>Squashing applied</td>
+</tr>
+<tr>
+  <td>Sum of log-sigmoid (Logistic loss)</td>
+  <td>$\arg\min \sum \log(1 + \exp(-y_i \mathbf{w}^\top \mathbf{x}_i))$</td>
+  <td>Robust</td>
+  <td>Final practical form</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Three Equivalent Views of Logistic Regression</strong></p>
+<blockquote>
+<h3 id="1-geometry-soft-margin-linear-separator-view">1. Geometry (soft-margin / linear separator view)</h3>
+<p>With labels $y_i\in{-1,+1}$ we solve
+$$
+\mathbf{w}^*
+=\arg\min_{\mathbf{w}}
+\sum_{i=1}^n
+\log\bigl(1+\exp(-y_i\mathbf{w}^\top\mathbf{x}_i)\bigr)
+$$
+(the sum of logistic losses).<br />
+This is the natural “soft” analogue of the hard-margin geometric objective $\sum\max(0,1-y_i\mathbf{w}^\top\mathbf{x}_i)$.</p>
+</blockquote>
+<blockquote>
+<h3 id="2-probability-maximum-likelihood-bernoulli-view">2. Probability (maximum-likelihood / Bernoulli view)</h3>
+<p>With labels $y_i\in{0,1}$ and the logistic (sigmoid) link
+$$
+p_i=\sigma(\mathbf{w}^\top\mathbf{x}<em>i)=\frac{1}{1+e^{-\mathbf{w}^\top\mathbf{x}<em>i}}
+$$
+we maximise the Bernoulli likelihood, or equivalently minimise the binary cross-entropy:
+$$
+\mathbf{w}^*
+=\arg\min</em>{\mathbf{w}}
+\sum</em>{i=1}^n
+\Bigl[
+-y_i\log p_i
+-(1-y_i)\log(1-p_i)
+\Bigr].
+$$</p>
+</blockquote>
+<blockquote>
+<h3 id="3-loss-function-view-will-learn-later">3. Loss-function view (will learn later)</h3>
+<p>Both of the above are exactly the same optimisation problem once the labels are mapped
+$$
+y_{\pm1};=;2y_{0/1}-1.
+$$
+The common training criterion is therefore simply called the <strong>logistic loss</strong> (or log-loss):
+$$
+\ell(z)=\log(1+e^{-z}),
+\qquad
+z=y,\mathbf{w}^\top\mathbf{x}.
+$$
+Minimising the sum of logistic losses is simultaneously</p>
+</blockquote>
+<ul>
+<li>a geometric soft-margin problem,</li>
+<li>maximum-likelihood estimation of a logistic model, and</li>
+<li>empirical risk minimisation with the logistic surrogate loss.</li>
+</ul>
+<p>Hence the three descriptions are mathematically identical.</p>
+<p><strong>Key Insight:</strong><br />
+Because $\log$ is monotonically increasing, taking the log (and then flipping the sign) does not change the optimal $\mathbf{w}$. This transformation gives us a smooth, convex, outlier-robust objective that is easy to optimize and has a clear probabilistic interpretation — the logistic loss.</p>
+<h2 id="04-weight-vector">04. Weight Vector</h2>
+<p><img src="./assets/04.01.jpg" alt="LR" /><br />
+<img src="./assets/04.03.jpg" alt="LR" /><br />
+<img src="./assets/04.02.jpg" alt="LR" /></p>
+<p><strong>Weight-Vector</strong></p>
+<p>We have the optimization problem:</p>
+<p>$$
+\mathbf{w}^* = \arg\min_{\mathbf{w}} \sum_{i=1}^{n} \log\big(1 + \exp(-y_i \mathbf{w}^\top \mathbf{x}_i)\big)
+$$</p>
+<p>$\mathbf{w}^*$ is the <strong>weight-vector</strong>.</p>
+<p>$$
+\mathbf{w} = \langle w_1, w_2, w_3, \dots, w_d \rangle
+$$</p>
+<ul>
+<li>$\mathbf{w} \in \mathbb{R}^d$</li>
+<li>$\mathbf{x}_i \in \mathbb{R}^d$  (d-features)</li>
+</ul>
+<h3 id="decision">Decision</h3>
+<p>For a query point $\mathbf{x}_q$:</p>
+<p>$$
+\begin{align*}
+\text{if } \mathbf{w}^\top \mathbf{x}_q &gt; 0 &amp;\quad \Rightarrow \quad y_q = +1 \
+\text{if } \mathbf{w}^\top \mathbf{x}_q &lt; 0 &amp;\quad \Rightarrow \quad y_q = -1
+\end{align*}
+$$</p>
+<h3 id="probabilistic-interpretation">Probabilistic Interpretation</h3>
+<p>$$
+\sigma(\mathbf{w}^\top \mathbf{x}_q) = P(y_q = +1)
+$$</p>
+<p>(value lies between 0 and 1)</p>
+<h3 id="interpretation-of-mathbfw">Interpretation of $\mathbf{w}$</h3>
+<p><strong>Case 1:</strong> If $w_i$ is <font style="color:green"><strong>positive</strong></font></p>
+<ul>
+<li>Feature $f_i$ <font style="font-size:1.5em">⬆</font></li>
+<li>$\Rightarrow$ $w_i x_{qi}$ <font style="font-size:1.5em">⬆</font></li>
+<li>$\Rightarrow$ $\sum w_i x_{qi}$ <font style="font-size:1.5em">⬆</font></li>
+<li>$\Rightarrow$ $\sigma(\mathbf{w}^\top \mathbf{x}_q)$ <font style="font-size:1.5em">⬆</font></li>
+<li>$\Rightarrow$ $P(y_q = +1)$ <font style="font-size:1.5em">⬆</font></li>
+</ul>
+<p><strong>Case 2:</strong> If $w_i$ is <font style="color:red"><strong>negative</strong></font></p>
+<ul>
+<li>Feature $f_i$ <font style="font-size:1.5em">⬆</font></li>
+<li>$\Rightarrow$ $w_i x_{qi}$ <font style="font-size:1.5em">⬇</font></li>
+<li>$\Rightarrow$ $\sum w_i x_{qi}$ <font style="font-size:1.5em">⬇</font></li>
+<li>$\Rightarrow$ $\sigma(\mathbf{w}^\top \mathbf{x}_q)$ <font style="font-size:1.5em">⬇</font></li>
+<li>$\Rightarrow$ $P(y_q = +1)$ <font style="font-size:1.5em">⬇</font></li>
+<li>$\Rightarrow$ $P(y_q = -1)$ <font style="font-size:1.5em">⬆</font></li>
+</ul>
+<p>(Note: $P(y_q = +1) = 1 - P(y_q = -1)$)</p>
+<h2 id="05-l2-regularization-overfitting-and-underfitting">05. L2 Regularization: Overfitting and Underfitting</h2>
+<p><img src="./assets/05.01.jpg" alt="LR" /><br />
+<img src="./assets/05.03.jpg" alt="LR" /><br />
+<img src="./assets/05.02.jpg" alt="LR" /></p>
+<blockquote>
+<p><strong>L2 Regularization: Overfitting vs Underfitting</strong></p>
+</blockquote>
+<p>We have:</p>
+<p>$$
+\mathbf{w}^* = \arg\min_{\mathbf{w}} \sum_{i=1}^{n} \log\big(1 + \exp(-y_i \mathbf{w}^\top \mathbf{x}_i)\big)
+$$</p>
+<p>Let $z_i = y_i \mathbf{w}^\top \mathbf{x}_i$</p>
+<p>Then the problem becomes:</p>
+<p>$$
+\mathbf{w}^* = \arg\min_{\mathbf{w}} \sum_{i=1}^{n} \log\big(1 + \exp(-z_i)\big)
+$$</p>
+<h3 id="observation">Observation</h3>
+<p>$\log(1 + \exp(-z_i)) \ge 0$ always.</p>
+<p>The <strong>minimal value</strong> of the sum is 0.<br />
+It occurs when $z_i \to +\infty$ for all $i$.</p>
+<p>If $z_i$ is positive and $z_i \to +\infty$:</p>
+<ul>
+<li>$\exp(-z_i) \to 0$</li>
+<li>$\log(1 + \exp(-z_i)) \to 0$</li>
+</ul>
+<h3 id="what-does-z-i-to-infty-mean">What does $z_i \to +\infty$ mean?</h3>
+<p>$z_i = y_i \mathbf{w}^\top \mathbf{x}_i \to +\infty$ means:</p>
+<ol>
+<li>The point $\mathbf{x}_i$ is correctly classified by $\mathbf{w}$.</li>
+<li>The signed distance is becoming extremely large.</li>
+</ol>
+<p>If we pick $\mathbf{w}$ such that:</p>
+<ul>
+<li>All training points are correctly classified, and</li>
+<li>$z_i \to +\infty$ for every point,</li>
+</ul>
+<p>then this $\mathbf{w}$ becomes the “best” according to the loss.<br />
+But this leads to <strong>overfitting</strong> (perfect job on training data, especially driven by outliers).<br />
+In this situation the individual weights $w_j \to +\infty$ or $w_j \to -\infty$.</p>
+<h3 id="regularization">Regularization</h3>
+<p>To control this, we add a regularization term:</p>
+<p>$$
+\mathbf{w}^* = \arg\min_{\mathbf{w}} \Bigg( \sum_{i=1}^{n} \log\big(1 + \exp(-y_i \mathbf{w}^\top \mathbf{x}_i)\big) + \lambda , \mathbf{w}^\top \mathbf{w} \Bigg)
+$$</p>
+<ul>
+<li>First term → <strong>loss term</strong></li>
+<li>Second term → <strong>regularization term</strong></li>
+</ul>
+<p>$$
+\lambda , \mathbf{w}^\top \mathbf{w} = \lambda |\mathbf{w}|<em>2^2 = \lambda \sum</em>{j=1}^{d} w_j^2
+$$</p>
+<p>(This is the square of the L2-norm of $\mathbf{w}$.)</p>
+<h3 id="effect-of-lambda">Effect of $\lambda$</h3>
+<ul>
+<li>$\lambda = 0$ → no regularization → <strong>overfitting</strong> (high variance)</li>
+<li>$\lambda$ very large → <strong>underfitting</strong> (high bias)</li>
+</ul>
+<p>$\lambda$ is the <strong>hyper-parameter</strong> of Logistic Regression<br />
+(similar to $K$ in k-NN or $\alpha$ in Laplace smoothing of Naive Bayes).</p>
+<p>We choose the best $\lambda$ using <strong>Cross-Validation</strong>.</p>
+<p><strong>Final form:</strong></p>
+<p>Minimize (loss function on training data + regularization term).</p>
+<h2 id="06-l1-regularization-and-sparsity">06. L1 Regularization and Sparsity</h2>
+<p><img src="./assets/06.01.jpg" alt="LR" /><br />
+<img src="./assets/06.02.jpg" alt="LR" /></p>
+<blockquote>
+<p><strong>L1 Regularization and Sparsity</strong></p>
+</blockquote>
+<p>We had (with L2 regularization):</p>
+<p>$$
+\mathbf{w}^* = \arg\min_{\mathbf{w}} \sum_{i=1}^{n} \log\big(1 + \exp(-y_i \mathbf{w}^\top \mathbf{x}_i)\big) + \lambda |\mathbf{w}|_2^2
+$$</p>
+<ul>
+<li>First term → logistic loss</li>
+<li>Second term → L2-regularization</li>
+</ul>
+<p>When $z_i \to +\infty$, the weights $w_i \to +\infty$ or $w_i \to -\infty$ (overfitting).</p>
+<h3 id="question-alternatives-to-l2-regularization">Question: Alternatives to L2-regularization?</h3>
+<p>Popular alternative: <strong>L1-regularization</strong></p>
+<p>Instead of $|\mathbf{w}|_2^2$ we use $|\mathbf{w}|_1$:</p>
+<p>$$
+|\mathbf{w}|<em>1 = \sum</em>{i=1}^{d} |w_i|
+$$</p>
+<p>So the new problem becomes:</p>
+<p>$$
+\mathbf{w}^* = \arg\min_{\mathbf{w}} \Big( \text{logistic loss on training data} \Big) + \lambda |\mathbf{w}|_1
+$$</p>
+<p>This is called <strong>L1-regularization</strong>.<br />
+It also prevents $w_i \to +\infty$ or $w_i \to -\infty$.</p>
+<h3 id="sparsity">Sparsity</h3>
+<p>A solution $\mathbf{w}^* = \langle w_1, w_2, \dots, w_d \rangle$ is said to be <strong>sparse</strong> if many of the $w_i$’s are exactly zero.</p>
+<p>If we use L1-regularization in Logistic Regression, all the unimportant / less-important features get $w_i = 0$.</p>
+<ul>
+<li>L1-reg → many $w_i$ become exactly zero</li>
+<li>L2-reg → $w_i$ become small but not necessarily zero</li>
+</ul>
+<h3 id="why-does-l1-reg-create-sparsity-compared-to-l2-reg">Why does L1-reg create sparsity (compared to L2-reg)?</h3>
+<p>(This is left as a question to prove / understand from the optimization geometry.)</p>
+<h3 id="elastic-net">Elastic-Net</h3>
+<p>We can also combine both:</p>
+<p>$$
+\mathbf{w}^* = \arg\min_{\mathbf{w}} \sum_{i=1}^{n} \log\big(1 + \exp(-z_i)\big) + \lambda_1 |\mathbf{w}|_1 + \lambda_2 |\mathbf{w}|_2^2
+$$</p>
+<p>This is called <strong>Elastic-Net</strong>.<br />
+It has two hyper-parameters: $\lambda_1$ and $\lambda_2$.</p>
+<h2 id="07-probabilistic-interpretation-gaussian-naive-bayes">07. Probabilistic Interpretation: Gaussian Naive Bayes</h2>
+<p><img src="./assets/07.01.jpg" alt="LR" /><br />
+<img src="./assets/07.02.jpg" alt="LR" /></p>
+<blockquote>
+<p><strong>Probabilistic Interpretation of Logistic Regression</strong></p>
+</blockquote>
+<p>Logistic Regression can be understood in three ways:</p>
+<ol>
+<li>Geometry &amp; Simple algebra</li>
+<li>Probability</li>
+<li>Loss minimization</li>
+</ol>
+<p>(Textbook mainly follows the probabilistic view.)</p>
+<h3 id="probabilistic-derivation-of-lr">Probabilistic Derivation of LR</h3>
+<p>Naive Bayes assumptions:</p>
+<ol>
+<li><p>Features are real-valued → Gaussian distribution<br />
+$$
+P(\mathbf{x}_i \mid y_i) \sim \mathcal{N}(\mu_i, \sigma)
+$$</p>
+</li>
+<li><p>$y_i = +1$ or $0$ → Bernoulli random variable (coin-toss)</p>
+</li>
+</ol>
+<p><strong>Key statement:</strong></p>
+<p>$$
+\text{LR} = \text{Gaussian Naive Bayes} + \text{Bernoulli}
+$$</p>
+<ul>
+<li>$P(\mathbf{x}_i \mid y_i)$ comes from Gaussian NB</li>
+<li>$y_i$ is Bernoulli</li>
+</ul>
+<h3 id="two-forms-of-the-optimization-problem">Two Forms of the Optimization Problem</h3>
+<p><strong>Geometric form</strong> (labels $+1$ or $-1$):</p>
+<p>$$
+\mathbf{w}^* = \arg\min_{\mathbf{w}} \sum_{i=1}^{n} \log\big(1 + \exp(-y_i \mathbf{w}^\top \mathbf{x}_i)\big) + \text{reg}
+$$</p>
+<p><strong>Probabilistic form</strong> (labels $+1$ or $0$):</p>
+<p>$$
+\mathbf{w}^* = \arg\min_{\mathbf{w}} \sum_{i=1}^{n} \Big[ -y_i \log p_i - (1-y_i)\log(1-p_i) \Big] + \text{reg}
+$$</p>
+<p>where</p>
+<p>$$
+p_i = \sigma(\mathbf{w}^\top \mathbf{x}_i)
+$$</p>
+<h3 id="showing-the-two-forms-are-equivalent">Showing the Two Forms are Equivalent</h3>
+<p><strong>Case 1:</strong> $y_i$ is positive</p>
+<ul>
+<li>Geometry: $y_i = +1$</li>
+<li>Probability: $y_i = +1$</li>
+</ul>
+<p>Geometry term:</p>
+<p>$$
+\log\big(1 + \exp(-\mathbf{w}^\top \mathbf{x}_i)\big)
+$$</p>
+<p>Probability term:</p>
+<p>$$
+-\log\left( \dfrac{1}{1+\exp(-\mathbf{w}^\top \mathbf{x}_i)} \right) = \log\big(1 + \exp(-\mathbf{w}^\top \mathbf{x}_i)\big)
+$$</p>
+<p>(They match.)</p>
+<p><strong>Case 2:</strong> $y_i$ is negative</p>
+<ul>
+<li>Geometry: $y_i = -1$</li>
+<li>Probability: $y_i = 0$</li>
+</ul>
+<p>Geometry term:</p>
+<p>$$
+\log\big(1 + \exp(\mathbf{w}^\top \mathbf{x}_i)\big)
+$$</p>
+<p>Probability term:</p>
+<p>$$
+-\log\big(1 - \sigma(\mathbf{w}^\top \mathbf{x}_i)\big) = -\log\left( \dfrac{\exp(-\mathbf{w}^\top \mathbf{x}_i)}{1+\exp(-\mathbf{w}^\top \mathbf{x}_i)} \right)
+$$</p>
+<p>After simplification (divide numerator &amp; denominator by $\exp(-\mathbf{w}^\top \mathbf{x}_i)$):</p>
+<p>$$
+= \log\big(1 + \exp(\mathbf{w}^\top \mathbf{x}_i)\big)
+$$</p>
+<p>(They match.)</p>
+<p>Thus both formulations are equivalent.</p>
+<h2 id="08-loss-minimization-interpretation">08. Loss Minimization Interpretation</h2>
+<p><img src="./assets/08.01.jpg" alt="LR" /><br />
+<img src="./assets/08.03.jpg" alt="LR" /><br />
+<img src="./assets/08.02.jpg" alt="LR" /></p>
+<blockquote>
+<p><strong>Loss Minimization Interpretation of LR</strong></p>
+</blockquote>
+<p>We already have the geometric and probabilistic interpretations.<br />
+Now we look at the <strong>loss-minimization</strong> view.</p>
+<p>$$
+\mathbf{w}^* = \arg\min_{\mathbf{w}} \sum_{i=1}^{n} \log\big(1 + \exp(-y_i \mathbf{w}^\top \mathbf{x}_i)\big)
+$$</p>
+<p>Here<br />
+$$
+f(\mathbf{x}_i) = \mathbf{w}^\top \mathbf{x}_i
+$$<br />
+and<br />
+$$
+z_i = y_i \mathbf{w}^\top \mathbf{x}_i = y_i \cdot f(\mathbf{x}_i)
+$$</p>
+<h3 id="ideal-optimization-model-classification">Ideal Optimization Model (Classification)</h3>
+<p>The ideal goal is:</p>
+<p>$$
+\mathbf{w}^* = \arg\min_{\mathbf{w}} \big( \text{number of incorrectly classified points} \big)
+$$</p>
+<p>This corresponds to the <strong>0-1 loss function</strong>:</p>
+<ul>
+<li>Loss = 1 if the point is incorrectly classified</li>
+<li>Loss = 0 if the point is correctly classified</li>
+</ul>
+<p>Graphically (with $z_i = y_i \mathbf{w}^\top \mathbf{x}_i$ on the x-axis):</p>
+<ul>
+<li>When $z_i &lt; 0$ → loss = 1</li>
+<li>When $z_i &gt; 0$ → loss = 0</li>
+</ul>
+<p>Minimizing 0-1 loss = maximizing profit (correct classifications).</p>
+<h3 id="ideal-form">Ideal Form</h3>
+<p>$$
+\mathbf{w}^* = \arg\min_{\mathbf{w}} \sum_{i=1}^{n} , 0\text{-}1\text{ loss}(z_i)
+$$</p>
+<p>where</p>
+<p>$$
+0\text{-}1\text{ loss}(z_i) =
+\begin{cases}
+1 &amp; \text{if } z_i &lt; 0 \
+0 &amp; \text{if } z_i &gt; 0
+\end{cases}
+$$</p>
+<h3 id="problem-with-0-1-loss">Problem with 0-1 Loss</h3>
+<p>To solve optimization problems in Machine Learning we need <strong>differentiation</strong> (from calculus).</p>
+<p>The 0-1 loss is <strong>not continuous</strong> (and therefore not differentiable) at $z_i = 0$.<br />
+Hence we cannot directly optimize it with gradient-based methods.</p>
+<h3 id="loss-minimization-interpretation">Loss-Minimization Interpretation</h3>
+<p>Different loss functions lead to different algorithms:</p>
+<ul>
+<li>Logistic loss → Logistic Regression</li>
+<li>Hinge loss → SVM</li>
+<li>Exponential loss → AdaBoost</li>
+<li>Squared loss → Linear Regression</li>
+</ul>
+<p>So Logistic Regression can also be viewed simply as:</p>
+<blockquote>
+<p>Minimize the logistic loss on the training data.</p>
+</blockquote>
+<h2 id="09-hyperparameters-and-random-search">09. Hyperparameters and Random Search</h2>
+<p><img src="./assets/09.01.jpg" alt="LR" /><br />
+<img src="./assets/09.02.jpg" alt="LR" /></p>
+<p>https://scikit-learn.org/stable/modules/grid_search.html</p>
+<blockquote>
+<p><strong><code>Hyperparameter Search / Optimization</code></strong></p>
+</blockquote>
+<p>$\lambda$ is the hyper-parameter of Logistic Regression.</p>
+<ul>
+<li>$\lambda = 0$ → Overfitting</li>
+<li>$\lambda = \infty$ → Underfitting</li>
+</ul>
+<p><strong>Question:</strong> How do we determine the best $\lambda$?</p>
+<p>We use <strong>Cross-Validation</strong> (look at CV-error).</p>
+<p>Similar hyper-parameters in other algorithms:</p>
+<ul>
+<li>$\lambda$ → Logistic Regression</li>
+<li>$K$ → k-NN</li>
+<li>$\alpha$ → Naive Bayes (Laplace smoothing)</li>
+</ul>
+<h3 id="nature-of-the-hyper-parameter">Nature of the Hyper-parameter</h3>
+<ul>
+<li>$K$ in k-NN is an <strong>integer</strong> ${1, 2, 3, \dots, n}$</li>
+<li>$\lambda$ in LR is a <strong>real number</strong> ($\lambda \in \mathbb{R}$)<br />
+Examples: $\lambda = 0.1234$, $\lambda = 0.2386$, etc.</li>
+</ul>
+<h3 id="grid-search-brute-force">Grid Search (Brute Force)</h3>
+<p>We try a set of candidate values and pick the one with lowest CV-error.</p>
+<p>Common grids:</p>
+<ol>
+<li>$\lambda = [0.001,\ 0.01,\ 0.1,\ 1,\ 10,\ 100,\ 1000]$</li>
+<li>$\lambda = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]$</li>
+<li>Logarithmic scale (recommended):</li>
+</ol>
+<p>$$
+\lambda = {10^{-4},\ 10^{-3},\ 10^{-2},\ 10^{-1},\ 1,\ 10,\ 10^{2},\ 10^{3},\ 10^{4}}
+$$</p>
+<h3 id="elastic-net-two-hyper-parameters">Elastic-Net (two hyper-parameters)</h3>
+<p>When we have $\lambda_1 |\mathbf{w}|_1 + \lambda_2 |\mathbf{w}|_2^2$, we must search in 2-D:</p>
+<p>$$
+\lambda_1 = {10^{-3},\ 10^{-2},\ \dots,\ 10^{3}}
+$$
+$$
+\lambda_2 = {10^{-3},\ 10^{-2},\ \dots,\ 10^{3}}
+$$</p>
+<p>Total combinations = $m_1 \times m_2$.</p>
+<h3 id="computational-cost-of-grid-search">Computational Cost of Grid Search</h3>
+<ul>
+<li>1 hyper-parameter → train the model $m$ times</li>
+<li>2 hyper-parameters → train $m_1 \times m_2$ times</li>
+<li>$k$ hyper-parameters → train $m^k$ times</li>
+</ul>
+<p>As the number of hyper-parameters increases, the number of times the model needs to be trained increases <strong>exponentially</strong>.<br />
+(This becomes a serious issue in Deep Learning.)</p>
+<h3 id="random-search">Random Search</h3>
+<p>Random Search is almost as good as Grid Search when the number of hyper-parameters is large.</p>
+<p>We randomly pick values of $\lambda$ from an interval, e.g.</p>
+<p>$$
+\lambda \in [10^{-4},\ 10^{4}]
+$$</p>
+<p>and evaluate CV-error on those randomly chosen points.</p>
+<p>Both <strong>Grid Search</strong> and <strong>Random Search</strong> are available in <strong>sklearn</strong>.</p>
+<h2 id="10-column-standardization">10. Column Standardization</h2>
+<p><img src="./assets/10.01.jpg" alt="LR" /><br />
+<img src="./assets/10.02.jpg" alt="LR" /></p>
+<blockquote>
+<p><strong><code>Column / Feature Standardization</code></strong></p>
+</blockquote>
+<p>We have the data matrix with features $f_1, f_2, \dots, f_j, \dots, f_d$.</p>
+<p>Each data point $\mathbf{x}_i \in \mathbb{R}^d$.</p>
+<p>For every feature $j$:</p>
+<ul>
+<li>Compute mean $\mu_j$</li>
+<li>Compute standard deviation $\sigma_j$</li>
+</ul>
+<p>Standardization (mean-centering + scaling):</p>
+<p>$$
+x_{ij}' = \dfrac{x_{ij} - \mu_j}{\sigma_j}
+$$</p>
+<ul>
+<li>Centering → subtract $\mu_j$</li>
+<li>Scaling → divide by $\sigma_j$</li>
+</ul>
+<p>This is exactly the same standardization we do for k-NN (because k-NN is distance-based).</p>
+<h3 id="importance-for-logistic-regression">Importance for Logistic Regression</h3>
+<p>For Logistic Regression it is <strong>mandatory</strong> to perform feature standardization <strong>before</strong> training on your data $\mathcal{D}$.</p>
+<p>Why?</p>
+<p>The decision boundary is determined by the weight vector $\mathbf{w}$ and the hyperplane $\pi$.<br />
+If features are on very different scales, the optimization and the resulting $\mathbf{w}$ get distorted by the feature scales.</p>
+<p>Therefore:</p>
+<blockquote>
+<p>Always standardize the features before training a Logistic Regression model.</p>
+</blockquote>
+<h2 id="11-feature-importance-and-model-interpretability">11. Feature Importance and Model Interpretability</h2>
+<p><img src="./assets/11.01.jpg" alt="LR" /><br />
+<img src="./assets/11.02.jpg" alt="LR" /></p>
+<blockquote>
+<p><strong><code>Feature Importance &amp; Model Interpretability</code></strong></p>
+</blockquote>
+<p>We have features $f_1, f_2, \dots, f_j, \dots, f_d$<br />
+and the corresponding weights $w_1, w_2, \dots, w_j, \dots, w_d$.</p>
+<p>Recall: Logistic Regression = Gaussian Naive Bayes + Bernoulli<br />
+(under the assumption that all features are independent — same assumption as Naive Bayes).</p>
+<p><strong>Feature importance</strong> comes from the $w_j$’s.</p>
+<h3 id="comparison-with-other-models">Comparison with other models</h3>
+<ul>
+<li><strong>k-NN</strong>: Feature importance → Forward Feature Selection</li>
+<li><strong>Naive Bayes</strong>: $P(x_i \mid y=+1)$ → features which are important</li>
+<li><strong>Logistic Regression</strong>: $w_j$’s → to determine feature importance</li>
+</ul>
+<h3 id="how-to-read-the-weights">How to read the weights</h3>
+<p>$|w_j|$ = absolute value of the weight corresponding to feature $f_j$</p>
+<p><strong>Case 1:</strong> $w_j$ is positive and large<br />
+→ $\mathbf{w}^\top \mathbf{x}_q$ increases<br />
+→ $P(y_q = +1)$ increases</p>
+<p><strong>Case 2:</strong> $w_j$ is negative and large<br />
+→ $\sum w_j x_{qj}$ decreases<br />
+→ $P(y_q = -1)$ increases</p>
+<h3 id="example-predict-gender-male-1-female-1">Example: Predict gender (male = +1, female = −1)</h3>
+<ul>
+<li><p>Feature: hair-length ($hL$)<br />
+$|w_{hL}|$ is large and $w_{hL}$ is negative<br />
+→ as hair-length increases, $P(y_q = -1)$ increases (more likely female)</p>
+</li>
+<li><p>Feature: height ($h$)<br />
+$w_h$ is positive (medium positive weight)<br />
+→ as height increases, $P(y_q = +1)$ increases (more likely male)</p>
+</li>
+</ul>
+<h3 id="model-interpretability">Model Interpretability</h3>
+<p>Given a query point $\mathbf{x}_q$:</p>
+<ul>
+<li>If the model predicts $y_q = +1$ → look at the top features that pushed the decision toward +1</li>
+<li>If the model predicts $y_q = -1$ → look at the top features that pushed the decision toward −1</li>
+</ul>
+<p>Even if we have 100 features, we can look at the <strong>top 5 features</strong> (by $|w_j|$) to give a clear reasoning for the prediction.</p>
+<h2 id="12-collinearity-of-features">12. Collinearity of Features</h2>
+<p><img src="./assets/12.01.jpg" alt="LR" /><br />
+<img src="./assets/12.02.jpg" alt="LR" /></p>
+<blockquote>
+<p><strong><code>Collinearity (or) Multicollinearity</code></strong></p>
+</blockquote>
+<p>In feature importance we assumed that features are independent, so that $|w_j|$ can be used as a feature-importance value.</p>
+<h3 id="collinearity">Collinearity</h3>
+<p>Two features $f_i$ and $f_j$ are said to be <strong>collinear</strong> if</p>
+<p>$$
+f_i = \alpha f_j + \beta
+$$</p>
+<p>for some constants $\alpha, \beta$.</p>
+<h3 id="multicollinearity">Multicollinearity</h3>
+<p>If several features satisfy a linear relation, for example</p>
+<p>$$
+f_1 = \alpha_1 + \alpha_2 f_2 + \alpha_3 f_3 + \alpha_4 f_4
+$$</p>
+<p>then $f_1, f_2, f_3, f_4$ are said to be <strong>multicollinear</strong>.</p>
+<h3 id="why-w-j-is-not-useful-when-features-are-collinear">Why $|w_j|$ is not useful when features are collinear</h3>
+<p><strong>Example</strong></p>
+<p>Dataset $\mathcal{D} = {(\mathbf{x}<em>i, y_i)}</em>{i=1}^n$</p>
+<p>Learned weight vector:</p>
+<p>$$
+\mathbf{w}^* = \langle 1,\ 2,\ 3 \rangle
+$$</p>
+<p>corresponding to features $f_1, f_2, f_3$.</p>
+<p>For a query point $\mathbf{x}<em>q = \langle x</em>{q1}, x_{q2}, x_{q3} \rangle$</p>
+<p>$$
+\mathbf{w}^\top \mathbf{x}<em>q = x</em>{q1} + 2 x_{q2} + 3 x_{q3}
+$$</p>
+<p>Now suppose $f_2 = 1.5, f_1$ (i.e., $f_1$ and $f_2$ are collinear).</p>
+<p>Then we can rewrite:</p>
+<p>$$
+\mathbf{w}^\top \mathbf{x}<em>q = x</em>{q1} + 2(1.5 x_{q1}) + 3 x_{q3} = 4 x_{q1} + 3 x_{q3}
+$$</p>
+<p>which is the same as the weight vector</p>
+<p>$$
+\tilde{\mathbf{w}} = \langle 4,\ 0,\ 3 \rangle
+$$</p>
+<p>Both $\mathbf{w}^*$ and $\tilde{\mathbf{w}}$ give the <strong>same classification</strong>, but:</p>
+<ul>
+<li>In $\mathbf{w}^*$ → $f_3$ looks most important</li>
+<li>In $\tilde{\mathbf{w}}$ → $f_1$ looks most important</li>
+</ul>
+<p><strong>Conclusion</strong></p>
+<p>If features are collinear, the weight vector can change arbitrarily.<br />
+Therefore $|w_j|$ <strong>cannot</strong> be used as a reliable feature-importance measure.</p>
+<h3 id="how-to-detect-multicollinearity-perturbation-technique">How to detect multicollinearity (Perturbation technique)</h3>
+<ol>
+<li>Take the original data matrix.</li>
+<li>Add a small amount of noise to each feature:</li>
+</ol>
+<p>$$
+x_{ij}' = x_{ij} + \varepsilon, \quad \varepsilon \sim \mathcal{N}(0, 0.01)
+$$</p>
+<ol start="3">
+<li>Retrain the model and obtain a new weight vector $\tilde{\mathbf{w}}$.</li>
+</ol>
+<p><strong>Before perturbation:</strong> $\mathbf{w} = \langle w_1, w_2, \dots, w_j, \dots, w_d \rangle$<br />
+<strong>After perturbation:</strong> $\tilde{\mathbf{w}} = \langle \tilde{w}_1, \tilde{w}_2, \dots, \tilde{w}_j, \dots, \tilde{w}_d \rangle$</p>
+<p>If $w_j$ and $\tilde{w}_j$ differ significantly, the features are collinear → we cannot trust $|w_j|$ as feature importance.</p>
+<p>In such cases we fall back to methods like <strong>Forward Feature Selection</strong> (the same technique used for k-NN).</p>
+<h2 id="13-test-run-time-space-and-time-complexity">13. Test Run, Time, Space and Time Complexity</h2>
+<p><img src="./assets/13.01.jpg" alt="LR" /><br />
+<img src="./assets/13.02.jpg" alt="LR" /></p>
+<blockquote>
+<p><strong><code>Train &amp; Runtime Space &amp; Time Complexity</code></strong></p>
+</blockquote>
+<ul>
+<li>$n$ = number of points in $D_{\text{train}}$</li>
+<li>$d$ = dimensionality</li>
+</ul>
+<h3 id="training-logistic-regression">Training Logistic Regression</h3>
+<p>We solve</p>
+<p>$$
+\mathbf{w}^* = \arg\min_{\mathbf{w}} \big( \text{logistic loss} + \text{regularization} \big)
+$$</p>
+<p>This is an optimization problem (will be discussed in the next chapter).<br />
+In practice we use <strong>SGD</strong> (Stochastic Gradient Descent).</p>
+<p>Training complexity: $O(nd)$</p>
+<p>The final model is simply the weight vector:</p>
+<p>$$
+\mathbf{w}^* = \langle w_1, w_2, \dots, w_d \rangle
+$$</p>
+<h3 id="runtime-prediction">Runtime (Prediction)</h3>
+<p>For a query point $\mathbf{x}_q$:</p>
+<p>$$
+\mathbf{w}^\top \mathbf{x}<em>q = \sum</em>{j=1}^{d} w_j x_{qj}
+$$</p>
+<ul>
+<li>If $\mathbf{w}^\top \mathbf{x}_q &gt; 0$ → predict $+1$</li>
+<li>If $\mathbf{w}^\top \mathbf{x}_q &lt; 0$ → predict $-1$</li>
+</ul>
+<p><strong>Space complexity:</strong> $O(d)$<br />
+<strong>Time complexity:</strong> $O(d)$</p>
+<h3 id="when-d-is-small-eg-d-30">When $d$ is small (e.g. $d = 30$)</h3>
+<ul>
+<li>Logistic Regression is <strong>very very good</strong> for low-latency applications.</li>
+<li>Only 30 multiplications + 29 additions → can easily finish in ~1 ms.</li>
+<li>Memory efficient (only need to store $\mathbf{w}^*$).</li>
+<li>Favourite algorithm of many internet companies for real-time systems.</li>
+</ul>
+<h3 id="when-d-is-large-eg-d-approx-1000">When $d$ is large (e.g. $d \approx 1000$)</h3>
+<ul>
+<li>$\mathbf{w}^\top \mathbf{x}_q$ needs 1000 multiplications &amp; additions → higher latency.</li>
+<li>Solution: use <strong>L1 regularization</strong> to obtain sparsity.<ul>
+<li>Many $w_j$ corresponding to less important features become exactly 0.</li>
+<li>If only 50 weights remain non-zero → only 50 multiplications &amp; 50 additions → still ~1 ms latency.</li>
+</ul>
+</li>
+</ul>
+<p><strong>Trade-off (Bias vs Latency)</strong></p>
+<ul>
+<li>Increasing $\lambda$ → more sparsity → lower latency</li>
+<li>But also → higher bias (more underfitting)</li>
+</ul>
+<p>We can control this trade-off using the regularization hyper-parameter $\lambda$.</p>
+<h2 id="14-real-world-cases">14. Real-World Cases</h2>
+<p><img src="./assets/14.01.jpg" alt="LR" /><br />
+<img src="./assets/14.02.jpg" alt="LR" /></p>
+<blockquote>
+<p><strong><code>Cases &amp; Practical Aspects of Logistic Regression</code></strong></p>
+</blockquote>
+<h3 id="decision-surface">Decision Surface</h3>
+<ul>
+<li>Linear / Hyperplane</li>
+</ul>
+<h3 id="assumption">Assumption</h3>
+<ul>
+<li>Data is linearly separable (or almost linearly separable)</li>
+</ul>
+<h3 id="feature-importance-and-interpretability">Feature Importance &amp; Interpretability</h3>
+<ul>
+<li>Use $|w_j|$ <strong>only if</strong> features are <strong>not</strong> multicollinear</li>
+<li>Given $\mathbf{x}_q$, we can explain why the model predicted $y_q = +1$ (or $-1$)</li>
+</ul>
+<h3 id="imbalanced-data">Imbalanced Data</h3>
+<ul>
+<li>Handle by <strong>upsampling</strong> or <strong>downsampling</strong></li>
+</ul>
+<h3 id="outliers">Outliers</h3>
+<ul>
+<li>Less impact because of the squashing nature of $\sigma(\cdot)$</li>
+<li>Procedure:<ol>
+<li>Train on $D_{\text{train}}$ → obtain $\mathbf{w}^*$</li>
+<li>Compute $\mathbf{w}^{*\top} \mathbf{x}_i$ (signed distance from the hyperplane $\pi$ to each point)</li>
+<li>Remove points that are very far away from $\pi$</li>
+<li>Retrain on the cleaned $D'_{\text{train}}$ → get final $\tilde{\mathbf{w}}^*$</li>
+</ol>
+</li>
+</ul>
+<h3 id="missing-values">Missing Values</h3>
+<ul>
+<li>Imputation (mean, median, or model-based)</li>
+</ul>
+<h3 id="multi-class-classification">Multi-class Classification</h3>
+<ul>
+<li><strong>One-vs-Rest</strong> (most common)</li>
+<li>Other extensions of Logistic Regression:<ul>
+<li>MaxEnt models</li>
+<li>Softmax Classifier</li>
+<li>Multinomial Logistic Regression<br />
+(these lead into Deep Learning)</li>
+</ul>
+</li>
+</ul>
+<h3 id="similarity-matrix">Similarity Matrix</h3>
+<ul>
+<li>Not directly used by Logistic Regression</li>
+<li>Kernel Logistic Regression is an extension (related to SVM)</li>
+</ul>
+<h3 id="best-cases">Best Cases</h3>
+<ul>
+<li>Data is (almost) linearly separable</li>
+<li>Low-latency requirement → use L1-regularization for sparsity</li>
+<li>Very fast to train</li>
+</ul>
+<h3 id="large-d">Large $d$</h3>
+<ul>
+<li>When dimensionality is large, the chance that data is linearly separable is high</li>
+<li>For low-latency applications → prefer <strong>L1-regularization</strong> (to obtain sparsity)</li>
+</ul>
+<h2 id="15-logistic-regression-with-imbalanced-data-a-geometric-view">15. Logistic Regression with Imbalanced Data - A Geometric View</h2>
+<p><img src="./assets/15.01.jpg" alt="LR" /><br />
+<img src="./assets/15.03.jpg" alt="LR" /><br />
+<img src="./assets/15.02.jpg" alt="LR" /></p>
+<blockquote>
+<p><strong><code>How does imbalanced data impact Logistic Regression? (Geometric Explanation)</code></strong></p>
+</blockquote>
+<h3 id="setup">Setup</h3>
+<p>Suppose we have a highly imbalanced dataset:</p>
+<ul>
+<li>20 positive points ($+1$)</li>
+<li>3 negative points ($-1$)</li>
+</ul>
+<p>We compare two candidate hyperplanes $\pi_1$ and $\pi_2$.</p>
+<h3 id="case-1-hyperplane-pi-1-passes-closer-to-the-minority-class">Case 1: Hyperplane $\pi_1$ (passes closer to the minority class)</h3>
+<p>Signed distances are approximately $0.8$ for most points.</p>
+<p>Contribution to the objective (using sigmoid):</p>
+<p>$$
+\pi_1:\ (20 \times 0.8) + (3 \times 0.8) = 18.4
+$$</p>
+<h3 id="case-2-hyperplane-pi-2-pushed-towards-the-minority-class">Case 2: Hyperplane $\pi_2$ (pushed towards the minority class)</h3>
+<ul>
+<li>All 20 positive points get large positive signed distance ($\approx 1$)</li>
+<li>The 3 negative points get signed distance $\approx 0$</li>
+</ul>
+<p>Contribution:</p>
+<p>$$
+\pi_2:\ (20 \times 1) + (3 \times 0) = 20
+$$</p>
+<h3 id="observation-2">Observation</h3>
+<p>Even though $\pi_2$ completely ignores the minority class (the 3 negative points lie on or very close to the hyperplane), its total score ($20$) is <strong>higher</strong> than that of $\pi_1$ ($18.4$).</p>
+<p>Because the objective is essentially</p>
+<p>$$
+\max_{\mathbf{w}} \sum_{i=1}^{n} \sigma(y_i \mathbf{w}^\top \mathbf{x}_i)
+$$</p>
+<p>the majority class dominates the sum. The optimizer prefers a hyperplane that correctly classifies (and pushes far) the large number of majority points, even if it sacrifices the minority class.</p>
+<h3 id="balanced-case-for-comparison">Balanced case (for comparison)</h3>
+<p>If we have 20 positive and 20 negative points:</p>
+<p>$$
+\pi_1:\ (20 \times 0.8) + (20 \times 0.8) = 32
+$$</p>
+<p>$$
+\pi_2:\ (20 \times 1) + (20 \times 0) = 20
+$$</p>
+<p>Now $\pi_1$ is clearly better. The balanced data forces the hyperplane to respect both classes.</p>
+<h3 id="key-takeaway">Key Takeaway</h3>
+<p>In imbalanced data, Logistic Regression (without any correction) tends to shift the decision boundary towards the minority class, because the majority class contributes much more to the total loss/objective. This is why we use techniques such as <strong>upsampling</strong>, <strong>downsampling</strong>, or class-weighted loss when the data is imbalanced.</p>
+<h2 id="16-non-linearly-separable-data-and-feature-engineering">16. Non-Linearly Separable Data &amp; Feature Engineering</h2>
+<p><img src="./assets/16.01.jpg" alt="LR" /><br />
+<img src="./assets/16.02.jpg" alt="LR" /></p>
+<blockquote>
+<p><strong><code>Non-linearly Separable Data</code></strong></p>
+</blockquote>
+<p>Logistic Regression assumes the data is <strong>almost linearly separable</strong>.</p>
+<h3 id="can-we-use-logistic-regression-to-separate-the-classes">Can we use Logistic Regression to separate the classes?</h3>
+<p>If the positive and negative points form concentric circles (or any non-linear pattern) in the space of $f_1$ and $f_2$, then <strong>drawing a plane</strong> in that space <strong>cannot</strong> separate the two classes.</p>
+<h3 id="solution-feature-transformation-feature-engineering-ft-fe">Solution: Feature Transformation / Feature Engineering (FT / FE)</h3>
+<p><strong>Original features:</strong> $\mathbf{x}<em>i = \langle x</em>{i1}, x_{i2} \rangle$ (space of $f_1$ &amp; $f_2$)</p>
+<p>The decision boundary in original space is a circle:</p>
+<p>$$
+f_1^2 + f_2^2 = \gamma
+$$</p>
+<p><strong>Transform the features:</strong></p>
+<p>$$
+\begin{align*}
+f_1' &amp;= f_1^2 \
+f_2' &amp;= f_2^2
+\end{align*}
+$$</p>
+<p>Now in the new space of $f_1'$ and $f_2'$ the same boundary becomes</p>
+<p>$$
+f_1' + f_2' = \gamma
+$$</p>
+<p>which is a <strong>straight line</strong> (linearly separable).<br />
+We can now apply ordinary Logistic Regression in the transformed space.</p>
+<p><strong>Pipeline for a query point:</strong></p>
+<p>$$
+\mathbf{x}<em>q = \langle x</em>{q1}, x_{q2} \rangle
+\xrightarrow{\text{FT / FE}}
+\mathbf{x}<em>q' = \langle x</em>{q1}^2,\ x_{q2}^2 \rangle
+\xrightarrow{\text{LR model}}
+y_q
+$$</p>
+<h3 id="how-do-we-know-which-transform-to-apply">How do we know which transform to apply?</h3>
+<p>This is one of the <strong>most important aspects of applied ML / AI</strong>:</p>
+<ol>
+<li><strong>Feature Engineering</strong> (your skill + creativity)</li>
+<li>Bias-Variance trade-off</li>
+<li>Data Analysis &amp; Visualization</li>
+</ol>
+<p>Only 2–3 techniques are usually needed; Deep Learning is <strong>not</strong> always required.</p>
+<h3 id="more-examples">More Examples</h3>
+<p><strong>1. XOR problem</strong> (classic non-linearly separable case)</p>
+<p>Original space of $f_1, f_2$ is not linearly separable.<br />
+After the transform</p>
+<p>$$
+\begin{align*}
+f_1' &amp;= f_1 \times f_2 \
+f_2' &amp;= f_2
+\end{align*}
+$$</p>
+<p>the classes become linearly separable.</p>
+<p><strong>2. Sinusoidal pattern</strong></p>
+<p>When the decision boundary looks like a sine wave, use</p>
+<p>$$
+\begin{align*}
+f_1' &amp;= \sin(f_1) \
+f_2' &amp;= f_2
+\end{align*}
+$$</p>
+<h3 id="typical-transforms-for-real-valued-features">Typical Transforms for Real-valued Features</h3>
+<ol>
+<li><p><strong>Polynomial features</strong><br />
+$f_1 f_2,\ f_1^2,\ f_2^2,\ f_1^3,\ f_2^3,\ f_1^2 f_2,\ \dots$</p>
+</li>
+<li><p><strong>Trigonometric</strong><br />
+$\sin(f_1),\ \cos(f_1),\ \sin(f_1)\cos(f_2),\ (\sin(f_1))^2,\ \dots$</p>
+</li>
+<li><p><strong>Boolean feature engineering</strong><br />
+OR, AND, XOR combinations</p>
+</li>
+</ol>
+<p>(Also useful: $\log(f_i),\ e^{f_i}$, etc.)</p>
+<p><strong>Example from practice:</strong><br />
+Amazon reviews dataset → BoW, tf-idf, Word2Vec are all forms of feature engineering.</p>
+<blockquote>
+<p><strong>Feature Engineering is the most important aspect of Machine Learning.</strong></p>
+</blockquote>
+<h2 id="17-code-sample-logistic-regression-gridsearchcv-randomsearchcv">17. Code Sample: Logistic Regression, GridSearchCV, RandomSearchCV</h2>
+<blockquote>
+<h3 id="logisticregressionipynb"><a href="./LogisticRegression.ipynb"><code>LogisticRegression.ipynb</code></a></h3>
+</blockquote>
+<h2 id="18-assignment-5-apply-logistic-regression">18. Assignment-5: Apply Logistic Regression</h2>
+<h2 id="19-extensions-to-generalized-linear-models">19. Extensions to Generalized Linear Models</h2>
+<p>Refer to Part III</p>
+<blockquote>
+<h3 id="generalized-linear-modelspdf"><a href="./cs229-notes1.pdf"><code>Generalized Linear Models.pdf</code></a></h3>
+</blockquote>
+<p><img src="./assets/19.01.jpg" alt="LR" /><br />
+<img src="./assets/19.02.jpg" alt="LR" /></p>
+<blockquote>
+<p><strong><code>Generalized Linear Models (GLM)</code></strong></p>
+</blockquote>
+<p>Logistic Regression is a special case of a much broader family called <strong>Generalized Linear Models (GLM)</strong>.</p>
+<h3 id="logistic-regression-recap">Logistic Regression (recap)</h3>
+<ul>
+<li>Binary classification</li>
+<li>Logistic Regression = Gaussian Naive Bayes + <strong>Bernoulli</strong></li>
+<li>Probabilistic interpretation</li>
+</ul>
+<h3 id="extensions-of-logistic-regression-glm">Extensions of Logistic Regression → GLM</h3>
+<p>GLM lets us change the distribution of the target variable while keeping the linear structure.</p>
+<ol>
+<li><p><strong>Multinomial Logistic Regression</strong></p>
+<ul>
+<li>Uses <strong>Multinomial</strong> distribution</li>
+<li>Used for <strong>multi-class classification</strong></li>
+<li>Leads into Deep Learning (Softmax Classifier, etc.)</li>
+</ul>
+</li>
+<li><p><strong>Linear Regression</strong></p>
+<ul>
+<li>Assumes $P(y \mid \mathbf{x}) \sim \mathcal{N}(\mu, \sigma^2)$</li>
+<li>Target $y_i \in \mathbb{R}$</li>
+<li>Classic regression technique</li>
+</ul>
+</li>
+<li><p><strong>Poisson Regression</strong></p>
+<ul>
+<li>Uses <strong>Poisson</strong> distribution</li>
+<li>Used when the target is a <strong>count</strong> random variable</li>
+<li>Example: Predict the number of times a machine will fail in the next 60 days</li>
+</ul>
+</li>
+</ol>
+<h3 id="summary">Summary</h3>
+<table>
+<thead>
+<tr>
+  <th>Model</th>
+  <th>Distribution of $y$</th>
+  <th>Task</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Logistic Regression</td>
+  <td>Bernoulli</td>
+  <td>Binary classification</td>
+</tr>
+<tr>
+  <td>Multinomial LR</td>
+  <td>Multinomial</td>
+  <td>Multi-class classification</td>
+</tr>
+<tr>
+  <td>Linear Regression</td>
+  <td>Gaussian</td>
+  <td>Real-valued regression</td>
+</tr>
+<tr>
+  <td>Poisson Regression</td>
+  <td>Poisson</td>
+  <td>Count data prediction</td>
+</tr>
+</tbody>
+</table>
+<p>All of these are members of the <strong>Generalized Linear Models</strong> family.</p>
+
+</main>
+<aside class="note-toc" aria-label="On this page">
+<h2>On This Page</h2>
+<ul>
+          <li><a href="#01-geometric-intuition-of-logistic-regression">01. Geometric Intuition of Logistic Regression</a></li>
+          <li><a href="#02-sigmoid-function-squashing">02. Sigmoid Function: Squashing</a></li>
+          <li><a href="#03-mathematical-formulation-of-objective-function">03. Mathematical Formulation of Objective Function</a></li>
+          <li><a href="#04-weight-vector">04. Weight Vector</a></li>
+          <li><a href="#05-l2-regularization-overfitting-and-underfitting">05. L2 Regularization: Overfitting and Underfitting</a></li>
+          <li><a href="#06-l1-regularization-and-sparsity">06. L1 Regularization and Sparsity</a></li>
+          <li><a href="#07-probabilistic-interpretation-gaussian-naive-bayes">07. Probabilistic Interpretation: Gaussian Naive Bayes</a></li>
+          <li><a href="#08-loss-minimization-interpretation">08. Loss Minimization Interpretation</a></li>
+          <li><a href="#09-hyperparameters-and-random-search">09. Hyperparameters and Random Search</a></li>
+          <li><a href="#10-column-standardization">10. Column Standardization</a></li>
+          <li><a href="#11-feature-importance-and-model-interpretability">11. Feature Importance and Model Interpretability</a></li>
+          <li><a href="#12-collinearity-of-features">12. Collinearity of Features</a></li>
+          <li><a href="#13-test-run-time-space-and-time-complexity">13. Test Run, Time, Space and Time Complexity</a></li>
+          <li><a href="#14-real-world-cases">14. Real-World Cases</a></li>
+          <li><a href="#15-logistic-regression-with-imbalanced-data-a-geometric-view">15. Logistic Regression with Imbalanced Data - A Geometric View</a></li>
+          <li><a href="#16-non-linearly-separable-data-and-feature-engineering">16. Non-Linearly Separable Data &amp; Feature Engineering</a></li>
+          <li><a href="#17-code-sample-logistic-regression-gridsearchcv-randomsearchcv">17. Code Sample: Logistic Regression, GridSearchCV, RandomSearchCV</a></li>
+          <li><a href="#18-assignment-5-apply-logistic-regression">18. Assignment-5: Apply Logistic Regression</a></li>
+          <li><a href="#19-extensions-to-generalized-linear-models">19. Extensions to Generalized Linear Models</a></li>
+</ul>
+</aside>
+</div>
+</div>
+<script>
+if (window.hljs) document.querySelectorAll("pre code[class*='language-']").forEach((block) => window.hljs.highlightElement(block));
+(() => {
+  const links = [...document.querySelectorAll('.note-toc a')];
+  const heads = links.map((link) => document.getElementById(decodeURIComponent(link.hash.slice(1)))).filter(Boolean);
+  if (!links.length || !heads.length || !("IntersectionObserver" in window)) return;
+  const setActive = (heading) => links.forEach((link) => link.classList.toggle('is-active', link.hash === `#${heading.id}`));
+  const observer = new IntersectionObserver((entries) => {
+    const visible = entries.filter((entry) => entry.isIntersecting).sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
+    if (visible.length) setActive(visible[0].target);
+  }, { rootMargin: '-10% 0px -75% 0px', threshold: 0 });
+  heads.forEach((heading) => observer.observe(heading));
+})();
+</script>
+</body>
+</html>

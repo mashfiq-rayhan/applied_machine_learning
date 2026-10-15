@@ -1,0 +1,684 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Numpy | Applied Machine Learning</title>
+    <link rel="stylesheet" href="../HTMLs/theme.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
+    <script>
+      window.MathJax = {
+        tex: {
+          inlineMath: [
+            ["$", "$"],
+            ["\\(", "\\)"],
+          ],
+          displayMath: [
+            ["$$", "$$"],
+            ["\\[", "\\]"],
+          ],
+          processEscapes: true,
+          processEnvironments: true,
+        },
+        options: {
+          skipHtmlTags: ["script", "noscript", "style", "textarea", "pre", "code"],
+        },
+      };
+    </script>
+    <script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-svg.js"></script>
+  </head>
+  <body class="site-page">
+    <div class="site-layout">
+      <nav class="curriculum-nav" aria-label="Main curriculum navigation">
+        <iframe src="../HTMLs/table-of-contents.html" title="Machine learning curriculum"></iframe>
+      </nav>
+      <div class="note-layout">
+        <main class="note-content">
+          <img
+            src="https://upload.wikimedia.org/wikipedia/commons/1/1a/NumPy_logo.svg"
+            alt="NumPy Logo"
+            width="200"
+            height="80" />
+
+          <h4 id="numpy-arrays">NumPy Arrays</h4>
+
+          <p><strong>python objects:</strong></p>
+          <ol>
+            <li>high-level number objects: integers, floating point</li>
+            <li>containers: lists (costless insertion and append), dictionaries (fast lookup)</li>
+          </ol>
+
+          <p><strong>Numpy provides:</strong></p>
+          <ol>
+            <li>extension package to Python for multi-dimensional arrays</li>
+            <li>closer to hardware (efficiency)</li>
+            <li>designed for scientific computation (convenience)</li>
+            <li>Also known as array oriented computing</li>
+          </ol>
+
+          <div class="code-cell">
+            <pre><code class="language-python">import numpy as np</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python">a = np.array([0, 1, 2, 3, 4, 5])
+print(a)
+
+print(np.arange(10))</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python"># Python lists
+L = range(1000)
+%timeit [i**2 for i in L]</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python">a = np.arange(1000)
+%timeit a**2</code></pre>
+          </div>
+          <h3 id="1-creating-arrays">1. Creating arrays</h3>
+
+          <p><strong>1.1. Manual Construction of arrays</strong></p>
+
+          <div class="code-cell">
+            <pre><code class="language-python"># 1-D
+
+a = np.array([0, 1, 2, 3, 4])
+print(a)
+a</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python"># Dimensions
+a.ndim</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python"># shape
+a.shape</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python">len(a)</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python"># 2D 3D
+b = np.array([[0, 1, 2], [3, 4, 5]])
+b</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python">b.ndim</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python">b.shape</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python">len(b)</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python">c = np.array([[[0, 1], [2, 3]], [[4, 5], [6, 7]]])
+c</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python">c.ndim</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python">c.shape</code></pre>
+          </div>
+          <p><strong>1.2 Functions for creating arrays</strong></p>
+
+          <div class="code-cell">
+            <pre><code class="language-python"># arange
+a = np.arange(10)
+a</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python">b = np.arange(1, 10, 2)
+b</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python"># linspace
+
+a = np.linspace(0, 1, 6)
+a</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python"># common arrays
+
+a = np.ones((3, 3))
+a</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python">b = np.zeros((3, 3))
+b</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python">c = np.eye(3)
+c</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python">c = np.eye(3, 3)
+c</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python"># diag
+a = np.diag([1, 2, 3, 4, 5])
+a</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python">a = np.random.rand(4)
+a</code></pre>
+          </div>
+          <h3 id="2-basic-datatypes">2. Basic DataTypes</h3>
+
+          <div class="code-cell">
+            <pre><code class="language-python">a = np.arange(10)
+a.dtype</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python">a = np.arange(10, dtype=&#x27;float64&#x27;)
+a</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python">a = np.zeros((3, 3))
+print(a)
+a.dtype</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python">d = np.array([1+2j, 2+4j])
+print(d.dtype)
+d.dtype</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python">b = np.array([True, False, True, False])
+print(b.dtype)</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python">s = np.array([&#x27;Mash&#x27;, &#x27;Ray&#x27;])
+s.dtype</code></pre>
+          </div>
+          <p>
+            <strong
+              >Each built-in data type has a character code that uniquely identifies it.</strong
+            >
+          </p>
+          <p>'b' − boolean</p>
+          <p>'i' − (signed) integer</p>
+          <p>'u' − unsigned integer</p>
+          <p>'f' − floating-point</p>
+          <p>'c' − complex-floating point</p>
+          <p>'m' − timedelta</p>
+          <p>'M' − datetime</p>
+          <p>'O' − (Python) objects</p>
+          <p>'S', 'a' − (byte-)string</p>
+          <p>'U' − Unicode</p>
+          <p>'V' − raw data (void)</p>
+
+          <h3 id="3-indexing-and-slicing">3. Indexing and Slicing</h3>
+
+          <p><strong>3.1 Indexing</strong></p>
+
+          <div class="code-cell">
+            <pre><code class="language-python">a = np.arange(10)
+print(a[5])</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python">a = np.diag([1, 2, 3])
+print(a)
+
+print(a[2, 2])
+</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python">a[2, 1] = 5
+a</code></pre>
+          </div>
+          <p><strong>3.2 Slicing</strong></p>
+
+          <div class="code-cell">
+            <pre><code class="language-python">a = np.arange(10)
+</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python">a[1:8:2] # [startindex: endindex(exclusive) : step]</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python">a = np.arange(10)
+a[5:] = 10
+a</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python">b = np.arange(5)
+print(5)
+a[5:] = b[::-1]
+print(a)</code></pre>
+          </div>
+          <h3 id="4-copies-and-views">4. Copies and Views</h3>
+
+          <div class="code-cell">
+            <pre><code class="language-python">a = np.arange(10)
+a</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python">b = a[::2]
+b</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python">np.shares_memory(a, b)</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python">b[0] = 10
+b</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python">a</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python">a = np.arange(10)
+c = a[::2].copy()
+c</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python">np.shares_memory(a, c)
+c[0] = 10
+print(c)
+print(a)</code></pre>
+          </div>
+          <h3 id="5-fancy-indexing">5. Fancy Indexing</h3>
+
+          <div class="code-cell">
+            <pre><code class="language-python">a = np.random.randint(0, 20, 15)
+a</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python">mask = (a % 2 == 0)
+mask</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python">extract_from_a = a[mask]
+extract_from_a</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python">a[mask] = -1
+a</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python">a = np.arange(0, 100, 10)
+a</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python">a[[2, 3, 2, 4, 2]]</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python">a[[9,7]] = -200
+print(a)</code></pre>
+          </div>
+          <h3 id="elementwise-operations">Elementwise Operations</h3>
+
+          <p><strong>1. Basic Operations</strong></p>
+
+          <p><strong>with scalars</strong></p>
+
+          <div class="code-cell">
+            <pre><code class="language-python">a = np.array([1, 2, 3, 4])
+a + 1</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python">a * 2</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python">a ** 2</code></pre>
+          </div>
+          <p><strong>All arithmetic operates elementwise</strong></p>
+
+          <div class="code-cell">
+            <pre><code class="language-python">b = np.ones(4) + 1
+b</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python">a - b</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python">a * b</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python"># Matrix Multiplication
+c = np.diag([1, 2, 3, 4])
+
+print(c * c)
+print(&quot;**************&quot;)
+print(c.dot(c))</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python">a = np.array([1, 2, 3, 4])
+a = np.array([5, 2, 2, 4])
+
+a == b</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python">a &gt; b</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python">a = np.array([1, 2, 3, 4])
+b = np.array([5, 2, 2, 4])
+c = np.array([1, 2, 3, 4])
+
+print(np.array_equal(a, b))
+print(np.array_equal(a, c))</code></pre>
+          </div>
+          <p><strong>Logical Operations</strong></p>
+
+          <div class="code-cell">
+            <pre><code class="language-python">a = np.array([1, 1, 0, 0], dtype=bool)
+b = np.array([1, 0, 1, 0], dtype=bool)</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python">np.logical_or(a,b)</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python">np.logical_and(a, b)</code></pre>
+          </div>
+          <p><strong>Transacendental functions:</strong></p>
+
+          <div class="code-cell">
+            <pre><code class="language-python">a = np.arange(5)</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python">np.sin(a)</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python">np.log(a)</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python">np.exp(a)</code></pre>
+          </div>
+          <h3 id="basic-reductions">Basic Reductions</h3>
+
+          <p><strong>computing sums</strong></p>
+
+          <div class="code-cell">
+            <pre><code class="language-python">x = np.array([1, 2, 3, 4])
+np.sum(x)</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python">x = np.array([[1, 1], [2, 2]])</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python">x</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python">x.sum(axis=0)</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python">x.sum(axis=1)</code></pre>
+          </div>
+          <p><strong>Other reductions</strong></p>
+
+          <div class="code-cell">
+            <pre><code class="language-python">x = np.array([1, 3, 2])</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python">x.min()</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python">x.max()</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python">x.argmin()</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python">x.argmax()</code></pre>
+          </div>
+          <p><strong>Logical Operations</strong></p>
+
+          <div class="code-cell">
+            <pre><code class="language-python">np.all([True, True, False])</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python">np.any([True, False, False])</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python">a = np.zeros((50, 50))
+np.any(a != 0)</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python">np.all(a == a)</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python">a = np.array([1, 2, 3, 2])
+b = np.array([2, 2, 3, 2])
+c = np.array([6, 4, 4, 5])
+
+((a&lt;= b) &amp; (b &lt;= c)).all()</code></pre>
+          </div>
+          <p><strong>Statistics</strong></p>
+
+          <div class="code-cell">
+            <pre><code class="language-python">x = np.array([1, 2, 3, 1])
+y = np.array([[1, 2, 3], [5, 6, 1]])</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python">print(x)
+print(y)</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python">x.mean()</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python">np.median(x)</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python">np.median(y, axis=-1)</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python">x.std()</code></pre>
+          </div>
+          <p><strong>Example:</strong></p>
+
+          <p>
+            Data in populations.txt describes the populations of hares and lynxes (and carrots) in
+            northern Canada during 20 years.
+          </p>
+
+          <div class="code-cell">
+            <pre><code class="language-python">data = np.loadtxt(&#x27;./Materials/populations.txt&#x27;)</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python">data</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python">year, hares, lynxes, carrots = data.T
+print(year)</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python">populations = data[:, 1:]
+populations</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python">populations.std(axis=0)</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python">np.argmax(populations, axis=1)</code></pre>
+          </div>
+          <h3 id="broadcasting">Broadcasting</h3>
+
+          <p>Basic operations on numpy arrays (addition, etc.) are elementwise</p>
+          <p>
+            This works on arrays of the same size. Nevertheless, It’s also possible to do operations
+            on arrays of different sizes if NumPy can transform these arrays so that they all have
+            the same size: this conversion is called broadcasting.
+          </p>
+          <p>The image below gives an example of broadcasting:</p>
+
+          <p><img src="./Materials/broadcasting.png" alt="title" /></p>
+
+          <div class="code-cell">
+            <pre><code class="language-python">a = np.tile(np.arange(0, 40, 10), (3, 1))
+print(a)
+
+print(&#x27;-----------&#x27;)
+a = a.T
+print(a)</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python">b = np.array([0, 1, 2])</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python">a + b</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python">a = np.arange(0, 40, 10)
+print(a)
+print(a.shape)</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python">a = a[:, np.newaxis]
+print(a)
+print(a.shape)</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python">a + b</code></pre>
+          </div>
+          <h3 id="array-shape-manipulation">Array Shape Manipulation</h3>
+
+          <p><strong>Flattening</strong></p>
+
+          <div class="code-cell">
+            <pre><code class="language-python">a = np.array([[1, 2, 3], [4, 5, 6]])
+a.ravel()</code></pre>
+          </div>
+          <p><strong>Reshaping</strong></p>
+
+          <div class="code-cell">
+            <pre><code class="language-python">print(a)
+print(a.shape)</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python">b = a.ravel()
+b</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python">b = b.reshape(2, 3)
+b</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python">b[0,0] = 100
+
+print(b)
+print(a)</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python">a = np.zeros((3, 2))
+print(a)
+b = a.T.reshape(3*2)
+print(b)
+b[0] = 50
+print(b)
+print(a)
+</code></pre>
+          </div>
+          <p><strong>Adding a Dimension</strong></p>
+
+          <p>Indexing with the np.newaxis object allows us to add an axis to an array</p>
+
+          <p>
+            newaxis is used to increase the dimension of the existing array by one more dimension,
+            when used once. Thus,
+          </p>
+          <p>1D array will become 2D array</p>
+          <p>2D array will become 3D array</p>
+          <p>3D array will become 4D array and so on</p>
+
+          <div class="code-cell">
+            <pre><code class="language-python">z = np.array([1, 2, 3])
+print(z)
+print(z.shape)
+print(z.ndim)</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python">print(z[:, np.newaxis])
+print(z.shape)
+print(z.ndim)</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python">a = np.arange(4 * 3 * 2).reshape(4, 3, 2)
+print(a)
+print(a.shape)
+print(a.ndim)</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python">a[0, 2, 1]</code></pre>
+          </div>
+          <p><strong>Resizing</strong></p>
+
+          <div class="code-cell">
+            <pre><code class="language-python">a = np.arange(4)
+a.resize((8,))
+a</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python">b = a
+a.resize((4,)) </code></pre>
+          </div>
+          <p><strong>Sorting Data</strong></p>
+
+          <div class="code-cell">
+            <pre><code class="language-python">#Sorting along an axis:
+a = np.array([[5, 4, 6], [2, 3, 2]])
+print(a)
+b = np.sort(a, axis=1)
+print(b)</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python">#in-place sort
+a.sort(axis=1)
+a</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python">#sorting with fancy indexing
+a = np.array([4, 3, 1, 2])
+j = np.argsort(a)
+j</code></pre>
+          </div>
+          <div class="code-cell">
+            <pre><code class="language-python">a[j]</code></pre>
+          </div>
+        </main>
+        <aside class="note-toc" aria-label="On this page">
+          <h2>On This Page</h2>
+          <ul>
+            <li><a href="#1-creating-arrays">1. Creating arrays</a></li>
+            <li><a href="#2-basic-datatypes">2. Basic DataTypes</a></li>
+            <li><a href="#3-indexing-and-slicing">3. Indexing and Slicing</a></li>
+            <li><a href="#4-copies-and-views">4. Copies and Views</a></li>
+            <li><a href="#5-fancy-indexing">5. Fancy Indexing</a></li>
+            <li><a href="#elementwise-operations">Elementwise Operations</a></li>
+            <li><a href="#basic-reductions">Basic Reductions</a></li>
+            <li><a href="#broadcasting">Broadcasting</a></li>
+            <li><a href="#array-shape-manipulation">Array Shape Manipulation</a></li>
+          </ul>
+        </aside>
+      </div>
+    </div>
+    <script>
+      if (window.hljs)
+        document
+          .querySelectorAll("pre code[class*='language-']")
+          .forEach((block) => window.hljs.highlightElement(block));
+      (() => {
+        const links = [...document.querySelectorAll(".note-toc a")],
+          heads = links
+            .map((l) => document.getElementById(decodeURIComponent(l.hash.slice(1))))
+            .filter(Boolean);
+        if (!links.length || !heads.length || !("IntersectionObserver" in window)) return;
+        const set = (h) =>
+          links.forEach((l) => l.classList.toggle("is-active", l.hash === `#${h.id}`));
+        const ob = new IntersectionObserver(
+          (es) => {
+            const v = es
+              .filter((e) => e.isIntersecting)
+              .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
+            if (v.length) set(v[0].target);
+          },
+          { rootMargin: "-10% 0px -75% 0px", threshold: 0 },
+        );
+        heads.forEach((h) => ob.observe(h));
+      })();
+    </script>
+  </body>
+</html>
